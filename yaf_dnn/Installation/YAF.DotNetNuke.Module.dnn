@@ -1,11 +1,12 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="YetAnotherForumDotNet" type="Module" version="01.96.25374">
+    <package name="YetAnotherForumDotNet" type="Module" version="02.00.05400">
       <friendlyName>YetAnotherForumDotNet</friendlyName>
       <description>
-        &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; as DotNetNuke Module. Yet Another Forum.NET (YAF) is an open source ASP.NET forum system.&lt;br /&gt;
+        &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; as DNN Module. Yet Another Forum.NET (YAF) is an open source ASP.NET forum system.&lt;br /&gt;
         &lt;em&gt;Please visit: &lt;a href=&quot;http://www.yetanotherforum.net&quot;&gt;http://www.yetanotherforum.net&lt;/a&gt; for more information.&lt;/em&gt;
       </description>
+      <iconFile>yaf.png</iconFile>
       <owner>
         <name>Jaben Cargman</name>
         <organization>Yet Another Forum.NET</organization>
@@ -15,7 +16,7 @@
       <license src="License.html" />
       <releaseNotes src="ReadMe.html" />
       <dependencies>
-        <dependency type="CoreVersion">05.03.00</dependency>
+        <dependency type="CoreVersion">06.02.00</dependency>
       </dependencies>
       <components>
         <component type="Module">
@@ -62,23 +63,23 @@
             </moduleDefinitions>
           </desktopModule>
         </component>
+        <component type="File">
+          <files>
+            <basePath>DesktopModules\YetAnotherForumDotNet</basePath>
+            <file>
+              <name>yaf.png</name>
+              <sourceFileName>yaf.png</sourceFileName>
+            </file>
+          </files>
+        </component>
         <component type="Assembly">
           <assemblies>
             <basePath>bin</basePath>
-            <assembly>
-              <name>Autofac.Configuration.dll</name>
-            </assembly>
             <assembly>
               <name>Autofac.dll</name>
             </assembly>
             <assembly>
               <name>CookComputing.XmlRpcV2.dll</name>                         
-            </assembly>
-            <assembly>
-              <name>Intelligencia.UrlRewriter.dll</name>
-            </assembly>
-            <assembly>
-              <name>Moq.dll</name>
             </assembly>
             <assembly>
               <name>nStuff.UpdateControls.dll</name>
@@ -187,10 +188,19 @@
             </file>
           </files>
         </component>
-        <component type="File">
+        <component type="Cleanup" version="02.00.05400">
           <files>
             <file>
-              <name>UrlRewriter.config</name>
+              <path>bin</path>
+              <name>Intelligencia.UrlRewriter.dll</name>
+            </file>
+            <file>
+              <path>bin</path>
+              <name>Autofac.Configuration.dll</name>
+            </file>
+            <file>
+              <path>bin</path>
+              <name>Moq.dll</name>
             </file>
           </files>
         </component>
@@ -200,13 +210,7 @@
             <install>
               <configuration>
                 <nodes>
-                  <node path="/configuration" action="update" key="configSource" collision="overwrite">
-                    <rewriter configSource="URLRewriter.config" />
-                  </node>
                   <node path="/configuration/system.net" action="remove" />
-                  <node path="/configuration/configSections" action="update" key="name" collision="overwrite">
-                     <section name="rewriter" type="Intelligencia.UrlRewriter.Configuration.RewriterConfigurationSectionHandler, Intelligencia.UrlRewriter" requirePermission="false" />
-                  </node>
                   <node path="/configuration/appSettings" action="update" key="key" collision="overwrite">
                     <add key="YAF.BoardID" value="1" />
                     <add key="YAF.EnableURLRewriting" value="true" />
@@ -232,22 +236,13 @@
                      <remove name="YafTaskModule" />
                   </node>
                   <node path="/configuration/system.webServer/modules" action="update" key="name" collision="overwrite">
-                     <remove name="UrlRewriter" />
-                  </node>
-                  <node path="/configuration/system.webServer/modules" action="update" key="name" collision="overwrite">
                      <add name="YafTaskModule" type="YAF.Core.YafTaskModule, YAF.Core" preCondition="managedHandler" />
-                  </node>
-                  <node path="/configuration/system.webServer/modules" action="update" key="name" collision="overwrite">
-                     <add name="UrlRewriter" type="Intelligencia.UrlRewriter.RewriterHttpModule,Intelligencia.UrlRewriter" preCondition="managedHandler" />
                   </node>
                   <node path="/configuration/system.webServer/handlers" action="update" key="name" collision="overwrite">
                     <add name="YafHandler" preCondition="integratedMode" verb="GET" path="Resource.ashx" type="YAF.YafResourceHandler, YAF" />
                   </node>
                   <node path="/configuration/system.web/httpModules" action="update" key="name" collision="overwrite">
                      <add name="YafTaskModule" type="YAF.Core.YafTaskModule, YAF.Core" />
-                  </node>
-                  <node path="/configuration/system.web/httpModules" action="update" key="name" collision="overwrite">
-                    <add name="UrlRewriter" type="Intelligencia.UrlRewriter.RewriterHttpModule,Intelligencia.UrlRewriter" />
                   </node>
                   <node path="/configuration/system.web/compilation/assemblies" action="update" key="assembly" collision="overwrite">
                      <add assembly="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089" />
@@ -304,6 +299,11 @@
                   <node path="/configuration/system.web/pages/namespaces/add[starts-with(@namespace,'YAF')]" action="remove" />
                   <node path="/configuration/system.web/pages/namespaces/add[starts-with(@namespace,'YAF')]" action="remove" />
                   <node path="/configuration/system.web/pages/namespaces/add[starts-with(@namespace,'YAF')]" action="remove" />
+                  <node path="/configuration/rewriter[@configSource='URLRewriter.config']" action="remove" />
+                  <node path="/configuration/configSections/section[@name='rewriter']" action="remove" />
+                  <node path="/configuration/system.webServer/modules/remove[@name='UrlRewriter']" action="remove" />
+                  <node path="/configuration/system.webServer/modules/add[@name='UrlRewriter']" action="remove" />
+                  <node path="/configuration/system.web/httpModules/add[@name='UrlRewriter']" action="remove" />
                 </nodes>
               </configuration>
             </install>
@@ -387,13 +387,14 @@
         </component>
       </components>
     </package>
-    <package name="YAF.WhatsNew" type="Module" version="01.96.25374">
+    <package name="YAF.WhatsNew" type="Module" version="02.00.05400">
       <friendlyName>YAF What's New</friendlyName>
       <description>
         &lt;p&gt;This Module displays the Latest Posts from a  &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; Module. Based on the Current Users Authorization Level. You can define Which Forum should been used, and how many Posts should displayed.
         &lt;/p&gt;
         &lt;p&gt;The Posts are rendered as nested List for easy Skinning.&lt;/p&gt;
       </description>
+      <iconFile>yaf.png</iconFile>
       <owner>
         <name>Ingo Herbote</name>
         <organization>Yet Another Forum.NET</organization>
@@ -403,7 +404,7 @@
       <license src="License.html" />
       <releaseNotes />
       <dependencies>
-        <dependency type="CoreVersion">05.03.00</dependency>
+        <dependency type="CoreVersion">06.02.00</dependency>
       </dependencies>
       <components>
         <component type="Module">
