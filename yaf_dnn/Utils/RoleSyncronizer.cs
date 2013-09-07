@@ -1,5 +1,5 @@
 ﻿/* Yet Another Forum.NET
- * Copyright (C) 2006-2012 Jaben Cargman
+ * Copyright (C) 2006-2013 Jaben Cargman
  * http://www.yetanotherforum.net/
  * 
  * This program is free software; you can redistribute it and/or
@@ -83,24 +83,30 @@ namespace YAF.DotNetNuke.Utils
 
                 if (roleFlags.IsStart)
                 {
-                    if (!yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
+                    if (yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
                     {
-                        UpdateUserRole(role, yafUserId, dnnUserInfo.Username, true);
-
-                        rolesChanged = true;
+                        continue;
                     }
+
+                    UpdateUserRole(role, yafUserId, dnnUserInfo.Username, true);
+
+                    rolesChanged = true;
                 }
                 else
                 {
-                    if (dnnUserInfo.Roles.Any(dnnRole => dnnRole.Equals(row["Name"].ToString())))
+                    if (!dnnUserInfo.Roles.Any(dnnRole => dnnRole.Equals(row["Name"].ToString())))
                     {
-                        if (!yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
-                        {
-                            UpdateUserRole(role, yafUserId, dnnUserInfo.Username, true);
-
-                            rolesChanged = true;
-                        }
+                        continue;
                     }
+
+                    if (yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
+                    {
+                        continue;
+                    }
+
+                    UpdateUserRole(role, yafUserId, dnnUserInfo.Username, true);
+
+                    rolesChanged = true;
                 }
             }
 
@@ -143,7 +149,7 @@ namespace YAF.DotNetNuke.Utils
 
             // Check If Dnn Roles Exists in Yaf
             foreach (string role in from role in roles
-                                    where !string.IsNullOrEmpty(role)
+                                    where role.IsSet()
                                     let any = yafBoardRoles.Any(yafRole => yafRole.RoleName.Equals(role))
                                     where !any
                                     select role)

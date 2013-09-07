@@ -24,15 +24,7 @@ namespace YAF.DotNetNuke.Controller
     using System;
     using System.Data;
 
-    using global::DotNetNuke.Common.Lists;
-
-    using global::DotNetNuke.Common.Utilities;
-
     using global::DotNetNuke.Data;
-
-    using global::DotNetNuke.Entities.Profile;
-
-    using YAF.Types.Extensions;
 
     #endregion
 
@@ -64,107 +56,6 @@ namespace YAF.DotNetNuke.Controller
 
             return lastUpdatedDate;
         }       
-
-        /// <summary>
-        /// Adds the YAF Profile property definitions for a portal
-        /// </summary>
-        /// <param name="portalId">Id of the Portal</param>
-        public static void AddYafProfileDefinitions(int portalId)
-        {
-            ListController objListController = new ListController();
-            ListEntryInfoCollection dataTypes = objListController.GetListEntryInfoCollection("DataType");
-
-            AddYafProfileDefinition(portalId, "YAF Profile", "Birthday", "DateTime", 255, dataTypes);
-            AddYafProfileDefinition(portalId, "YAF Profile", "Occupation", "Text", 400, dataTypes);
-            AddYafProfileDefinition(portalId, "YAF Profile", "Gender", "List", 4, dataTypes);
-            AddYafProfileDefinition(portalId, "YAF Profile", "Blog", "Text", 255, dataTypes);
-            AddYafProfileDefinition(portalId, "YAF Profile", "MSN", "Text", 255, dataTypes);
-            AddYafProfileDefinition(portalId, "YAF Profile", "YIM", "Text", 255, dataTypes);
-            AddYafProfileDefinition(portalId, "YAF Profile", "AIM", "Text", 255, dataTypes);
-            AddYafProfileDefinition(portalId, "YAF Profile", "ICQ", "Text", 255, dataTypes);
-            AddYafProfileDefinition(portalId, "YAF Profile", "Facebook", "Text", 400, dataTypes);
-            AddYafProfileDefinition(portalId, "YAF Profile", "Twitter", "Text", 400, dataTypes);
-            AddYafProfileDefinition(portalId, "YAF Profile", "TwitterId", "Text", 400, dataTypes);
-            AddYafProfileDefinition(portalId, "YAF Profile", "Region", "Text", 255, dataTypes);
-            AddYafProfileDefinition(portalId, "YAF Profile", "XMPP", "Text", 255, dataTypes);
-        }
-
-        /// <summary>
-        /// Adds a single default property definition
-        /// </summary>
-        /// <param name="portalId">Id of the Portal</param>
-        /// <param name="category">Category of the Property</param>
-        /// <param name="name">Name of the Property</param>
-        /// <param name="listType">The list type.</param>
-        /// <param name="length">The length.</param>
-        /// <param name="types">The types.</param>
-        public static void AddYafProfileDefinition(int portalId, string category, string name, string listType, int length, ListEntryInfoCollection types)
-        {
-            var profileProperties = ProfileController.GetPropertyDefinitionsByPortal(portalId);
-
-            var lastViewOrder = profileProperties[profileProperties.Count - 1].ViewOrder;
-
-            var typeInfo = types.ToGenericList<ListEntryInfo>().Find(item => item.Value.Equals(listType));
-
-            if (typeInfo == null)
-            {
-                return;
-            }
-
-            ProfilePropertyDefinition propertyDefinition = new ProfilePropertyDefinition
-                {
-                    DataType = typeInfo.EntryID,
-                    DefaultValue = string.Empty,
-                    ModuleDefId = Null.NullInteger,
-                    PortalId = portalId,
-                    PropertyCategory = category,
-                    PropertyName = name,
-                    Required = false,
-                    Visible = true,
-                    Length = length,
-                    ViewOrder = ++lastViewOrder
-                };
-
-            ProfileController.AddPropertyDefinition(propertyDefinition);
-
-            // Add Gender List
-            if (!name.Equals("Gender"))
-            {
-                return;
-            }
-
-            var listController = new ListController();
-
-            listController.AddListEntry(
-                new ListEntryInfo
-                    {
-                        DefinitionID = Null.NullInteger,
-                        PortalID = portalId,
-                        ListName = name,
-                        Value = "0",
-                        Text = "None Specified"
-                    });
-
-            listController.AddListEntry(
-                new ListEntryInfo
-                    {
-                        DefinitionID = Null.NullInteger,
-                        PortalID = portalId,
-                        ListName = name,
-                        Value = "1",
-                        Text = "Male"
-                    });
-
-            listController.AddListEntry(
-                new ListEntryInfo
-                    {
-                        DefinitionID = Null.NullInteger,
-                        PortalID = portalId,
-                        ListName = name,
-                        Value = "2",
-                        Text = "Female"
-                    });
-        }
 
         #endregion
     }

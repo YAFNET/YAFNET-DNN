@@ -69,10 +69,11 @@
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.sql" Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_source\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\obj\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\bin\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Browsers\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Data\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.zip;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\Thumbs.db;" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.xsl" Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_source\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\obj\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\bin\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Browsers\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Data\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.zip;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\Thumbs.db;" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.asmx" Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_source\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\obj\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\bin\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Browsers\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Data\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.zip;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\Thumbs.db;" />    
+      <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.pak" Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_source\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\obj\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\bin\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Browsers\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Data\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.zip;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\Thumbs.db;" />    
     </ItemGroup>
 
     <ItemGroup>
-      <yafsrcInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\**\*.*" Exclude="$(MSBuildProjectDirectory)\.nuget\nuget.exe;$(MSBuildProjectDirectory)\..\yafsrc\.nuget\nuget.exe;$(MSBuildProjectDirectory)\..\yafsrc\packages\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\Tools\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\YAF.Extras\**\*.*;$(MSBuildProjectDirectory)\..\**\*.ReSharper;$(MSBuildProjectDirectory)\..\**\*.testsettings;$(MSBuildProjectDirectory)\..\**\*.chm;$(MSBuildProjectDirectory)\..\**\*.psd;$(MSBuildProjectDirectory)\..\**\TestResults\**;$(MSBuildProjectDirectory)\..\**\nStuff.UpdateControls\**;$(MSBuildProjectDirectory)\..\**\Dependencies\**;$(MSBuildProjectDirectory)\..\**\CookComputing.XmlRpc\**;$(MSBuildProjectDirectory)\..\**\obj\**;$(MSBuildProjectDirectory)\..\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\**\bin\**;$(MSBuildProjectDirectory)\..\**\*.zip;$(MSBuildProjectDirectory)\**\Thumbs.db;$(MSBuildProjectDirectory)\..\**\*.user;$(MSBuildProjectDirectory)\..\**\.svn\**;$(MSBuildProjectDirectory)\..\**\*.suo;" />
+      <yafsrcInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\**\*.*" Exclude="$(MSBuildProjectDirectory)\.nuget\nuget.exe;$(MSBuildProjectDirectory)\..\yafsrc\.nuget\nuget.exe;$(MSBuildProjectDirectory)\..\yafsrc\packages\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\Tools\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\YAF.Extras\**\*.*;$(MSBuildProjectDirectory)\..\**\*.ReSharper;$(MSBuildProjectDirectory)\..\**\*.testsettings;$(MSBuildProjectDirectory)\..\**\*.chm;$(MSBuildProjectDirectory)\..\**\*.psd;$(MSBuildProjectDirectory)\..\**\TestResults\**;$(MSBuildProjectDirectory)\..\**\nStuff.UpdateControls\**;$(MSBuildProjectDirectory)\..\**\Dependencies\**;$(MSBuildProjectDirectory)\..\**\CookComputing.XmlRpc\**;$(MSBuildProjectDirectory)\..\**\obj\**;$(MSBuildProjectDirectory)\..\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\**\bin\**;$(MSBuildProjectDirectory)\..\**\*.zip;$(MSBuildProjectDirectory)\**\Thumbs.db;$(MSBuildProjectDirectory)\..\**\*.user;$(MSBuildProjectDirectory)\..\**\.svn\**;$(MSBuildProjectDirectory)\..\**\*.suo;$(MSBuildProjectDirectory)\..\**\Tools\**;$(MSBuildProjectDirectory)\..\**\YAF.Extras\**;$(MSBuildProjectDirectory)\..\**\Autofac.2.6.1.841\**;" />
     </ItemGroup>
 
     <ItemGroup>
@@ -87,7 +88,7 @@
       <Output TaskParameter="Include" ItemName="SqlDataProviderFiles" />
     </CreateItem>
 
-    <CreateItem Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\**\*.dll">
+    <CreateItem Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\**\*.dll" Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\Intelligencia.UrlRewriter.dll">
       <Output TaskParameter="Include" ItemName="LibaryFiles" />
     </CreateItem>
 
@@ -97,10 +98,10 @@
     
     <Copy SourceFiles="$(MSBuildProjectDirectory)\YafDnnWhatsNew.ascx" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
     <Copy SourceFiles="$(MSBuildProjectDirectory)\YafDnnWhatsNewSettings.ascx" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\UrlRewriter.config" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
 
     <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\License.html" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
     <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\ReadMe.html" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\yaf.png" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
 
     <!-- create the INSTALL YafDnnWhatsNewResources.ZIP file -->
     <Copy SourceFiles="@(YafDnnWhatsNewResourcesInclude)" DestinationFolder="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources\%(RecursiveDir)" />

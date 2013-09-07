@@ -19,6 +19,7 @@
 
 namespace YAF.DotNetNuke.Utils
 {
+    using System.Data;
     using System.Web.Security;
 
     using global::DotNetNuke.Entities.Portals;
@@ -30,6 +31,7 @@ namespace YAF.DotNetNuke.Utils
     using YAF.Core;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
+    using YAF.Types.Flags;
     using YAF.Utils;
 
     /// <summary>
@@ -72,16 +74,30 @@ namespace YAF.DotNetNuke.Utils
             // setup their initial profile information
             userProfile.Initialize(dnnUser.UserName, true);
 
-            userProfile.RealName = dnnUserInfo.Profile.FullName;
-            
-            if (dnnUserInfo.Profile.Country.IsSet() && !dnnUserInfo.Profile.Country.Equals("N/A"))
+            if (dnnUserInfo.Profile.FullName.IsSet())
             {
-                userProfile.Country = ProfileSyncronizer.GetRegionInfoFromCountryName(dnnUserInfo.Profile.Country).TwoLetterISORegionName;
+                userProfile.RealName = dnnUserInfo.Profile.FullName;
             }
 
-            userProfile.Region = dnnUserInfo.Profile.Region;
-            userProfile.City = dnnUserInfo.Profile.City;
-            userProfile.Homepage = dnnUserInfo.Profile.Website;
+            if (dnnUserInfo.Profile.Country.IsSet() && !dnnUserInfo.Profile.Country.Equals("N/A"))
+            {
+                var regionInfo = ProfileSyncronizer.GetRegionInfoFromCountryName(dnnUserInfo.Profile.Country);
+
+                if (regionInfo != null)
+                {
+                    userProfile.Country = regionInfo.TwoLetterISORegionName;
+                }
+            }
+
+            if (dnnUserInfo.Profile.City.IsSet())
+            {
+                userProfile.City = dnnUserInfo.Profile.City;
+            }
+
+            if (dnnUserInfo.Profile.Website.IsSet())
+            {
+                userProfile.Homepage = dnnUserInfo.Profile.Website;
+            } 
 
             userProfile.Save();
 
@@ -91,8 +107,8 @@ namespace YAF.DotNetNuke.Utils
                 boardID,
                 dnnUserInfo.Username,
                 dnnUserInfo.DisplayName,
-                null,
-                ProfileSyncronizer.GetUserTimeZoneOffset(dnnUserInfo, portalSettings),
+                dnnUserInfo.Email,
+                0,
                 null,
                 null,
                 null,
@@ -119,6 +135,42 @@ namespace YAF.DotNetNuke.Utils
             RoleSyncronizer.SynchronizeUserRoles(boardID, portalSettings.PortalId, yafUserId.ToType<int>(), dnnUserInfo);
 
             return yafUserId.ToType<int>();
+        }
+
+        /// <summary>
+        /// Adds the User as Host user if not already
+        /// </summary>
+        /// <param name="yafUserId">The YAF user id.</param>
+        /// <param name="boardId">The board id.</param>
+        public static void CreateYafHostUser(int yafUserId, int boardId)
+        {
+            // get this user information...
+            var userInfoTable = LegacyDb.user_list(boardId, yafUserId, null, null, null);
+
+            if (userInfoTable.Rows.Count <= 0)
+            {
+                return;
+            }
+
+            DataRow row = userInfoTable.Rows[0];
+
+            if (row["IsHostAdmin"].ToType<bool>())
+            {
+                return;
+            }
+
+            // fix the IsHostAdmin flag...
+            var userFlags = new UserFlags(row["Flags"]) { IsHostAdmin = true };
+
+            // update...
+            LegacyDb.user_adminsave(
+                boardId,
+                yafUserId,
+                row["Name"],
+                row["DisplayName"],
+                row["Email"],
+                userFlags.BitValue,
+                row["RankID"]);
         }
     }
 }

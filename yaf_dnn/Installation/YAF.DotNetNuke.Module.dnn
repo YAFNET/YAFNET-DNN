@@ -1,7 +1,7 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
     <package name="YetAnotherForumDotNet" type="Module" version="02.00.05400">
-      <friendlyName>YetAnotherForumDotNet</friendlyName>
+      <friendlyName>YAF.NET Forums</friendlyName>
       <description>
         &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; as DNN Module. Yet Another Forum.NET (YAF) is an open source ASP.NET forum system.&lt;br /&gt;
         &lt;em&gt;Please visit: &lt;a href=&quot;http://www.yetanotherforum.net&quot;&gt;http://www.yetanotherforum.net&lt;/a&gt; for more information.&lt;/em&gt;
@@ -388,7 +388,7 @@
       </components>
     </package>
     <package name="YAF.WhatsNew" type="Module" version="02.00.05400">
-      <friendlyName>YAF What's New</friendlyName>
+      <friendlyName>YAF.NET Forums What's New</friendlyName>
       <description>
         &lt;p&gt;This Module displays the Latest Posts from a  &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; Module. Based on the Current Users Authorization Level. You can define Which Forum should been used, and how many Posts should displayed.
         &lt;/p&gt;

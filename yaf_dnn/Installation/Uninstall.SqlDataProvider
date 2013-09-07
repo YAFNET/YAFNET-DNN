@@ -435,10 +435,6 @@ if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'
 DROP TABLE {databaseOwner}{objectQualifier}yaf_Category
 GO
 
-if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Board]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE {databaseOwner}{objectQualifier}yaf_Board
-GO
-
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_BBCode]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 DROP TABLE {databaseOwner}{objectQualifier}yaf_BBCode
 GO
@@ -529,6 +525,10 @@ GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Medal]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 DROP TABLE {databaseOwner}{objectQualifier}yaf_Medal
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Board]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_Board
 GO
 
 
