@@ -83,6 +83,7 @@
     <Compile Include="Objects\Topics.cs" />
     <Compile Include="Objects\YafCultureInfo.cs" />
     <Compile Include="Utils\CultureUtilities.cs" />
+    <Compile Include="Utils\BreadCrumbHelper.cs" />
     <Compile Include="Utils\RoleSyncronizer.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

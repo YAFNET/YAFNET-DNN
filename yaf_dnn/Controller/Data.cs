@@ -24,7 +24,6 @@ namespace YAF.DotNetNuke.Controller
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.Data.SqlClient;
 
     using global::DotNetNuke.Data;
 
@@ -33,6 +32,7 @@ namespace YAF.DotNetNuke.Controller
     using YAF.Classes.Data;
     using YAF.DotNetNuke.Objects;
     using YAF.Types.Extensions;
+    using YAF.Types.Interfaces.Data;
 
     #endregion
 
@@ -63,7 +63,7 @@ namespace YAF.DotNetNuke.Controller
             bool showNoCountPosts,
             bool findLastRead = false)
         {
-            using (SqlCommand cmd = MsSqlDbAccess.GetCommand("topic_latest"))
+            using (var cmd = DbHelpers.GetCommand("topic_latest"))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("BoardID", boardId);
@@ -73,7 +73,7 @@ namespace YAF.DotNetNuke.Controller
                 cmd.Parameters.AddWithValue("ShowNoCountPosts", showNoCountPosts);
                 cmd.Parameters.AddWithValue("FindLastRead", findLastRead);
 
-                return MsSqlDbAccess.Current.GetData(cmd, true);
+                return LegacyDb.DbAccess.GetData(cmd);
             }
         }
 
@@ -88,7 +88,7 @@ namespace YAF.DotNetNuke.Controller
         /// </returns>
         public static DataTable ActiveAccessUser(object boardId, object userId, bool isGuest)
         {
-            using (SqlCommand cmd = MsSqlDbAccess.GetCommand("pageaccess"))
+            using (var cmd = DbHelpers.GetCommand("pageaccess"))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("BoardID", boardId);
@@ -96,7 +96,7 @@ namespace YAF.DotNetNuke.Controller
                 cmd.Parameters.AddWithValue("IsGuest", isGuest);
                 cmd.Parameters.AddWithValue("UTCTIMESTAMP", DateTime.UtcNow);
 
-                return MsSqlDbAccess.Current.GetData(cmd, true);
+                return LegacyDb.DbAccess.GetData(cmd);
             }
         }
 
