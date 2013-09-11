@@ -29,9 +29,11 @@ namespace YAF.DotNetNuke.Utils
 
     using global::DotNetNuke.UI.Skins;
 
+    using YAF.Classes;
     using YAF.Controls;
     using YAF.Core;
     using YAF.Types.Extensions;
+    using YAF.Types.Interfaces;
     using YAF.Utils.Helpers;
 
     /// <summary>
@@ -58,12 +60,18 @@ namespace YAF.DotNetNuke.Utils
                     return false;
                 }
 
+                if (yafPageLinks.Rows.Count <= 1)
+                {
+                    return false;
+                }
+
                 var breadCrumbControl = FindDnnBreadCrumbControl(control, dnnBreadCrumbID);
 
                 if (breadCrumbControl == null)
                 {
                     return false;
                 }
+
 
                 var separator =
                     breadCrumbControl.GetType()
@@ -87,28 +95,24 @@ namespace YAF.DotNetNuke.Utils
                 foreach (DataRow row in yafPageLinks.Rows)
                 {
                     var title = HttpUtility.HtmlEncode(row["Title"].ToString().Trim());
+
+                    if (YafContext.Current.Get<YafBoardSettings>().Name.Equals(title))
+                    {
+                        continue;
+                    }
+
                     var url = row["URL"].ToString().Trim();
 
-                    if (url.IsNotSet())
-                    {
-                        yafBreadCrumb.AppendFormat(
-                            @"{2}<a href=""#"" class=""{0}"">{1}</a>",
-                            cssClass,
-                            title,
-                            separator);
-                    }
-                    else
-                    {
-                        yafBreadCrumb.AppendFormat(
-                            @"{3}<a href=""{0}"" class=""{1}"">{2}</a>",
-                            url,
-                            cssClass,
-                            title,
-                            separator);
-                    }
+                    yafBreadCrumb.AppendFormat(
+                        @"{3}<a href=""{0}"" class=""{1}"">{2}</a>",
+                        url.IsNotSet() ? "#" : url,
+                        cssClass,
+                        title,
+                        separator);
                 }
 
                 breadCrumbControl.FindControlAs<Label>("lblBreadCrumb").Text += yafBreadCrumb.ToString();
+
 
                 return true;
             }
