@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-namespace YAF.DotNetNuke.Utils
+namespace YAF.DotNetNuke.Components.Utils
 {
     using System;
     using System.Data;
@@ -72,7 +72,6 @@ namespace YAF.DotNetNuke.Utils
                     return false;
                 }
 
-
                 var separator =
                     breadCrumbControl.GetType()
                         .GetProperty("Separator")
@@ -112,7 +111,6 @@ namespace YAF.DotNetNuke.Utils
                 }
 
                 breadCrumbControl.FindControlAs<Label>("lblBreadCrumb").Text += yafBreadCrumb.ToString();
-
 
                 return true;
             }

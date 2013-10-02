@@ -17,14 +17,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-namespace YAF.DotNetNuke.Utils
+namespace YAF.DotNetNuke.Components.Utils
 {
+    using System;
     using System.Data;
     using System.Web.Security;
 
+    using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Portals;
-
     using global::DotNetNuke.Entities.Users;
+    using global::DotNetNuke.Services.Exceptions;
 
     using YAF.Classes;
     using YAF.Classes.Data;
@@ -32,6 +34,7 @@ namespace YAF.DotNetNuke.Utils
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
+    using YAF.Types.Interfaces;
     using YAF.Utils;
 
     /// <summary>
@@ -39,6 +42,109 @@ namespace YAF.DotNetNuke.Utils
     /// </summary>
     public class UserImporter
     {
+        /// <summary>
+        /// Imports the users.
+        /// </summary>
+        /// <param name="boardId">The board id.</param>
+        /// <param name="portalId">The portal id.</param>
+        /// <param name="info">The information text.</param>
+        /// <returns>
+        /// Returns the Number of Users that where imported
+        /// </returns>
+        public static int ImportUsers(int boardId, int portalId, out string info)
+        {
+            var portalGUID = new PortalController().GetPortal(portalId).GUID;
+
+            return ImportUsers(boardId, portalId, portalGUID, out info);
+        }
+
+        /// <summary>
+        /// Imports the users.
+        /// </summary>
+        /// <param name="boardId">The board id.</param>
+        /// <param name="portalId">The portal id.</param>
+        /// <param name="portalGUID">The portal unique identifier.</param>
+        /// <param name="info">The information text.</param>
+        /// <returns>
+        /// Returns the Number of Users that where imported
+        /// </returns>
+        public static int ImportUsers(int boardId, int portalId, Guid portalGUID,  out string info)
+        {
+            var newUserCount = 0;
+
+            var users = UserController.GetUsers(portalId);
+
+            users.Sort(new UserComparer());
+
+            // Load Yaf Board Settings if needed
+            var boardSettings = YafContext.Current == null
+                                    ? new YafLoadBoardSettings(boardId)
+                                    : YafContext.Current.Get<YafBoardSettings>();
+
+            var rolesChanged = false;
+
+            try
+            {
+                foreach (UserInfo dnnUserInfo in users)
+                {
+                    var dnnUser = Membership.GetUser(dnnUserInfo.Username, true);
+
+                    if (dnnUser == null)
+                    {
+                        continue;
+                    }
+
+                    if (dnnUserInfo.IsDeleted)
+                    {
+                        continue;
+                    }
+
+                    var yafUserId = LegacyDb.user_get(boardId, dnnUser.ProviderUserKey);
+
+                    if (yafUserId.Equals(0))
+                    {
+                        // Create user if Not Exist
+                        yafUserId = CreateYafUser(dnnUserInfo, dnnUser, boardId, null, boardSettings);
+                        newUserCount++;
+                    }
+                    else
+                    {
+                        ProfileSyncronizer.UpdateUserProfile(
+                            yafUserId,
+                            null,
+                            null,
+                            dnnUserInfo,
+                            dnnUser,
+                            portalId,
+                            portalGUID,
+                            boardId);
+                    }
+
+                    rolesChanged = RoleSyncronizer.SynchronizeUserRoles(boardId, portalId, yafUserId, dnnUserInfo);
+
+                    // super admin check...
+                    if (dnnUserInfo.IsSuperUser)
+                    {
+                        CreateYafHostUser(yafUserId, boardId);
+                    }
+                }
+
+                YafContext.Current.Get<IDataCache>().Clear();
+
+                DataCache.ClearCache();
+            }
+            catch (Exception ex)
+            {
+                Exceptions.LogException(ex);
+            }
+
+            info = "{0} User(s) Imported{1}".FormatWith(
+                newUserCount,
+                rolesChanged ? ", but all User Roles are synchronized!" : ", User Roles already synchronized!");
+
+            return newUserCount;
+        }
+
         /// <summary>
         /// Creates the YAF user.
         /// </summary>

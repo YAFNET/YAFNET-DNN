@@ -17,26 +17,22 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-namespace YAF.DotNetNuke.Utils
+namespace YAF.DotNetNuke.Components.Utils
 {
     using System;
-    using System.Data;
     using System.Globalization;
     using System.Linq;
     using System.Web.Security;
 
     using global::DotNetNuke.Common;
-
     using global::DotNetNuke.Common.Utilities;
-
     using global::DotNetNuke.Entities.Modules;
-
     using global::DotNetNuke.Entities.Users;
 
     using YAF.Classes;
     using YAF.Classes.Data;
     using YAF.Core;
-    using YAF.DotNetNuke.Objects;
+    using YAF.DotNetNuke.Components.Controllers;
     using YAF.Types;
     using YAF.Types.Constants;
     using YAF.Types.EventProxies;
@@ -79,7 +75,7 @@ namespace YAF.DotNetNuke.Utils
                 }
 
                 var yafTime = yafUserProfile.LastUpdatedDate;
-                var dnnTime = Controller.Profile.YafDnnGetLastUpdatedProfile(dnnUserInfo.UserID);
+                var dnnTime = Profile.YafDnnGetLastUpdatedProfile(dnnUserInfo.UserID);
 
                 if (dnnTime <= yafTime)
                 {

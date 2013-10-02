@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-namespace YAF.DotNetNuke.Utils
+namespace YAF.DotNetNuke.Components.Utils
 {
     using System.Collections.Generic;
     using System.Data;
@@ -25,7 +25,7 @@ namespace YAF.DotNetNuke.Utils
     using System.Linq;
 
     using YAF.Core;
-    using YAF.DotNetNuke.Objects;
+    using YAF.DotNetNuke.Components.Objects;
 
     /// <summary>
     /// Culture Helper Class

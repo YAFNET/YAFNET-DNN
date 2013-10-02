@@ -17,40 +17,45 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-namespace YAF.DotNetNuke.Components.Objects
+namespace YAF.DotNetNuke.Components.Controllers
 {
-    #region Using
+    #region
 
     using System;
+    using System.Data;
+
+    using global::DotNetNuke.Data;
 
     #endregion
 
     /// <summary>
-    /// Messages List
+    /// DataController to Handling all SQL Stuff
     /// </summary>
-    public class Messages
+    public class Profile
     {
-        #region Constants and Fields
+        #region Public Methods
 
         /// <summary>
-        ///   Gets or sets Message Posted at
+        /// Get The Latest DateTime where on of the DNN Profile Fields was updated
         /// </summary>
-        public DateTime Posted { get; set; }
+        /// <param name="userID">The user ID.</param>
+        /// <returns>
+        /// The DateTime when the DNN Profile was last updated.
+        /// </returns>
+        public static DateTime YafDnnGetLastUpdatedProfile(int userID)
+        {
+            DateTime lastUpdatedDate = new DateTime();
 
-        /// <summary>
-        ///  Gets or sets The Message Id
-        /// </summary>
-        public int MessageId { get; set; }
+            using (IDataReader dr = DataProvider.Instance().ExecuteReader("YafDnn_LastUpdatedProfile", userID))
+            {
+                while (dr.Read())
+                {
+                    lastUpdatedDate = (DateTime)dr["LastUpdatedDate"];
+                }
+            }
 
-        /// <summary>
-        ///  Gets or sets The Topic Id
-        /// </summary>
-        public int TopicId { get; set; }
-
-        /// <summary>
-        ///  Gets or sets The Complete Message of a Post
-        /// </summary>
-        public string Message { get; set; }
+            return lastUpdatedDate;
+        }       
 
         #endregion
     }

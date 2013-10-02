@@ -17,13 +17,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-namespace YAF.DotNetNuke
+namespace YAF.DotNetNuke.Components.Objects
 {
   #region Using
 
-  using System;
+    using System;
 
-  #endregion
+    #endregion
 
   /// <summary>
   /// Topics List

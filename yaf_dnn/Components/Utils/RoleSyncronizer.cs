@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-namespace YAF.DotNetNuke.Utils
+namespace YAF.DotNetNuke.Components.Utils
 {
     using System;
     using System.Collections.Generic;
@@ -25,15 +25,13 @@ namespace YAF.DotNetNuke.Utils
     using System.Linq;
 
     using global::DotNetNuke.Entities.Modules;
-
     using global::DotNetNuke.Entities.Users;
-
     using global::DotNetNuke.Security.Roles;
 
     using YAF.Classes.Data;
     using YAF.Core;
     using YAF.Core.Model;
-    using YAF.DotNetNuke.Controller;
+    using YAF.DotNetNuke.Components.Controllers;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
     using YAF.Types.Interfaces;
