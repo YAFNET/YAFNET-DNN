@@ -94,24 +94,6 @@ namespace YAF.DotNetNuke {
         protected global::System.Web.UI.WebControls.CheckBox InheritDnnLanguage;
         
         /// <summary>
-        /// SyncProfile control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UserControl SyncProfile;
-        
-        /// <summary>
-        /// AutoSyncProfile control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox AutoSyncProfile;
-        
-        /// <summary>
         /// update control.
         /// </summary>
         /// <remarks>

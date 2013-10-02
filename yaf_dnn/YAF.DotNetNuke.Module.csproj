@@ -74,24 +74,23 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controller\Data.cs" />
-    <Compile Include="Controller\Profile.cs" />
-    <Compile Include="DnnRichEditor.cs" />
-    <Compile Include="DnnSendMail.cs" />
-    <Compile Include="DotNetNukeUrlBuilder.cs" />
-    <Compile Include="Objects\Messages.cs" />
-    <Compile Include="Objects\Topics.cs" />
-    <Compile Include="Objects\YafCultureInfo.cs" />
-    <Compile Include="Utils\CultureUtilities.cs" />
-    <Compile Include="Utils\BreadCrumbHelper.cs" />
-    <Compile Include="Utils\RoleSyncronizer.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Utils\ProfileSyncronizer.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Utils\UserComparer.cs" />
-    <Compile Include="Utils\UserImporter.cs" />
+    <Compile Include="Components\Controllers\Data.cs" />
+    <Compile Include="Components\Controllers\Profile.cs" />
+    <Compile Include="Components\Controllers\YAFDnnController.cs" />
+    <Compile Include="Components\Integration\DnnRichEditor.cs" />
+    <Compile Include="Components\Integration\Journal.cs" />
+    <Compile Include="Components\Integration\SendMail.cs" />
+    <Compile Include="Components\Objects\Messages.cs" />
+    <Compile Include="Components\Objects\Topics.cs" />
+    <Compile Include="Components\Objects\YafCultureInfo.cs" />
+    <Compile Include="Components\Rewriter\DotNetNukeUrlBuilder.cs" />
+    <Compile Include="Components\Tasks\YafDnnImportScheduler.cs" />
+    <Compile Include="Components\Utils\BreadCrumbHelper.cs" />
+    <Compile Include="Components\Utils\CultureUtilities.cs" />
+    <Compile Include="Components\Utils\ProfileSyncronizer.cs" />
+    <Compile Include="Components\Utils\RoleSyncronizer.cs" />
+    <Compile Include="Components\Utils\UserComparer.cs" />
+    <Compile Include="Components\Utils\UserImporter.cs" />
     <Compile Include="YafDnnWhatsNew.ascx.cs">
       <DependentUpon>YafDnnWhatsNew.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -106,11 +105,7 @@
     <Compile Include="YafDnnWhatsNewSettings.ascx.designer.cs">
       <DependentUpon>YafDnnWhatsNewSettings.ascx</DependentUpon>
     </Compile>
-    <Compile Include="YafDnnImportScheduler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="YAFDnnController.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="YafDnnModule.ascx.cs">
       <DependentUpon>YafDnnModule.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

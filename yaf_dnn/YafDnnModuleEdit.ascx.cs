@@ -29,7 +29,6 @@ namespace YAF.DotNetNuke
 
     using global::DotNetNuke.Services.Localization;
 
-    using YAF.Classes.Data;
     using YAF.Core;
     using YAF.Core.Model;
     using YAF.Types.Constants;
@@ -174,16 +173,6 @@ namespace YAF.DotNetNuke
             }
 
             this.InheritDnnLanguage.Checked = ineritDnnLang;
-
-            // Load Auto Sync Setting
-            bool autoSyncProfile = true;
-
-            if ((string)this.Settings["AutoSyncProfile"] != null)
-            {
-                bool.TryParse((string)this.Settings["AutoSyncProfile"], out autoSyncProfile);
-            }
-
-            this.AutoSyncProfile.Checked = autoSyncProfile;
         }
 
         /// <summary>
@@ -201,7 +190,6 @@ namespace YAF.DotNetNuke
             objModules.UpdateModuleSetting(this.ModuleId, "RemoveTabName", this.RemoveTabName.SelectedValue);
             objModules.UpdateModuleSetting(
                 this.ModuleId, "InheritDnnLanguage", this.InheritDnnLanguage.Checked.ToString());
-            objModules.UpdateModuleSetting(this.ModuleId, "AutoSyncProfile", this.AutoSyncProfile.Checked.ToString());
 
             YafBuildLink.Redirect(ForumPages.forum);
         }

@@ -23,7 +23,6 @@ namespace YAF.DotNetNuke
 
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Web.UI.WebControls;
 
     using global::DotNetNuke.Common.Utilities;
@@ -35,6 +34,7 @@ namespace YAF.DotNetNuke
     using global::DotNetNuke.Services.Exceptions;
 
     using YAF.Types.Extensions;
+    using YAF.Utils.Helpers;
 
     #endregion
 
@@ -69,58 +69,35 @@ namespace YAF.DotNetNuke
 
                 if (this.YafInstances.Items.Count > 0)
                 {
-                    if (!string.IsNullOrEmpty((string)this.TabModuleSettings["YafPage"])
-                        && !string.IsNullOrEmpty((string)this.TabModuleSettings["YafModuleId"]))
+                    if (this.TabModuleSettings["YafPage"].ToType<string>().IsSet()
+                        && this.TabModuleSettings["YafModuleId"].ToType<string>().IsSet())
                     {
                         this.YafInstances.SelectedValue = "{0}-{1}".FormatWith(
-                            this.TabModuleSettings["YafPage"], this.TabModuleSettings["YafModuleId"]);
+                            this.TabModuleSettings["YafPage"],
+                            this.TabModuleSettings["YafModuleId"]);
                     }
                 }
 
-                if (!string.IsNullOrEmpty((string)this.TabModuleSettings["YafMaxPosts"]))
+                this.txtMaxResult.Text = this.TabModuleSettings["YafMaxPosts"].ToType<string>().IsSet()
+                                             ? this.TabModuleSettings["YafMaxPosts"].ToType<string>()
+                                             : "10";
+
+                if (this.TabModuleSettings["YafUseRelativeTime"] is bool)
                 {
-                    this.txtMaxResult.Text = (string)this.TabModuleSettings["YafMaxPosts"];
-                }
-                else
-                {
-                    this.txtMaxResult.Text = "10";
+                    this.UseRelativeTime.Checked = this.TabModuleSettings["YafUseRelativeTime"].ToType<bool>();
                 }
 
-                if (!string.IsNullOrEmpty((string)this.TabModuleSettings["YafUseRelativeTime"]))
-                {
-                    bool yafUseRelativeTime;
-                    bool.TryParse((string)this.TabModuleSettings["YafUseRelativeTime"], out yafUseRelativeTime);
+                this.HtmlHeader.Text = this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
+                                           ? this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>()
+                                           : "<ul>";
 
-                    this.UseRelativeTime.Checked = yafUseRelativeTime;
-                }
+                this.HtmlItem.Text = this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>().IsSet()
+                                         ? this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>()
+                                         : "<li class=\"YafPosts\">[LASTPOSTICON]&nbsp;<strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />\"[LASTMESSAGE:150]\"<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
 
-                if (!string.IsNullOrEmpty((string)TabModuleSettings["YafWhatsNewHeader"]))
-                {
-                    this.HtmlHeader.Text = (string)TabModuleSettings["YafWhatsNewHeader"];
-                }
-                else
-                {
-                    this.HtmlHeader.Text = "<ul>";
-                }
-
-                if (!string.IsNullOrEmpty((string)TabModuleSettings["YafWhatsNewItemTemplate"]))
-                {
-                    this.HtmlItem.Text = (string)TabModuleSettings["YafWhatsNewItemTemplate"];
-                }
-                else
-                {
-                    this.HtmlItem.Text =
-                        "<li class=\"YafPosts\">[LASTPOSTICON]&nbsp;<strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
-                }
-
-                if (!string.IsNullOrEmpty((string)TabModuleSettings["YafWhatsNewFooter"]))
-                {
-                    this.HtmlFooter.Text = (string)TabModuleSettings["YafWhatsNewFooter"];
-                }
-                else
-                {
-                    this.HtmlFooter.Text = "</ul>";
-                }
+                this.HtmlFooter.Text = this.TabModuleSettings["YafWhatsNewFooter"].ToType<string>().IsSet()
+                                           ? this.TabModuleSettings["YafWhatsNewFooter"].ToType<string>()
+                                           : "</ul>";
             }
             catch (Exception exc)
             {
@@ -153,7 +130,7 @@ namespace YAF.DotNetNuke
                     }
                 }
 
-                if (IsNumeric(this.txtMaxResult.Text) || !string.IsNullOrEmpty(this.txtMaxResult.Text))
+                if (ValidationHelper.IsNumeric(this.txtMaxResult.Text) || !string.IsNullOrEmpty(this.txtMaxResult.Text))
                 {
                     objModules.UpdateTabModuleSetting(this.TabModuleId, "YafMaxPosts", this.txtMaxResult.Text);
                 }
@@ -163,7 +140,9 @@ namespace YAF.DotNetNuke
                 }
 
                 objModules.UpdateTabModuleSetting(
-                    this.TabModuleId, "YafUseRelativeTime", this.UseRelativeTime.Checked.ToString());
+                    this.TabModuleId,
+                    "YafUseRelativeTime",
+                    this.UseRelativeTime.Checked.ToString());
 
                 if (!string.IsNullOrEmpty(this.HtmlHeader.Text))
                 {
@@ -190,25 +169,6 @@ namespace YAF.DotNetNuke
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Check if Object is a Number
-        /// </summary>
-        /// <param name="valueToCheck">
-        /// Object to Check
-        /// </param>
-        /// <returns>
-        /// Returns boolean Value
-        /// </returns>
-        private static bool IsNumeric(object valueToCheck)
-        {
-            double dummy;
-            string inputValue = Convert.ToString(valueToCheck);
-
-            bool numeric = double.TryParse(inputValue, NumberStyles.Any, null, out dummy);
-
-            return numeric;
-        }
 
         /// <summary>
         /// Fill DropDownList with Portal Tabs
@@ -240,8 +200,7 @@ namespace YAF.DotNetNuke
                 {
                     ModuleInfo objModule = pair.Value;
 
-                    if (objModule.IsDeleted || objModule.DesktopModuleID != objDesktopModuleInfo.DesktopModuleID
-                        || objModule.IsDeleted)
+                    if (objModule.IsDeleted || objModule.DesktopModuleID != objDesktopModuleInfo.DesktopModuleID)
                     {
                         continue;
                     }
@@ -261,10 +220,10 @@ namespace YAF.DotNetNuke
                     }
 
                     var objListItem = new ListItem
-                        {
-                            Value = "{0}-{1}".FormatWith(objModule.TabID, objModule.ModuleID),
-                            Text = "{0} -> {1}".FormatWith(strPath, objModule.ModuleTitle)
-                        };
+                                          {
+                                              Value = "{0}-{1}".FormatWith(objModule.TabID, objModule.ModuleID),
+                                              Text = "{0} -> {1}".FormatWith(strPath, objModule.ModuleTitle)
+                                          };
 
                     this.YafInstances.Items.Add(objListItem);
                 }

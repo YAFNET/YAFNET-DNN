@@ -27,30 +27,16 @@ namespace YAF.DotNetNuke
     using System.IO;
     using System.Linq;
     using System.Web;
-    using System.Web.Security;
     using System.Web.UI.WebControls;
 
     using global::DotNetNuke.Common;
-
-    using global::DotNetNuke.Common.Utilities;
-
     using global::DotNetNuke.Entities.Modules;
-
-    using global::DotNetNuke.Entities.Users;
-
-    using global::DotNetNuke.Services.Exceptions;
-
     using global::DotNetNuke.Services.Localization;
 
     using global::DotNetNuke.Services.Scheduling;
 
-    using YAF.Classes;
-    using YAF.Classes.Data;
-    using YAF.Core;
-    using YAF.DotNetNuke.Utils;
+    using YAF.DotNetNuke.Components.Utils;
     using YAF.Types.Extensions;
-    using YAF.Types.Flags;
-    using YAF.Types.Interfaces;
 
     #endregion
 
@@ -71,22 +57,6 @@ namespace YAF.DotNetNuke
         /// </summary>
         private int boardId;
 
-        /// <summary>
-        /// Gets or sets The New Users Counter
-        /// </summary>
-        private int NewUsers
-        {
-            get
-            {
-                return this.ViewState["NewUsers"] != null ? (int)this.ViewState["NewUsers"] : 0;
-            }
-
-            set
-            {
-                this.ViewState["NewUsers"] = value;
-            }
-        }
-
         #endregion
 
         #region Methods
@@ -103,11 +73,6 @@ namespace YAF.DotNetNuke
             {
                 case "add":
                     this.InstallScheduleClient();
-                    btn.CommandArgument = "update";
-                    btn.Text = Localization.GetString("UpdateSheduler.Text", this.LocalResourceFile);
-                    break;
-                case "update":
-                    UpdateScheduleItem(GetIdOfScheduleClient(TypeFullName));
                     btn.CommandArgument = "delete";
                     btn.Text = Localization.GetString("DeleteShedulerText", this.LocalResourceFile);
                     break;
@@ -172,24 +137,6 @@ namespace YAF.DotNetNuke
         }
 
         /// <summary>
-        /// The update schedule item.
-        /// </summary>
-        /// <param name="scheduleId">
-        /// The schedule id.
-        /// </param>
-        private static void UpdateScheduleItem(int scheduleId)
-        {
-            // get the item by id
-            ScheduleItem item = SchedulingProvider.Instance().GetSchedule(scheduleId);
-
-            // set property on item
-            item.TimeLapse = 60;
-
-            // update item
-            SchedulingProvider.Instance().UpdateSchedule(item);
-        }
-
-        /// <summary>
         /// The close click.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
@@ -197,43 +144,6 @@ namespace YAF.DotNetNuke
         private void CloseClick(object sender, EventArgs e)
         {
             this.Response.Redirect(Globals.NavigateURL(), true);
-        }
-
-        /// <summary>
-        /// The create YAF host user.
-        /// </summary>
-        /// <param name="yafUserId">
-        /// The YAF user id.
-        /// </param>
-        private void CreateYafHostUser(int yafUserId)
-        {
-            // get this user information...
-            DataTable userInfo = LegacyDb.user_list(this.boardId, yafUserId, null, null, null);
-
-            if (userInfo.Rows.Count <= 0)
-            {
-                return;
-            }
-
-            DataRow row = userInfo.Rows[0];
-
-            if (Convert.ToBoolean(row["IsHostAdmin"]))
-            {
-                return;
-            }
-
-            // fix the IsHostAdmin flag...
-            var userFlags = new UserFlags(row["Flags"]) { IsHostAdmin = true };
-
-            // update...
-            LegacyDb.user_adminsave(
-                this.boardId,
-                yafUserId,
-                row["Name"],
-                row["DisplayName"],
-                row["Email"],
-                userFlags.BitValue,
-                row["RankID"]);
         }
 
         /// <summary>
@@ -249,7 +159,7 @@ namespace YAF.DotNetNuke
 
             try
             {
-                this.boardId = int.Parse(this.Settings["forumboardid"].ToString());
+                this.boardId = this.Settings["forumboardid"].ToType<int>();
             }
             catch (Exception)
             {
@@ -261,17 +171,17 @@ namespace YAF.DotNetNuke
                 return;
             }
 
-            string sFile = "{0}App_Data/YafImports.xml".FormatWith(HttpRuntime.AppDomainAppPath);
+            var importFile = "{0}App_Data/YafImports.xml".FormatWith(HttpRuntime.AppDomainAppPath);
 
             var dsSettings = new DataSet();
 
             try
             {
-                dsSettings.ReadXml(sFile);
+                dsSettings.ReadXml(importFile);
             }
             catch (Exception)
             {
-                var file = new FileStream(sFile, FileMode.Create);
+                var file = new FileStream(importFile, FileMode.Create);
                 var sw = new StreamWriter(file);
 
                 sw.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
@@ -283,7 +193,7 @@ namespace YAF.DotNetNuke
                 file.Close();
             }
 
-            bool bUpdateXml = false;
+            var updateXml = false;
 
             foreach (DataRow oRow in dsSettings.Tables[0].Rows)
             {
@@ -292,14 +202,14 @@ namespace YAF.DotNetNuke
 
                 if (iPortal.Equals(this.PortalId) && iBoard.Equals(this.boardId))
                 {
-                    bUpdateXml = false;
+                    updateXml = false;
                     break;
                 }
 
-                bUpdateXml = true;
+                updateXml = true;
             }
 
-            if (bUpdateXml)
+            if (updateXml)
             {
                 DataRow dr = dsSettings.Tables["Import"].NewRow();
 
@@ -308,7 +218,7 @@ namespace YAF.DotNetNuke
 
                 dsSettings.Tables[0].Rows.Add(dr);
 
-                dsSettings.WriteXml(sFile);
+                dsSettings.WriteXml(importFile);
             }
 
             this.btnAddScheduler.CommandArgument = "delete";
@@ -322,83 +232,11 @@ namespace YAF.DotNetNuke
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void ImportClick(object sender, EventArgs e)
         {
-            this.NewUsers = 0;
+            string info;
 
-            var users = UserController.GetUsers(this.PortalId);
-            users.Sort(new UserComparer());
+            UserImporter.ImportUsers(this.boardId, this.PortalSettings.PortalId, this.PortalSettings.GUID, out info);
 
-            var rolesChanged = false;
-
-            try
-            {
-                foreach (UserInfo dnnUserInfo in users)
-                {
-                    // Get current Dnn user
-                    // UserInfo dnnUserInfo = UserController.GetUserById(PortalId, UserId);
-
-                    // get the user from the membership provider
-                    MembershipUser dnnUser = Membership.GetUser(dnnUserInfo.Username, true);
-
-                    if (dnnUser == null)
-                    {
-                        continue;
-                    }
-
-                    if (dnnUserInfo.IsDeleted)
-                    {
-                        continue;
-                    }
-
-                    int yafUserId = LegacyDb.user_get(this.boardId, dnnUser.ProviderUserKey);
-
-                    if (yafUserId.Equals(0))
-                    {
-                        yafUserId = UserImporter.CreateYafUser(
-                            dnnUserInfo,
-                            dnnUser,
-                            this.boardId,
-                            this.PortalSettings,
-                            YafContext.Current.Get<YafBoardSettings>());
-
-                        this.NewUsers++;
-                    }
-                    else
-                    {
-                        ProfileSyncronizer.UpdateUserProfile(
-                            yafUserId,
-                            dnnUserInfo,
-                            dnnUser,
-                            this.PortalSettings.PortalId,
-                            this.PortalSettings.GUID,
-                            this.boardId);
-                    }
-
-                    rolesChanged = RoleSyncronizer.SynchronizeUserRoles(this.boardId, this.PortalSettings.PortalId, yafUserId, dnnUserInfo);
-
-                    // super admin check...
-                    if (dnnUserInfo.IsSuperUser)
-                    {
-                        this.CreateYafHostUser(yafUserId);
-                    }
-                }
-
-                this.lInfo.Text =
-                    Localization.GetString("UsersImported.Text", this.LocalResourceFile).FormatWith(this.NewUsers);
-
-                this.lInfo.Text += rolesChanged
-                                       ? Localization.GetString("RolesSynced.Text", this.LocalResourceFile)
-                                       : Localization.GetString("RolesNotSynced.Text", this.LocalResourceFile);
-
-                YafContext.Current.Get<IDataCache>().Clear();
-
-                // DataCache.ClearCache();
-                DataCache.ClearPortalCache(this.PortalSettings.PortalId, true);
-                this.Session.Clear();
-            }
-            catch (Exception ex)
-            {
-                Exceptions.ProcessModuleLoadException(this, ex);
-            }
+            this.lInfo.Text = info;
         }
 
         /// <summary>
@@ -427,15 +265,15 @@ namespace YAF.DotNetNuke
 
             var dsSettings = new DataSet();
 
-            string sFile = "{0}App_Data/YafImports.xml".FormatWith(HttpRuntime.AppDomainAppPath);
+            var filePath = "{0}App_Data/YafImports.xml".FormatWith(HttpRuntime.AppDomainAppPath);
 
             try
             {
-                dsSettings.ReadXml(sFile);
+                dsSettings.ReadXml(filePath);
             }
             catch (Exception)
             {
-                var file = new FileStream(sFile, FileMode.Create);
+                var file = new FileStream(filePath, FileMode.Create);
                 var sw = new StreamWriter(file);
 
                 sw.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");

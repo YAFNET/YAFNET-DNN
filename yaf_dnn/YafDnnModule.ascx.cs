@@ -49,8 +49,8 @@ namespace YAF.DotNetNuke
     using YAF.Classes.Data;
     using YAF.Core;
     using YAF.Core.Model;
-    using YAF.DotNetNuke.Objects;
-    using YAF.DotNetNuke.Utils;
+    using YAF.DotNetNuke.Components.Objects;
+    using YAF.DotNetNuke.Components.Utils;
     using YAF.Types;
     using YAF.Types.Attributes;
     using YAF.Types.Extensions;
@@ -406,16 +406,7 @@ namespace YAF.DotNetNuke
             }
 
             // Check if the user exists in yaf
-            int yafUserId;
-
-            try
-            {
-                yafUserId = YafContext.Current.IsGuest ? 0 : YafContext.Current.PageUserID;
-            }
-            catch (Exception)
-            {
-                yafUserId = LegacyDb.user_get(this.forum1.BoardID, dnnMembershipUser.ProviderUserKey);
-            }
+            var yafUserId = LegacyDb.user_get(this.forum1.BoardID, dnnMembershipUser.ProviderUserKey);
 
             if (yafUserId.Equals(0))
             {

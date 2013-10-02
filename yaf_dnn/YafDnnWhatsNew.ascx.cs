@@ -26,8 +26,8 @@ namespace YAF.DotNetNuke
     using System.Data;
     using System.Globalization;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Web;
-    using System.Web.Caching;
     using System.Web.Security;
     using System.Web.UI;
     using System.Web.UI.WebControls;
@@ -35,7 +35,7 @@ namespace YAF.DotNetNuke
     using global::DotNetNuke.Common;
 
     using global::DotNetNuke.Entities.Modules;
-
+    using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Framework;
 
     using global::DotNetNuke.Services.Exceptions;
@@ -46,10 +46,10 @@ namespace YAF.DotNetNuke
     using YAF.Classes.Data;
     using YAF.Controls;
     using YAF.Core;
-    using YAF.DotNetNuke.Controller;
+    using YAF.DotNetNuke.Components.Controllers;
+    using YAF.DotNetNuke.Components.Utils;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
-    using YAF.Utils;
     using YAF.Utils.Helpers;
 
     #endregion
@@ -59,13 +59,7 @@ namespace YAF.DotNetNuke
     /// </summary>
     public partial class YafDnnWhatsNew : PortalModuleBase
     {
-        // Settings
         #region Constants and Fields
-
-        /// <summary>
-        ///   The cache size.
-        /// </summary>
-        private const int CacheSize = 500;
 
         /// <summary>
         ///   Use Relative Time Setting
@@ -135,176 +129,14 @@ namespace YAF.DotNetNuke
                 {
                     sb.Append('-');
                 }
-                else if (char.GetUnicodeCategory(currentChar) != UnicodeCategory.NonSpacingMark &&
-                         !char.IsPunctuation(currentChar) && !char.IsSymbol(currentChar) && currentChar < 128)
+                else if (char.GetUnicodeCategory(currentChar) != UnicodeCategory.NonSpacingMark
+                         && !char.IsPunctuation(currentChar) && !char.IsSymbol(currentChar) && currentChar < 128)
                 {
                     sb.Append(currentChar);
                 }
             }
 
             return sb.ToString();
-        }
-
-        /// <summary>
-        /// The get cache name.
-        /// </summary>
-        /// <param name="type">
-        /// The type.
-        /// </param>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// Returns the Cache Name.
-        /// </returns>
-        protected string GetCacheName(string type, int id)
-        {
-            return @"urlRewritingDT-{0}-Range-{1}-to-{2}".FormatWith(type, this.HighRange(id), this.LowRange(id));
-        }
-
-        /// <summary>
-        /// The get data row from cache.
-        /// </summary>
-        /// <param name="type">
-        /// The type.
-        /// </param>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// Returns cached Data Row
-        /// </returns>
-        protected DataRow GetDataRowFromCache(string type, int id)
-        {
-            // get the data table and find the value
-            var list = HttpContext.Current.Cache[this.GetCacheName(type, id)] as DataTable;
-
-            if (list != null)
-            {
-                DataRow row = list.Rows.Find(id);
-
-                // valid, return...
-                if (row != null)
-                {
-                    return row;
-                }
-
-                // invalidate this cache section
-                HttpContext.Current.Cache.Remove(this.GetCacheName(type, id));
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// The get forum name.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// Returns the forum Name.
-        /// </returns>
-        protected string GetForumName(int id)
-        {
-            const string Type = "Forum";
-            const string PrimaryKey = "ForumID";
-            const string NameField = "Name";
-
-            DataRow row = this.GetDataRowFromCache(Type, id);
-
-            if (row == null)
-            {
-                // get the section desired...
-                DataTable list = LegacyDb.forum_simplelist(this.LowRange(id), CacheSize);
-
-                // set it up in the cache
-                row = this.SetupDataToCache(ref list, Type, id, PrimaryKey);
-
-                if (row == null)
-                {
-                    return string.Empty;
-                }
-            }
-
-            return CleanStringForURL(row[NameField].ToString());
-        }
-
-        /// <summary>
-        /// The get topic name.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// Returns the Topic Name.
-        /// </returns>
-        protected string GetTopicName(int id)
-        {
-            const string Type = "Topic";
-            const string PrimaryKey = "TopicID";
-            const string NameField = "Topic";
-
-            DataRow row = this.GetDataRowFromCache(Type, id);
-
-            if (row == null)
-            {
-                // get the section desired...
-                DataTable list = LegacyDb.topic_simplelist(this.LowRange(id), CacheSize);
-
-                // set it up in the cache
-                row = this.SetupDataToCache(ref list, Type, id, PrimaryKey);
-
-                if (row == null)
-                {
-                    return string.Empty;
-                }
-            }
-
-            return CleanStringForURL(row[NameField].ToString());
-        }
-
-        /// <summary>
-        /// The get topic name from message.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// Returns the Topic Name.
-        /// </returns>
-        protected string GetTopicNameFromMessage(int id)
-        {
-            const string Type = "Message";
-            const string PrimaryKey = "MessageID";
-
-            DataRow row = this.GetDataRowFromCache(Type, id);
-
-            if (row == null)
-            {
-                // get the section desired...
-                DataTable list = LegacyDb.message_simplelist(this.LowRange(id), CacheSize);
-
-                // set it up in the cache
-                row = this.SetupDataToCache(ref list, Type, id, PrimaryKey);
-
-                if (row == null)
-                {
-                    return string.Empty;
-                }
-            }
-
-            return this.GetTopicName(row["TopicID"].ToType<int>());
-        }
-
-        /// <summary>
-        /// High the range.
-        /// </summary>
-        /// <param name="id">The id.</param>
-        /// <returns>The high range.</returns>
-        protected int HighRange(int id)
-        {
-            return (int)(Math.Ceiling((double)(id / CacheSize)) * CacheSize);
         }
 
         /// <summary>
@@ -327,11 +159,11 @@ namespace YAF.DotNetNuke
                 case ListItemType.Item:
                     {
                         Literal objLiteral = new Literal { Text = this.ProcessItem(e) };
-                        e.Item.Controls.Add(objLiteral); 
+                        e.Item.Controls.Add(objLiteral);
                     }
 
                     break;
-                /*case ListItemType.Separator:
+                    /*case ListItemType.Separator:
                     {
                         Literal objLiteral = new Literal { Text = this.ProcessSeparator() };
                         e.Item.Controls.Add(objLiteral);
@@ -345,19 +177,7 @@ namespace YAF.DotNetNuke
                     }
 
                     break;
-            }            
-        }
-
-        /// <summary>
-        /// Lows the range.
-        /// </summary>
-        /// <param name="id">The id.</param>
-        /// <returns>
-        /// The low range.
-        /// </returns>
-        protected int LowRange(int id)
-        {
-            return (int)(Math.Floor((double)(id / CacheSize)) * CacheSize);
+            }
         }
 
         /// <summary>
@@ -381,14 +201,11 @@ namespace YAF.DotNetNuke
                     "timeagojs",
                     this.ResolveUrl("~/DesktopModules/YetAnotherForumDotNet/resources/js/jquery.timeago.js"));
 
-                var timeagoLoadJs =
-                    @"Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(loadTimeAgo);
-            function loadTimeAgo() {				      	
-            " +
-                    Localization.GetString("TIMEAGO_JS", this.LocalResourceFile) +
-                    @"
+                var timeagoLoadJs = @"Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(loadTimeAgo);
+            function loadTimeAgo() {{				      	
+            {0}
               jQuery('abbr.timeago').timeago();	
-			      }";
+			      }}".FormatWith(Localization.GetString("TIMEAGO_JS", this.LocalResourceFile));
 
                 ScriptManager.RegisterStartupScript(this, csType, "timeagoloadjs", timeagoLoadJs, true);
             }
@@ -397,61 +214,10 @@ namespace YAF.DotNetNuke
         }
 
         /// <summary>
-        /// The setup data to cache.
-        /// </summary>
-        /// <param name="list">
-        /// The list.
-        /// </param>
-        /// <param name="type">
-        /// The type.
-        /// </param>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <param name="primaryKey">
-        /// The primary key.
-        /// </param>
-        /// <returns>
-        /// Data Row
-        /// </returns>
-        protected DataRow SetupDataToCache(ref DataTable list, string type, int id, string primaryKey)
-        {
-            DataRow row = null;
-
-            if (list != null)
-            {
-                list.Columns[primaryKey].Unique = true;
-                list.PrimaryKey = new[] { list.Columns[primaryKey] };
-
-                // store it for the future
-                var randomValue = new Random();
-                HttpContext.Current.Cache.Insert(
-                    this.GetCacheName(type, id), 
-                    list, 
-                    null, 
-                    DateTime.UtcNow.AddMinutes(randomValue.Next(5, 15)), 
-                    Cache.NoSlidingExpiration, 
-                    CacheItemPriority.Low, 
-                    null);
-
-                // find and return profile..
-                row = list.Rows.Find(id);
-
-                if (row == null)
-                {
-                    // invalidate this cache section
-                    HttpContext.Current.Cache.Remove(this.GetCacheName(type, id));
-                }
-            }
-
-            return row;
-        }
-
-        /// <summary>
-        /// Get the Yaf Board id from ModuleId and the Module Settings
+        /// Get the YAF Board id from ModuleId and the Module Settings
         /// </summary>
         /// <param name="iModuleId">
-        /// The Module id of the Yaf Module Instance
+        /// The Module id of the YAF Module Instance
         /// </param>
         /// <returns>
         /// The Board Id From the Settings
@@ -486,8 +252,7 @@ namespace YAF.DotNetNuke
 
                 Data.ActiveAccessUser(this.boardId, yafUserId, HttpContext.Current.User.Identity.IsAuthenticated);
 
-                var activeTopics = Data.TopicLatest(
-                  this.boardId, this.maxPosts, yafUserId, false, true);
+                var activeTopics = Data.TopicLatest(this.boardId, this.maxPosts, yafUserId, false, true);
 
                 this.LatestPosts.DataSource = activeTopics;
                 this.LatestPosts.DataBind();
@@ -510,26 +275,39 @@ namespace YAF.DotNetNuke
         }
 
         /// <summary>
-        /// Get Yaf User Id from the Current DNN User
+        /// Get YAF User Id from the Current DNN User
         /// </summary>
         /// <returns>
-        /// The Yaf User ID
+        /// The YAF User ID
         /// </returns>
         private int GetYafUserId()
         {
             // Check for user
-            if (HttpContext.Current.User.Identity.IsAuthenticated)
+            if (!HttpContext.Current.User.Identity.IsAuthenticated)
             {
-                // get the user from the membership provider
-                MembershipUser dnnUser = Membership.GetUser(UserInfo.Username, true);
-
-                if (dnnUser != null)
-                {
-                    return LegacyDb.user_get(this.boardId, dnnUser.ProviderUserKey);
-                }
+                return UserMembershipHelper.GuestUserId;
             }
 
-            return UserMembershipHelper.GuestUserId;
+            // get the user from the membership provider
+            var dnnUser = Membership.GetUser(this.UserInfo.Username, true);
+
+            // Check if the user exists in yaf
+            var yafUserId = LegacyDb.user_get(this.boardId, dnnUser.ProviderUserKey);
+
+            if (!yafUserId.Equals(0))
+            {
+                return yafUserId;
+            }
+
+            // Get current DNN user
+            var dnnUserInfo = UserController.GetCurrentUserInfo();
+
+            return UserImporter.CreateYafUser(
+                dnnUserInfo,
+                dnnUser,
+                this.boardId,
+                this.PortalSettings,
+                YafContext.Current.Get<YafBoardSettings>());
         }
 
         /// <summary>
@@ -541,11 +319,11 @@ namespace YAF.DotNetNuke
             {
                 var objModuleController = new ModuleController();
 
-                Hashtable moduleSettings = objModuleController.GetTabModuleSettings(this.TabModuleId);
+                var moduleSettings = objModuleController.GetTabModuleSettings(this.TabModuleId);
 
-                if (!string.IsNullOrEmpty((string)moduleSettings["YafPage"]))
+                if (moduleSettings["YafPage"].ToType<string>().IsSet())
                 {
-                    this.yafTabId = int.Parse((string)moduleSettings["YafPage"]);
+                    this.yafTabId = moduleSettings["YafPage"].ToType<int>();
                 }
                 else
                 {
@@ -555,7 +333,8 @@ namespace YAF.DotNetNuke
                         this.Response.Redirect(
                             this.ResolveUrl(
                                 "~/tabid/{0}/ctl/Module/ModuleId/{1}/Default.aspx".FormatWith(
-                                    this.PortalSettings.ActiveTab.TabID, this.ModuleId)));
+                                    this.PortalSettings.ActiveTab.TabID,
+                                    this.ModuleId)));
                     }
                     else
                     {
@@ -564,9 +343,9 @@ namespace YAF.DotNetNuke
                     }
                 }
 
-                if (!string.IsNullOrEmpty((string)moduleSettings["YafModuleId"]))
+                if (moduleSettings["YafModuleId"].ToType<string>().IsSet())
                 {
-                    this.yafModuleId = int.Parse((string)moduleSettings["YafModuleId"]);
+                    this.yafModuleId = moduleSettings["YafModuleId"].ToType<int>();
                 }
                 else
                 {
@@ -576,7 +355,8 @@ namespace YAF.DotNetNuke
                         this.Response.Redirect(
                             this.ResolveUrl(
                                 "~/tabid/{0}/ctl/Module/ModuleId/{1}/Default.aspx".FormatWith(
-                                    this.PortalSettings.ActiveTab.TabID, this.ModuleId)));
+                                    this.PortalSettings.ActiveTab.TabID,
+                                    this.ModuleId)));
                     }
                     else
                     {
@@ -596,7 +376,8 @@ namespace YAF.DotNetNuke
                         this.Response.Redirect(
                             this.ResolveUrl(
                                 "~/tabid/{0}/ctl/Module/ModuleId/{1}/Default.aspx".FormatWith(
-                                    this.PortalSettings.ActiveTab.TabID, this.ModuleId)));
+                                    this.PortalSettings.ActiveTab.TabID,
+                                    this.ModuleId)));
                     }
                     else
                     {
@@ -605,58 +386,27 @@ namespace YAF.DotNetNuke
                     }
                 }
 
-                try
-                {
-                    this.maxPosts = !string.IsNullOrEmpty((string)moduleSettings["YafMaxPosts"])
-                                         ? int.Parse((string)moduleSettings["YafMaxPosts"])
-                                         : 10;
-                }
-                catch (Exception)
-                {
-                    this.maxPosts = 10;
-                }
+                this.maxPosts = moduleSettings["YafMaxPosts"].ToType<string>().IsSet()
+                                    ? moduleSettings["YafMaxPosts"].ToType<int>()
+                                    : 10;
 
-                if (!string.IsNullOrEmpty((string)moduleSettings["YafUseRelativeTime"]))
-                {
-                    this.useRelativeTime = true;
+                this.useRelativeTime = !moduleSettings["YafUseRelativeTime"].ToType<string>().IsSet()
+                                       || moduleSettings["YafUseRelativeTime"].ToType<bool>();
 
-                    bool.TryParse((string)moduleSettings["YafUseRelativeTime"], out this.useRelativeTime);
-                }
-                else
-                {
-                    this.useRelativeTime = true;
-                }
+                this.headerTemplate = moduleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
+                                          ? moduleSettings["YafWhatsNewHeader"].ToType<string>()
+                                          : "<ul>";
 
-                if (!string.IsNullOrEmpty((string)moduleSettings["YafWhatsNewHeader"]))
-                {
-                    this.headerTemplate = (string)moduleSettings["YafWhatsNewHeader"];
-                }
-                else
-                {
-                    this.headerTemplate = "<ul>";
-                }
+                this.itemTemplate = moduleSettings["YafWhatsNewItemTemplate"].ToType<string>().IsSet()
+                                        ? moduleSettings["YafWhatsNewItemTemplate"].ToType<string>()
+                                        : "<li class=\"YafPosts\">[LASTPOSTICON]&nbsp;<strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />\"[LASTMESSAGE:150]\"<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
 
-                if (!string.IsNullOrEmpty((string)moduleSettings["YafWhatsNewItemTemplate"]))
-                {
-                    this.itemTemplate = (string)moduleSettings["YafWhatsNewItemTemplate"];
-                }
-                else
-                {
-                    this.itemTemplate = "<li class=\"YafPosts\">[LASTPOSTICON]&nbsp;<strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
-                }
-
-                if (!string.IsNullOrEmpty((string)moduleSettings["YafWhatsNewFooter"]))
-                {
-                    this.footerTemplate = (string)moduleSettings["YafWhatsNewFooter"];
-                }
-                else
-                {
-                    this.footerTemplate = "</ul>";
-                }
+                this.footerTemplate = moduleSettings["YafWhatsNewFooter"].ToType<string>().IsSet()
+                                          ? moduleSettings["YafWhatsNewFooter"].ToType<string>()
+                                          : "</ul>";
             }
             catch (Exception exc)
             {
-                // Module failed to load 
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
@@ -678,66 +428,73 @@ namespace YAF.DotNetNuke
         private string ProcessItem(RepeaterItemEventArgs e)
         {
             var currentRow = (DataRowView)e.Item.DataItem;
-
+            
             var currentItem = this.itemTemplate;
-
-            string sMessageUrl =
+            
+            var messageUrl =
                 this.ResolveUrl(
                     "~/Default.aspx?tabid={1}&g=posts&m={0}#post{0}".FormatWith(
-                        currentRow["LastMessageID"], this.yafTabId));
+                        currentRow["LastMessageID"],
+                        this.yafTabId));
 
             // make message url...
             if (Classes.Config.EnableURLRewriting)
             {
-                sMessageUrl =
+                messageUrl =
                     Globals.ResolveUrl(
                         "~/tabid/{0}/g/posts/m/{1}/{2}.aspx#post{1}".FormatWith(
                             this.yafTabId,
                             currentRow["LastMessageID"],
-                            this.GetTopicNameFromMessage(currentRow["LastMessageID"].ToType<int>())));
+                            YafContext.Current.Get<IBadWordReplace>().Replace(currentRow["Topic"].ToString())));
             }
 
             // Render [LASTPOSTICON]
             var lastPostedImage = new ThemeImage
-                {
-                    LocalizedTitlePage = "DEFAULT",
-                    LocalizedTitleTag = "GO_LAST_POST",
-                    LocalizedTitle = Localization.GetString("LastPost.Text", this.LocalResourceFile),
-                    ThemeTag = "TOPIC_NEW",
-                    Style = "width:16px;height:16px"
-                };
+                                      {
+                                          LocalizedTitlePage = "DEFAULT",
+                                          LocalizedTitleTag = "GO_LAST_POST",
+                                          LocalizedTitle =
+                                              Localization.GetString("LastPost.Text", this.LocalResourceFile),
+                                          ThemeTag = "TOPIC_NEW",
+                                          Style = "width:16px;height:16px"
+                                      };
 
             currentItem = currentItem.Replace("[LASTPOSTICON]", lastPostedImage.RenderToString());
 
             // Render [TOPICLINK]
             var textMessageLink = new HyperLink
-                {
-                    Text = YafContext.Current.Get<IBadWordReplace>().Replace(currentRow["Topic"].ToString()),
-                    NavigateUrl = sMessageUrl
-                };
+                                      {
+                                          Text =
+                                              YafContext.Current.Get<IBadWordReplace>()
+                                              .Replace(currentRow["Topic"].ToString()),
+                                          NavigateUrl = messageUrl
+                                      };
 
             currentItem = currentItem.Replace("[TOPICLINK]", textMessageLink.RenderToString());
 
             // Render [FORUMLINK]
             var forumLink = new HyperLink
-                {
-                    Text = currentRow["Forum"].ToString(),
-                    NavigateUrl =
-                        Classes.Config.EnableURLRewriting
-                            ? Globals.ResolveUrl(
-                                "~/tabid/{0}/g/topics/f/{1}/{2}.aspx".FormatWith(
-                                    this.yafTabId,
-                                    currentRow["ForumID"],
-                                    this.GetForumName(currentRow["ForumID"].ToType<int>())))
-                            : this.ResolveUrl(
-                                "~/Default.aspx?tabid={1}&g=topics&f={0}".FormatWith(currentRow["ForumID"], this.yafTabId))
-                };
+                                {
+                                    Text = currentRow["Forum"].ToString(),
+                                    NavigateUrl =
+                                        Classes.Config.EnableURLRewriting
+                                            ? Globals.ResolveUrl(
+                                                "~/tabid/{0}/g/topics/f/{1}/{2}.aspx".FormatWith(
+                                                    this.yafTabId,
+                                                    currentRow["ForumID"],
+                                                    currentRow["Forum"]))
+                                            : this.ResolveUrl(
+                                                "~/Default.aspx?tabid={1}&g=topics&f={0}".FormatWith(
+                                                    currentRow["ForumID"],
+                                                    this.yafTabId))
+                                };
 
             currentItem = currentItem.Replace("[FORUMLINK]", forumLink.RenderToString());
 
             // Render [BYTEXT]
             currentItem = currentItem.Replace(
-                "[BYTEXT]", YafContext.Current.Get<IHaveLocalization>().GetText("SEARCH", "BY"));
+                "[BYTEXT]",
+                YafContext.Current.Get<IHaveLocalization>().GetText("SEARCH", "BY"));
 
             // Render [LASTUSERLINK]
             // Just in case...
@@ -750,27 +507,58 @@ namespace YAF.DotNetNuke
                 userName = this.HtmlEncode(userName);
 
                 var lastUserLink = new HyperLink
-                    {
-                        Text = userName,
-                        ToolTip = userName,
-                        NavigateUrl =
-                            Classes.Config.EnableURLRewriting
-                                ? Globals.ResolveUrl(
-                                    "~/tabid/{0}/g/profile/u/{1}/{2}.aspx".FormatWith(
-                                        this.yafTabId, currentRow["LastUserID"], userName))
-                                : this.ResolveUrl(
-                                    "~/Default.aspx?tabid={1}&g=profile&u={0}".FormatWith(
-                                        currentRow["LastUserID"], this.yafTabId))
-                    };
+                                       {
+                                           Text = userName,
+                                           ToolTip = userName,
+                                           NavigateUrl =
+                                               Classes.Config.EnableURLRewriting
+                                                   ? Globals.ResolveUrl(
+                                                       "~/tabid/{0}/g/profile/u/{1}/{2}.aspx".FormatWith(
+                                                           this.yafTabId,
+                                                           currentRow["LastUserID"],
+                                                           userName))
+                                                   : this.ResolveUrl(
+                                                       "~/Default.aspx?tabid={1}&g=profile&u={0}".FormatWith(
+                                                           currentRow["LastUserID"],
+                                                           this.yafTabId))
+                                       };
 
                 currentItem = currentItem.Replace("[LASTUSERLINK]", lastUserLink.RenderToString());
+            }
+
+            // Render [LASTMESSAGE]
+            var lastMessage =
+                BBCodeHelper.StripBBCode(
+                    HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(currentRow["LastMessage"].ToType<string>())))
+                    .RemoveMultipleWhitespace();
+
+            try
+            {
+                var match = Regex.Match(currentItem, @"\[LASTMESSAGE\:(?<count>[0-9]*)\]", RegexOptions.Compiled);
+
+                if (match.Success)
+                {
+                    var messageLimit = match.Groups["count"].Value.ToType<int>();
+
+                    currentItem = currentItem.Replace(
+                        "[LASTMESSAGE:{0}]".FormatWith(match.Groups["count"].Value),
+                        lastMessage.Truncate(messageLimit));
+                }
+                else
+                {
+                    currentItem = currentItem.Replace("[LASTMESSAGE]", lastMessage);
+                }
+            }
+            catch (Exception)
+            {
+                currentItem = currentItem.Replace("[LASTMESSAGE]", lastMessage);
             }
 
             // Render [LASTPOSTEDDATETIME]
             var displayDateTime = new DisplayDateTime { DateTime = currentRow["LastPosted"].ToType<DateTime>() };
 
             currentItem = currentItem.Replace("[LASTPOSTEDDATETIME]", displayDateTime.RenderToString());
-
+            
             return currentItem;
         }
 
