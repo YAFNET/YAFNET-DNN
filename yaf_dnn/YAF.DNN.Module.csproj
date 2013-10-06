@@ -76,10 +76,11 @@
   <ItemGroup>
     <Compile Include="Components\Controllers\Data.cs" />
     <Compile Include="Components\Controllers\Profile.cs" />
-    <Compile Include="Components\Controllers\YAFDnnController.cs" />
+    <Compile Include="Components\Controllers\Search.cs" />
     <Compile Include="Components\Integration\DnnRichEditor.cs" />
     <Compile Include="Components\Integration\Journal.cs" />
     <Compile Include="Components\Integration\SendMail.cs" />
+    <Compile Include="Components\Objects\ForumAccess.cs" />
     <Compile Include="Components\Objects\Messages.cs" />
     <Compile Include="Components\Objects\Topics.cs" />
     <Compile Include="Components\Objects\YafCultureInfo.cs" />
@@ -137,6 +138,7 @@
     <None Include="Installation\01.94.01.SqlDataProvider" />
     <None Include="Installation\01.95.50.SqlDataProvider" />
     <Content Include="Installation\01.96.10.SqlDataProvider" />
+    <Content Include="Installation\02.00.00.SqlDataProvider" />
     <None Include="Installation\Uninstall.SqlDataProvider" />
     <Content Include="web.config" />
     <Content Include="web.Debug.config">

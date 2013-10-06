@@ -25,7 +25,6 @@ namespace YAF.DotNetNuke
     using System.Text;
 
     using global::DotNetNuke.Common;
-
     using global::DotNetNuke.Entities.Portals;
 
     using global::DotNetNuke.Entities.Tabs;
@@ -65,7 +64,8 @@ namespace YAF.DotNetNuke
 
             var activeTab = portalSettings.ActiveTab;
 
-            var boardNameOrPageName = YafContext.Current.Get<YafBoardSettings>().Name;
+            var boardNameOrPageName = UrlRewriteHelper.CleanStringForURL(
+                YafContext.Current.Get<YafBoardSettings>().Name);
 
             if (!Config.EnableURLRewriting)
             {
@@ -147,32 +147,45 @@ namespace YAF.DotNetNuke
                     boardNameOrPageName,
                     portalSettings));
 
+            /*newUrl.AppendFormat(
+               FriendlyUrlProvider.Instance().FriendlyUrl(
+                    activeTab,
+                    "~/Default.aspx?TabId={0}&{1}".FormatWith(activeTab.TabID, url),
+                    boardNameOrPageName,
+                    portalSettings));*/
+
             // add anchor
             if (parser.HasAnchor)
             {
                 newUrl.AppendFormat("#{0}", parser.Anchor);
             }
 
-            return newUrl.Length >= 260 ? this.GetStandardUrl(activeTab, url, boardNameOrPageName, portalSettings) : newUrl.ToString();
+            return newUrl.Length >= 260
+                       ? this.GetStandardUrl(activeTab, url, boardNameOrPageName, portalSettings)
+                       : newUrl.ToString();
         }
 
         #endregion
 
         /// <summary>
-        /// Gets the standard URL.
+        /// Gets the standard URL without any specific page names.
         /// </summary>
         /// <param name="activeTab">The active tab.</param>
         /// <param name="url">The URL.</param>
         /// <param name="boardNameOrPageName">Name of the board name original page.</param>
         /// <param name="portalSettings">The portal settings.</param>
         /// <returns>Returns the Normal URL</returns>
-        private string GetStandardUrl(TabInfo activeTab, string url, string boardNameOrPageName, PortalSettings portalSettings)
+        private string GetStandardUrl(
+            TabInfo activeTab,
+            string url,
+            string boardNameOrPageName,
+            PortalSettings portalSettings)
         {
             return Globals.FriendlyUrl(
-                    activeTab,
-                    "{0}&{1}".FormatWith(Globals.ApplicationURL(activeTab.TabID), url),
-                    boardNameOrPageName,
-                    portalSettings);
+                activeTab,
+                "{0}&{1}".FormatWith(Globals.ApplicationURL(activeTab.TabID), url),
+                boardNameOrPageName,
+                portalSettings);
         }
     }
 }

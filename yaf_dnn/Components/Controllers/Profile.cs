@@ -22,9 +22,10 @@ namespace YAF.DotNetNuke.Components.Controllers
     #region
 
     using System;
-    using System.Data;
 
     using global::DotNetNuke.Data;
+
+    using YAF.Types.Extensions;
 
     #endregion
 
@@ -44,13 +45,13 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// </returns>
         public static DateTime YafDnnGetLastUpdatedProfile(int userID)
         {
-            DateTime lastUpdatedDate = new DateTime();
+            var lastUpdatedDate = new DateTime();
 
-            using (IDataReader dr = DataProvider.Instance().ExecuteReader("YafDnn_LastUpdatedProfile", userID))
+            using (var dataReader = DataProvider.Instance().ExecuteReader("YafDnn_LastUpdatedProfile", userID))
             {
-                while (dr.Read())
+                while (dataReader.Read())
                 {
-                    lastUpdatedDate = (DateTime)dr["LastUpdatedDate"];
+                    lastUpdatedDate = dataReader["LastUpdatedDate"].ToType<DateTime>();
                 }
             }
 

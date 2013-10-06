@@ -31,6 +31,7 @@ namespace YAF.DotNetNuke.Components.Controllers
     using YAF.Classes.Data;
     using YAF.DotNetNuke.Components.Objects;
     using YAF.Types.Extensions;
+    using YAF.Types.Flags;
     using YAF.Types.Interfaces.Data;
 
     #endregion
@@ -65,6 +66,7 @@ namespace YAF.DotNetNuke.Components.Controllers
             using (var cmd = DbHelpers.GetCommand("topic_latest"))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
+
                 cmd.Parameters.AddWithValue("BoardID", boardId);
                 cmd.Parameters.AddWithValue("NumPosts", numOfPostsToRetrieve);
                 cmd.Parameters.AddWithValue("PageUserID", pageUserId);
@@ -90,6 +92,7 @@ namespace YAF.DotNetNuke.Components.Controllers
             using (var cmd = DbHelpers.GetCommand("pageaccess"))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
+
                 cmd.Parameters.AddWithValue("BoardID", boardId);
                 cmd.Parameters.AddWithValue("UserID", userId);
                 cmd.Parameters.AddWithValue("IsGuest", isGuest);
@@ -107,18 +110,18 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// </returns>
         public static List<Messages> YafDnnGetMessages()
         {
-            List<Messages> messagesList = new List<Messages>();
+            var messagesList = new List<Messages>();
 
-            using (IDataReader dr = DataProvider.Instance().ExecuteReader("YafDnn_Messages"))
+            using (var dataReader = DataProvider.Instance().ExecuteReader("YafDnn_Messages"))
             {
-                while (dr.Read())
+                while (dataReader.Read())
                 {
-                    Messages message = new Messages
+                    var message = new Messages
                         {
-                            Message = Convert.ToString(dr["Message"]),
-                            MessageId = dr["MessageID"].ToType<int>(),
-                            TopicId = dr["TopicID"].ToType<int>(),
-                            Posted = Convert.ToDateTime(dr["Posted"])
+                            Message = dataReader["Message"].ToType<string>(),
+                            MessageId = dataReader["MessageID"].ToType<int>(),
+                            TopicId = dataReader["TopicID"].ToType<int>(),
+                            Posted = dataReader["Posted"].ToType<DateTime>()
                         };
 
                     messagesList.Add(message);
@@ -136,18 +139,18 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// </returns>
         public static List<Topics> YafDnnGetTopics()
         {
-            List<Topics> topicsList = new List<Topics>();
+            var topicsList = new List<Topics>();
 
-            using (IDataReader dr = DataProvider.Instance().ExecuteReader("YafDnn_Topics"))
+            using (var dataReader = DataProvider.Instance().ExecuteReader("YafDnn_Topics"))
             {
-                while (dr.Read())
+                while (dataReader.Read())
                 {
-                    Topics topic = new Topics
+                    var topic = new Topics
                         {
-                            TopicName = Convert.ToString(dr["Topic"]),
-                            TopicId = dr["TopicID"].ToType<int>(),
-                            ForumId = dr["ForumID"].ToType<int>(),
-                            Posted = Convert.ToDateTime(dr["Posted"])
+                            TopicName = dataReader["Topic"].ToType<string>(),
+                            TopicId = dataReader["TopicID"].ToType<int>(),
+                            ForumId = dataReader["ForumID"].ToType<int>(),
+                            Posted = dataReader["Posted"].ToType<DateTime>()
                         };
 
                     topicsList.Add(topic);
@@ -164,16 +167,16 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// <returns>Returns the YAF Board Roles</returns>
         public static List<RoleInfo> GetYafBoardRoles(int boardId)
         {
-            List<RoleInfo> roles = new List<RoleInfo>();
+            var roles = new List<RoleInfo>();
 
-            using (IDataReader dr = DataProvider.Instance().ExecuteReader("yaf_group_list", boardId, null))
+            using (var dataReader = DataProvider.Instance().ExecuteReader("yaf_group_list", boardId, null))
             {
-                while (dr.Read())
+                while (dataReader.Read())
                 {
-                    RoleInfo role = new RoleInfo
+                    var role = new RoleInfo
                     {
-                        RoleName = Convert.ToString(dr["Name"]),
-                        RoleID = dr["GroupID"].ToType<int>(),
+                        RoleName = dataReader["Name"].ToType<string>(),
+                        RoleID = dataReader["GroupID"].ToType<int>(),
                     };
 
                     roles.Add(role);
@@ -190,17 +193,17 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// <returns>Returns the YAF Board access masks</returns>
         public static List<RoleInfo> GetYafBoardAccessMasks(int boardId)
         {
-            List<RoleInfo> roles = new List<RoleInfo>();
+            var roles = new List<RoleInfo>();
 
-            using (IDataReader dr = DataProvider.Instance().ExecuteReader("yaf_accessmask_list", boardId, null, 0))
+            using (var dataReader = DataProvider.Instance().ExecuteReader("yaf_accessmask_list", boardId, null, 0))
             {
-                while (dr.Read())
+                while (dataReader.Read())
                 {
-                    RoleInfo role = new RoleInfo
+                    var role = new RoleInfo
                     {
-                        RoleName = Convert.ToString(dr["Name"]),
-                        RoleID = dr["AccessMaskID"].ToType<int>(),
-                        RoleGroupID = dr["Flags"].ToType<int>()
+                        RoleName = Convert.ToString(dataReader["Name"]),
+                        RoleID = dataReader["AccessMaskID"].ToType<int>(),
+                        RoleGroupID = dataReader["Flags"].ToType<int>()
                     };
 
                     roles.Add(role);
@@ -218,16 +221,16 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// <returns>Returns List of YAF user roles</returns>
         public static List<RoleInfo> GetYafUserRoles(int boardId, int yafUserId)
         {
-            List<RoleInfo> roles = new List<RoleInfo>();
+            var roles = new List<RoleInfo>();
 
-            using (IDataReader dr = DataProvider.Instance().ExecuteReader("yaf_usergroup_list", yafUserId))
+            using (var dataReader = DataProvider.Instance().ExecuteReader("yaf_usergroup_list", yafUserId))
             {
-                while (dr.Read())
+                while (dataReader.Read())
                 {
-                    RoleInfo role = new RoleInfo
+                    var role = new RoleInfo
                     {
-                        RoleName = Convert.ToString(dr["Name"]),
-                        RoleID = dr["GroupID"].ToType<int>(),
+                        RoleName = dataReader["Name"].ToType<string>(),
+                        RoleID = dataReader["GroupID"].ToType<int>(),
                     };
 
                     roles.Add(role);
@@ -235,6 +238,34 @@ namespace YAF.DotNetNuke.Components.Controllers
             }
 
             return roles;
+        }
+
+        /// <summary>
+        /// Gets the read access list for forum.
+        /// </summary>
+        /// <param name="forumId">The forum unique identifier.</param>
+        /// <returns>Returns the read access list for forum</returns>
+        public static List<ForumAccess> GetReadAccessListForForum(int forumId)
+        {
+            var forumAccessList = new List<ForumAccess>();
+
+            using (var dataReader = DataProvider.Instance().ExecuteReader("yaf_GetReadAccessListForForum", forumId))
+            {
+                while (dataReader.Read())
+                {
+                    var forumAccess = new ForumAccess
+                    {
+                        GroupID = dataReader["GroupID"].ToType<int>(),
+                        GroupName = dataReader["GroupName"].ToType<string>(),
+                        AccessMaskName = dataReader["AccessMaskName"].ToType<string>(),
+                        Flags = new AccessFlags(dataReader["Flags"])
+                    };
+
+                    forumAccessList.Add(forumAccess);
+                }
+            }
+
+            return forumAccessList;
         }
 
         #endregion

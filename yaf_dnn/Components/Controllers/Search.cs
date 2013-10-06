@@ -17,20 +17,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-namespace YAF.DotNetNuke
+namespace YAF.DotNetNuke.Components.Controllers
 {
     #region Using
 
-    using System;
-    using System.Linq;
-
-    using global::DotNetNuke.Common.Utilities;
-
     using global::DotNetNuke.Entities.Modules;
-
     using global::DotNetNuke.Services.Search;
-
-    using YAF.Types.Extensions;
 
     #endregion
 
@@ -44,7 +36,7 @@ namespace YAF.DotNetNuke
         #region ISearchable
 
         /// <summary>
-        /// TODO
+        /// TODO : Get YAF Search Items
         /// </summary>
         /// <param name="moduleInfo">The module info.</param>
         /// <returns>

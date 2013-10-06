@@ -10,6 +10,7 @@
         <asp:DropDownList id="YafInstances" Width="325" runat="server"
                 datavaluefield="ModuleID" datatextfield="ModuleTitle">
              </asp:DropDownList>
+    </div>
     <div class="dnnFormItem">
         <dnn:label id="lblMaxResult" runat="server" controlname="txtMaxResult" suffix=":"></dnn:label>
         <asp:TextBox ID="txtMaxResult" runat="server"></asp:TextBox>

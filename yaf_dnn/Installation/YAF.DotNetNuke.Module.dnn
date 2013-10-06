@@ -23,7 +23,7 @@
           <desktopModule>
             <moduleName>YetAnotherForumDotNet</moduleName>
             <foldername>YetAnotherForumDotNet</foldername>
-            <businessControllerClass>YAF.DotNetNuke.YafDnnController, YAF.DotNetNuke.Module</businessControllerClass>
+            <businessControllerClass>YAF.DotNetNuke.Components.Controllers.Search, YAF.DotNetNuke.Module</businessControllerClass>
             <supportedFeatures />
             <moduleDefinitions>
               <moduleDefinition>
@@ -379,6 +379,10 @@
             <script type="Install">
               <name>01.96.10.SqlDataProvider</name>
               <version>01.96.15118</version>
+            </script>
+            <script type="Install">
+              <name>02.00.00.SqlDataProvider</name>
+              <version>02.00.05400</version>
             </script>
             <script type="UnInstall">
               <name>Uninstall.SqlDataProvider</name>

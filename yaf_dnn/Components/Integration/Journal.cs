@@ -19,10 +19,15 @@
 
 namespace YAF.DotNetNuke.Components.Integration
 {
+    using System.Linq;
+    using System.Text;
+
     using global::DotNetNuke.Entities.Portals;
     using global::DotNetNuke.Entities.Users;
+    using global::DotNetNuke.Security.Roles;
     using global::DotNetNuke.Services.Journal;
 
+    using YAF.DotNetNuke.Components.Controllers;
     using YAF.Types.Attributes;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
@@ -62,6 +67,7 @@ namespace YAF.DotNetNuke.Components.Integration
                              Summary = message.Truncate(150),
                              Body = message,
                              JournalTypeId = 5,
+                             SecuritySet = this.GetSecuritySet(forumID, portalSettings.PortalId),
                              ObjectKey =
                                  "{0}:{1}:{2}".FormatWith(
                                      forumID.ToString(),
@@ -73,30 +79,6 @@ namespace YAF.DotNetNuke.Components.Integration
             {
                 JournalController.Instance.DeleteJournalItemByKey(portalSettings.PortalId, ji.ObjectKey);
             }
-
-            /*string roles = string.Empty;
-            if (!(string.IsNullOrEmpty(ReadRoles)))
-            {
-                if (ReadRoles.Contains("|"))
-                {
-                    roles = ReadRoles.Substring(0, ReadRoles.IndexOf("|", StringComparison.Ordinal) - 1);
-                }
-            }
-
-            foreach (string s in roles.Split(';'))
-            {
-                if ((s == "-1") | (s == "-3"))
-                {
-                    if ((ji.SecuritySet != null) && (!ji.SecuritySet.Contains("E,")))
-                    {
-                        ji.SecuritySet += "E,";
-                    }
-                }
-                else
-                {
-                    ji.SecuritySet += "R" + s + ",";
-                }
-            }*/
 
             // TODO:
             /*if (SocialGroupId > 0)
@@ -138,6 +120,7 @@ namespace YAF.DotNetNuke.Components.Integration
                              Summary = message.Truncate(150),
                              Body = message,
                              JournalTypeId = 6,
+                             SecuritySet = this.GetSecuritySet(forumID, portalSettings.PortalId),
                              ObjectKey =
                                  "{0}:{1}:{2}".FormatWith(
                                      forumID.ToString(),
@@ -150,30 +133,6 @@ namespace YAF.DotNetNuke.Components.Integration
                 JournalController.Instance.DeleteJournalItemByKey(portalSettings.PortalId, ji.ObjectKey);
             }
             
-            /*string roles = string.Empty;
-            if (!(string.IsNullOrEmpty(ReadRoles)))
-            {
-                if (ReadRoles.Contains("|"))
-                {
-                    roles = ReadRoles.Substring(0, ReadRoles.IndexOf("|", StringComparison.Ordinal) - 1);
-                }
-            }
-
-            foreach (string s in roles.Split(';'))
-            {
-                if ((s == "-1") | (s == "-3"))
-                {
-                    if ((ji.SecuritySet != null) && (!ji.SecuritySet.Contains("E,")))
-                    {
-                        ji.SecuritySet += "E,";
-                    }
-                }
-                else
-                {
-                    ji.SecuritySet += "R" + s + ",";
-                }
-            }*/
-
             // TODO:
             /*if (SocialGroupId > 0)
             {
@@ -181,6 +140,49 @@ namespace YAF.DotNetNuke.Components.Integration
             }*/
 
             JournalController.Instance.SaveJournalItem(ji, -1);
+        }
+
+        /// <summary>
+        /// Gets the security set for the forum.
+        /// </summary>
+        /// <param name="forumID">The forum unique identifier.</param>
+        /// <param name="portalID">The portal unique identifier.</param>
+        /// <returns>Returns The Security Set for the Forum including all Roles which have Read Access</returns>
+        private string GetSecuritySet(int forumID, int portalID)
+        {
+            var forumAccessList = Data.GetReadAccessListForForum(forumID);
+
+            var dnnRoles = new RoleController().GetPortalRoles(portalID).Cast<RoleInfo>().ToList();
+
+            var securitySet = new StringBuilder();
+
+            foreach (var forumAccess in forumAccessList)
+            {
+                if (!forumAccess.Flags.ReadAccess)
+                {
+                    continue;
+                }
+
+                RoleInfo role = null;
+
+                if (dnnRoles.Any(r => r.RoleName == forumAccess.GroupName))
+                {
+                    role = dnnRoles.First(r => r.RoleName == forumAccess.GroupName);
+                }
+
+                if (role != null)
+                {
+                    securitySet.AppendFormat("R{0},", role.RoleID);
+                }
+
+                // Guest Access
+                if (forumAccess.GroupName == "Guests")
+                {
+                    securitySet.Append("E,");
+                }
+            }
+
+            return securitySet.ToString();
         }
     }
 }

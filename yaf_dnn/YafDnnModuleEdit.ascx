@@ -19,10 +19,6 @@
         <dnn:label id="InheritLanguage" runat="server" controlname="InheritDnnLanguage" Suffix=":"></dnn:label>
         <asp:CheckBox runat="server" id="InheritDnnLanguage"  />
     </div>
-    <div class="dnnFormItem">
-        <dnn:label id="SyncProfile" runat="server" controlname="AutoSyncProfile" Suffix=":"></dnn:label>
-        <asp:CheckBox runat="server" id="AutoSyncProfile"  />
-    </div>
     <ul class="dnnActions dnnClear">
         <li>
             <asp:Button runat="server" id="update" cssclass="dnnPrimaryAction" />
