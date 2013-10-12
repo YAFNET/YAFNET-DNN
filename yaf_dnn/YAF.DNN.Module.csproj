@@ -54,7 +54,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetNuke">
-      <HintPath>..\..\..\..\..\Users\Watcher\Documents\Projects\Visual Studio 2012\Projects\DotNetNuke\bin62\DotNetNuke.dll</HintPath>
+      <HintPath>Libaries\DotNetNuke.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -76,7 +76,9 @@
   <ItemGroup>
     <Compile Include="Components\Controllers\Data.cs" />
     <Compile Include="Components\Controllers\Profile.cs" />
-    <Compile Include="Components\Controllers\Search.cs" />
+    <Compile Include="Components\Controllers\Search.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Components\Integration\DnnRichEditor.cs" />
     <Compile Include="Components\Integration\Journal.cs" />
     <Compile Include="Components\Integration\SendMail.cs" />
@@ -88,8 +90,12 @@
     <Compile Include="Components\Tasks\YafDnnImportScheduler.cs" />
     <Compile Include="Components\Utils\BreadCrumbHelper.cs" />
     <Compile Include="Components\Utils\CultureUtilities.cs" />
-    <Compile Include="Components\Utils\ProfileSyncronizer.cs" />
-    <Compile Include="Components\Utils\RoleSyncronizer.cs" />
+    <Compile Include="Components\Utils\ProfileSyncronizer.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Components\Utils\RoleSyncronizer.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Components\Utils\UserComparer.cs" />
     <Compile Include="Components\Utils\UserImporter.cs" />
     <Compile Include="YafDnnWhatsNew.ascx.cs">

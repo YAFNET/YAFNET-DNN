@@ -55,7 +55,7 @@ namespace YAF.DotNetNuke.Components.Integration
         /// </param>
         public void Send([NotNull] MailMessage mailMessage)
         {
-            CodeContracts.ArgumentNotNull(mailMessage, "mailMessage");
+            CodeContracts.VerifyNotNull(mailMessage, "mailMessage");
 
             var settings = HostController.Instance.GetSettingsDictionary();
 
@@ -106,7 +106,7 @@ namespace YAF.DotNetNuke.Components.Integration
         /// </param>
         public void SendAll([NotNull] IEnumerable<MailMessage> messages)
         {
-            CodeContracts.ArgumentNotNull(messages, "messages");
+            CodeContracts.VerifyNotNull(messages, "messages");
 
             foreach (var mailMessage in messages)
             {
@@ -130,7 +130,7 @@ namespace YAF.DotNetNuke.Components.Integration
             [NotNull] IEnumerable<MailMessage> messages,
             [CanBeNull] Action<MailMessage, Exception> handleExceptionAction)
         {
-            CodeContracts.ArgumentNotNull(messages, "messages");
+            CodeContracts.VerifyNotNull(messages, "messages");
 
             foreach (var mailMessage in messages.ToList())
             {
