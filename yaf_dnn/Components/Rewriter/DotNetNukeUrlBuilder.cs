@@ -48,6 +48,20 @@ namespace YAF.DotNetNuke
         #region Public Methods
 
         /// <summary>
+        /// Builds the Full URL.
+        /// </summary>
+        /// <param name="url">
+        /// The url.
+        /// </param>
+        /// <returns>
+        /// Returns the URL.
+        /// </returns>
+        public override string BuildUrlFull(string url)
+        {
+            return this.BuildUrl(url);
+        }
+
+        /// <summary>
         /// The build url.
         /// </summary>
         /// <param name="url">
