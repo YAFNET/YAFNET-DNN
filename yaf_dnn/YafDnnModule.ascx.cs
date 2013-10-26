@@ -506,7 +506,16 @@ namespace YAF.DotNetNuke
                 this.createNewBoard = false;
 
                 // This will create an error if there is no setting for forumboardid
-                this.forum1.BoardID = this.Settings["forumboardid"].ToType<int>();
+                if (this.Settings["forumboardid"] != null)
+                {
+                    this.forum1.BoardID = this.Settings["forumboardid"].ToType<int>();
+                }
+                else
+                {
+                    // Create a new board
+                    this.createNewBoard = true;
+                }
+                
             }
             catch (Exception)
             {
