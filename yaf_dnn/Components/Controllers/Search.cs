@@ -27,9 +27,9 @@ namespace YAF.DotNetNuke.Components.Controllers
     #endregion
 
     /// <summary>
-    /// YAF DNN Controller
+    /// Search Controller
     /// </summary>
-    public class YafDnnController : ModuleSettingsBase, ISearchable
+    public class Search : ModuleSettingsBase, ISearchable
     {
         #region Implemented Interfaces
 
