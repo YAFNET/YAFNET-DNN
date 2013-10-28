@@ -6,10 +6,10 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}yaf_GetReadAccessListForForum
   @ForumID int
 	AS
 	select fa.GroupID, GroupName = g.Name, AccessMaskName = am.Name, am.Flags
-	from [yaf].[dbo].[yaf_ForumAccess] fa
-	Inner join [yaf].[dbo].[yaf_AccessMask] am
+	from {databaseOwner}{objectQualifier}yaf_ForumAccess fa
+	Inner join {databaseOwner}{objectQualifier}yaf_AccessMask am
     on (fa.AccessMaskID = am.AccessMaskID)
-	inner join [yaf].[dbo].[yaf_Group] g
+	inner join {databaseOwner}{objectQualifier}yaf_Group g
 	on (fa.GroupID = g.GroupID)
 	where fa.ForumID = @ForumID
 GO
