@@ -20,7 +20,7 @@
 namespace YAF.DotNetNuke.Components.Utils
 {
     using System;
-    using System.Data;
+    using System.Collections.Generic;
     using System.Reflection;
     using System.Text;
     using System.Web;
@@ -53,14 +53,14 @@ namespace YAF.DotNetNuke.Components.Utils
         {
             try
             {
-                var yafPageLinks = GetYafPageLinksTable();
+                var yafPageLinks = GetYafPageLinkList();
 
                 if (yafPageLinks == null)
                 {
                     return false;
                 }
 
-                if (yafPageLinks.Rows.Count <= 1)
+                if (yafPageLinks.Count <= 1)
                 {
                     return false;
                 }
@@ -91,16 +91,16 @@ namespace YAF.DotNetNuke.Components.Utils
                 // add dnn css classes to yaf breadcrumb links
                 var yafBreadCrumb = new StringBuilder();
 
-                foreach (DataRow row in yafPageLinks.Rows)
+                foreach (var link in yafPageLinks)
                 {
-                    var title = HttpUtility.HtmlEncode(row["Title"].ToString().Trim());
+                    var title = HttpUtility.HtmlEncode(link.Title.Trim());
 
                     if (YafContext.Current.Get<YafBoardSettings>().Name.Equals(title))
                     {
                         continue;
                     }
 
-                    var url = row["URL"].ToString().Trim();
+                    var url = link.URL.Trim();
 
                     yafBreadCrumb.AppendFormat(
                         @"{3}<a href=""{0}"" class=""{1}"">{2}</a>",
@@ -121,18 +121,18 @@ namespace YAF.DotNetNuke.Components.Utils
         }
 
         /// <summary>
-        /// Gets the YAF page links data table.
+        /// Gets the YAF page links list
         /// </summary>
-        /// <returns>Returns the Data Table if found</returns>
-        private static DataTable GetYafPageLinksTable()
+        /// <returns>Returns the List if found</returns>
+        private static List<PageLink> GetYafPageLinkList()
         {
-            DataTable pageLinksTable = null;
+            List<PageLink> pageLinksTable = null;
 
             var pageLinksControl = YafContext.Current.CurrentForumPage.FindControlAs<PageLinks>("PageLinks");
 
             if (pageLinksControl != null)
             {
-                pageLinksTable = pageLinksControl.PageLinkDT;
+                pageLinksTable = pageLinksControl.PageLinkList;
             }
 
             return pageLinksTable;
