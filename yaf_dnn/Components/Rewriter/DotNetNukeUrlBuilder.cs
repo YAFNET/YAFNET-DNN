@@ -22,9 +22,11 @@ namespace YAF.DotNetNuke
     #region Using
 
     using System;
+    using System.Linq;
     using System.Text;
 
     using global::DotNetNuke.Common;
+    using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Portals;
 
     using global::DotNetNuke.Entities.Tabs;
@@ -76,14 +78,14 @@ namespace YAF.DotNetNuke
 
             var portalSettings = PortalController.GetCurrentPortalSettings();
 
-            var activeTab = portalSettings.ActiveTab;
+            var yafTab = this.GetYAFTab(portalSettings);
 
             var boardNameOrPageName = UrlRewriteHelper.CleanStringForURL(
                 YafContext.Current.Get<YafBoardSettings>().Name);
 
             if (!Config.EnableURLRewriting)
             {
-                return this.GetStandardUrl(activeTab, url, boardNameOrPageName, portalSettings);
+                return this.GetStandardUrl(yafTab, url, boardNameOrPageName, portalSettings);
             }
 
             var parser = new SimpleURLParameterParser(url);
@@ -156,8 +158,8 @@ namespace YAF.DotNetNuke
 
             newUrl.AppendFormat(
                 Globals.FriendlyUrl(
-                    activeTab,
-                    "{0}&{1}".FormatWith(Globals.ApplicationURL(activeTab.TabID), url),
+                    yafTab,
+                    "{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), url),
                     boardNameOrPageName,
                     portalSettings));
 
@@ -175,7 +177,7 @@ namespace YAF.DotNetNuke
             }
 
             return newUrl.Length >= 260
-                       ? this.GetStandardUrl(activeTab, url, boardNameOrPageName, portalSettings)
+                       ? this.GetStandardUrl(yafTab, url, boardNameOrPageName, portalSettings)
                        : newUrl.ToString();
         }
 
@@ -200,6 +202,33 @@ namespace YAF.DotNetNuke
                 "{0}&{1}".FormatWith(Globals.ApplicationURL(activeTab.TabID), url),
                 boardNameOrPageName,
                 portalSettings);
+        }
+
+        /// <summary>
+        /// Gets the YAF tab id.
+        /// </summary>
+        /// <param name="portalSettings">The portal settings.</param>
+        /// <returns>Return the YAF tab id</returns>
+        private TabInfo GetYAFTab(PortalSettings portalSettings)
+        {
+            var tabs = TabController.GetPortalTabs(portalSettings.PortalId, -1, true, true);
+
+            var desktopModuleInfo =
+                DesktopModuleController.GetDesktopModuleByModuleName("YetAnotherForumDotNet", portalSettings.PortalId);
+
+            foreach (TabInfo tab in from tab in tabs
+                                    where tab != null && !tab.IsDeleted
+                                    let modules = new ModuleController()
+                                    from pair in modules.GetTabModules(tab.TabID)
+                                    let module = pair.Value
+                                    where
+                                        !module.IsDeleted && module.DesktopModuleID == desktopModuleInfo.DesktopModuleID
+                                    select tab)
+            {
+                return tab;
+            }
+
+            return portalSettings.ActiveTab;
         }
     }
 }
