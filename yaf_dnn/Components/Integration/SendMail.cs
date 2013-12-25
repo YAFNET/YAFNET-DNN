@@ -26,7 +26,6 @@ namespace YAF.DotNetNuke.Components.Integration
     using System.IO;
     using System.Linq;
     using System.Net.Mail;
-    using System.Threading;
 
     using global::DotNetNuke.Entities.Controllers;
     using global::DotNetNuke.Services.Mail;
@@ -101,53 +100,31 @@ namespace YAF.DotNetNuke.Components.Integration
         /// <summary>
         /// Sends all MailMessages via the SMTP Client. Doesn't handle any exceptions.
         /// </summary>
-        /// <param name="messages">
-        /// The messages.
-        /// </param>
-        public void SendAll([NotNull] IEnumerable<MailMessage> messages)
+        /// <param name="messages">The messages.</param>
+        /// <param name="handleException"> The handle exception action.</param>
+        public void SendAll([NotNull] IEnumerable<MailMessage> messages, [CanBeNull] Action<MailMessage, Exception> handleException = null)
         {
-            CodeContracts.VerifyNotNull(messages, "messages");
+            var mailMessages = messages as IList<MailMessage> ?? messages.ToList();
+            
+            CodeContracts.VerifyNotNull(mailMessages, "messages");
 
-            foreach (var mailMessage in messages)
-            {
-                this.Send(mailMessage);
-            }
-
-            /*  messages.ToList().ForEach(
-                      m => m.Send());*/
-        }
-
-        /// <summary>
-        /// The send all isolated.
-        /// </summary>
-        /// <param name="messages">
-        /// The messages.
-        /// </param>
-        /// <param name="handleExceptionAction">
-        /// The handle exception action.
-        /// </param>
-        public void SendAllIsolated(
-            [NotNull] IEnumerable<MailMessage> messages,
-            [CanBeNull] Action<MailMessage, Exception> handleExceptionAction)
-        {
-            CodeContracts.VerifyNotNull(messages, "messages");
-
-            foreach (var mailMessage in messages.ToList())
+            foreach (var mailMessage in mailMessages)
             {
                 try
                 {
                     // send the message...
-                    // message.Send();
                     this.Send(mailMessage);
-
-                    // sleep for a 1/20 of a second...
-                    Thread.Sleep(50);
                 }
                 catch (Exception ex)
                 {
-                    if (handleExceptionAction != null)
+                    if (handleException != null)
                     {
-                        handleExceptionAction(mailMessage, ex);
+                        handleException(mailMessage, ex);
+                    }
+                    else
+                    {
+                        // don't handle here...
+                        throw;
                     }
                 }
             }
