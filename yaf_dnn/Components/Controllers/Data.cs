@@ -24,8 +24,8 @@ namespace YAF.DotNetNuke.Components.Controllers
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
 
-    using global::DotNetNuke.Data;
     using global::DotNetNuke.Security.Roles;
 
     using YAF.Classes.Data;
@@ -112,20 +112,22 @@ namespace YAF.DotNetNuke.Components.Controllers
         {
             var messagesList = new List<Messages>();
 
-            using (var dataReader = DataProvider.Instance().ExecuteReader("YafDnn_Messages"))
+            using (var cmd = DbHelpers.GetCommand("YafDnn_Messages"))
             {
-                while (dataReader.Read())
-                {
-                    var message = new Messages
-                        {
-                            Message = dataReader["Message"].ToType<string>(),
-                            MessageId = dataReader["MessageID"].ToType<int>(),
-                            TopicId = dataReader["TopicID"].ToType<int>(),
-                            Posted = dataReader["Posted"].ToType<DateTime>()
-                        };
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                    messagesList.Add(message);
-                }
+                var mesagesTable = LegacyDb.DbAccess.GetData(cmd);
+
+                messagesList.AddRange(
+                    from DataRow row in mesagesTable.Rows
+                    select
+                        new Messages
+                            {
+                                Message = row["Message"].ToType<string>(),
+                                MessageId = row["MessageID"].ToType<int>(),
+                                TopicId = row["TopicID"].ToType<int>(),
+                                Posted = row["Posted"].ToType<DateTime>()
+                            });
             }
 
             return messagesList;
@@ -141,20 +143,22 @@ namespace YAF.DotNetNuke.Components.Controllers
         {
             var topicsList = new List<Topics>();
 
-            using (var dataReader = DataProvider.Instance().ExecuteReader("YafDnn_Topics"))
+            using (var cmd = DbHelpers.GetCommand("YafDnn_Topics"))
             {
-                while (dataReader.Read())
-                {
-                    var topic = new Topics
-                        {
-                            TopicName = dataReader["Topic"].ToType<string>(),
-                            TopicId = dataReader["TopicID"].ToType<int>(),
-                            ForumId = dataReader["ForumID"].ToType<int>(),
-                            Posted = dataReader["Posted"].ToType<DateTime>()
-                        };
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                    topicsList.Add(topic);
-                }
+                var topicsTable = LegacyDb.DbAccess.GetData(cmd);
+
+                topicsList.AddRange(
+                    from DataRow row in topicsTable.Rows
+                    select
+                        new Topics
+                            {
+                                TopicName = row["Topic"].ToType<string>(),
+                                TopicId = row["TopicID"].ToType<int>(),
+                                ForumId = row["ForumID"].ToType<int>(),
+                                Posted = row["Posted"].ToType<DateTime>()
+                            });
             }
 
             return topicsList;
@@ -169,18 +173,19 @@ namespace YAF.DotNetNuke.Components.Controllers
         {
             var roles = new List<RoleInfo>();
 
-            using (var dataReader = DataProvider.Instance().ExecuteReader("yaf_group_list", boardId, null))
+            using (var cmd = DbHelpers.GetCommand("group_list"))
             {
-                while (dataReader.Read())
-                {
-                    var role = new RoleInfo
-                    {
-                        RoleName = dataReader["Name"].ToType<string>(),
-                        RoleID = dataReader["GroupID"].ToType<int>(),
-                    };
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                    roles.Add(role);
-                }
+                cmd.Parameters.AddWithValue("BoardID", boardId);
+                cmd.AddParam("GroupID", null);
+
+                var groupsTable = LegacyDb.DbAccess.GetData(cmd);
+
+                roles.AddRange(
+                    from DataRow row in groupsTable.Rows
+                    select
+                        new RoleInfo { RoleName = row["Name"].ToType<string>(), RoleID = row["GroupID"].ToType<int>(), });
             }
 
             return roles;
@@ -195,19 +200,25 @@ namespace YAF.DotNetNuke.Components.Controllers
         {
             var roles = new List<RoleInfo>();
 
-            using (var dataReader = DataProvider.Instance().ExecuteReader("yaf_accessmask_list", boardId, null, 0))
+            using (var cmd = DbHelpers.GetCommand("accessmask_list"))
             {
-                while (dataReader.Read())
-                {
-                    var role = new RoleInfo
-                    {
-                        RoleName = Convert.ToString(dataReader["Name"]),
-                        RoleID = dataReader["AccessMaskID"].ToType<int>(),
-                        RoleGroupID = dataReader["Flags"].ToType<int>()
-                    };
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                    roles.Add(role);
-                }
+                cmd.Parameters.AddWithValue("BoardID", boardId);
+                cmd.AddParam("AccessMaskID", null);
+                cmd.AddParam("ExcludeFlags", 0);
+
+                var accessmasksTable = LegacyDb.DbAccess.GetData(cmd);
+
+                roles.AddRange(
+                    from DataRow row in accessmasksTable.Rows
+                    select
+                        new RoleInfo
+                            {
+                                RoleName = Convert.ToString(row["Name"]),
+                                RoleID = row["AccessMaskID"].ToType<int>(),
+                                RoleGroupID = row["Flags"].ToType<int>()
+                            });
             }
 
             return roles;
@@ -223,18 +234,18 @@ namespace YAF.DotNetNuke.Components.Controllers
         {
             var roles = new List<RoleInfo>();
 
-            using (var dataReader = DataProvider.Instance().ExecuteReader("yaf_usergroup_list", yafUserId))
+            using (var cmd = DbHelpers.GetCommand("usergroup_list"))
             {
-                while (dataReader.Read())
-                {
-                    var role = new RoleInfo
-                    {
-                        RoleName = dataReader["Name"].ToType<string>(),
-                        RoleID = dataReader["GroupID"].ToType<int>(),
-                    };
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                    roles.Add(role);
-                }
+                cmd.Parameters.AddWithValue("UserID", yafUserId);
+
+                var rolesTable = LegacyDb.DbAccess.GetData(cmd);
+
+                roles.AddRange(
+                    from DataRow row in rolesTable.Rows
+                    select
+                        new RoleInfo { RoleName = row["Name"].ToType<string>(), RoleID = row["GroupID"].ToType<int>(), });
             }
 
             return roles;
@@ -249,20 +260,24 @@ namespace YAF.DotNetNuke.Components.Controllers
         {
             var forumAccessList = new List<ForumAccess>();
 
-            using (var dataReader = DataProvider.Instance().ExecuteReader("yaf_GetReadAccessListForForum", forumId))
+            using (var cmd = DbHelpers.GetCommand("GetReadAccessListForForum"))
             {
-                while (dataReader.Read())
-                {
-                    var forumAccess = new ForumAccess
-                    {
-                        GroupID = dataReader["GroupID"].ToType<int>(),
-                        GroupName = dataReader["GroupName"].ToType<string>(),
-                        AccessMaskName = dataReader["AccessMaskName"].ToType<string>(),
-                        Flags = new AccessFlags(dataReader["Flags"])
-                    };
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                    forumAccessList.Add(forumAccess);
-                }
+                cmd.Parameters.AddWithValue("ForumID", forumId);
+
+                var accessListTable = LegacyDb.DbAccess.GetData(cmd);
+
+                forumAccessList.AddRange(
+                    from DataRow row in accessListTable.Rows
+                    select
+                        new ForumAccess
+                            {
+                                GroupID = row["GroupID"].ToType<int>(),
+                                GroupName = row["GroupName"].ToType<string>(),
+                                AccessMaskName = row["AccessMaskName"].ToType<string>(),
+                                Flags = new AccessFlags(row["Flags"])
+                            });
             }
 
             return forumAccessList;

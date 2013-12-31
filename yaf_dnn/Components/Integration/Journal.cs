@@ -33,6 +33,7 @@ namespace YAF.DotNetNuke.Components.Integration
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Utils;
+    using YAF.Utils.Helpers;
 
     /// <summary>
     /// Activity Stream DNN Integration Class
@@ -50,6 +51,10 @@ namespace YAF.DotNetNuke.Components.Integration
         /// <param name="message">The message.</param>
         public void AddTopicToStream(int forumID, long topicID, int messageID, string topicTitle, string message)
         {
+            message = BBCodeHelper.StripBBCode(
+                    HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
+                    .RemoveMultipleWhitespace();
+
             var user = UserController.GetCurrentUserInfo();
             var portalSettings = PortalSettings.Current;
 
@@ -99,6 +104,10 @@ namespace YAF.DotNetNuke.Components.Integration
         /// <param name="message">The message.</param>
         public void AddReplyToStream(int forumID, long topicID, int messageID, string topicTitle, string message)
         {
+            message = BBCodeHelper.StripBBCode(
+                    HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
+                    .RemoveMultipleWhitespace();
+
             var user = UserController.GetCurrentUserInfo();
             var portalSettings = PortalSettings.Current;
             
