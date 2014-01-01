@@ -17,7 +17,7 @@ This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Mo
 
 ### Screen Shots
 
-![mainscreen](http://www.watchersnet.de/Portals/0/screenshots/dnn/YafScreenShot.png)
+![mainscreen](http://www.watchersnet.de/Portals/0/screenshots/dnn/YafScreenShot2.png)
 
 Admin Control Panel
 ![adminpanel](http://www.watchersnet.de/Portals/0/screenshots/dnn/YafAdminPanel.png)
