@@ -19,6 +19,9 @@ This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Mo
 
 ![mainscreen](http://www.watchersnet.de/Portals/0/screenshots/dnn/YafScreenShot.png)
 
+Admin Control Panel
+![adminpanel](http://www.watchersnet.de/Portals/0/screenshots/dnn/YafAdminPanel.png)
+
 There is also a Second Child Module the *YAF.NET Forums What's New* Module which shows The Latest Posts in a List
 ![whatsnew](http://www.watchersnet.de/Portals/0/screenshots/dnn/ScreenshotYafLatestPosts.jpg)
 
