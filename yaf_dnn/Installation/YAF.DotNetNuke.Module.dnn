@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="YetAnotherForumDotNet" type="Module" version="02.10.05500">
+    <package name="YetAnotherForumDotNet" type="Module" version="02.10.05501">
       <friendlyName>YAF.NET Forums</friendlyName>
       <description>
         &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; as DNN Module. Yet Another Forum.NET (YAF) is an open source ASP.NET forum system.&lt;br /&gt;
@@ -8,7 +8,7 @@
       </description>
       <iconFile>yaf.png</iconFile>
       <owner>
-        <name>Jaben Cargman</name>
+        <name>Ingo Herbote</name>
         <organization>Yet Another Forum.NET</organization>
         <url>http://www.yetanotherforum.net/</url>
         <email>support@yetanotherforum.net</email>
@@ -370,7 +370,7 @@
             <basePath>DesktopModules/YetAnotherForumDotNet/</basePath>
             <script type="Install">
               <name>01.96.10.SqlDataProvider</name>
-              <version>01.96.15118</version>
+              <version>01.96.10</version>
             </script>
             <script type="UnInstall">
               <name>Uninstall.SqlDataProvider</name>
@@ -379,7 +379,7 @@
         </component>
       </components>
     </package>
-    <package name="YAF.WhatsNew" type="Module" version="02.10.05500">
+    <package name="YAF.WhatsNew" type="Module" version="02.10.05501">
       <friendlyName>YAF.NET Forums What's New</friendlyName>
       <description>
         &lt;p&gt;This Module displays the Latest Posts from a  &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; Module. Based on the Current Users Authorization Level. You can define Which Forum should been used, and how many Posts should displayed.
