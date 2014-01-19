@@ -415,7 +415,9 @@ namespace YAF.DotNetNuke
                     dnnMembershipUser,
                     this.forum1.BoardID,
                     this.CurrentPortalSettings,
-                    this.Get<YafBoardSettings>());
+                    YafContext.Current == null
+                        ? new YafLoadBoardSettings(this.forum1.BoardID)
+                        : YafContext.Current.Get<YafBoardSettings>());
 
                 // super admin check...
                 if (dnnUserInfo.IsSuperUser)
@@ -515,7 +517,6 @@ namespace YAF.DotNetNuke
                     // Create a new board
                     this.createNewBoard = true;
                 }
-                
             }
             catch (Exception)
             {
