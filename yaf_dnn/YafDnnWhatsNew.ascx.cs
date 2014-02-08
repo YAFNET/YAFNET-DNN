@@ -46,6 +46,7 @@ namespace YAF.DotNetNuke
     using YAF.Classes.Data;
     using YAF.Controls;
     using YAF.Core;
+    using YAF.Core.Helpers;
     using YAF.DotNetNuke.Components.Controllers;
     using YAF.DotNetNuke.Components.Utils;
     using YAF.Types.Extensions;
@@ -104,7 +105,7 @@ namespace YAF.DotNetNuke
         #endregion
 
         #region Methods
-
+        /*
         /// <summary>
         /// The clean string for url.
         /// </summary>
@@ -137,7 +138,7 @@ namespace YAF.DotNetNuke
             }
 
             return sb.ToString();
-        }
+        }*/
 
         /// <summary>
         /// The latest posts_ item data bound.
@@ -445,7 +446,7 @@ namespace YAF.DotNetNuke
                         "~/tabid/{0}/g/posts/m/{1}/{2}.aspx#post{1}".FormatWith(
                             this.yafTabId,
                             currentRow["LastMessageID"],
-                            YafContext.Current.Get<IBadWordReplace>().Replace(currentRow["Topic"].ToString())));
+                            UrlRewriteHelper.CleanStringForURL(YafContext.Current.Get<IBadWordReplace>().Replace(currentRow["Topic"].ToString()))));
             }
 
             // Render [LASTPOSTICON]
