@@ -74,6 +74,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\yafsrc\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Components\Controllers\Data.cs" />
     <Compile Include="Components\Controllers\Profile.cs" />
     <Compile Include="Components\Controllers\Search.cs">
