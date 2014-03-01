@@ -35,7 +35,6 @@ namespace YAF.DotNetNuke
     using global::DotNetNuke.Entities.Portals;
 
     using global::DotNetNuke.Entities.Tabs;
-    using global::DotNetNuke.Entities.Users;
 
     using YAF.Classes;
     using YAF.Core;
@@ -154,11 +153,6 @@ namespace YAF.DotNetNuke
                     }
 
                     break;
-                case "cp_editprofile":
-                    {
-                        // Redirect the user to the Dnn profile page.
-                        return Globals.UserProfileURL(UserController.GetCurrentUserInfo().UserID);
-                    }
             }
 
             newUrl.AppendFormat(
