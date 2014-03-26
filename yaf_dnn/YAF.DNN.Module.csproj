@@ -82,6 +82,7 @@
     <Compile Include="Components\Controllers\Search.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Components\Integration\CombinedUserDataHelper.cs" />
     <Compile Include="Components\Integration\DnnRichEditor.cs" />
     <Compile Include="Components\Integration\Journal.cs" />
     <Compile Include="Components\Integration\SendMail.cs" />

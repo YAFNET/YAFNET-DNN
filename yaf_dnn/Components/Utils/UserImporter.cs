@@ -28,6 +28,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using System.Data;
     using System.Web.Security;
 
+    using global::DotNetNuke.Common;
     using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Portals;
     using global::DotNetNuke.Entities.Users;
@@ -36,6 +37,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using YAF.Classes;
     using YAF.Classes.Data;
     using YAF.Core;
+    using YAF.DotNetNuke.Components.Integration;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
@@ -101,6 +103,7 @@ namespace YAF.DotNetNuke.Components.Utils
 
                     if (dnnUserInfo.IsDeleted)
                     {
+                        // TODO : Delete user in yaf
                         continue;
                     }
 
@@ -116,8 +119,8 @@ namespace YAF.DotNetNuke.Components.Utils
                     {
                         ProfileSyncronizer.UpdateUserProfile(
                             yafUserId,
-                            null,
-                            null,
+                            YafUserProfile.GetProfile(dnnUser.UserName),
+                            new CustomCombinedUserDataHelper(dnnUser, yafUserId, boardId),
                             dnnUserInfo,
                             dnnUser,
                             portalId,

@@ -78,6 +78,19 @@ namespace YAF.DotNetNuke
         /// </returns>
         public override string BuildUrl(string url)
         {
+            if (url.IsNotSet())
+            {
+                // return BaseURL
+                var baseUrl = Globals.NavigateURL(0);
+
+                if (baseUrl.Contains("tabid/0/Default.aspx"))
+                {
+                    baseUrl = baseUrl.Replace("tabid/0/Default.aspx", string.Empty);
+                }
+
+                return baseUrl;
+            }
+
             var newUrl = new StringBuilder();
 
             var portalSettings = PortalController.GetCurrentPortalSettings();

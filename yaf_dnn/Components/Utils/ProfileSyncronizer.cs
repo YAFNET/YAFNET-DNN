@@ -74,24 +74,17 @@ namespace YAF.DotNetNuke.Components.Utils
             [NotNull] int boardId,
             [CanBeNull] bool ignoreLastUpdated = false)
         {
+            var logger = YafContext.Current.Get<ILogger>();
+
             try
             {
-                if (yafUserProfile == null)
-                {
-                    yafUserProfile = YafUserProfile.GetProfile(membershipUser.UserName);
-                }
+                var yafTime = yafUserProfile.LastSyncedWithDNN;
 
-                var yafTime = yafUserProfile.LastUpdatedDate;
                 var dnnTime = Profile.YafDnnGetLastUpdatedProfile(dnnUserInfo.UserID);
 
-                if (dnnTime <= yafTime & !ignoreLastUpdated)
+                if (dnnTime <= yafTime && !ignoreLastUpdated)
                 {
                     return;
-                }
-
-                if (yafCurrentUserData == null)
-                {
-                    yafCurrentUserData = new CombinedUserDataHelper(yafUserId);
                 }
 
                 SyncYafProfile(
@@ -104,8 +97,6 @@ namespace YAF.DotNetNuke.Components.Utils
             }
             catch (Exception ex)
             {
-                var logger = YafContext.Current.Get<ILogger>();
-
                 if (logger != null)
                 {
                     logger.Log(
@@ -201,9 +192,9 @@ namespace YAF.DotNetNuke.Components.Utils
                 boardId,
                 null,
                 dnnUserInfo.DisplayName,
-                null,
-                yafUserData.TimeZone,
-                yafUserData.LanguageFile,
+                dnnUserInfo.Email,
+                0,
+                yafUserData.LanguageFile.IsSet() ? yafUserData.LanguageFile : null ,
                 yafUserData.CultureUser,
                 yafUserData.ThemeFile,
                 yafUserData.TextEditor,
@@ -238,7 +229,9 @@ namespace YAF.DotNetNuke.Components.Utils
             if (dnnUserInfo.Profile.Website.IsSet())
             {
                 yafUserProfile.Homepage = dnnUserInfo.Profile.Website;
-            } 
+            }
+
+            yafUserProfile.LastSyncedWithDNN = DateTime.Now;
 
             yafUserProfile.Save();
 
@@ -263,15 +256,11 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="portalGUID">The portal GUID.</param>
         private static void SaveDnnAvatar(string fileId, int yafUserId, Guid portalGUID)
         {
-            var dnnAvatarUrl =
-                Globals.ResolveUrl(
-                    "~/LinkClick.aspx?fileticket={0}".FormatWith(
-                        UrlUtils.EncryptParameter(fileId, portalGUID.ToString())));
-
-            // update
             LegacyDb.user_saveavatar(
                 yafUserId,
-                "{0}{1}".FormatWith(BaseUrlBuilder.BaseUrl, dnnAvatarUrl),
+                "{0}LinkClick.aspx?fileticket={1}".FormatWith(
+                    YafBuildLink.GetBasePath(),
+                    UrlUtils.EncryptParameter(fileId, portalGUID.ToString())),
                 null,
                 null);
 
