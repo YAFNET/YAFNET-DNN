@@ -32,7 +32,7 @@ namespace YAF.DotNetNuke.Components.Integration
     using System.Linq;
     using System.Net.Mail;
 
-    using global::DotNetNuke.Entities.Controllers;
+    using global::DotNetNuke.Entities.Host;
     using global::DotNetNuke.Services.Mail;
 
     using YAF.Types;
@@ -61,8 +61,6 @@ namespace YAF.DotNetNuke.Components.Integration
         {
             CodeContracts.VerifyNotNull(mailMessage, "mailMessage");
 
-            var settings = HostController.Instance.GetSettingsDictionary();
-
             var body = string.Empty;
 
             bool mailIsHtml = false;
@@ -78,7 +76,7 @@ namespace YAF.DotNetNuke.Components.Integration
                     body = reader.ReadToEnd();
                 }
             }
-
+            
             Mail.SendMail(
                 mailMessage.From.Address,
                 mailMessage.To.ToString(),
@@ -90,10 +88,10 @@ namespace YAF.DotNetNuke.Components.Integration
                 mailMessage.BodyEncoding,
                 body,
                 string.Empty,
-                settings["SMTPServer"],
-                settings["SMTPAuthentication"],
-                settings["SMTPUsername"],
-                settings["SMTPPassword"]);
+                Host.SMTPServer,
+                Host.SMTPAuthentication,
+                Host.SMTPUsername,
+                Host.SMTPPassword);
         }
 
         #endregion
