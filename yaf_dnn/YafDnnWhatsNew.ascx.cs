@@ -110,41 +110,7 @@ namespace YAF.DotNetNuke
         #endregion
 
         #region Methods
-        /*
-        /// <summary>
-        /// The clean string for url.
-        /// </summary>
-        /// <param name="inputString">The input string.</param>
-        /// <returns>Returns the Cleaned String</returns>
-        protected static string CleanStringForURL(string inputString)
-        {
-            var sb = new StringBuilder();
-
-            // trim...
-            inputString = HttpContext.Current.Server.HtmlDecode(inputString.Trim());
-
-            // fix ampersand...
-            inputString = inputString.Replace("&", "and");
-
-            // normalize the Unicode
-            inputString = inputString.Normalize(NormalizationForm.FormD);
-
-            foreach (char currentChar in inputString)
-            {
-                if (char.IsWhiteSpace(currentChar) || currentChar == '.')
-                {
-                    sb.Append('-');
-                }
-                else if (char.GetUnicodeCategory(currentChar) != UnicodeCategory.NonSpacingMark
-                         && !char.IsPunctuation(currentChar) && !char.IsSymbol(currentChar) && currentChar < 128)
-                {
-                    sb.Append(currentChar);
-                }
-            }
-
-            return sb.ToString();
-        }*/
-
+        
         /// <summary>
         /// The latest posts_ item data bound.
         /// </summary>

@@ -34,6 +34,7 @@ namespace YAF.DotNetNuke
 
     using global::DotNetNuke.Services.Localization;
 
+    using YAF.Classes;
     using YAF.Core;
     using YAF.Core.Model;
     using YAF.Types.Constants;
@@ -139,8 +140,8 @@ namespace YAF.DotNetNuke
             this.cancel.Text = Localization.GetString("Cancel.Text", this.LocalResourceFile);
             this.create.Text = Localization.GetString("Create.Text", this.LocalResourceFile);
 
-            this.update.Visible = this.IsEditable;
-            this.create.Visible = this.IsEditable;
+            //this.update.Visible = this.IsEditable;
+            //this.create.Visible = this.IsEditable;
 
             if (this.IsPostBack)
             {
@@ -198,6 +199,18 @@ namespace YAF.DotNetNuke
             objModules.UpdateModuleSetting(this.ModuleId, "RemoveTabName", this.RemoveTabName.SelectedValue);
             objModules.UpdateModuleSetting(
                 this.ModuleId, "InheritDnnLanguage", this.InheritDnnLanguage.Checked.ToString());
+
+            var boardSettings = new YafLoadBoardSettings(this.BoardID.SelectedValue.ToType<int>())
+                                    {
+                                        DNNPageTab =
+                                            this.TabId
+                                    };
+
+            // save the settings to the database
+            boardSettings.SaveRegistry();
+
+            // Reload forum settings
+            YafContext.Current.BoardSettings = null;
 
             YafBuildLink.Redirect(ForumPages.forum);
         }

@@ -61,6 +61,7 @@ namespace YAF.DotNetNuke
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
+    using YAF.Utils.Helpers;
 
     #endregion
 
@@ -319,26 +320,31 @@ namespace YAF.DotNetNuke
                     Localization.GetPageLocale(this.CurrentPortalSettings));
 
                 var largestBoardId = this.GetRepository<Board>()
-                                               .Create(
-                                                   newBoardName,
-                                                   yafCultureInfo.Culture,
-                                                   yafCultureInfo.LanguageFile,
-                                                   "DotNetNuke",
-                                                   "DotNetNuke",
-                                                   dnnUserInfo.Username,
-                                                   dnnUserInfo.Email,
-                                                   dnnUser.ProviderUserKey.ToString(),
-                                                   false,
-                                                   string.Empty);
+                    .Create(
+                        newBoardName,
+                        yafCultureInfo.Culture,
+                        yafCultureInfo.LanguageFile,
+                        "DotNetNuke",
+                        "DotNetNuke",
+                        dnnUserInfo.Username,
+                        dnnUserInfo.Email,
+                        dnnUser.ProviderUserKey.ToString(),
+                        false,
+                        string.Empty);
 
                 // Assign the new forum to this module
-               var objForumSettings = new ModuleController();
+                var objForumSettings = new ModuleController();
 
                 objForumSettings.UpdateModuleSetting(this.ModuleId, "forumboardid", largestBoardId.ToString());
                 objForumSettings.UpdateModuleSetting(this.ModuleId, "forumcategoryid", string.Empty);
 
                 this.forum1.BoardID = largestBoardId;
             }
+
+            var boardSettings = new YafLoadBoardSettings(this.forum1.BoardID) { DNNPageTab = this.TabId };
+
+            // save the settings to the database
+            boardSettings.SaveRegistry();
         }
 
         /// <summary>
@@ -507,27 +513,51 @@ namespace YAF.DotNetNuke
             this.Load += this.DotNetNukeModule_Load;
             this.forum1.PageTitleSet += this.Forum1_PageTitleSet;
 
-            // Get current BoardID
-            try
-            {
-                this.createNewBoard = false;
+            this.createNewBoard = false;
 
-                // This will create an error if there is no setting for forumboardid
-                if (this.Settings["forumboardid"] != null)
+            // This will create an error if there is no setting for forumboardid
+            if (this.Settings["forumboardid"] != null)
+            {
+                this.forum1.BoardID = this.Settings["forumboardid"].ToType<int>();
+
+                var boardSettings = new YafLoadBoardSettings(this.forum1.BoardID);
+
+                if (boardSettings.DNNPageTab.Equals(-1) || !boardSettings.DNNPageTab.Equals(this.TabId))
                 {
-                    this.forum1.BoardID = this.Settings["forumboardid"].ToType<int>();
-                }
-                else
-                {
-                    // Create a new board
-                    this.createNewBoard = true;
+                    if (HttpContext.Current.User.Identity.IsAuthenticated
+                        && UserController.GetCurrentUserInfo().IsSuperUser)
+                    {
+                        this.Response.Redirect(
+                            this.ResolveUrl(
+                                "~/tabid/{0}/ctl/Edit/mid/{1}/Default.aspx".FormatWith(
+                                    this.PortalSettings.ActiveTab.TabID,
+                                    this.ModuleId)));
+                    }
+                    else
+                    {
+                        boardSettings.DNNPageTab = this.TabId;
+
+                        // save the settings to the database
+                        boardSettings.SaveRegistry();
+
+                        // Reload forum settings
+                        YafContext.Current.BoardSettings = null;
+                    }
                 }
             }
-            catch (Exception)
+            else
             {
-                // A forum does not exist for this module
                 // Create a new board
                 this.createNewBoard = true;
+
+                if (HttpContext.Current.User.Identity.IsAuthenticated && UserController.GetCurrentUserInfo().IsSuperUser)
+                {
+                    this.Response.Redirect(
+                        this.ResolveUrl(
+                            "~/tabid/{0}/ctl/Edit/mid/{1}/Default.aspx".FormatWith(
+                                this.PortalSettings.ActiveTab.TabID,
+                                this.ModuleId)));
+                }
             }
 
             // Inherit Language from Dnn?
