@@ -27,11 +27,9 @@ namespace YAF.DotNetNuke
     #region Using
 
     using System;
-    using System.Linq;
     using System.Text;
 
     using global::DotNetNuke.Common;
-    using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Portals;
 
     using global::DotNetNuke.Entities.Tabs;
@@ -95,7 +93,10 @@ namespace YAF.DotNetNuke
 
             var portalSettings = PortalController.GetCurrentPortalSettings();
 
-            var yafTab = this.GetYAFTab(portalSettings);
+            var yafTab = new TabController().GetTab(
+                YafContext.Current.Get<YafBoardSettings>().DNNPageTab,
+                portalSettings.PortalId,
+                false);
 
             var boardNameOrPageName = UrlRewriteHelper.CleanStringForURL(
                 YafContext.Current.Get<YafBoardSettings>().Name);
@@ -153,7 +154,7 @@ namespace YAF.DotNetNuke
                     break;
                 case "profile":
                     {
-                        boardNameOrPageName = UrlRewriteHelper.GetProfileName(parser["u"].ToType<int>());
+                        boardNameOrPageName = parser["name"].IsSet() ? parser["name"] : UrlRewriteHelper.GetProfileName(parser["u"].ToType<int>());
                     }
 
                     break;
@@ -214,33 +215,6 @@ namespace YAF.DotNetNuke
                 "{0}&{1}".FormatWith(Globals.ApplicationURL(activeTab.TabID), url),
                 boardNameOrPageName,
                 portalSettings);
-        }
-
-        /// <summary>
-        /// Gets the YAF tab id.
-        /// </summary>
-        /// <param name="portalSettings">The portal settings.</param>
-        /// <returns>Return the YAF tab id</returns>
-        private TabInfo GetYAFTab(PortalSettings portalSettings)
-        {
-            var tabs = TabController.GetPortalTabs(portalSettings.PortalId, -1, true, true);
-
-            var desktopModuleInfo =
-                DesktopModuleController.GetDesktopModuleByModuleName("YetAnotherForumDotNet", portalSettings.PortalId);
-
-            foreach (TabInfo tab in from tab in tabs
-                                    where tab != null && !tab.IsDeleted
-                                    let modules = new ModuleController()
-                                    from pair in modules.GetTabModules(tab.TabID)
-                                    let module = pair.Value
-                                    where
-                                        !module.IsDeleted && module.DesktopModuleID == desktopModuleInfo.DesktopModuleID
-                                    select tab)
-            {
-                return tab;
-            }
-
-            return portalSettings.ActiveTab;
         }
     }
 }

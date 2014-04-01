@@ -29,12 +29,10 @@ namespace YAF.DotNetNuke.Components.Utils
     using System.Linq;
     using System.Web.Security;
 
-    using global::DotNetNuke.Common;
     using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Users;
 
-    using YAF.Classes;
     using YAF.Classes.Data;
     using YAF.Core;
     using YAF.DotNetNuke.Components.Controllers;
@@ -194,7 +192,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 dnnUserInfo.DisplayName,
                 dnnUserInfo.Email,
                 0,
-                yafUserData.LanguageFile.IsSet() ? yafUserData.LanguageFile : null ,
+                yafUserData.LanguageFile.IsSet() ? yafUserData.LanguageFile : null,
                 yafUserData.CultureUser,
                 yafUserData.ThemeFile,
                 yafUserData.TextEditor,
