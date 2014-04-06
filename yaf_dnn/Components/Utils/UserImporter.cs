@@ -28,7 +28,6 @@ namespace YAF.DotNetNuke.Components.Utils
     using System.Data;
     using System.Web.Security;
 
-    using global::DotNetNuke.Common;
     using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Portals;
     using global::DotNetNuke.Entities.Users;
@@ -37,7 +36,6 @@ namespace YAF.DotNetNuke.Components.Utils
     using YAF.Classes;
     using YAF.Classes.Data;
     using YAF.Core;
-    using YAF.DotNetNuke.Components.Integration;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
@@ -112,7 +110,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     if (yafUserId.Equals(0))
                     {
                         // Create user if Not Exist
-                        yafUserId = CreateYafUser(dnnUserInfo, dnnUser, boardId, null, boardSettings);
+                        yafUserId = CreateYafUser(dnnUserInfo, dnnUser, boardId, portalId, boardSettings);
                         newUserCount++;
                     }
                     else
@@ -147,7 +145,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 Exceptions.LogException(ex);
             }
 
-            info = "{0} User(s) Imported{1}".FormatWith(
+            info = "{0} User(s) Imported, all user profiles are synchronized{1}".FormatWith(
                 newUserCount,
                 rolesChanged ? ", but all User Roles are synchronized!" : ", User Roles already synchronized!");
 
@@ -160,7 +158,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="dnnUserInfo">The DNN user info.</param>
         /// <param name="dnnUser">The DNN user.</param>
         /// <param name="boardID">The board ID.</param>
-        /// <param name="portalSettings">The portal settings.</param>
+        /// <param name="portalID">The portal identifier.</param>
         /// <param name="boardSettings">The board settings.</param>
         /// <returns>
         /// Returns the User ID of the new User
@@ -169,7 +167,7 @@ namespace YAF.DotNetNuke.Components.Utils
             UserInfo dnnUserInfo,
             MembershipUser dnnUser,
             int boardID,
-            PortalSettings portalSettings,
+            int portalID,
             YafBoardSettings boardSettings)
         {
             // setup roles
@@ -247,7 +245,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 boardSettings.DefaultNotificationSetting,
                 boardSettings.DefaultSendDigestEmail);
 
-            RoleSyncronizer.SynchronizeUserRoles(boardID, portalSettings.PortalId, yafUserId.ToType<int>(), dnnUserInfo);
+            RoleSyncronizer.SynchronizeUserRoles(boardID, portalID, yafUserId.ToType<int>(), dnnUserInfo);
 
             return yafUserId.ToType<int>();
         }

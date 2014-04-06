@@ -28,11 +28,14 @@ namespace YAF.DotNetNuke
 
     using System;
     using System.Text;
+    using System.Web;
+    using System.Web.DynamicData;
 
     using global::DotNetNuke.Common;
     using global::DotNetNuke.Entities.Portals;
 
     using global::DotNetNuke.Entities.Tabs;
+    using global::DotNetNuke.Services.Url.FriendlyUrl;
 
     using YAF.Classes;
     using YAF.Core;
@@ -62,28 +65,66 @@ namespace YAF.DotNetNuke
         /// </returns>
         public override string BuildUrlFull(string url)
         {
-            return this.BuildUrl(url);
+            return this.BuildUrl(YafContext.Current.Get<YafBoardSettings>(), url);
+        }
+
+        /// <summary>
+        /// Builds the Full URL.
+        /// </summary>
+        /// <param name="boardSettings">The board settings.</param>
+        /// <param name="url">The url.</param>
+        /// <returns>
+        /// Returns the URL.
+        /// </returns>
+        public override string BuildUrlFull(object boardSettings, string url)
+        {
+            return this.BuildUrl(boardSettings, url);
         }
 
         /// <summary>
         /// The build url.
         /// </summary>
-        /// <param name="url">
-        /// The url.
-        /// </param>
+        /// <param name="url">The url.</param>
         /// <returns>
         /// The new Url.
         /// </returns>
         public override string BuildUrl(string url)
         {
+            return this.BuildUrl(YafContext.Current.Get<YafBoardSettings>(), url);
+        }
+
+        /// <summary>
+        /// The build url.
+        /// </summary>
+        /// <param name="boardSettings">The board settings.</param>
+        /// <param name="url">The url.</param>
+        /// <returns>
+        /// The new Url.
+        /// </returns>
+        public override string BuildUrl(object boardSettings, string url)
+        {
+            var yafBoardSettings = boardSettings.ToType<YafBoardSettings>();
+
+            var yafTab = new TabController().GetTab(yafBoardSettings.DNNPageTab);
+
             if (url.IsNotSet())
             {
                 // return BaseURL
-                var baseUrl = Globals.NavigateURL(0);
+                var baseUrl = Globals.NavigateURL();
 
-                if (baseUrl.Contains("tabid/0/Default.aspx"))
+                if (baseUrl.EndsWith(yafTab.TabName))
                 {
-                    baseUrl = baseUrl.Replace("tabid/0/Default.aspx", string.Empty);
+                    baseUrl = baseUrl.Replace(yafTab.TabName, string.Empty);
+                }
+
+                if (baseUrl.EndsWith("{0}.aspx".FormatWith(yafTab.TabName)))
+                {
+                    baseUrl = baseUrl.Replace("{0}.aspx".FormatWith(yafTab.TabName), string.Empty);
+                }
+
+                if (baseUrl.EndsWith("{0}.aspx".FormatWith(yafTab.TabName.ToLower())))
+                {
+                    baseUrl = baseUrl.Replace("{0}.aspx".FormatWith(yafTab.TabName.ToLower()), string.Empty);
                 }
 
                 return baseUrl;
@@ -91,15 +132,16 @@ namespace YAF.DotNetNuke
 
             var newUrl = new StringBuilder();
 
-            var portalSettings = PortalController.GetCurrentPortalSettings();
+            var portalSettings = new PortalSettings(yafTab.PortalID);
+
+            /*var portalSettings = PortalController.GetCurrentPortalSettings();
 
             var yafTab = new TabController().GetTab(
-                YafContext.Current.Get<YafBoardSettings>().DNNPageTab,
+                yafBoardSettings.DNNPageTab,
                 portalSettings.PortalId,
-                false);
+                false);*/
 
-            var boardNameOrPageName = UrlRewriteHelper.CleanStringForURL(
-                YafContext.Current.Get<YafBoardSettings>().Name);
+            var boardNameOrPageName = UrlRewriteHelper.CleanStringForURL(yafBoardSettings.Name);
 
             if (!Config.EnableURLRewriting)
             {
@@ -154,7 +196,9 @@ namespace YAF.DotNetNuke
                     break;
                 case "profile":
                     {
-                        boardNameOrPageName = parser["name"].IsSet() ? parser["name"] : UrlRewriteHelper.GetProfileName(parser["u"].ToType<int>());
+                        boardNameOrPageName = parser["name"].IsSet()
+                                                  ? parser["name"]
+                                                  : UrlRewriteHelper.GetProfileName(parser["u"].ToType<int>());
                     }
 
                     break;
@@ -169,12 +213,20 @@ namespace YAF.DotNetNuke
                     break;
             }
 
-            newUrl.AppendFormat(
+            newUrl.Append(
+                FriendlyUrlProvider.Instance()
+                    .FriendlyUrl(
+                        yafTab,
+                        "{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), url),
+                        boardNameOrPageName + ".aspx",
+                        portalSettings.DefaultPortalAlias));
+
+            /*newUrl.AppendFormat(
                 Globals.FriendlyUrl(
                     yafTab,
                     "{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), url),
                     boardNameOrPageName,
-                    portalSettings));
+                    portalSettings.DefaultPortalAlias));
 
             /*newUrl.AppendFormat(
                FriendlyUrlProvider.Instance().FriendlyUrl(
@@ -184,10 +236,10 @@ namespace YAF.DotNetNuke
                     portalSettings));*/
 
             // add anchor
-            if (parser.HasAnchor)
+            /*if (parser.HasAnchor)
             {
-                newUrl.AppendFormat("#{0}", parser.Anchor);
-            }
+               newUrl.AppendFormat("#{0}", parser.Anchor);
+            }*/
 
             return newUrl.Length >= 260
                        ? this.GetStandardUrl(yafTab, url, boardNameOrPageName, portalSettings)
@@ -210,11 +262,12 @@ namespace YAF.DotNetNuke
             string boardNameOrPageName,
             PortalSettings portalSettings)
         {
-            return Globals.FriendlyUrl(
-                activeTab,
-                "{0}&{1}".FormatWith(Globals.ApplicationURL(activeTab.TabID), url),
-                boardNameOrPageName,
-                portalSettings);
+            return FriendlyUrlProvider.Instance()
+                .FriendlyUrl(
+                    activeTab,
+                    "{0}&{1}".FormatWith(Globals.ApplicationURL(activeTab.TabID), url),
+                    boardNameOrPageName,
+                    portalSettings.DefaultPortalAlias);
         }
     }
 }

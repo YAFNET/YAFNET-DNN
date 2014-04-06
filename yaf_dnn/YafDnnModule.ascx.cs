@@ -425,7 +425,7 @@ namespace YAF.DotNetNuke
                     dnnUserInfo,
                     dnnMembershipUser,
                     this.forum1.BoardID,
-                    this.CurrentPortalSettings,
+                    this.CurrentPortalSettings.PortalId,
                     YafContext.Current == null
                         ? new YafLoadBoardSettings(this.forum1.BoardID)
                         : YafContext.Current.Get<YafBoardSettings>());

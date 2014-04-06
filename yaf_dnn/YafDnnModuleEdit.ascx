@@ -5,7 +5,7 @@
     <div class="dnnFormItem">
         <dnn:label id="BoardName" runat="server" controlname="BoardID" Suffix=":"></dnn:label>
         <asp:dropdownlist autopostback="true" runat="server" id="BoardID" />&nbsp;
-        <asp:Button runat="server" id="create" cssclass="wizButton" />
+        <asp:LinkButton runat="server" id="create" CssClass="dnnPrimaryAction" />
     </div>
     <div class="dnnFormItem">
         <dnn:label id="Category" runat="server" controlname="CategoryID" Suffix=":"></dnn:label>
@@ -21,10 +21,10 @@
     </div>
     <ul class="dnnActions dnnClear">
         <li>
-            <asp:Button runat="server" id="update" cssclass="dnnPrimaryAction" />
+            <asp:LinkButton runat="server" id="update" cssclass="dnnPrimaryAction" />
         </li>
         <li>
-            <asp:Button runat="server" id="cancel" cssclass="dnnSecondaryAction" />
+            <asp:LinkButton runat="server" id="cancel" cssclass="dnnSecondaryAction" />
         </li>
     </ul>
 </div>

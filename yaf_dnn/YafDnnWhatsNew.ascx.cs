@@ -29,8 +29,6 @@ namespace YAF.DotNetNuke
     using System;
     using System.Collections;
     using System.Data;
-    using System.Globalization;
-    using System.Text;
     using System.Text.RegularExpressions;
     using System.Web;
     using System.Web.Security;
@@ -278,7 +276,7 @@ namespace YAF.DotNetNuke
                 dnnUserInfo,
                 dnnUser,
                 this.boardId,
-                this.PortalSettings,
+                this.PortalSettings.PortalId,
                 YafContext.Current.Get<YafBoardSettings>());
         }
 

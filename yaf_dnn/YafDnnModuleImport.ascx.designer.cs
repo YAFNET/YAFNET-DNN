@@ -28,7 +28,7 @@ namespace YAF.DotNetNuke {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnImportUsers;
+        protected global::System.Web.UI.WebControls.LinkButton btnImportUsers;
         
         /// <summary>
         /// lInfo control.
@@ -55,7 +55,7 @@ namespace YAF.DotNetNuke {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddScheduler;
+        protected global::System.Web.UI.WebControls.LinkButton btnAddScheduler;
         
         /// <summary>
         /// Close control.
@@ -64,6 +64,6 @@ namespace YAF.DotNetNuke {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Close;
+        protected global::System.Web.UI.WebControls.LinkButton Close;
     }
 }

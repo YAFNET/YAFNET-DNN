@@ -28,13 +28,13 @@ namespace YAF.DotNetNuke
 
     using System;
     using System.Data;
+    using System.Web;
     using System.Web.UI.WebControls;
 
     using global::DotNetNuke.Entities.Modules;
 
     using global::DotNetNuke.Services.Localization;
 
-    using YAF.Classes;
     using YAF.Core;
     using YAF.Core.Model;
     using YAF.Types.Constants;
@@ -42,6 +42,7 @@ namespace YAF.DotNetNuke
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
     using YAF.Utils;
+    using YAF.Utils.Helpers;
 
     #endregion
 
@@ -140,9 +141,6 @@ namespace YAF.DotNetNuke
             this.cancel.Text = Localization.GetString("Cancel.Text", this.LocalResourceFile);
             this.create.Text = Localization.GetString("Create.Text", this.LocalResourceFile);
 
-            //this.update.Visible = this.IsEditable;
-            //this.create.Visible = this.IsEditable;
-
             if (this.IsPostBack)
             {
                 return;
@@ -191,6 +189,15 @@ namespace YAF.DotNetNuke
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void UpdateClick(object sender, EventArgs e)
         {
+            var config = new ConfigHelper();
+
+            // Check if BaskeUrlMask is set and if not automatically write it
+            if (config.GetConfigValueAsString("YAF.BaseUrlMask").IsNotSet()
+                && config.TrustLevel >= AspNetHostingPermissionLevel.High)
+            {
+                config.WriteAppSetting("YAF.BaseUrlMask", YafBuildLink.GetBasePath());
+            }
+
             var objModules = new ModuleController();
 
             objModules.UpdateModuleSetting(this.ModuleId, "forumboardid", this.BoardID.SelectedValue);
