@@ -195,7 +195,11 @@ namespace YAF.DotNetNuke
             if (config.GetConfigValueAsString("YAF.BaseUrlMask").IsNotSet()
                 && config.TrustLevel >= AspNetHostingPermissionLevel.High)
             {
-                config.WriteAppSetting("YAF.BaseUrlMask", YafBuildLink.GetBasePath());
+                var urlKey =
+                            "http://{0}/".FormatWith(
+                                HttpContext.Current.Request.ServerVariables["SERVER_NAME"]);
+
+                config.WriteAppSetting("YAF.BaseUrlMask", urlKey);
             }
 
             var objModules = new ModuleController();
