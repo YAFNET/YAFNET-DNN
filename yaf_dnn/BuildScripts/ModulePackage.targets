@@ -115,10 +115,10 @@
     </CreateItem>
     
     <Zip Files="@(YafDnnWhatsNewResourcesContent)" WorkingDirectory="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources" ZipFileName="YafDnnWhatsNewResources.$(Extension)" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources.$(Extension)" DestinationFolder="package/" />
+    <Move SourceFiles="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources.$(Extension)" DestinationFolder="package/" />
     
     <!-- create the INSTALL yafdnn-res.ZIP file -->
-    <Copy SourceFiles="@(yafdnn-resInclude)" DestinationFolder="$(MSBuildProjectDirectory)\yafdnn-res\%(RecursiveDir)" />
+    <Move SourceFiles="@(yafdnn-resInclude)" DestinationFolder="$(MSBuildProjectDirectory)\yafdnn-res\%(RecursiveDir)" />
     
     <!-- Minify JS and CSS Files -->
     <ItemGroup>
@@ -143,15 +143,11 @@
     <!-- Create the Install package -->    
     <Zip Files="@(OutputContent)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="$(PackageName)_$(YAFVersion).$(Extension)" />
     <!-- Copy the Install package to the Packages folder -->
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion).$(Extension)" DestinationFolder="packages/" />
-
-    <Delete Files="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources.$(Extension)" />
-    <Delete Files="$(MSBuildProjectDirectory)\yafdnn-res.$(Extension)" />
+    <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion).$(Extension)" DestinationFolder="packages/" />
 
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\Package" />
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources" />
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\yafdnn-res" />
-
 
     <!-- Create SOURCE ZIP  -->
 
@@ -164,10 +160,7 @@
     </CreateItem>
 
     <Zip Files="@(OutputSource)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="$(PackageName)_$(YAFVersion)-SRC.$(Extension)" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion)-SRC.$(Extension)" DestinationFolder="packages/" />
-
-    <Delete Files="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion).$(Extension)" />
-    <Delete Files="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion)-SRC.$(Extension)" />
+    <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion)-SRC.$(Extension)" DestinationFolder="packages/" />
 
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\Package" />
 

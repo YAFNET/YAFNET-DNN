@@ -61,7 +61,6 @@ namespace YAF.DotNetNuke
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
-    using YAF.Utils.Helpers;
 
     #endregion
 
@@ -207,7 +206,7 @@ namespace YAF.DotNetNuke
         {
             Exception x = this.Server.GetLastError();
 
-            this.Get<ILogger>().Error(x, "Error on the DNN Module");
+            YafContext.Current.Get<ILogger>().Error(x, "Error on the DNN Module");
 
             base.OnError(e);
         }
@@ -319,7 +318,7 @@ namespace YAF.DotNetNuke
                     YafCultures,
                     Localization.GetPageLocale(this.CurrentPortalSettings));
 
-                var largestBoardId = this.GetRepository<Board>()
+                var largestBoardId = YafContext.Current.GetRepository<Board>()
                     .Create(
                         newBoardName,
                         yafCultureInfo.Culture,
@@ -459,7 +458,7 @@ namespace YAF.DotNetNuke
         /// <param name="e">The <see cref="ForumPageTitleArgs" /> instance containing the event data.</param>
         private void Forum1_PageTitleSet(object sender, ForumPageTitleArgs e)
         {
-            int removeTabName = 1;
+            var removeTabName = 1;
 
             if (this.Settings["RemoveTabName"] != null)
             {
@@ -467,9 +466,9 @@ namespace YAF.DotNetNuke
             }
 
             // Check if Tab Name/Title Matches the Forum Board Name
-            if (removeTabName.Equals(2))
+            if (removeTabName.Equals(2) && YafContext.Current != null)
             {
-                if (this.Get<YafBoardSettings>().Name.Equals(this.CurrentPortalSettings.ActiveTab.TabName))
+                if (YafContext.Current.Get<YafBoardSettings>().Name.Equals(this.CurrentPortalSettings.ActiveTab.TabName))
                 {
                     removeTabName = 1;
                 }
@@ -477,7 +476,7 @@ namespace YAF.DotNetNuke
                 if (this.CurrentPortalSettings.ActiveTab.Title.IsSet())
                 {
                     if (
-                        this.Get<YafBoardSettings>().Name.Equals(
+                        YafContext.Current.Get<YafBoardSettings>().Name.Equals(
                             this.CurrentPortalSettings.ActiveTab.Title))
                     {
                         removeTabName = 1;

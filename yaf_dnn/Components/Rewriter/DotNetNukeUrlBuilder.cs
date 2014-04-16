@@ -28,8 +28,6 @@ namespace YAF.DotNetNuke
 
     using System;
     using System.Text;
-    using System.Web;
-    using System.Web.DynamicData;
 
     using global::DotNetNuke.Common;
     using global::DotNetNuke.Entities.Portals;
@@ -41,6 +39,7 @@ namespace YAF.DotNetNuke
     using YAF.Core;
     using YAF.Core.Helpers;
     using YAF.Core.URLBuilder;
+    using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Utils;
@@ -130,6 +129,11 @@ namespace YAF.DotNetNuke
                 return baseUrl;
             }
 
+            if (!Config.EnableURLRewriting)
+            {
+                return Globals.ResolveUrl("{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), url));
+            }
+
             var newUrl = new StringBuilder();
 
             var portalSettings = new PortalSettings(yafTab.PortalID);
@@ -143,22 +147,17 @@ namespace YAF.DotNetNuke
 
             var boardNameOrPageName = UrlRewriteHelper.CleanStringForURL(yafBoardSettings.Name);
 
-            if (!Config.EnableURLRewriting)
-            {
-                return this.GetStandardUrl(yafTab, url, boardNameOrPageName, portalSettings);
-            }
-
             var parser = new SimpleURLParameterParser(url);
 
-            switch (parser["g"])
+            switch (parser["g"].ToEnum<ForumPages>())
             {
-                case "topics":
+                case ForumPages.topics:
                     {
                         boardNameOrPageName = UrlRewriteHelper.GetForumName(parser["f"].ToType<int>());
                     }
 
                     break;
-                case "posts":
+                case ForumPages.posts:
                     {
                         if (parser["t"].IsSet())
                         {
@@ -194,15 +193,17 @@ namespace YAF.DotNetNuke
                     }
 
                     break;
-                case "profile":
+                case ForumPages.profile:
                     {
-                        boardNameOrPageName = parser["name"].IsSet()
-                                                  ? parser["name"]
-                                                  : UrlRewriteHelper.GetProfileName(parser["u"].ToType<int>());
+                        boardNameOrPageName =
+                            UrlRewriteHelper.CleanStringForURL(
+                                parser["name"].IsSet()
+                                    ? parser["name"]
+                                    : UrlRewriteHelper.GetProfileName(parser["u"].ToType<int>()));
                     }
 
                     break;
-                case "forum":
+                case ForumPages.forum:
                     {
                         if (parser["c"].IsSet())
                         {
@@ -218,22 +219,8 @@ namespace YAF.DotNetNuke
                     .FriendlyUrl(
                         yafTab,
                         "{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), url),
-                        boardNameOrPageName + ".aspx",
+                        boardNameOrPageName,
                         portalSettings.DefaultPortalAlias));
-
-            /*newUrl.AppendFormat(
-                Globals.FriendlyUrl(
-                    yafTab,
-                    "{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), url),
-                    boardNameOrPageName,
-                    portalSettings.DefaultPortalAlias));
-
-            /*newUrl.AppendFormat(
-               FriendlyUrlProvider.Instance().FriendlyUrl(
-                    activeTab,
-                    "~/Default.aspx?TabId={0}&{1}".FormatWith(activeTab.TabID, url),
-                    boardNameOrPageName,
-                    portalSettings));*/
 
             // add anchor
             /*if (parser.HasAnchor)
