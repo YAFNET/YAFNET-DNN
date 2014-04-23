@@ -54,7 +54,9 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="portalId">The portal id.</param>
         /// <param name="yafUserId">The YAF user id.</param>
         /// <param name="dnnUserInfo">The DNN user info.</param>
-        /// <returns>Returns if the Roles where synched or not</returns>
+        /// <returns>
+        /// Returns if the Roles where synched or not
+        /// </returns>
         public static bool SynchronizeUserRoles(int boardId, int portalId, int yafUserId, UserInfo dnnUserInfo)
         {
             // Make sure are roles exist
@@ -140,10 +142,10 @@ namespace YAF.DotNetNuke.Components.Utils
         }
 
         /// <summary>
-        /// Checks if the <paramref name="roles"/> exists, in YAF, the user is in 
+        /// Checks if the <paramref name="roles" /> exists, in YAF, the user is in
         /// </summary>
         /// <param name="boardId">The board id.</param>
-        /// <param name="roles">The <paramref name="roles"/>.</param>
+        /// <param name="roles">The <paramref name="roles" />.</param>
         public static void ImportDNNRoles(int boardId, string[] roles)
         {
             var yafBoardRoles = Data.GetYafBoardRoles(boardId);
@@ -182,16 +184,16 @@ namespace YAF.DotNetNuke.Components.Utils
 
             try
             {
-                // Give the default DNN Roles Member Access, unknown roles get "Read Only Access"
+                // Give the default DNN Roles Member Access, unknown roles get "No Access Mask"
                 accessMaskId = roleName.Equals("Registered Users") || roleName.Equals("Subscribers")
                                ? yafBoardAccessMasks.Find(mask => mask.RoleName.Equals("Member Access")).RoleID
-                               : yafBoardAccessMasks.Find(mask => mask.RoleName.Equals("Read Only Access")).RoleID;
+                               : yafBoardAccessMasks.Find(mask => mask.RoleName.Equals("No Access Mask")).RoleID;
             }
             catch (Exception)
             {
-                accessMaskId = yafBoardAccessMasks.Find(mask => mask.RoleGroupID.Equals(1)).RoleID;
+                accessMaskId = yafBoardAccessMasks.Find(mask => mask.RoleGroupID.Equals(0)).RoleID;
             }
-            
+
             // Role exists in membership but not in yaf itself simply add it to yaf
             return LegacyDb.group_save(
                 DBNull.Value,

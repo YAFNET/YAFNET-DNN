@@ -118,7 +118,7 @@
     <Move SourceFiles="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources.$(Extension)" DestinationFolder="package/" />
     
     <!-- create the INSTALL yafdnn-res.ZIP file -->
-    <Move SourceFiles="@(yafdnn-resInclude)" DestinationFolder="$(MSBuildProjectDirectory)\yafdnn-res\%(RecursiveDir)" />
+    <Copy SourceFiles="@(yafdnn-resInclude)" DestinationFolder="$(MSBuildProjectDirectory)\yafdnn-res\%(RecursiveDir)" />
     
     <!-- Minify JS and CSS Files -->
     <ItemGroup>
