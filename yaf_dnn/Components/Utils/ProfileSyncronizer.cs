@@ -33,6 +33,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Users;
 
+    using YAF.Classes;
     using YAF.Classes.Data;
     using YAF.Core;
     using YAF.DotNetNuke.Components.Controllers;
@@ -59,7 +60,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="membershipUser">MemberShip of current User</param>
         /// <param name="portalID">The portal ID.</param>
         /// <param name="portalGuid">The portal GUID.</param>
-        /// <param name="boardId">The board Id.</param>
+        /// <param name="boardSettings">The board settings.</param>
         /// <param name="ignoreLastUpdated">if set to <c>true</c> [ignore last updated].</param>
         public static void UpdateUserProfile(
             [NotNull] int yafUserId,
@@ -69,7 +70,7 @@ namespace YAF.DotNetNuke.Components.Utils
             [NotNull] MembershipUser membershipUser,
             [NotNull] int portalID,
             [NotNull] Guid portalGuid,
-            [NotNull] int boardId,
+            [NotNull] YafBoardSettings boardSettings,
             [CanBeNull] bool ignoreLastUpdated = false)
         {
             var logger = YafContext.Current.Get<ILogger>();
@@ -91,7 +92,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     yafCurrentUserData,
                     dnnUserInfo,
                     portalGuid,
-                    boardId);
+                    boardSettings);
             }
             catch (Exception ex)
             {
@@ -163,8 +164,8 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="yafUserData">The YAF user data.</param>
         /// <param name="dnnUserInfo">The DNN user info.</param>
         /// <param name="portalGUID">The portal GUID.</param>
-        /// <param name="boardId">The board Id.</param>
-        private static void SyncYafProfile(int yafUserId, YafUserProfile yafUserProfile, IUserData yafUserData, UserInfo dnnUserInfo, Guid portalGUID, int boardId)
+        /// <param name="boardSettings">The board settings.</param>
+        private static void SyncYafProfile(int yafUserId, YafUserProfile yafUserProfile, IUserData yafUserData, UserInfo dnnUserInfo, Guid portalGUID, YafBoardSettings boardSettings)
         {
             /*var userCuluture = new YafCultureInfo
             {
@@ -187,7 +188,7 @@ namespace YAF.DotNetNuke.Components.Utils
 
             LegacyDb.user_save(
                 yafUserId,
-                boardId,
+                boardSettings.BoardID,
                 null,
                 dnnUserInfo.DisplayName,
                 dnnUserInfo.Email,
@@ -237,10 +238,15 @@ namespace YAF.DotNetNuke.Components.Utils
 
             if (dnnUserInfo.Profile.Photo.IsSet())
             {
-                SaveDnnAvatar(dnnUserInfo.Profile.Photo, yafUserId, portalGUID);
+                SaveDnnAvatar(dnnUserInfo.Profile.Photo, yafUserId, portalGUID, boardSettings);
             }
 
             // clear the cache for this user...)
+            if (YafContext.Current == null)
+            {
+                return;
+            }
+
             YafContext.Current.Get<IRaiseEvent>().Raise(new UpdateUserEvent(yafUserId));
 
             YafContext.Current.Get<IDataCache>().Clear();
@@ -252,18 +258,16 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="fileId">The file id.</param>
         /// <param name="yafUserId">The YAF user id.</param>
         /// <param name="portalGUID">The portal GUID.</param>
-        private static void SaveDnnAvatar(string fileId, int yafUserId, Guid portalGUID)
+        /// <param name="boardSettings">The board settings.</param>
+        private static void SaveDnnAvatar(string fileId, int yafUserId, Guid portalGUID, YafBoardSettings boardSettings)
         {
             LegacyDb.user_saveavatar(
                 yafUserId,
                 "{0}LinkClick.aspx?fileticket={1}".FormatWith(
-                    YafBuildLink.GetBasePath(),
+                    YafBuildLink.GetBasePath(boardSettings),
                     UrlUtils.EncryptParameter(fileId, portalGUID.ToString())),
                 null,
                 null);
-
-            // clear the cache for this user...
-            YafContext.Current.Get<IRaiseEvent>().Raise(new UpdateUserEvent(yafUserId));
         }
     }
 }

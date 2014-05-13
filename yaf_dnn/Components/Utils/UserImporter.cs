@@ -123,7 +123,7 @@ namespace YAF.DotNetNuke.Components.Utils
                             dnnUser,
                             portalId,
                             portalGUID,
-                            boardId,
+                            boardSettings,
                             true);
                     }
 

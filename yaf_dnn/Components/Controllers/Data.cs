@@ -38,6 +38,7 @@ namespace YAF.DotNetNuke.Components.Controllers
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
     using YAF.Types.Interfaces.Data;
+    using YAF.Types.Models;
 
     #endregion
 
@@ -47,6 +48,30 @@ namespace YAF.DotNetNuke.Components.Controllers
     public class Data
     {
         #region Public Methods
+
+        /// <summary>
+        /// Get The list of all boards
+        /// </summary>
+        /// <returns>
+        /// Returns the List of all boards
+        /// </returns>
+        public static List<Board> ListBoards()
+        {
+            var boards = new List<Board>();
+            using (var cmd = DbHelpers.GetCommand("board_list"))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("BoardID", null);
+
+
+                var mesagesTable = LegacyDb.DbAccess.GetData(cmd);
+
+                boards.AddRange(from DataRow row in mesagesTable.Rows select new Board { ID = row["ID"].ToType<int>() });
+            }
+
+            return boards;
+        }
 
         /// <summary>
         /// Get The Latest Post from SQL

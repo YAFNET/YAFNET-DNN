@@ -387,7 +387,11 @@ namespace YAF.DotNetNuke
                 return;
             }
 
-            RoleSyncronizer.SynchronizeUserRoles(this.forum1.BoardID, this.CurrentPortalSettings.PortalId, yafUserId, dnnUser);
+            RoleSyncronizer.SynchronizeUserRoles(
+                this.forum1.BoardID,
+                this.CurrentPortalSettings.PortalId,
+                yafUserId,
+                dnnUser);
 
             this.Session["{0}_rolesloaded".FormatWith(this.SessionUserKeyName)] = true;
         }
@@ -418,6 +422,10 @@ namespace YAF.DotNetNuke
             // Check if the user exists in yaf
             var yafUserId = LegacyDb.user_get(this.forum1.BoardID, dnnMembershipUser.ProviderUserKey);
 
+            var boardSettings = YafContext.Current == null
+                                    ? new YafLoadBoardSettings(this.forum1.BoardID)
+                                    : YafContext.Current.Get<YafBoardSettings>();
+
             if (yafUserId.Equals(0))
             {
                 yafUserId = UserImporter.CreateYafUser(
@@ -425,9 +433,7 @@ namespace YAF.DotNetNuke
                     dnnMembershipUser,
                     this.forum1.BoardID,
                     this.CurrentPortalSettings.PortalId,
-                    YafContext.Current == null
-                        ? new YafLoadBoardSettings(this.forum1.BoardID)
-                        : YafContext.Current.Get<YafBoardSettings>());
+                    boardSettings);
 
                 // super admin check...
                 if (dnnUserInfo.IsSuperUser)
@@ -447,7 +453,7 @@ namespace YAF.DotNetNuke
                     dnnMembershipUser,
                     this.CurrentPortalSettings.PortalId,
                     this.CurrentPortalSettings.GUID,
-                    this.forum1.BoardID);
+                    boardSettings);
             }
         }
 

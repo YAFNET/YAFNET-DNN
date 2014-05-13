@@ -29,14 +29,20 @@ namespace YAF.DotNetNuke
     using System;
     using System.Data;
     using System.IO;
+    using System.Linq;
     using System.Web;
 
     using global::DotNetNuke.Services.Exceptions;
 
     using global::DotNetNuke.Services.Scheduling;
 
+    using YAF.Core;
+    using YAF.Core.Model;
+    using YAF.DotNetNuke.Components.Controllers;
     using YAF.DotNetNuke.Components.Utils;
     using YAF.Types.Extensions;
+    using YAF.Types.Interfaces;
+    using YAF.Types.Models;
 
     #endregion
 
@@ -128,12 +134,20 @@ namespace YAF.DotNetNuke
                 settings.ReadXml(filePath);
             }
 
+            var boards = YafContext.Current != null
+                             ? YafContext.Current.GetRepository<Board>().ListTyped()
+                             : Data.ListBoards();
+
             foreach (DataRow dataRow in settings.Tables[0].Rows)
             {
-                UserImporter.ImportUsers(
-                    dataRow["BoardId"].ToType<int>(),
-                    dataRow["PortalId"].ToType<int>(),
-                    out this.info);
+                var boardId = dataRow["BoardId"].ToType<int>();
+                var portalId = dataRow["PortalId"].ToType<int>();
+
+                // check if board exist
+                if (boards.Any(b => b.ID.Equals(boardId)))
+                {
+                    UserImporter.ImportUsers(boardId, portalId, out this.info);
+                }
             }
         }
 

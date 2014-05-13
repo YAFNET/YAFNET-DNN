@@ -149,69 +149,89 @@ namespace YAF.DotNetNuke
 
             var parser = new SimpleURLParameterParser(url);
 
-            switch (parser["g"].ToEnum<ForumPages>())
-            {
-                case ForumPages.topics:
+            var pageName = parser["g"];
+            ForumPages forumPage = ForumPages.forum;
+            var getDescription = false;
+
+            if (pageName.IsSet())
+                {
+                    try
                     {
-                        boardNameOrPageName = UrlRewriteHelper.GetForumName(parser["f"].ToType<int>());
+                        forumPage = pageName.ToEnum<ForumPages>();
+                        getDescription = true;
                     }
-
-                    break;
-                case ForumPages.posts:
+                    catch (Exception)
                     {
-                        if (parser["t"].IsSet())
+                        getDescription = false;
+                    }
+                }
+
+            if (getDescription)
+            {
+                switch (forumPage)
+                {
+                    case ForumPages.topics:
                         {
-                            var topicName = UrlRewriteHelper.GetTopicName(parser["t"].ToType<int>());
-
-                            if (topicName.EndsWith("-"))
-                            {
-                                topicName = topicName.Remove(topicName.Length - 1, 1);
-                            }
-
-                            boardNameOrPageName = topicName;
+                            boardNameOrPageName = UrlRewriteHelper.GetForumName(parser["f"].ToType<int>());
                         }
-                        else if (parser["m"].IsSet())
-                        {
-                            string topicName;
 
-                            try
+                        break;
+                    case ForumPages.posts:
+                        {
+                            if (parser["t"].IsSet())
                             {
-                                topicName = UrlRewriteHelper.GetTopicNameFromMessage(parser["m"].ToType<int>());
+                                var topicName = UrlRewriteHelper.GetTopicName(parser["t"].ToType<int>());
 
                                 if (topicName.EndsWith("-"))
                                 {
                                     topicName = topicName.Remove(topicName.Length - 1, 1);
                                 }
+
+                                boardNameOrPageName = topicName;
                             }
-                            catch (Exception)
+                            else if (parser["m"].IsSet())
                             {
-                                topicName = parser["g"];
+                                string topicName;
+
+                                try
+                                {
+                                    topicName = UrlRewriteHelper.GetTopicNameFromMessage(parser["m"].ToType<int>());
+
+                                    if (topicName.EndsWith("-"))
+                                    {
+                                        topicName = topicName.Remove(topicName.Length - 1, 1);
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    topicName = parser["g"];
+                                }
+
+                                boardNameOrPageName = topicName;
                             }
-
-                            boardNameOrPageName = topicName;
                         }
-                    }
 
-                    break;
-                case ForumPages.profile:
-                    {
-                        boardNameOrPageName =
-                            UrlRewriteHelper.CleanStringForURL(
-                                parser["name"].IsSet()
-                                    ? parser["name"]
-                                    : UrlRewriteHelper.GetProfileName(parser["u"].ToType<int>()));
-                    }
-
-                    break;
-                case ForumPages.forum:
-                    {
-                        if (parser["c"].IsSet())
+                        break;
+                    case ForumPages.profile:
                         {
-                            boardNameOrPageName = UrlRewriteHelper.GetCategoryName(parser["c"].ToType<int>());
+                            boardNameOrPageName =
+                                UrlRewriteHelper.CleanStringForURL(
+                                    parser["name"].IsSet()
+                                        ? parser["name"]
+                                        : UrlRewriteHelper.GetProfileName(parser["u"].ToType<int>()));
                         }
-                    }
 
-                    break;
+                        break;
+                    case ForumPages.forum:
+                        {
+                            if (parser["c"].IsSet())
+                            {
+                                boardNameOrPageName = UrlRewriteHelper.GetCategoryName(parser["c"].ToType<int>());
+                            }
+                        }
+
+                        break;
+                }
             }
 
             newUrl.Append(
