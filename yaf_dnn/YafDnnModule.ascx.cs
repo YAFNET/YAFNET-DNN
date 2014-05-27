@@ -32,6 +32,7 @@ namespace YAF.DotNetNuke
     using System.Web;
     using System.Web.Security;
     using System.Web.UI;
+    using System.Web.UI.WebControls;
 
     using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Modules;
@@ -53,14 +54,12 @@ namespace YAF.DotNetNuke
     using YAF.Classes;
     using YAF.Classes.Data;
     using YAF.Core;
-    using YAF.Core.Model;
     using YAF.DotNetNuke.Components.Objects;
     using YAF.DotNetNuke.Components.Utils;
     using YAF.Types;
     using YAF.Types.Attributes;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
-    using YAF.Types.Models;
 
     #endregion
 
@@ -70,11 +69,6 @@ namespace YAF.DotNetNuke
     public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceLocator
     {
         #region Constants and Fields
-
-        /// <summary>
-        /// The _create new board.
-        /// </summary>
-        private bool createNewBoard;
 
         /// <summary>
         /// The _portal settings.
@@ -109,23 +103,28 @@ namespace YAF.DotNetNuke
             get
             {
                 ModuleActionCollection actions = new ModuleActionCollection
-                    {
-                        {
-                            this.GetNextActionID(), 
-                            Localization.GetString("EditYafSettings.Text", this.LocalResourceFile), 
-                            ModuleActionType.AddContent, string.Empty, string.Empty, this.EditUrl(), 
-                            false, 
-                            SecurityAccessLevel.Host,
-                            true,
-                            false
-                            },
-                        {
-                            this.GetNextActionID(), Localization.GetString("UserImporter.Text", this.LocalResourceFile),
-                            ModuleActionType.AddContent, string.Empty, string.Empty, this.EditUrl("Import"), false,
-                            SecurityAccessLevel.Host,
-                            true,
-                            false }
-                    };
+                                                     {
+                                                         {
+                                                             this.GetNextActionID(),
+                                                             Localization.GetString(
+                                                                 "EditYafSettings.Text",
+                                                                 this.LocalResourceFile),
+                                                             ModuleActionType.AddContent,
+                                                             string.Empty, string.Empty,
+                                                             this.EditUrl(), false,
+                                                             SecurityAccessLevel.Host, true, false
+                                                         },
+                                                         {
+                                                             this.GetNextActionID(),
+                                                             Localization.GetString(
+                                                                 "UserImporter.Text",
+                                                                 this.LocalResourceFile),
+                                                             ModuleActionType.AddContent,
+                                                             string.Empty, string.Empty,
+                                                             this.EditUrl("Import"), false,
+                                                             SecurityAccessLevel.Host, true, false
+                                                         }
+                                                     };
 
                 return actions;
             }
@@ -139,7 +138,9 @@ namespace YAF.DotNetNuke
             get
             {
                 return "yaf_dnn_boardid{0}_userid{1}_portalid{2}".FormatWith(
-                    this.forum1.BoardID, this.UserId, this.CurrentPortalSettings.PortalId);
+                    this.forum1.BoardID,
+                    this.UserId,
+                    this.CurrentPortalSettings.PortalId);
             }
         }
 
@@ -290,63 +291,6 @@ namespace YAF.DotNetNuke
         }
 
         /// <summary>
-        /// Creates the new board.
-        /// </summary>
-        /// <param name="dnnUserInfo">The DNN user info.</param>
-        /// <param name="dnnUser">The DNN user.</param>
-        private void CreateNewBoard(UserInfo dnnUserInfo, MembershipUser dnnUser)
-        {
-            if (dnnUserInfo.IsSuperUser)
-            {
-                // This is HOST and probably the first board.
-                // The install routine already created the first board.
-                // Make sure Module settings are in place
-                var objForumSettings = new ModuleController();
-
-                objForumSettings.UpdateModuleSetting(this.ModuleId, "forumboardid", "1");
-                objForumSettings.UpdateModuleSetting(this.ModuleId, "forumcategoryid", string.Empty);
-
-                this.forum1.BoardID = 1;
-            }
-            else
-            {
-                // This is an admin adding a new forum.
-                var newBoardName = "{0} Forums".FormatWith(this.CurrentPortalSettings.PortalName);
-
-                // Create the board
-                var yafCultureInfo = CultureUtilities.GetYafCultureInfo(
-                    YafCultures,
-                    Localization.GetPageLocale(this.CurrentPortalSettings));
-
-                var largestBoardId = YafContext.Current.GetRepository<Board>()
-                    .Create(
-                        newBoardName,
-                        yafCultureInfo.Culture,
-                        yafCultureInfo.LanguageFile,
-                        "DotNetNuke",
-                        "DotNetNuke",
-                        dnnUserInfo.Username,
-                        dnnUserInfo.Email,
-                        dnnUser.ProviderUserKey.ToString(),
-                        false,
-                        string.Empty);
-
-                // Assign the new forum to this module
-                var objForumSettings = new ModuleController();
-
-                objForumSettings.UpdateModuleSetting(this.ModuleId, "forumboardid", largestBoardId.ToString());
-                objForumSettings.UpdateModuleSetting(this.ModuleId, "forumcategoryid", string.Empty);
-
-                this.forum1.BoardID = largestBoardId;
-            }
-
-            var boardSettings = new YafLoadBoardSettings(this.forum1.BoardID) { DNNPageTab = this.TabId };
-
-            // save the settings to the database
-            boardSettings.SaveRegistry();
-        }
-
-        /// <summary>
         /// Handles the Load event of the DotNetNukeModule control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
@@ -366,7 +310,7 @@ namespace YAF.DotNetNuke
 
             try
             {
-               this.CreateOrUpdateUser();
+                this.CreateOrUpdateUser();
             }
             catch (Exception ex)
             {
@@ -410,13 +354,6 @@ namespace YAF.DotNetNuke
             if (dnnMembershipUser == null)
             {
                 return;
-            }
-
-            // Admin or Host user?
-            if ((dnnUserInfo.IsSuperUser || dnnUserInfo.UserID == this.CurrentPortalSettings.AdministratorId) &&
-                this.createNewBoard)
-            {
-                this.CreateNewBoard(dnnUserInfo, dnnMembershipUser);
             }
 
             // Check if the user exists in yaf
@@ -482,8 +419,8 @@ namespace YAF.DotNetNuke
                 if (this.CurrentPortalSettings.ActiveTab.Title.IsSet())
                 {
                     if (
-                        YafContext.Current.Get<YafBoardSettings>().Name.Equals(
-                            this.CurrentPortalSettings.ActiveTab.Title))
+                        YafContext.Current.Get<YafBoardSettings>()
+                            .Name.Equals(this.CurrentPortalSettings.ActiveTab.Title))
                     {
                         removeTabName = 1;
                     }
@@ -495,7 +432,8 @@ namespace YAF.DotNetNuke
             {
                 this.BasePage.Title =
                     this.BasePage.Title.Replace(
-                        "> {0}".FormatWith(this.CurrentPortalSettings.ActiveTab.TabName), string.Empty);
+                        "> {0}".FormatWith(this.CurrentPortalSettings.ActiveTab.TabName),
+                        string.Empty);
             }
 
             BreadCrumbHelper.UpdateDnnBreadCrumb(this, "dnnBreadcrumb");
@@ -518,8 +456,6 @@ namespace YAF.DotNetNuke
             this.Load += this.DotNetNukeModule_Load;
             this.forum1.PageTitleSet += this.Forum1_PageTitleSet;
 
-            this.createNewBoard = false;
-
             // This will create an error if there is no setting for forumboardid
             if (this.Settings["forumboardid"] != null)
             {
@@ -538,7 +474,7 @@ namespace YAF.DotNetNuke
                                     this.PortalSettings.ActiveTab.TabID,
                                     this.ModuleId)));
                     }
-                    else
+                    /*else
                     {
                         boardSettings.DNNPageTab = this.TabId;
 
@@ -547,14 +483,30 @@ namespace YAF.DotNetNuke
 
                         // Reload forum settings
                         YafContext.Current.BoardSettings = null;
-                    }
+                    }*/
+                }
+
+                // Inherit Language from Dnn?
+                var ineritDnnLanguage = true;
+
+                if (this.Settings["InheritDnnLanguage"] != null)
+                {
+                    ineritDnnLanguage = this.Settings["InheritDnnLanguage"].ToType<bool>();
+                }
+
+                if (ineritDnnLanguage)
+                {
+                    SetDnnLangToYaf();
+                }
+
+                // Override to set to specifc ID
+                if (this.Settings["forumcategoryid"] != null)
+                {
+                    this.forum1.CategoryID = this.Settings["forumcategoryid"].ToType<int>();
                 }
             }
             else
             {
-                // Create a new board
-                this.createNewBoard = true;
-
                 if (HttpContext.Current.User.Identity.IsAuthenticated && UserController.GetCurrentUserInfo().IsSuperUser)
                 {
                     this.Response.Redirect(
@@ -563,25 +515,17 @@ namespace YAF.DotNetNuke
                                 this.PortalSettings.ActiveTab.TabID,
                                 this.ModuleId)));
                 }
-            }
+                else
+                {
+                    this.pnlModuleContent.Controls.Clear();
 
-            // Inherit Language from Dnn?
-            var ineritDnnLanguage = true;
-
-            if (this.Settings["InheritDnnLanguage"] != null)
-            {
-                ineritDnnLanguage = this.Settings["InheritDnnLanguage"].ToType<bool>();
-            }
-
-            if (ineritDnnLanguage)
-            {
-                SetDnnLangToYaf();
-            }
-
-            // Override to set to specifc ID
-            if (this.Settings["forumcategoryid"] != null)
-            {
-                this.forum1.CategoryID = this.Settings["forumcategoryid"].ToType<int>();
+                    this.pnlModuleContent.Controls.Add(
+                        new Literal
+                            {
+                                Text =
+                                    "<div class=\"dnnFormMessage dnnFormInfo\">Please login as Superuser (host) and Setup the forum first.</div>"
+                            });
+                }
             }
         }
 
