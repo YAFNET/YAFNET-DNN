@@ -134,7 +134,7 @@
     </CreateItem>
 
     <Zip Files="@(yafdnn-resContent)" WorkingDirectory="$(MSBuildProjectDirectory)\yafdnn-res" ZipFileName="yafdnn-res.$(Extension)" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\yafdnn-res.$(Extension)" DestinationFolder="package/" />
+    <Move SourceFiles="$(MSBuildProjectDirectory)\yafdnn-res.$(Extension)" DestinationFolder="package/" />
     
 
     <CreateItem Include="$(MSBuildProjectDirectory)\Package\**\*.*">
@@ -143,7 +143,7 @@
     <!-- Create the Install package -->    
     <Zip Files="@(OutputContent)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="$(PackageName)_$(YAFVersion).$(Extension)" />
     <!-- Copy the Install package to the Packages folder -->
-    <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion).$(Extension)" DestinationFolder="packages/" />
+    <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion).$(Extension)" DestinationFolder="deploy/" />
 
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\Package" />
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources" />
@@ -160,7 +160,7 @@
     </CreateItem>
 
     <Zip Files="@(OutputSource)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="$(PackageName)_$(YAFVersion)-SRC.$(Extension)" />
-    <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion)-SRC.$(Extension)" DestinationFolder="packages/" />
+    <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion)-SRC.$(Extension)" DestinationFolder="deploy/" />
 
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\Package" />
 
