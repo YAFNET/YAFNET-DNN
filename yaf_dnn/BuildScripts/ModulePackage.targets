@@ -140,6 +140,9 @@
     <CreateItem Include="$(MSBuildProjectDirectory)\Package\**\*.*">
       <Output TaskParameter="Include" ItemName="OutputContent" />
     </CreateItem>
+
+    <RemoveDir Directories ="$(MSBuildProjectDirectory)\deploy" />
+
     <!-- Create the Install package -->    
     <Zip Files="@(OutputContent)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="$(PackageName)_$(YAFVersion).$(Extension)" />
     <!-- Copy the Install package to the Packages folder -->
@@ -152,7 +155,7 @@
     <!-- Create SOURCE ZIP  -->
 
     <!-- create the SOURCE RESOURCES.ZIP file -->
-    <Copy SourceFiles="@(yafsrcInclude)" DestinationFolder="$(MSBuildProjectDirectory)\Package\YetAnotherForum.NET\%(RecursiveDir)" />
+    <Copy SourceFiles="@(yafsrcInclude)" DestinationFolder="$(MSBuildProjectDirectory)\Package\yafsrc\%(RecursiveDir)" />
     <Copy SourceFiles="@(yaf_dnnInclude)" DestinationFolder="$(MSBuildProjectDirectory)\Package\yaf_dnn\%(RecursiveDir)" />
 
     <CreateItem Include="$(MSBuildProjectDirectory)\Package\**\*.*">
