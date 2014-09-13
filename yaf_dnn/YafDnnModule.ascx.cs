@@ -40,7 +40,7 @@ namespace YAF.DotNetNuke
     using global::DotNetNuke.Entities.Modules.Actions;
 
     using global::DotNetNuke.Entities.Portals;
-
+    using global::DotNetNuke.Entities.Tabs;
     using global::DotNetNuke.Entities.Users;
 
     using global::DotNetNuke.Framework;
@@ -461,9 +461,12 @@ namespace YAF.DotNetNuke
             {
                 this.forum1.BoardID = this.Settings["forumboardid"].ToType<int>();
 
-                var boardSettings = new YafLoadBoardSettings(this.forum1.BoardID);
+                var boardSettingsTabId = YafContext.Current.BoardSettings != null
+                                         && YafContext.Current.BoardSettings.BoardID.Equals(this.forum1.BoardID)
+                                             ? YafContext.Current.BoardSettings.DNNPageTab
+                                             : new YafLoadBoardSettings(this.forum1.BoardID).DNNPageTab;
 
-                if (boardSettings.DNNPageTab.Equals(-1) || !boardSettings.DNNPageTab.Equals(this.TabId))
+                if (boardSettingsTabId.Equals(-1) || !boardSettingsTabId.Equals(this.TabId) && !this.CurrentPortalSettings.ContentLocalizationEnabled)
                 {
                     if (HttpContext.Current.User.Identity.IsAuthenticated
                         && UserController.GetCurrentUserInfo().IsSuperUser)

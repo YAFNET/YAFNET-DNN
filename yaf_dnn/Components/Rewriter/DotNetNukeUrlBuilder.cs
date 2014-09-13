@@ -28,11 +28,13 @@ namespace YAF.DotNetNuke
 
     using System;
     using System.Text;
+    using System.Web;
 
     using global::DotNetNuke.Common;
     using global::DotNetNuke.Entities.Portals;
 
     using global::DotNetNuke.Entities.Tabs;
+    using global::DotNetNuke.Services.Localization;
     using global::DotNetNuke.Services.Url.FriendlyUrl;
 
     using YAF.Classes;
@@ -106,6 +108,16 @@ namespace YAF.DotNetNuke
 
             var yafTab = new TabController().GetTab(yafBoardSettings.DNNPageTab);
 
+            var portalSettings = new PortalSettings(yafTab.PortalID);
+
+            if (portalSettings.ContentLocalizationEnabled)
+            {
+                yafTab = new TabController().GetTabByCulture(
+                    yafBoardSettings.DNNPageTab,
+                    yafTab.PortalID,
+                    new LocaleController().GetCurrentLocale(yafTab.PortalID));
+            }
+
             if (url.IsNotSet())
             {
                 // return BaseURL
@@ -135,15 +147,6 @@ namespace YAF.DotNetNuke
             }
 
             var newUrl = new StringBuilder();
-
-            var portalSettings = new PortalSettings(yafTab.PortalID);
-
-            /*var portalSettings = PortalController.GetCurrentPortalSettings();
-
-            var yafTab = new TabController().GetTab(
-                yafBoardSettings.DNNPageTab,
-                portalSettings.PortalId,
-                false);*/
 
             var boardNameOrPageName = UrlRewriteHelper.CleanStringForURL(yafBoardSettings.Name);
 
