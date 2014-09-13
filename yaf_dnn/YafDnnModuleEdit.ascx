@@ -8,10 +8,6 @@
         <asp:LinkButton runat="server" id="create" CssClass="dnnPrimaryAction" />
     </div>
     <div class="dnnFormItem">
-        <dnn:label id="Category" runat="server" controlname="CategoryID" Suffix=":"></dnn:label>
-        <asp:dropdownlist runat="server" id="CategoryID"/>
-    </div>
-    <div class="dnnFormItem">
         <dnn:label id="RemoveTabNameLabel" runat="server" controlname="RemoveTabName" Suffix=":"></dnn:label>
         <asp:dropdownlist runat="server" id="RemoveTabName" />
     </div>

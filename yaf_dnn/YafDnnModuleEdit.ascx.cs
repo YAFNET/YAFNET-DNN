@@ -32,7 +32,6 @@ namespace YAF.DotNetNuke
     using System.Web.UI.WebControls;
 
     using global::DotNetNuke.Entities.Modules;
-
     using global::DotNetNuke.Services.Localization;
 
     using YAF.Core;
@@ -63,7 +62,6 @@ namespace YAF.DotNetNuke
             this.update.Click += this.UpdateClick;
             this.cancel.Click += CancelClick;
             this.create.Click += CreateClick;
-            this.BoardID.SelectedIndexChanged += this.BoardIdSelectedIndexChanged;
             base.OnInit(e);
         }
 
@@ -85,49 +83,6 @@ namespace YAF.DotNetNuke
         private static void CreateClick(object sender, EventArgs e)
         {
             YafBuildLink.Redirect(ForumPages.admin_editboard);
-        }
-
-        /// <summary>
-        /// The bind categories.
-        /// </summary>
-        private void BindCategories()
-        {
-            using (
-                DataTable dt = YafContext.Current.GetRepository<Category>()
-                    .List(null, this.BoardID.SelectedValue.ToType<int>()))
-            {
-                DataRow row = dt.NewRow();
-                row["Name"] = Localization.GetString("AllCategories.Text", this.LocalResourceFile);
-                row["CategoryID"] = DBNull.Value;
-                dt.Rows.InsertAt(row, 0);
-
-                this.CategoryID.DataSource = dt;
-                this.CategoryID.DataTextField = "Name";
-                this.CategoryID.DataValueField = "CategoryID";
-                this.CategoryID.DataBind();
-
-                if (this.Settings["forumcategoryid"] == null)
-                {
-                    return;
-                }
-
-                var item = this.CategoryID.Items.FindByValue(this.Settings["forumcategoryid"].ToString());
-
-                if (item != null)
-                {
-                    item.Selected = true;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Change the Categories if the Board is changed
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void BoardIdSelectedIndexChanged(object sender, EventArgs e)
-        {
-            this.BindCategories();
         }
 
         /// <summary>
@@ -161,8 +116,6 @@ namespace YAF.DotNetNuke
                     }
                 }
             }
-
-            this.BindCategories();
 
             // Load Remove Tab Name Setting
             this.RemoveTabName.Items.Add(new ListItem(Localization.GetString("RemoveTabName0.Text", this.LocalResourceFile), "0"));
@@ -205,7 +158,6 @@ namespace YAF.DotNetNuke
             var objModules = new ModuleController();
 
             objModules.UpdateModuleSetting(this.ModuleId, "forumboardid", this.BoardID.SelectedValue);
-            objModules.UpdateModuleSetting(this.ModuleId, "forumcategoryid", this.CategoryID.SelectedValue);
 
             objModules.UpdateModuleSetting(this.ModuleId, "RemoveTabName", this.RemoveTabName.SelectedValue);
             objModules.UpdateModuleSetting(

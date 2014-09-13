@@ -501,12 +501,6 @@ namespace YAF.DotNetNuke
                 {
                     SetDnnLangToYaf();
                 }
-
-                // Override to set to specifc ID
-                if (this.Settings["forumcategoryid"] != null)
-                {
-                    this.forum1.CategoryID = this.Settings["forumcategoryid"].ToType<int>();
-                }
             }
             else
             {
