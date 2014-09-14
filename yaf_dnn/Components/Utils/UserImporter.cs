@@ -99,11 +99,20 @@ namespace YAF.DotNetNuke.Components.Utils
                         continue;
                     }
 
-                    if (dnnUserInfo.IsDeleted)
+                    // unapprove soft deleted user in yaf
+                    if (dnnUserInfo.IsDeleted && dnnUser.IsApproved)
                     {
-                        // TODO : Delete user in yaf
+                        dnnUser.IsApproved = false;
+                        Membership.UpdateUser(dnnUser);
+
                         continue;
                     }
+
+                    if (!dnnUserInfo.IsDeleted && !dnnUser.IsApproved)
+                    {
+                        dnnUser.IsApproved = true;
+                        Membership.UpdateUser(dnnUser);
+                    } 
 
                     var yafUserId = LegacyDb.user_get(boardId, dnnUser.ProviderUserKey);
 
