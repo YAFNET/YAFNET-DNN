@@ -261,10 +261,17 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="boardSettings">The board settings.</param>
         private static void SaveDnnAvatar(string fileId, int yafUserId, Guid portalGUID, YafBoardSettings boardSettings)
         {
+            var basePath = YafBuildLink.GetBasePath(boardSettings);
+
+            if (!basePath.EndsWith("/"))
+            {
+                basePath = "{0}/".FormatWith(basePath);
+            }
+
             LegacyDb.user_saveavatar(
                 yafUserId,
                 "{0}LinkClick.aspx?fileticket={1}".FormatWith(
-                    YafBuildLink.GetBasePath(boardSettings),
+                    basePath,
                     UrlUtils.EncryptParameter(fileId, portalGUID.ToString())),
                 null,
                 null);
