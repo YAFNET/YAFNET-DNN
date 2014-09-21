@@ -29,7 +29,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using System.Globalization;
     using System.Linq;
 
-    using YAF.Core;
+    using YAF.Core.Helpers;
     using YAF.DotNetNuke.Components.Objects;
 
     /// <summary>
