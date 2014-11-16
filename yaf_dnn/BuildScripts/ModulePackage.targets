@@ -183,10 +183,10 @@
     
     <!-- Minify JS and CSS Files -->
     <ItemGroup>
-      <JS Include="$(MSBuildProjectDirectory)\yafdnn-res\**\*.js" Exclude="**\*.min.js;**\*-min.js;**\*_src.js;$(MSBuildProjectDirectory)\yafdnn-res\editors\ckeditor\**\*.js;$(MSBuildProjectDirectory)\yafdnn-res\editors\tiny_mce\**\*.js;" />
+      <JS Include="$(MSBuildProjectDirectory)\yafdnn-res\**\*.js" Exclude="**\*.min.js;**\*-min.js;**\*_src.js;$(MSBuildProjectDirectory)\yafdnn-res\Scripts\**\*.js;$(MSBuildProjectDirectory)\yafdnn-res\Content\**\*.js;" />
     </ItemGroup>
     <ItemGroup>
-      <CSS Include="$(MSBuildProjectDirectory)\yafdnn-res\**\*.css" Exclude="**\*.min.css;**\*_src.css;$(MSBuildProjectDirectory)\yafdnn-res\themes\**\*.css;$(MSBuildProjectDirectory)\yafdnn-res\editors\ckeditor\**\*.css;$(MSBuildProjectDirectory)\yafdnn-res\editors\tiny_mce\**\*.css;" />
+      <CSS Include="$(MSBuildProjectDirectory)\yafdnn-res\**\*.css" Exclude="**\*.min.css;**\*_src.css;$(MSBuildProjectDirectory)\yafdnn-res\themes\**\*.css;$(MSBuildProjectDirectory)\yafdnn-res\Scripts\**\*.css;$(MSBuildProjectDirectory)\yafdnn-res\Content\**\*.css;" />
     </ItemGroup>
     <AjaxMin JsSourceFiles="@(JS)" JsSourceExtensionPattern="\.js$" JsTargetExtension=".js" CssSourceFiles="@(CSS)" CssSourceExtensionPattern="\.css$" CssTargetExtension=".css"  />
 
