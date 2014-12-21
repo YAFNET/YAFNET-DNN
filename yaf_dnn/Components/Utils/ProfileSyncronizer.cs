@@ -236,9 +236,13 @@ namespace YAF.DotNetNuke.Components.Utils
 
             yafUserProfile.Save();
 
-            if (dnnUserInfo.Profile.Photo.IsSet())
+            if (dnnUserInfo.Profile.Photo.IsSet() && !dnnUserInfo.Profile.PhotoURL.Contains("no_avatar.gif"))
             {
-                SaveDnnAvatar(dnnUserInfo.Profile.Photo, yafUserId, portalGUID, boardSettings);
+                SaveDnnAvatar(dnnUserInfo.Profile.PhotoURL, yafUserId, portalGUID, boardSettings);
+            }
+            else
+            {
+                LegacyDb.user_deleteavatar(yafUserId);
             }
 
             // clear the cache for this user...)
