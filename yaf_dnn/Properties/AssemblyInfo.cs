@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("YetAnotherForum.NET")]
 [assembly: AssemblyProduct("YAF for DNN")]
-[assembly: AssemblyCopyright("Copyright © 2006-2014 Yet Another Forum.NET")]
+[assembly: AssemblyCopyright("Copyright © 2006-2015 Yet Another Forum.NET")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

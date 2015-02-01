@@ -26,7 +26,6 @@ namespace YAF.DotNetNuke.Components.Utils
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
 
     using global::DotNetNuke.Entities.Modules;
@@ -64,21 +63,21 @@ namespace YAF.DotNetNuke.Components.Utils
 
             var yafUserRoles = Data.GetYafUserRoles(boardId, yafUserId);
 
-            var yafBoardRoles = LegacyDb.group_list(boardId, DBNull.Value);
+            var yafBoardRoles = YafContext.Current.GetRepository<Group>().ListTyped(boardId: boardId);
 
             var rolesChanged = false;
 
             // TODO : Move code to sql SP
 
             // add yaf only roles to yaf
-            foreach (DataRow row in yafBoardRoles.Rows)
+            foreach (var boardRole in yafBoardRoles)
             {
-                GroupFlags roleFlags = new GroupFlags(row["Flags"]);
+                var roleFlags = new GroupFlags(boardRole.Flags);
 
                 var role = new RoleInfo
                 {
-                    RoleName = row["Name"].ToString(),
-                    RoleID = row["GroupID"].ToType<int>()
+                    RoleName = boardRole.Name,
+                    RoleID = boardRole.ID
                 };
 
                 if (roleFlags.IsGuest)
@@ -99,7 +98,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 }
                 else
                 {
-                    if (!dnnUserInfo.Roles.Any(dnnRole => dnnRole.Equals(row["Name"].ToString())))
+                    if (!dnnUserInfo.Roles.Any(dnnRole => dnnRole.Equals(boardRole.Name)))
                     {
                         continue;
                     }
@@ -153,7 +152,7 @@ namespace YAF.DotNetNuke.Components.Utils
             var yafBoardAccessMasks = Data.GetYafBoardAccessMasks(boardId);
 
             // Check If Dnn Roles Exists in Yaf
-            foreach (string role in from role in roles
+            foreach (var role in from role in roles
                                     where role.IsSet()
                                     let any = yafBoardRoles.Any(yafRole => yafRole.RoleName.Equals(role))
                                     where !any
