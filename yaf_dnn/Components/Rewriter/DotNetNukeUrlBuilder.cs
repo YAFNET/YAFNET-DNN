@@ -153,7 +153,7 @@ namespace YAF.DotNetNuke
             var parser = new SimpleURLParameterParser(url);
 
             var pageName = parser["g"];
-            ForumPages forumPage = ForumPages.forum;
+            var forumPage = ForumPages.forum;
             var getDescription = false;
 
             if (pageName.IsSet())
@@ -171,11 +171,18 @@ namespace YAF.DotNetNuke
 
             if (getDescription)
             {
+                string useKey;
                 switch (forumPage)
                 {
                     case ForumPages.topics:
                         {
-                            boardNameOrPageName = UrlRewriteHelper.GetForumName(parser["f"].ToType<int>());
+                            useKey = "f";
+                            
+                            boardNameOrPageName =
+                                UrlRewriteHelper.CleanStringForURL(
+                                    parser["name"].IsSet()
+                                        ? parser["name"]
+                                        : UrlRewriteHelper.GetForumName(parser[useKey].ToType<int>()));
                         }
 
                         break;
@@ -183,7 +190,9 @@ namespace YAF.DotNetNuke
                         {
                             if (parser["t"].IsSet())
                             {
-                                var topicName = UrlRewriteHelper.GetTopicName(parser["t"].ToType<int>());
+                                useKey = "t";
+
+                                var topicName = UrlRewriteHelper.GetTopicName(parser[useKey].ToType<int>());
 
                                 if (topicName.EndsWith("-"))
                                 {
@@ -194,11 +203,13 @@ namespace YAF.DotNetNuke
                             }
                             else if (parser["m"].IsSet())
                             {
+                                useKey = "m";
+                                
                                 string topicName;
 
                                 try
                                 {
-                                    topicName = UrlRewriteHelper.GetTopicNameFromMessage(parser["m"].ToType<int>());
+                                    topicName = UrlRewriteHelper.GetTopicNameFromMessage(parser[useKey].ToType<int>());
 
                                     if (topicName.EndsWith("-"))
                                     {
@@ -217,11 +228,13 @@ namespace YAF.DotNetNuke
                         break;
                     case ForumPages.profile:
                         {
+                            useKey = "u";
+                            
                             boardNameOrPageName =
                                 UrlRewriteHelper.CleanStringForURL(
                                     parser["name"].IsSet()
                                         ? parser["name"]
-                                        : UrlRewriteHelper.GetProfileName(parser["u"].ToType<int>()));
+                                        : UrlRewriteHelper.GetProfileName(parser[useKey].ToType<int>()));
                         }
 
                         break;
@@ -229,6 +242,7 @@ namespace YAF.DotNetNuke
                         {
                             if (parser["c"].IsSet())
                             {
+                                useKey = "c";
                                 boardNameOrPageName = UrlRewriteHelper.GetCategoryName(parser["c"].ToType<int>());
                             }
                         }
@@ -241,7 +255,7 @@ namespace YAF.DotNetNuke
                 FriendlyUrlProvider.Instance()
                     .FriendlyUrl(
                         yafTab,
-                        "{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), url),
+                        "{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), parser.CreateQueryString(new[] { "name" })),
                         boardNameOrPageName,
                         portalSettings.DefaultPortalAlias));
 
