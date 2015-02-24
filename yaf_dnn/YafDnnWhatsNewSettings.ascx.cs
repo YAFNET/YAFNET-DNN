@@ -87,11 +87,6 @@ namespace YAF.DotNetNuke
                                              ? this.TabModuleSettings["YafMaxPosts"].ToType<string>()
                                              : "10";
 
-                if (this.TabModuleSettings["YafUseRelativeTime"] is bool)
-                {
-                    this.UseRelativeTime.Checked = this.TabModuleSettings["YafUseRelativeTime"].ToType<bool>();
-                }
-
                 this.HtmlHeader.Text = this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
                                            ? this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>()
                                            : "<ul>";
@@ -143,11 +138,6 @@ namespace YAF.DotNetNuke
                 {
                     objModules.UpdateTabModuleSetting(this.TabModuleId, "YafMaxPosts", "10");
                 }
-
-                objModules.UpdateTabModuleSetting(
-                    this.TabModuleId,
-                    "YafUseRelativeTime",
-                    this.UseRelativeTime.Checked.ToString());
 
                 if (!string.IsNullOrEmpty(this.HtmlHeader.Text))
                 {
@@ -210,7 +200,7 @@ namespace YAF.DotNetNuke
                         continue;
                     }
 
-                    string strPath = objTab.TabName;
+                    var strPath = objTab.TabName;
                     TabInfo objTabSelected = objTab;
 
                     while (objTabSelected.ParentId != Null.NullInteger)

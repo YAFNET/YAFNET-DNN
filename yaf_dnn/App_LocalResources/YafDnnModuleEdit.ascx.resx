@@ -129,12 +129,6 @@
   <data name="Cancel.Text" xml:space="preserve">
     <value>Cancel / Return</value>
   </data>
-  <data name="Category.Help" xml:space="preserve">
-    <value>Select Category to shown on this Page.</value>
-  </data>
-  <data name="Category.Text" xml:space="preserve">
-    <value>Category</value>
-  </data>
   <data name="ControlTitle_edit.Text" xml:space="preserve">
     <value>Edit DNN-YAF Settings</value>
   </data>

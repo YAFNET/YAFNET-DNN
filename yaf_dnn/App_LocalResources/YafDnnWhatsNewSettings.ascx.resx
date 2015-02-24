@@ -135,12 +135,6 @@
   <data name="ModuleHelp.Text" xml:space="preserve">
     <value>Here you have to define which YAF Module Instance you want to use. You can also define How many Posts should be displayed.</value>
   </data>
-  <data name="lblRelativeTime.Help" xml:space="preserve">
-    <value>If checked, client-side "Time Ago" library will be used to show "relative times" to users instead of UTC and or imperfect server-side times.</value>
-  </data>
-  <data name="lblRelativeTime.Text" xml:space="preserve">
-    <value>Show Relative Time</value>
-  </data>
   <data name="labelHtmlFooter.Help" xml:space="preserve">
     <value>Customize the template for the footer.</value>
   </data>

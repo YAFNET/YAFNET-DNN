@@ -39,7 +39,6 @@ namespace YAF.DotNetNuke
 
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Users;
-    using global::DotNetNuke.Framework;
 
     using global::DotNetNuke.Services.Exceptions;
 
@@ -64,11 +63,6 @@ namespace YAF.DotNetNuke
     public partial class YafDnnWhatsNew : PortalModuleBase
     {
         #region Constants and Fields
-
-        /// <summary>
-        ///   Use Relative Time Setting
-        /// </summary>
-        private bool useRelativeTime;
 
         /// <summary>
         ///   The YAF board id.
@@ -157,28 +151,7 @@ namespace YAF.DotNetNuke
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         protected void Page_Load(object sender, EventArgs e)
         {
-            Type csType = typeof(Page);
-
             this.LoadSettings();
-
-            if (this.useRelativeTime)
-            {
-                jQuery.RequestRegistration();
-
-                ScriptManager.RegisterClientScriptInclude(
-                    this,
-                    csType,
-                    "timeagojs",
-                    this.ResolveUrl("~/DesktopModules/YetAnotherForumDotNet/resources/js/jquery.timeago.js"));
-
-                var timeagoLoadJs = @"Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(loadTimeAgo);
-            function loadTimeAgo() {{				      	
-            {0}
-              jQuery('abbr.timeago').timeago();	
-			      }}".FormatWith(Localization.GetString("TIMEAGO_JS", this.LocalResourceFile));
-
-                ScriptManager.RegisterStartupScript(this, csType, "timeagoloadjs", timeagoLoadJs, true);
-            }
 
             this.BindData();
         }
@@ -359,9 +332,6 @@ namespace YAF.DotNetNuke
                 this.maxPosts = moduleSettings["YafMaxPosts"].ToType<string>().IsSet()
                                     ? moduleSettings["YafMaxPosts"].ToType<int>()
                                     : 10;
-
-                this.useRelativeTime = !moduleSettings["YafUseRelativeTime"].ToType<string>().IsSet()
-                                       || moduleSettings["YafUseRelativeTime"].ToType<bool>();
 
                 this.headerTemplate = moduleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
                                           ? moduleSettings["YafWhatsNewHeader"].ToType<string>()

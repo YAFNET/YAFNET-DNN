@@ -129,12 +129,6 @@
   <data name="Cancel.Text" xml:space="preserve">
     <value>Abbruch</value>
   </data>
-  <data name="Category.Help" xml:space="preserve">
-    <value>Kategorie wählen die Angezeigt werden soll.</value>
-  </data>
-  <data name="Category.Text" xml:space="preserve">
-    <value>Kategorie</value>
-  </data>
   <data name="ControlTitle_edit.Text" xml:space="preserve">
     <value>DNN-YAF Einstellungen bearbeiten</value>
   </data>
@@ -146,9 +140,6 @@
   </data>
   <data name="InheritLanguage.Text" xml:space="preserve">
     <value>Sprache vererben</value>
-  </data>
-  <data name="OverrideTheme.Text" xml:space="preserve">
-    <value>Skin überschreiben?</value>
   </data>
   <data name="RemoveTabName0.Text" xml:space="preserve">
     <value>Nicht entfernen</value>

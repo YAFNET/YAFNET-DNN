@@ -135,12 +135,6 @@
   <data name="ModuleHelp.Text" xml:space="preserve">
     <value>Hier definieren Sie welche Modul Instanz verwendet werden soll. Sie können außerdem bestimmen wie viele Beiträge angezeigt werden sollen.</value>
   </data>
-  <data name="lblRelativeTime.Help" xml:space="preserve">
-    <value>Wenn aktiviert, wird Cdie Zeite Relative angzeigt anstatt in UTC Server seitiger Zeiten.</value>
-  </data>
-  <data name="lblRelativeTime.Text" xml:space="preserve">
-    <value>Zeige Relative Zeit</value>
-  </data>
   <data name="labelHtmlFooter.Help" xml:space="preserve">
     <value>Passen Sie die Vorlage für den Fuß an.</value>
   </data>
