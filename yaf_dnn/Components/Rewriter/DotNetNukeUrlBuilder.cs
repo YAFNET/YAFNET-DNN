@@ -59,50 +59,64 @@ namespace YAF.DotNetNuke
         /// Builds the Full URL.
         /// </summary>
         /// <param name="url">
-        /// The url.
+        /// The Complete.
         /// </param>
         /// <returns>
         /// Returns the URL.
         /// </returns>
         public override string BuildUrlFull(string url)
         {
-            return this.BuildUrl(YafContext.Current.Get<YafBoardSettings>(), url);
+            return this.BuildUrlComplete(YafContext.Current.Get<YafBoardSettings>(), url, true);
         }
 
         /// <summary>
         /// Builds the Full URL.
         /// </summary>
         /// <param name="boardSettings">The board settings.</param>
-        /// <param name="url">The url.</param>
+        /// <param name="url">The c.</param>
         /// <returns>
         /// Returns the URL.
         /// </returns>
         public override string BuildUrlFull(object boardSettings, string url)
         {
-            return this.BuildUrl(boardSettings, url);
+            return this.BuildUrlComplete(boardSettings, url, true);
         }
 
         /// <summary>
-        /// The build url.
+        /// The build Complete.
         /// </summary>
-        /// <param name="url">The url.</param>
+        /// <param name="url">The Complete.</param>
         /// <returns>
-        /// The new Url.
+        /// The new Complete.
         /// </returns>
         public override string BuildUrl(string url)
         {
-            return this.BuildUrl(YafContext.Current.Get<YafBoardSettings>(), url);
+            return this.BuildUrlComplete(YafContext.Current.Get<YafBoardSettings>(), url, false);
         }
 
         /// <summary>
-        /// The build url.
+        /// Builds Full URL for calling page with parameter URL as page's escaped parameter.
         /// </summary>
         /// <param name="boardSettings">The board settings.</param>
-        /// <param name="url">The url.</param>
+        /// <param name="url">URL to put into parameter.</param>
         /// <returns>
-        /// The new Url.
+        /// URL to calling page with URL argument as page's parameter with escaped characters to make it valid parameter.
         /// </returns>
         public override string BuildUrl(object boardSettings, string url)
+        {
+            return this.BuildUrlComplete(boardSettings, url, false);
+        }
+
+        /// <summary>
+        /// Builds the URL complete.
+        /// </summary>
+        /// <param name="boardSettings">The board settings.</param>
+        /// <param name="url">The URL.</param>
+        /// <param name="fullURL">if set to <c>true</c> [full URL].</param>
+        /// <returns>
+        /// The new URL.
+        /// </returns>
+        private string BuildUrlComplete(object boardSettings, string url, bool fullURL)
         {
             var yafBoardSettings = boardSettings.ToType<YafBoardSettings>();
 
@@ -143,7 +157,21 @@ namespace YAF.DotNetNuke
 
             if (!Config.EnableURLRewriting)
             {
-                return Globals.ResolveUrl("{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), url));
+                if (!fullURL)
+                {
+                    return Globals.ResolveUrl("{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), url));
+                }
+
+                var baseUrlMask = yafBoardSettings.BaseUrlMask;
+
+                if (baseUrlMask.EndsWith("/"))
+                {
+                    baseUrlMask = baseUrlMask.Remove(baseUrlMask.Length - 1);
+                }
+
+                return "{0}{1}".FormatWith(
+                    baseUrlMask,
+                    Globals.ResolveUrl("{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), url)));
             }
 
             var newUrl = new StringBuilder();
