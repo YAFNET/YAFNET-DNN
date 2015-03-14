@@ -29,6 +29,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using System.Linq;
     using System.Web.Security;
 
+    using global::DotNetNuke.Common;
     using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Users;
@@ -238,17 +239,11 @@ namespace YAF.DotNetNuke.Components.Utils
 
             if (dnnUserInfo.Profile.Photo.IsSet() && !dnnUserInfo.Profile.PhotoURL.Contains("no_avatar.gif"))
             {
-                SaveDnnAvatar(dnnUserInfo.Profile.PhotoURL, yafUserId, portalGUID, boardSettings);
+                SaveDnnAvatar("fileid={0}".FormatWith(dnnUserInfo.Profile.Photo), yafUserId, portalGUID, boardSettings);
             }
             else
             {
                 LegacyDb.user_deleteavatar(yafUserId);
-            }
-
-            // clear the cache for this user...)
-            if (YafContext.Current == null)
-            {
-                return;
             }
 
             YafContext.Current.Get<IRaiseEvent>().Raise(new UpdateUserEvent(yafUserId));
@@ -276,7 +271,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 yafUserId,
                 "{0}LinkClick.aspx?fileticket={1}".FormatWith(
                     basePath,
-                    UrlUtils.EncryptParameter(fileId, portalGUID.ToString())),
+                    UrlUtils.EncryptParameter(UrlUtils.GetParameterValue(fileId), portalGUID.ToString())),
                 null,
                 null);
         }
