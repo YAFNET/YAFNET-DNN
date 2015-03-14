@@ -34,6 +34,7 @@ namespace YAF.DotNetNuke.Components.Utils
 
     using YAF.Classes.Data;
     using YAF.Core;
+    using YAF.Core.Extensions;
     using YAF.Core.Model;
     using YAF.DotNetNuke.Components.Controllers;
     using YAF.Types.Extensions;
@@ -134,7 +135,8 @@ namespace YAF.DotNetNuke.Components.Utils
             // empty out access table
             if (rolesChanged && YafContext.Current != null)
             {
-                YafContext.Current.GetRepository<ActiveAccess>().Reset();
+                YafContext.Current.GetRepository<ActiveAccess>().DeleteAll();
+                YafContext.Current.GetRepository<Active>().DeleteAll();
             }
 
             return rolesChanged;

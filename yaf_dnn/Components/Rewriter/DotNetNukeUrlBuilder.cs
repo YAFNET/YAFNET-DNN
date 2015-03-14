@@ -28,12 +28,12 @@ namespace YAF.DotNetNuke
 
     using System;
     using System.Text;
-    using System.Web;
 
     using global::DotNetNuke.Common;
     using global::DotNetNuke.Entities.Portals;
 
     using global::DotNetNuke.Entities.Tabs;
+    using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Services.Localization;
     using global::DotNetNuke.Services.Url.FriendlyUrl;
 
@@ -263,6 +263,11 @@ namespace YAF.DotNetNuke
                                     parser["name"].IsSet()
                                         ? parser["name"]
                                         : UrlRewriteHelper.GetProfileName(parser[useKey].ToType<int>()));
+
+                            // Redirect the user to the Dnn profile page.
+                            /*return
+                                Globals.UserProfileURL(
+                                    UserController.GetUserByName(yafTab.PortalID, boardNameOrPageName).UserID);*/
                         }
 
                         break;
@@ -271,7 +276,7 @@ namespace YAF.DotNetNuke
                             if (parser["c"].IsSet())
                             {
                                 useKey = "c";
-                                boardNameOrPageName = UrlRewriteHelper.GetCategoryName(parser["c"].ToType<int>());
+                                boardNameOrPageName = UrlRewriteHelper.GetCategoryName(parser[useKey].ToType<int>());
                             }
                         }
 

@@ -40,24 +40,6 @@ namespace YAF.DotNetNuke {
         protected global::System.Web.UI.WebControls.LinkButton create;
         
         /// <summary>
-        /// Category control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UserControl Category;
-        
-        /// <summary>
-        /// CategoryID control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList CategoryID;
-        
-        /// <summary>
         /// RemoveTabNameLabel control.
         /// </summary>
         /// <remarks>
