@@ -231,26 +231,39 @@ namespace YAF.Editors
         case "Telerik.DNN.Providers.RadEditorProvider":
           this.Page.ClientScript.RegisterClientScriptBlock(
             this.Page.GetType(), 
-            "insertsmiley", 
-            "<script type='text/javascript'>function insertsmiley(code,img){{\nvar editor = $find('{0}');editor.pasteHtml('<img src=\"' + img + '\" alt=\"\" />');\n}}\n</script>".FormatWith(editor.ClientID));
+            "insertsmiley",
+            @"<script type='text/javascript'>
+               function insertsmiley(code,img){{\nvar editor = $find('{0}');editor.pasteHtml('[img]' + img + '[/img]');\n}}\n
+               function insertAttachment(id,url){{\nvar editor = $find('{0}');editor.pasteHtml('[attach]' + id + '[/attach]');\n}}\n
+              </script>".FormatWith(editor.ClientID));
           break;
         case "DotNetNuke.HtmlEditor.FckHtmlEditorProvider.FckHtmlEditorProvider":
           this.Page.ClientScript.RegisterClientScriptBlock(
             this.Page.GetType(), 
-            "insertsmiley", 
-            "<script language=\"javascript\" type=\"text/javascript\">\nfunction insertsmiley(code,img) {{\nvar oEditor = FCKeditorAPI.GetInstance('{0}');\nif ( oEditor.EditMode == FCK_EDITMODE_WYSIWYG ) {{\noEditor.InsertHtml( '<img src=\"' + img + '\" alt=\"\" />' ); }}\nelse alert( 'You must be on WYSIWYG mode!' );\n}}\n</script>\n".FormatWith(editor.ClientID.Replace("$", "_")));
+            "insertsmiley",
+            @"<script language=""javascript"" type=""text/javascript"">\n
+               function insertsmiley(code,img) {{\nvar oEditor = FCKeditorAPI.GetInstance('{0}');\n oEditor.InsertHtml( '[img]' + img + '[/img]' );\n}}\n
+               function insertAttachment(id, url) {{\nvar oEditor = FCKeditorAPI.GetInstance('{0}');\n oEditor.InsertHtml( '[attach]' + id + '[/attach]' );\n}}\n
+              </script>\n".FormatWith(editor.ClientID.Replace("$", "_")));
           break;
         case "WatchersNET.CKEditor.CKHtmlEditorProvider":
-          this.Page.ClientScript.RegisterClientScriptBlock(
-            this.Page.GetType(), 
-            "insertsmiley", 
-            "<script language=\"javascript\" type=\"text/javascript\">\nfunction insertsmiley(code,img) {{\nvar ckEditor = CKEDITOR.instances.{0};\nif ( ckEditor.mode == 'wysiwyg' ) {{\nckEditor.insertHtml( '<img src=\"' + img + '\" alt=\"\" />' ); }}\nelse alert( 'You must be on WYSIWYG mode!' );\n}}\n</script>\n".FormatWith(editor.ClientID));
+              this.Page.ClientScript.RegisterClientScriptBlock(
+                  this.Page.GetType(),
+                  "insertsmiley",
+                  @"<script language=""javascript"" type=""text/javascript\"">\n
+                       function insertsmiley(code,img) {{\nvar ckEditor = CKEDITOR.instances.{0}; ckEditor.insertHtml( '[img]' + img + '[/img]' );\n}}\n
+                       function insertAttachment(id,url) {{\nvar ckEditor = CKEDITOR.instances.{0}; ckEditor.insertHtml( '[attach]' + id + '[/attach]' );\n}}\n
+                    </script>\n"
+                      .FormatWith(editor.ClientID));
           break;
         case "DotNetNuke.HtmlEditor.TelerikEditorProvider.EditorProvider":
           this.Page.ClientScript.RegisterClientScriptBlock(
             this.Page.GetType(), 
-            "insertsmiley", 
-            "<script type='text/javascript'>function insertsmiley(code,img){{\nvar editor = $find('{0}');editor.pasteHtml('<img src=\"' + img + '\" alt=\"\" />');\n}}\n</script>".FormatWith(editor.ClientID));
+            "insertsmiley",
+            @"<script type='text/javascript'>
+                     function insertsmiley(code,img){{\nvar editor = $find('{0}');editor.pasteHtml('[img]' + img + '[/img]');\n}}\n
+                     function insertAttachment(id,url){{\nvar editor = $find('{0}');editor.pasteHtml('[attach]' + id + '[/attach]');\n}}\n
+               </script>".FormatWith(editor.ClientID));
           break;
       }
     }
