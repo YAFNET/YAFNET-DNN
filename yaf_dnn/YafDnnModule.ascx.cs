@@ -436,7 +436,7 @@ namespace YAF.DotNetNuke
                         string.Empty);
             }
 
-            BreadCrumbHelper.UpdateDnnBreadCrumb(this, "dnnBreadcrumb");
+            BreadCrumbHelper.UpdateDnnBreadCrumb(this, "dnnBreadcrumb", this.PortalSettings);
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014 Ingo Herbote
+ * Copyright (C) 2014-2015 Ingo Herbote
  * http://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -32,6 +32,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using System.Web.UI;
     using System.Web.UI.WebControls;
 
+    using global::DotNetNuke.Entities.Portals;
     using global::DotNetNuke.UI.Skins;
 
     using YAF.Classes;
@@ -51,10 +52,11 @@ namespace YAF.DotNetNuke.Components.Utils
         /// </summary>
         /// <param name="control">The control.</param>
         /// <param name="dnnBreadCrumbID">The DNN bread crumb unique identifier.</param>
+        /// <param name="portalSettings">The portal settings.</param>
         /// <returns>
         /// Returns if the Bread Crumb was successfully appended
         /// </returns>
-        public static bool UpdateDnnBreadCrumb(Control control, string dnnBreadCrumbID)
+        public static bool UpdateDnnBreadCrumb(Control control, string dnnBreadCrumbID, PortalSettings portalSettings)
         {
             try
             {
@@ -82,7 +84,13 @@ namespace YAF.DotNetNuke.Components.Utils
                         .GetProperty("Separator")
                         .GetValue(breadCrumbControl, BindingFlags.Public | BindingFlags.NonPublic, null, null, null)
                         .ToString();
-                object cssObject = breadCrumbControl.GetType()
+
+                if (separator.IndexOf("src=") != -1)
+                {
+                    separator = separator.Replace("src=\"", "src=\"{0}".FormatWith(portalSettings.ActiveTab.SkinPath));
+                }
+
+                var cssObject = breadCrumbControl.GetType()
                     .GetProperty("CssClass")
                     .GetValue(breadCrumbControl, BindingFlags.Public | BindingFlags.NonPublic, null, null, null);
 
@@ -108,10 +116,10 @@ namespace YAF.DotNetNuke.Components.Utils
                     var url = link.URL.Trim();
 
                     yafBreadCrumb.AppendFormat(
-                        @"{3}<a href=""{0}"" class=""{1}"">{2}</a>",
-                        url.IsNotSet() ? "#" : url,
-                        cssClass,
-                        title,
+                        @"{3}<a href=""{0}"" class=""{1}"">{2}</a>", 
+                        url.IsNotSet() ? "#" : url, 
+                        cssClass, 
+                        title, 
                         separator);
                 }
 
@@ -146,9 +154,15 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <summary>
         /// Finds the DNN bread crumb control.
         /// </summary>
-        /// <param name="theControl">The control.</param>
-        /// <param name="dnnBreadCrumbID">The DNN bread crumb unique identifier.</param>
-        /// <returns>Returns the Control if found</returns>
+        /// <param name="theControl">
+        /// The control.
+        /// </param>
+        /// <param name="dnnBreadCrumbID">
+        /// The DNN bread crumb unique identifier.
+        /// </param>
+        /// <returns>
+        /// Returns the Control if found
+        /// </returns>
         private static Control FindDnnBreadCrumbControl(Control theControl, string dnnBreadCrumbID)
         {
             Control foundControl;
