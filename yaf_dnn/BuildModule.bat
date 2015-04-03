@@ -4,4 +4,6 @@
 @SET PATH=%FrameworkDir%;%FrameworkSDKDir%;%PATH%
 @SET LANGDIR=EN
 
+.nuget\nuget.exe restore ..\yafsrc\yetanotherforum.net.sln
+
 msbuild.exe YAF.DNN.Module.sln /p:Configuration=Release /t:Clean;Build /p:WarningLevel=0

@@ -101,7 +101,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     cssClass = cssObject.ToString();
                 }
 
-                // add dnn css classes to yaf breadcrumb links
+                // add dnn CSS classes to YAF breadcrumb links
                 var yafBreadCrumb = new StringBuilder();
 
                 foreach (var link in yafPageLinks)

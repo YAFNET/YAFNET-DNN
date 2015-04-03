@@ -1,7 +1,7 @@
 /* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014 Ingo Herbote
+ * Copyright (C) 2014-2015 Ingo Herbote
  * http://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,21 +27,16 @@ namespace YAF.DotNetNuke
     #region
 
     using System;
-    using System.Collections;
     using System.Data;
     using System.Text.RegularExpressions;
     using System.Web;
     using System.Web.Security;
-    using System.Web.UI;
     using System.Web.UI.WebControls;
 
     using global::DotNetNuke.Common;
-
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Users;
-
     using global::DotNetNuke.Services.Exceptions;
-
     using global::DotNetNuke.Services.Localization;
 
     using YAF.Classes;
@@ -54,6 +49,7 @@ namespace YAF.DotNetNuke
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Utils.Helpers;
+    using YAF.Utils.Helpers.StringUtils;
 
     #endregion
 
@@ -106,15 +102,19 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// The latest posts_ item data bound.
         /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="RepeaterItemEventArgs" /> instance containing the event data.</param>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The <see cref="RepeaterItemEventArgs"/> instance containing the event data.
+        /// </param>
         protected void LatestPostsItemDataBound(object sender, RepeaterItemEventArgs e)
         {
             switch (e.Item.ItemType)
             {
                 case ListItemType.Header:
                     {
-                        Literal objLiteral = new Literal { Text = this.GetHeader() };
+                        var objLiteral = new Literal { Text = this.GetHeader() };
                         e.Item.Controls.Add(objLiteral);
                     }
 
@@ -122,12 +122,13 @@ namespace YAF.DotNetNuke
                 case ListItemType.AlternatingItem:
                 case ListItemType.Item:
                     {
-                        Literal objLiteral = new Literal { Text = this.ProcessItem(e) };
+                        var objLiteral = new Literal { Text = this.ProcessItem(e) };
                         e.Item.Controls.Add(objLiteral);
                     }
 
                     break;
-                    /*case ListItemType.Separator:
+
+                /*case ListItemType.Separator:
                     {
                         Literal objLiteral = new Literal { Text = this.ProcessSeparator() };
                         e.Item.Controls.Add(objLiteral);
@@ -136,7 +137,7 @@ namespace YAF.DotNetNuke
                     break;*/
                 case ListItemType.Footer:
                     {
-                        Literal objLiteral = new Literal { Text = this.GetFooter() };
+                        var objLiteral = new Literal { Text = this.GetFooter() };
                         e.Item.Controls.Add(objLiteral);
                     }
 
@@ -147,8 +148,12 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// Handles the Load event of the Page control.
         /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        /// <param name="sender">
+        /// The source of the event.
+        /// </param>
+        /// <param name="e">
+        /// The <see cref="EventArgs"/> instance containing the event data.
+        /// </param>
         protected void Page_Load(object sender, EventArgs e)
         {
             this.LoadSettings();
@@ -168,7 +173,7 @@ namespace YAF.DotNetNuke
         private static int GetYafBoardId(int iModuleId)
         {
             var moduleController = new ModuleController();
-            Hashtable moduleSettings = moduleController.GetModuleSettings(iModuleId);
+            var moduleSettings = moduleController.GetModuleSettings(iModuleId);
 
             int iForumId;
 
@@ -246,10 +251,10 @@ namespace YAF.DotNetNuke
             var dnnUserInfo = UserController.GetCurrentUserInfo();
 
             return UserImporter.CreateYafUser(
-                dnnUserInfo,
-                dnnUser,
-                this.boardId,
-                this.PortalSettings.PortalId,
+                dnnUserInfo, 
+                dnnUser, 
+                this.boardId, 
+                this.PortalSettings.PortalId, 
                 YafContext.Current.Get<YafBoardSettings>());
         }
 
@@ -276,7 +281,7 @@ namespace YAF.DotNetNuke
                         this.Response.Redirect(
                             this.ResolveUrl(
                                 "~/tabid/{0}/ctl/Module/ModuleId/{1}/Default.aspx".FormatWith(
-                                    this.PortalSettings.ActiveTab.TabID,
+                                    this.PortalSettings.ActiveTab.TabID, 
                                     this.ModuleId)));
                     }
                     else
@@ -298,7 +303,7 @@ namespace YAF.DotNetNuke
                         this.Response.Redirect(
                             this.ResolveUrl(
                                 "~/tabid/{0}/ctl/Module/ModuleId/{1}/Default.aspx".FormatWith(
-                                    this.PortalSettings.ActiveTab.TabID,
+                                    this.PortalSettings.ActiveTab.TabID, 
                                     this.ModuleId)));
                     }
                     else
@@ -319,7 +324,7 @@ namespace YAF.DotNetNuke
                         this.Response.Redirect(
                             this.ResolveUrl(
                                 "~/tabid/{0}/ctl/Module/ModuleId/{1}/Default.aspx".FormatWith(
-                                    this.PortalSettings.ActiveTab.TabID,
+                                    this.PortalSettings.ActiveTab.TabID, 
                                     this.ModuleId)));
                     }
                     else
@@ -363,8 +368,12 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// Processes the item.
         /// </summary>
-        /// <param name="e">The <see cref="RepeaterItemEventArgs" /> instance containing the event data.</param>
-        /// <returns>Returns the Item as string</returns>
+        /// <param name="e">
+        /// The <see cref="RepeaterItemEventArgs"/> instance containing the event data.
+        /// </param>
+        /// <returns>
+        /// Returns the Item as string
+        /// </returns>
         private string ProcessItem(RepeaterItemEventArgs e)
         {
             var currentRow = (DataRowView)e.Item.DataItem;
@@ -374,7 +383,7 @@ namespace YAF.DotNetNuke
             var messageUrl =
                 this.ResolveUrl(
                     "~/Default.aspx?tabid={1}&g=posts&m={0}#post{0}".FormatWith(
-                        currentRow["LastMessageID"],
+                        currentRow["LastMessageID"], 
                         this.yafTabId));
 
             // make message url...
@@ -383,19 +392,19 @@ namespace YAF.DotNetNuke
                 messageUrl =
                     Globals.ResolveUrl(
                         "~/tabid/{0}/g/posts/m/{1}/{2}.aspx#post{1}".FormatWith(
-                            this.yafTabId,
-                            currentRow["LastMessageID"],
+                            this.yafTabId, 
+                            currentRow["LastMessageID"], 
                             UrlRewriteHelper.CleanStringForURL(YafContext.Current.Get<IBadWordReplace>().Replace(currentRow["Topic"].ToString()))));
             }
 
             // Render [LASTPOSTICON]
             var lastPostedImage = new ThemeImage
                                       {
-                                          LocalizedTitlePage = "DEFAULT",
-                                          LocalizedTitleTag = "GO_LAST_POST",
+                                          LocalizedTitlePage = "DEFAULT", 
+                                          LocalizedTitleTag = "GO_LAST_POST", 
                                           LocalizedTitle =
-                                              Localization.GetString("LastPost.Text", this.LocalResourceFile),
-                                          ThemeTag = "TOPIC_NEW",
+                                              Localization.GetString("LastPost.Text", this.LocalResourceFile), 
+                                          ThemeTag = "TOPIC_NEW", 
                                           Style = "width:16px;height:16px"
                                       };
 
@@ -406,7 +415,7 @@ namespace YAF.DotNetNuke
                                       {
                                           Text =
                                               YafContext.Current.Get<IBadWordReplace>()
-                                              .Replace(currentRow["Topic"].ToString()),
+                                              .Replace(currentRow["Topic"].ToString()), 
                                           NavigateUrl = messageUrl
                                       };
 
@@ -415,17 +424,17 @@ namespace YAF.DotNetNuke
             // Render [FORUMLINK]
             var forumLink = new HyperLink
                                 {
-                                    Text = currentRow["Forum"].ToString(),
+                                    Text = currentRow["Forum"].ToString(), 
                                     NavigateUrl =
                                         Classes.Config.EnableURLRewriting
                                             ? Globals.ResolveUrl(
                                                 "~/tabid/{0}/g/topics/f/{1}/{2}.aspx".FormatWith(
-                                                    this.yafTabId,
-                                                    currentRow["ForumID"],
+                                                    this.yafTabId, 
+                                                    currentRow["ForumID"], 
                                                     currentRow["Forum"]))
                                             : this.ResolveUrl(
                                                 "~/Default.aspx?tabid={1}&g=topics&f={0}".FormatWith(
-                                                    currentRow["ForumID"],
+                                                    currentRow["ForumID"], 
                                                     this.yafTabId))
                                 };
 
@@ -433,7 +442,7 @@ namespace YAF.DotNetNuke
 
             // Render [BYTEXT]
             currentItem = currentItem.Replace(
-                "[BYTEXT]",
+                "[BYTEXT]", 
                 YafContext.Current.Get<IHaveLocalization>().GetText("SEARCH", "BY"));
 
             // Render [LASTUSERLINK]
@@ -444,22 +453,22 @@ namespace YAF.DotNetNuke
                                    ? currentRow["LastUserDisplayName"].ToString()
                                    : currentRow["LastUserName"].ToString();
 
-                userName = this.HtmlEncode(userName);
+                userName = new UnicodeEncoder().XSSEncode(userName);
 
                 var lastUserLink = new HyperLink
                                        {
-                                           Text = userName,
-                                           ToolTip = userName,
+                                           Text = userName, 
+                                           ToolTip = userName, 
                                            NavigateUrl =
                                                Classes.Config.EnableURLRewriting
                                                    ? Globals.ResolveUrl(
                                                        "~/tabid/{0}/g/profile/u/{1}/{2}.aspx".FormatWith(
-                                                           this.yafTabId,
-                                                           currentRow["LastUserID"],
+                                                           this.yafTabId, 
+                                                           currentRow["LastUserID"], 
                                                            userName))
                                                    : this.ResolveUrl(
                                                        "~/Default.aspx?tabid={1}&g=profile&u={0}".FormatWith(
-                                                           currentRow["LastUserID"],
+                                                           currentRow["LastUserID"], 
                                                            this.yafTabId))
                                        };
 
@@ -481,7 +490,7 @@ namespace YAF.DotNetNuke
                     var messageLimit = match.Groups["count"].Value.ToType<int>();
 
                     currentItem = currentItem.Replace(
-                        "[LASTMESSAGE:{0}]".FormatWith(match.Groups["count"].Value),
+                        "[LASTMESSAGE:{0}]".FormatWith(match.Groups["count"].Value), 
                         lastMessage.Truncate(messageLimit));
                 }
                 else
