@@ -34,6 +34,7 @@ namespace YAF.DotNetNuke
     using System.Web.UI;
     using System.Web.UI.WebControls;
 
+    using global::DotNetNuke.Common;
     using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Modules;
 
@@ -233,6 +234,7 @@ namespace YAF.DotNetNuke
         {
             // setup jQuery and Jquery Ui Tabs.
             jQuery.RequestRegistration();
+
             jQuery.RequestUIRegistration();
 
             base.OnPreRender(e);
