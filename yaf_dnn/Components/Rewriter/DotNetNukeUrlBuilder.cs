@@ -30,10 +30,10 @@ namespace YAF.DotNetNuke
     using System.Text;
 
     using global::DotNetNuke.Common;
+    using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Portals;
 
     using global::DotNetNuke.Entities.Tabs;
-    using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Services.Localization;
     using global::DotNetNuke.Services.Url.FriendlyUrl;
 
@@ -135,7 +135,7 @@ namespace YAF.DotNetNuke
             if (url.IsNotSet())
             {
                 // return BaseURL
-                var baseUrl = Globals.NavigateURL();
+                var baseUrl = Globals.NavigateURL(yafBoardSettings.DNNPageTab, Null.NullString);
 
                 if (baseUrl.EndsWith(yafTab.TabName))
                 {
@@ -155,7 +155,7 @@ namespace YAF.DotNetNuke
                 return baseUrl;
             }
 
-            if (!Config.EnableURLRewriting)
+            if (!global::YAF.Classes.Config.EnableURLRewriting)
             {
                 if (!fullURL)
                 {
@@ -289,7 +289,7 @@ namespace YAF.DotNetNuke
                     .FriendlyUrl(
                         yafTab,
                         "{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), parser.CreateQueryString(new[] { "name" })),
-                        boardNameOrPageName,
+                        "{0}.aspx".FormatWith(boardNameOrPageName),
                         portalSettings.DefaultPortalAlias));
 
             // add anchor
