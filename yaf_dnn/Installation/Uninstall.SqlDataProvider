@@ -2,16 +2,16 @@ if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'
 drop procedure {databaseOwner}{objectQualifier}yaf_topic_latest_in_category
 GO
 
-IF  exists (select top 1 1 from {databaseOwner}sysobjects where id = OBJECT_ID(N'{databaseOwner}{objectQualifier}YafDnn_Messages') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
-DROP PROCEDURE {databaseOwner}{objectQualifier}YafDnn_Messages
+IF  exists (select top 1 1 from {databaseOwner}sysobjects where id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_YafDnn_Messages') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE {databaseOwner}{objectQualifier}yaf_YafDnn_Messages
 GO
 
-IF  exists (select top 1 1 from {databaseOwner}sysobjects where id = OBJECT_ID(N'{databaseOwner}{objectQualifier}YafDnn_Topics') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
-DROP PROCEDURE {databaseOwner}{objectQualifier}YafDnn_Topics
+IF  exists (select top 1 1 from {databaseOwner}sysobjects where id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_YafDnn_Topics') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE {databaseOwner}{objectQualifier}yaf_YafDnn_Topics
 GO
 
-IF  exists (select top 1 1 from {databaseOwner}sysobjects where id = OBJECT_ID(N'{databaseOwner}{objectQualifier}YafDnn_LastUpdatedProfile') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
-DROP PROCEDURE {databaseOwner}{objectQualifier}YafDnn_LastUpdatedProfile
+IF  exists (select top 1 1 from {databaseOwner}sysobjects where id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_YafDnn_LastUpdatedProfile') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE {databaseOwner}{objectQualifier}yaf_YafDnn_LastUpdatedProfile
 GO
 
 IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'{databaseOwner}{objectQualifier}YafDnn_GetPortalRoles') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
@@ -532,6 +532,18 @@ GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Medal]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 DROP TABLE {databaseOwner}{objectQualifier}yaf_Medal
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_BannedEmail]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_BannedEmail
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_BannedName]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_BannedName
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Spam_Words]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_Spam_Words
 GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Board]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
@@ -1913,4 +1925,52 @@ GO
 
 IF  exists (select top 1 1 from {databaseOwner}sysobjects where id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_mail_save') AND OBJECTPROPERTY(id,N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}{objectQualifier}yaf_mail_save
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_bannedemail_delete') AND Objectproperty(id,N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}yaf_bannedemail_delete
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_bannedemail_list') AND Objectproperty(id,N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}yaf_bannedemail_list
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_bannedemail_save') AND Objectproperty(id,N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}yaf_bannedemail_save
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_bannedname_delete') AND Objectproperty(id,N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}yaf_bannedname_delete
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_bannedname_list') AND Objectproperty(id,N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}yaf_bannedname_list
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_bannedname_save') AND Objectproperty(id,N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}yaf_bannedname_save
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_spam_words_delete') AND Objectproperty(id,N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}yaf_spam_words_delete
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_spam_words_list') AND Objectproperty(id,N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}yaf_spam_words_list
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_spam_words_save') AND Objectproperty(id,N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}yaf_spam_words_save
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_post_alluser_simple') AND Objectproperty(id,N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}yaf_post_alluser_simple
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_rsstopic_list') AND Objectproperty(id,N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}yaf_rsstopic_list
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_topic_similarlist') AND Objectproperty(id,N'IsProcedure') = 1)
+drop procedure {databaseOwner}{objectQualifier}yaf_topic_similarlist
 GO
