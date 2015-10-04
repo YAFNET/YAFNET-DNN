@@ -397,18 +397,27 @@ namespace YAF.DotNetNuke
                             UrlRewriteHelper.CleanStringForURL(YafContext.Current.Get<IBadWordReplace>().Replace(currentRow["Topic"].ToString()))));
             }
 
-            // Render [LASTPOSTICON]
-            var lastPostedImage = new ThemeImage
-                                      {
-                                          LocalizedTitlePage = "DEFAULT", 
-                                          LocalizedTitleTag = "GO_LAST_POST", 
-                                          LocalizedTitle =
-                                              Localization.GetString("LastPost.Text", this.LocalResourceFile), 
-                                          ThemeTag = "TOPIC_NEW", 
-                                          Style = "width:16px;height:16px"
-                                      };
+            try
+            {
+                // Render [LASTPOSTICON]
+                var lastPostedImage = new ThemeImage
+                                          {
+                                              LocalizedTitlePage = "DEFAULT",
+                                              LocalizedTitleTag = "GO_LAST_POST",
+                                              LocalizedTitle =
+                                                  Localization.GetString(
+                                                      "LastPost.Text",
+                                                      this.LocalResourceFile),
+                                              ThemeTag = "TOPIC_NEW",
+                                              Style = "width:16px;height:16px"
+                                          };
 
-            currentItem = currentItem.Replace("[LASTPOSTICON]", lastPostedImage.RenderToString());
+                currentItem = currentItem.Replace("[LASTPOSTICON]", lastPostedImage.RenderToString());
+            }
+            catch (Exception)
+            {
+                
+            }    
 
             // Render [TOPICLINK]
             var textMessageLink = new HyperLink

@@ -192,7 +192,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 null,
                 dnnUserInfo.DisplayName,
                 dnnUserInfo.Email,
-                0,
+                yafUserData.TimeZone,
                 yafUserData.LanguageFile.IsSet() ? yafUserData.LanguageFile : null,
                 yafUserData.CultureUser,
                 yafUserData.ThemeFile,
