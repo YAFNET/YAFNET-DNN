@@ -360,14 +360,13 @@
           <resourceFiles>
             <basePath>DesktopModules/YetAnotherForumDotNet</basePath>
             <resourceFile>
-              <path></path>
               <name>yafdnn-res.zip</name>
             </resourceFile>
           </resourceFiles>
         </component>
         <component type="Script">
           <scripts>
-            <basePath>DesktopModules/YetAnotherForumDotNet/</basePath>
+            <basePath>DesktopModules\YetAnotherForumDotNet\</basePath>
             <script type="Install">
               <name>01.96.10.SqlDataProvider</name>
               <version>01.96.10</version>
@@ -452,7 +451,6 @@
           <resourceFiles>
             <basePath>DesktopModules\YAF.WhatsNew</basePath>
             <resourceFile>
-              <path></path>
               <name>YafDnnWhatsNewResources.zip</name>
             </resourceFile>
           </resourceFiles>
