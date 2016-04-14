@@ -55,8 +55,12 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotNetNuke">
-      <HintPath>Libaries\DotNetNuke.dll</HintPath>
+    <Reference Include="DotNetNuke, Version=7.2.0.607, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Dnn.Platform.7.2.0\lib\net40\DotNetNuke.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationBlocks.Data, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Dnn.Platform.7.2.0\lib\net40\Microsoft.ApplicationBlocks.Data.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -159,6 +163,7 @@
     <None Include="Installation\YAF.DotNetNuke.Module.dnn">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\yafsrc\YAF.Classes\YAF.Classes.Config\YAF.Classes.Config.csproj">
@@ -272,6 +277,7 @@
     <DNNFileName>YAF.DotNetNuke.Module</DNNFileName>
     <PackageName>YAF_DNN</PackageName>
     <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\BuildScripts</MSBuildCommunityTasksPath>
+    <CreatePackages>false</CreatePackages>
   </PropertyGroup>
   <Import Project="BuildScripts\ModulePackage.Targets" />
   <Target Name="AfterBuild" DependsOnTargets="PackageModule">

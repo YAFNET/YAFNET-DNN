@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2015 Ingo Herbote
+ * Copyright (C) 2014-2016 Ingo Herbote
  * http://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -61,6 +61,7 @@ namespace YAF.DotNetNuke
     using YAF.Types.Attributes;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
+    using global::DotNetNuke.Framework.JavaScriptLibraries;
 
     #endregion
 
@@ -233,9 +234,9 @@ namespace YAF.DotNetNuke
         protected override void OnPreRender([NotNull] EventArgs e)
         {
             // setup jQuery and Jquery Ui Tabs.
-            jQuery.RequestRegistration();
+            JavaScript.RequestRegistration(CommonJs.jQuery);
 
-            jQuery.RequestUIRegistration();
+            JavaScript.RequestRegistration(CommonJs.jQueryUI);
 
             base.OnPreRender(e);
         }

@@ -1,7 +1,7 @@
 /* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2015 Ingo Herbote
+ * Copyright (C) 2014-2016 Ingo Herbote
  * http://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -36,6 +36,7 @@ namespace YAF.DotNetNuke
     using global::DotNetNuke.Common;
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Users;
+    using global::DotNetNuke.Framework;
     using global::DotNetNuke.Services.Exceptions;
     using global::DotNetNuke.Services.Localization;
 
@@ -50,7 +51,8 @@ namespace YAF.DotNetNuke
     using YAF.Types.Interfaces;
     using YAF.Utils.Helpers;
     using YAF.Utils.Helpers.StringUtils;
-
+    using System.Web.UI;
+    using global::DotNetNuke.Framework.JavaScriptLibraries;
     #endregion
 
     /// <summary>
@@ -60,6 +62,11 @@ namespace YAF.DotNetNuke
     {
         #region Constants and Fields
 
+        /// <summary>
+        ///   Use Relative Time Setting
+        /// </summary>
+        private bool useRelativeTime;
+        
         /// <summary>
         ///   The YAF board id.
         /// </summary>
@@ -157,6 +164,27 @@ namespace YAF.DotNetNuke
         protected void Page_Load(object sender, EventArgs e)
         {
             this.LoadSettings();
+
+            Type csType = typeof(Page);
+
+            if (this.useRelativeTime)
+            {
+                JavaScript.RequestRegistration(CommonJs.jQuery);
+
+                ScriptManager.RegisterClientScriptInclude(
+                this,
+                csType,
+                "timeagojs",
+                this.ResolveUrl("~/DesktopModules/YAF.WhatsNew/jquery.timeago.js"));
+
+                var timeagoLoadJs = @"Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(loadTimeAgo);
+            function loadTimeAgo() {{				      	
+            {0}
+              jQuery('abbr.timeago').timeago();	
+			      }}".FormatWith(Localization.GetString("TIMEAGO_JS", this.LocalResourceFile));
+
+                ScriptManager.RegisterStartupScript(this, csType, "timeagoloadjs", timeagoLoadJs, true);
+            }
 
             this.BindData();
         }
@@ -337,6 +365,9 @@ namespace YAF.DotNetNuke
                 this.maxPosts = moduleSettings["YafMaxPosts"].ToType<string>().IsSet()
                                     ? moduleSettings["YafMaxPosts"].ToType<int>()
                                     : 10;
+
+                this.useRelativeTime = !moduleSettings["YafUseRelativeTime"].ToType<string>().IsSet()
+                                       || moduleSettings["YafUseRelativeTime"].ToType<bool>();
 
                 this.headerTemplate = moduleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
                                           ? moduleSettings["YafWhatsNewHeader"].ToType<string>()

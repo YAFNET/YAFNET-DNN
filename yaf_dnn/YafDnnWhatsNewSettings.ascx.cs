@@ -1,7 +1,7 @@
 /* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2015 Ingo Herbote
+ * Copyright (C) 2014-2016 Ingo Herbote
  * http://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -87,6 +87,11 @@ namespace YAF.DotNetNuke
                                              ? this.TabModuleSettings["YafMaxPosts"].ToType<string>()
                                              : "10";
 
+                if (this.TabModuleSettings["YafUseRelativeTime"] is bool)
+                {
+                    this.UseRelativeTime.Checked = this.TabModuleSettings["YafUseRelativeTime"].ToType<bool>();
+                }
+
                 this.HtmlHeader.Text = this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
                                            ? this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>()
                                            : "<ul>";
@@ -130,7 +135,7 @@ namespace YAF.DotNetNuke
                     }
                 }
 
-                if (ValidationHelper.IsNumeric(this.txtMaxResult.Text) || !string.IsNullOrEmpty(this.txtMaxResult.Text))
+                if (ValidationHelper.IsNumeric(this.txtMaxResult.Text) || this.txtMaxResult.Text.IsSet())
                 {
                     objModules.UpdateTabModuleSetting(this.TabModuleId, "YafMaxPosts", this.txtMaxResult.Text);
                 }
@@ -139,17 +144,23 @@ namespace YAF.DotNetNuke
                     objModules.UpdateTabModuleSetting(this.TabModuleId, "YafMaxPosts", "10");
                 }
 
-                if (!string.IsNullOrEmpty(this.HtmlHeader.Text))
+                objModules.UpdateTabModuleSetting(
+                    this.TabModuleId,
+                    "YafUseRelativeTime",
+                    this.UseRelativeTime.Checked.ToString()
+                    );
+
+                if (this.HtmlHeader.Text.IsSet())
                 {
                     objModules.UpdateTabModuleSetting(this.TabModuleId, "YafWhatsNewHeader", this.HtmlHeader.Text);
                 }
 
-                if (!string.IsNullOrEmpty(this.HtmlItem.Text))
+                if (this.HtmlItem.Text.IsSet())
                 {
                     objModules.UpdateTabModuleSetting(this.TabModuleId, "YafWhatsNewItemTemplate", this.HtmlItem.Text);
                 }
 
-                if (!string.IsNullOrEmpty(this.HtmlFooter.Text))
+                if (this.HtmlFooter.Text.IsSet())
                 {
                     objModules.UpdateTabModuleSetting(this.TabModuleId, "YafWhatsNewFooter", this.HtmlFooter.Text);
                 }

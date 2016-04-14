@@ -16,6 +16,10 @@
         <asp:TextBox ID="txtMaxResult" runat="server"></asp:TextBox>
     </div>
     <div class="dnnFormItem">
+        <dnn:label id="lblRelativeTime" runat="server" controlname="UseRelativeTime" suffix=":"></dnn:label>
+        <asp:CheckBox ID="UseRelativeTime" runat="server" Checked="true"></asp:CheckBox>
+    </div>
+    <div class="dnnFormItem">
         <dnn:label id="labelHtmlHeader" runat="server" controlname="HtmlHeader" suffix=":"></dnn:label>
         <asp:TextBox ID="HtmlHeader" runat="server" TextMode="MultiLine" Rows="2"></asp:TextBox>
     </div>

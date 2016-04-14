@@ -5,7 +5,7 @@
   <Import Project="MSBuild.Extended.Tasks.Targets" />
   <Import Project="AjaxMin.tasks" />
     
-  <Target Name="PackageModule" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <Target Name="PackageModule" Condition=" '$(Configuration)' == 'Release' AND '$(CreatePackages)' == 'true' ">
     <XmlRead Prefix="n"
                     Namespace="http://schemas.microsoft.com/developer/msbuild/2003"
                     XPath="dotnetnuke/packages/package[starts-with(@name,'YetAnotherForumDotNet')]/@version"
@@ -109,6 +109,7 @@
       <YafDnnWhatsNewResourcesInclude Include="**\App_LocalResources\YafDnnWhatsNew.ascx.resx" />
       <YafDnnWhatsNewResourcesInclude Include="**\App_LocalResources\YafDnnWhatsNewSettings.ascx.de-DE.resx" />
       <YafDnnWhatsNewResourcesInclude Include="**\App_LocalResources\YafDnnWhatsNewSettings.ascx.resx" />
+      <YafDnnWhatsNewResourcesInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumExtensions.min.js" />
     </ItemGroup>
 
     <ItemGroup>
