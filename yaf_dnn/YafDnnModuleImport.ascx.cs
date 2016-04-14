@@ -80,7 +80,7 @@ namespace YAF.DotNetNuke
                 case "add":
                     this.InstallScheduleClient();
                     btn.CommandArgument = "delete";
-                    btn.Text = Localization.GetString("DeleteShedulerText", this.LocalResourceFile);
+                    btn.Text = Localization.GetString("DeleteSheduler.Text", this.LocalResourceFile);
                     break;
                 case "delete":
                     RemoveScheduleClient(GetIdOfScheduleClient(TypeFullName));
