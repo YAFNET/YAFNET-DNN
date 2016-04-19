@@ -41,7 +41,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Utils.Helpers;
-
+    using System.Text.RegularExpressions;
     /// <summary>
     /// Helper Class to inject the Bread Crumb
     /// </summary>
@@ -85,7 +85,7 @@ namespace YAF.DotNetNuke.Components.Utils
                         .GetValue(breadCrumbControl, BindingFlags.Public | BindingFlags.NonPublic, null, null, null)
                         .ToString();
 
-                if (separator.IndexOf("src=") != -1)
+                if (separator.IndexOf("src=") != -1 && !separator.Contains(portalSettings.ActiveTab.SkinPath))
                 {
                     separator = separator.Replace("src=\"", "src=\"{0}".FormatWith(portalSettings.ActiveTab.SkinPath));
                 }

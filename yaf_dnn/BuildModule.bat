@@ -6,4 +6,4 @@
 
 .nuget\nuget.exe restore ..\yafsrc\yetanotherforum.net.sln
 
-msbuild.exe YAF.DNN.Module.sln /p:Configuration=Release /t:Clean;Build /p:WarningLevel=0
+msbuild.exe YAF.DNN.Module.sln /p:Configuration=Release /t:Clean;Build /p:WarningLevel=0;CreatePackages=true /flp1:logfile=errors.txt;errorsonly %1 %2 %3 %4 %5 %6 %7 %8 %9 
