@@ -28,8 +28,10 @@ namespace YAF.DotNetNuke
 
     using System;
     using System.Text;
+    using System.Web;
 
     using global::DotNetNuke.Common;
+    using global::DotNetNuke.Common.Internal;
     using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Portals;
 
@@ -112,24 +114,27 @@ namespace YAF.DotNetNuke
         /// </summary>
         /// <param name="boardSettings">The board settings.</param>
         /// <param name="url">The URL.</param>
-        /// <param name="fullURL">if set to <c>true</c> [full URL].</param>
+        /// <param name="fullUrl">if set to <c>true</c> [full URL].</param>
         /// <returns>
         /// The new URL.
         /// </returns>
-        private string BuildUrlComplete(object boardSettings, string url, bool fullURL)
+        private string BuildUrlComplete(object boardSettings, string url, bool fullUrl)
         {
             var yafBoardSettings = boardSettings.ToType<YafBoardSettings>();
 
-            var yafTab = new TabController().GetTab(yafBoardSettings.DNNPageTab);
+            var yafTab = new TabController().GetTab(yafBoardSettings.DNNPageTab, yafBoardSettings.DNNPortalId, true);
 
-            var portalSettings = new PortalSettings(yafTab.PortalID);
+            var domainName = TestableGlobals.Instance.GetDomainName(HttpContext.Current.Request.Url);
+            var alias = PortalAliasController.Instance.GetPortalAlias(domainName);
+
+            var portalSettings = new PortalSettings(yafTab.PortalID, alias);
 
             if (portalSettings.ContentLocalizationEnabled)
             {
                 yafTab = new TabController().GetTabByCulture(
                     yafBoardSettings.DNNPageTab,
-                    yafTab.PortalID,
-                    new LocaleController().GetCurrentLocale(yafTab.PortalID));
+                    yafBoardSettings.DNNPortalId,
+                    new LocaleController().GetCurrentLocale(yafBoardSettings.DNNPortalId));
             }
 
             if (url.IsNotSet())
@@ -157,7 +162,7 @@ namespace YAF.DotNetNuke
 
             if (!global::YAF.Classes.Config.EnableURLRewriting)
             {
-                if (!fullURL)
+                if (!fullUrl)
                 {
                     return Globals.ResolveUrl("{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), url));
                 }
@@ -267,7 +272,7 @@ namespace YAF.DotNetNuke
                             // Redirect the user to the Dnn profile page.
                             /*return
                                 Globals.UserProfileURL(
-                                    UserController.GetUserByName(yafTab.PortalID, boardNameOrPageName).UserID);*/
+                                    UserController.GetUserByName(yafPortalId, boardNameOrPageName).UserID);*/
                         }
 
                         break;
@@ -290,7 +295,7 @@ namespace YAF.DotNetNuke
                         yafTab,
                         "{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), parser.CreateQueryString(new[] { "name" })),
                         "{0}.aspx".FormatWith(boardNameOrPageName),
-                        portalSettings.DefaultPortalAlias));
+                        portalSettings));
 
             // add anchor
             /*if (parser.HasAnchor)
@@ -324,7 +329,7 @@ namespace YAF.DotNetNuke
                     activeTab,
                     "{0}&{1}".FormatWith(Globals.ApplicationURL(activeTab.TabID), url),
                     boardNameOrPageName,
-                    portalSettings.DefaultPortalAlias);
+                    portalSettings);
         }
     }
 }
