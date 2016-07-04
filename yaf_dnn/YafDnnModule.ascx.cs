@@ -492,6 +492,20 @@ namespace YAF.DotNetNuke
                     }*/
                 }
 
+                if (YafContext.Current.BoardSettings.DNNPortalId.Equals(-1))
+                {
+                    var boardSettings = new YafLoadBoardSettings(this.forum1.BoardID)
+                    {
+                        DNNPageTab =
+                                            this.TabId,
+                        DNNPortalId =
+                                            this.PortalId
+                    };
+
+                    // save the settings to the database
+                    boardSettings.SaveRegistry();
+                }
+
                 // Inherit Language from Dnn?
                 var ineritDnnLanguage = true;
 

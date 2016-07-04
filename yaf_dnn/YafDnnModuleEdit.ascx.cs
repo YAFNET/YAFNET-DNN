@@ -166,7 +166,9 @@ namespace YAF.DotNetNuke
             var boardSettings = new YafLoadBoardSettings(this.BoardID.SelectedValue.ToType<int>())
                                     {
                                         DNNPageTab =
-                                            this.TabId
+                                            this.TabId,
+                                        DNNPortalId =
+                                            this.PortalId
                                     };
 
             // save the settings to the database
