@@ -124,7 +124,7 @@
     <value>Select Board to use on this Page.</value>
   </data>
   <data name="BoardName.Text" xml:space="preserve">
-    <value>Board</value>
+    <value>Select existing Board</value>
   </data>
   <data name="Cancel.Text" xml:space="preserve">
     <value>Cancel / Return</value>
@@ -140,6 +140,12 @@
   </data>
   <data name="InheritLanguage.Text" xml:space="preserve">
     <value>Inherit Language</value>
+  </data>
+  <data name="NewBoard.Help" xml:space="preserve">
+    <value>Enter a Board Name and Create a new Board</value>
+  </data>
+  <data name="NewBoard.Text" xml:space="preserve">
+    <value>Or Create a New Board</value>
   </data>
   <data name="OverrideTheme.Text" xml:space="preserve">
     <value>Override Theme?</value>

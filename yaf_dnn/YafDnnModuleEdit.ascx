@@ -5,7 +5,11 @@
     <div class="dnnFormItem">
         <dnn:label id="BoardName" runat="server" controlname="BoardID" Suffix=":"></dnn:label>
         <asp:dropdownlist autopostback="true" runat="server" id="BoardID" />&nbsp;
-        <asp:LinkButton runat="server" id="create" CssClass="dnnPrimaryAction" />
+    </div>
+    <div class="dnnFormItem">
+        <dnn:label id="NewBoard" runat="server" controlname="NewBoardName" Suffix=":"></dnn:label>
+        <asp:TextBox runat="server" ID="NewBoardName"></asp:TextBox>
+        <asp:LinkButton runat="server" id="create" CssClass="dnnPrimaryAction" OnClick="Create_OnClick" />
     </div>
     <div class="dnnFormItem">
         <dnn:label id="RemoveTabNameLabel" runat="server" controlname="RemoveTabName" Suffix=":"></dnn:label>
