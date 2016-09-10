@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2016 Ingo Herbote
  * http://www.yetanotherforum.net/
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -125,7 +125,8 @@ namespace YAF.DotNetNuke
             var yafTab = new TabController().GetTab(yafBoardSettings.DNNPageTab, yafBoardSettings.DNNPortalId, true);
 
             var domainName = TestableGlobals.Instance.GetDomainName(HttpContext.Current.Request.Url);
-            var alias = PortalAliasController.Instance.GetPortalAlias(domainName);
+            var aliasUrl = PortalAliasController.GetPortalAliasByTab(yafBoardSettings.DNNPageTab, domainName);
+            var alias = PortalAliasController.Instance.GetPortalAlias(aliasUrl);
 
             var portalSettings = new PortalSettings(yafTab.PortalID, alias);
 
@@ -210,7 +211,7 @@ namespace YAF.DotNetNuke
                     case ForumPages.topics:
                         {
                             useKey = "f";
-                            
+
                             boardNameOrPageName =
                                 UrlRewriteHelper.CleanStringForURL(
                                     parser["name"].IsSet()
@@ -237,7 +238,7 @@ namespace YAF.DotNetNuke
                             else if (parser["m"].IsSet())
                             {
                                 useKey = "m";
-                                
+
                                 string topicName;
 
                                 try
@@ -262,7 +263,7 @@ namespace YAF.DotNetNuke
                     case ForumPages.profile:
                         {
                             useKey = "u";
-                            
+
                             boardNameOrPageName =
                                 UrlRewriteHelper.CleanStringForURL(
                                     parser["name"].IsSet()

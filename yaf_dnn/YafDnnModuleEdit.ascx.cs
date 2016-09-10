@@ -249,7 +249,7 @@ namespace YAF.DotNetNuke
                     newAdmin.UserName,
                     newAdmin.Email,
                     newAdmin.ProviderUserKey.ToString(),
-                    this.PageContext().IsHostAdmin,
+                    this.PortalSettings.UserInfo.IsSuperUser,
                     Config.CreateDistinctRoles && Config.IsAnyPortal ? "YAF " : string.Empty);
 
             var loadWrapper = new Action<string, Action<Stream>>(
