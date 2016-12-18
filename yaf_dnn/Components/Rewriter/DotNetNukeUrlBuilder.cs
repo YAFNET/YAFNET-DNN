@@ -140,25 +140,7 @@ namespace YAF.DotNetNuke
 
             if (url.IsNotSet())
             {
-                // return BaseURL
-                var baseUrl = Globals.NavigateURL(yafBoardSettings.DNNPageTab, Null.NullString);
-
-                if (baseUrl.EndsWith(yafTab.TabName))
-                {
-                    baseUrl = baseUrl.Replace(yafTab.TabName, string.Empty);
-                }
-
-                if (baseUrl.EndsWith("{0}.aspx".FormatWith(yafTab.TabName)))
-                {
-                    baseUrl = baseUrl.Replace("{0}.aspx".FormatWith(yafTab.TabName), string.Empty);
-                }
-
-                if (baseUrl.EndsWith("{0}.aspx".FormatWith(yafTab.TabName.ToLower())))
-                {
-                    baseUrl = baseUrl.Replace("{0}.aspx".FormatWith(yafTab.TabName.ToLower()), string.Empty);
-                }
-
-                return baseUrl;
+                return this.GetBaseUrl(yafBoardSettings, yafTab);
             }
 
             if (!global::YAF.Classes.Config.EnableURLRewriting)
@@ -182,7 +164,7 @@ namespace YAF.DotNetNuke
 
             var newUrl = new StringBuilder();
 
-            var boardNameOrPageName = UrlRewriteHelper.CleanStringForURL(yafBoardSettings.Name);
+            var boardNameOrPageName = UrlRewriteHelper.CleanStringForURL(yafTab.TabName);
 
             var parser = new SimpleURLParameterParser(url);
 
@@ -284,10 +266,19 @@ namespace YAF.DotNetNuke
                                 useKey = "c";
                                 boardNameOrPageName = UrlRewriteHelper.GetCategoryName(parser[useKey].ToType<int>());
                             }
+                            else if (parser["g"].IsSet())
+                            {
+                                return "{0}{1}".FormatWith(this.GetBaseUrl(yafBoardSettings, yafTab), boardNameOrPageName);
+                            }
                         }
 
                         break;
                 }
+            }
+
+            if (boardNameOrPageName.Equals(yafTab.TabName))
+            {
+                boardNameOrPageName = string.Empty;
             }
 
             newUrl.Append(
@@ -304,12 +295,49 @@ namespace YAF.DotNetNuke
                newUrl.AppendFormat("#{0}", parser.Anchor);
             }*/
 
-            return newUrl.Length >= 260
+            var finalUrl = newUrl.ToString();
+
+            if (finalUrl.EndsWith("/"))
+            {
+                finalUrl = finalUrl.Remove(finalUrl.Length - 1);
+            }
+
+            return finalUrl.Length >= 260
                        ? this.GetStandardUrl(yafTab, url, boardNameOrPageName, portalSettings)
-                       : newUrl.ToString();
+                       : finalUrl;
         }
 
         #endregion
+
+        /// <summary>
+        /// Gets the base URL.
+        /// </summary>
+        /// <param name="yafBoardSettings">The YAF board settings.</param>
+        /// <param name="yafTab">The YAF tab.</param>
+        /// <returns>
+        /// Returns the BaseUrl
+        /// </returns>
+        private string GetBaseUrl(YafBoardSettings yafBoardSettings, TabInfo yafTab)
+        {
+            var baseUrl = Globals.NavigateURL(yafBoardSettings.DNNPageTab, Null.NullString);
+
+            if (baseUrl.EndsWith(yafTab.TabName))
+            {
+                baseUrl = baseUrl.Replace(yafTab.TabName, string.Empty);
+            }
+
+            if (baseUrl.EndsWith("{0}.aspx".FormatWith(yafTab.TabName)))
+            {
+                baseUrl = baseUrl.Replace("{0}.aspx".FormatWith(yafTab.TabName), string.Empty);
+            }
+
+            if (baseUrl.EndsWith("{0}.aspx".FormatWith(yafTab.TabName.ToLower())))
+            {
+                baseUrl = baseUrl.Replace("{0}.aspx".FormatWith(yafTab.TabName.ToLower()), string.Empty);
+            }
+
+            return baseUrl;
+        }
 
         /// <summary>
         /// Gets the standard URL without any specific page names.

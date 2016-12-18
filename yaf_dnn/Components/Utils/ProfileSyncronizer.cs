@@ -27,6 +27,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using System;
     using System.Globalization;
     using System.Linq;
+    using System.Web;
     using System.Web.Security;
 
     using global::DotNetNuke.Common.Utilities;
@@ -96,15 +97,12 @@ namespace YAF.DotNetNuke.Components.Utils
             }
             catch (Exception ex)
             {
-                if (logger != null)
-                {
-                    logger.Log(
-                        "Error while Syncing dnn userprofile with Yaf",
-                        EventLogTypes.Error,
-                        null,
-                        "Profile Syncronizer",
-                        ex);
-                }
+                logger?.Log(
+                    "Error while Syncing dnn userprofile with Yaf",
+                    EventLogTypes.Error,
+                    null,
+                    "Profile Syncronizer",
+                    ex);
             }
         }
 
@@ -243,8 +241,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     SaveDnnAvatar(
                         "fileid={0}".FormatWith(dnnUserInfo.Profile.Photo),
                         yafUserId,
-                        portalGUID,
-                        boardSettings);
+                        portalGUID);
                 }
                 else
                 {
@@ -267,10 +264,14 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="fileId">The file id.</param>
         /// <param name="yafUserId">The YAF user id.</param>
         /// <param name="portalGUID">The portal GUID.</param>
-        /// <param name="boardSettings">The board settings.</param>
-        private static void SaveDnnAvatar(string fileId, int yafUserId, Guid portalGUID, YafBoardSettings boardSettings)
+        private static void SaveDnnAvatar(string fileId, int yafUserId, Guid portalGUID)
         {
-            var basePath = YafBuildLink.GetBasePath(boardSettings);
+            var basePath = BaseUrlBuilder.GetBaseUrlFromVariables() + BaseUrlBuilder.AppPath;
+
+            if (!basePath.EndsWith("/"))
+            {
+                basePath = "{0}/".FormatWith(basePath);
+            }
 
             if (!basePath.EndsWith("/"))
             {
