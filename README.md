@@ -29,6 +29,19 @@ There is also a Second Child Module the *YAF.NET Forums What's New* Module which
 
 A "sandbox" test forum is available here: http://testforum.yetanotherforum.net/.
 
+### Getting Started with Development
+
+This project is dependent upon the parent solution, YAFNET.  This requires that the steps you follow be specific.
+
+1. Create a local directory for your project o live, such as C:\dev\YAFDev\ (just an example path).
+2. Fork this YAFNET-DNN project into your account and then clone it into the local folder you just created. There should now be a C:\dev\YAFDev\yaf_dnn\ folder, as well as a README and other Git files.
+3. (Optional) Attach an upstream to this YAFNET-DNN project in Git.
+4. Download a copy of the Master branch of [the YAFNET project](https://github.com/YAFNET/YAFNET), and extract to the main folder. The resulting path should be C:\dev\YAFDev\yafsrc\.
+5. Open and then build the YAFNET solution.
+6. Open and then build the YAFNET-DNN solution.
+
+Congratulations! You're now ready to begin development.
+
 ### Support
  
 * Free Community based Support Forum here: http://forum.yetanotherforum.net/.
