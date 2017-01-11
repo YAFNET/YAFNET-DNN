@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2016 Ingo Herbote
  * http://www.yetanotherforum.net/
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -35,6 +35,7 @@ namespace YAF.DotNetNuke.Components.Integration
     using global::DotNetNuke.Entities.Host;
     using global::DotNetNuke.Services.Mail;
 
+    using YAF.Core;
     using YAF.Types;
     using YAF.Types.Attributes;
     using YAF.Types.Interfaces;
@@ -76,9 +77,20 @@ namespace YAF.DotNetNuke.Components.Integration
                     body = reader.ReadToEnd();
                 }
             }
-            
+
+            string fromAddress;
+
+            try
+            {
+                fromAddress = YafContext.Current.BoardSettings.ForumEmail;
+            }
+            catch (Exception)
+            {
+                fromAddress = mailMessage.From.Address;
+            }
+
             Mail.SendMail(
-                mailMessage.From.Address,
+                fromAddress,
                 mailMessage.To.ToString(),
                 string.Empty,
                 string.Empty,
@@ -108,7 +120,7 @@ namespace YAF.DotNetNuke.Components.Integration
         public void SendAll([NotNull] IEnumerable<MailMessage> messages, [CanBeNull] Action<MailMessage, Exception> handleException = null)
         {
             var mailMessages = messages as IList<MailMessage> ?? messages.ToList();
-            
+
             CodeContracts.VerifyNotNull(mailMessages, "messages");
 
             foreach (var mailMessage in mailMessages)
