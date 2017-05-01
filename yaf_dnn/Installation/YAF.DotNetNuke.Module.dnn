@@ -79,7 +79,7 @@
               <name>Autofac.dll</name>
             </assembly>
             <assembly>
-              <name>CookComputing.XmlRpcV2.dll</name>                         
+              <name>CookComputing.XmlRpcV2.dll</name>
             </assembly>
             <assembly>
               <name>nStuff.UpdateControls.dll</name>
@@ -262,7 +262,10 @@
                   <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
                     <add tagPrefix="editor" namespace="YAF.Editors" />
                   </node>
-                 
+                  <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
+                    <add tagPrefix="asp" namespace="System.Web.UI.HtmlControls" assembly="System.Web"/>
+                  </node>
+
                   <node path="/configuration/system.web/httpHandlers" action="update" key="type" collision="overwrite">
                     <add verb="GET" path="Resource.ashx" type="YAF.YafResourceHandler, YAF" />
                   </node>
@@ -370,6 +373,10 @@
             <script type="Install">
               <name>01.96.10.SqlDataProvider</name>
               <version>01.96.10</version>
+            </script>
+            <script type="Install">
+              <name>02.30.00.SqlDataProvider</name>
+              <version>02.30.00</version>
             </script>
             <script type="UnInstall">
               <name>Uninstall.SqlDataProvider</name>
