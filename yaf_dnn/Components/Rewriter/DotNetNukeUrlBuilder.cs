@@ -302,6 +302,8 @@ namespace YAF.DotNetNuke
                 finalUrl = finalUrl.Remove(finalUrl.Length - 1);
             }
 
+            finalUrl = finalUrl.Replace("/%20/", "-");
+
             return finalUrl.Length >= 260
                        ? this.GetStandardUrl(yafTab, url, boardNameOrPageName, portalSettings)
                        : finalUrl;
