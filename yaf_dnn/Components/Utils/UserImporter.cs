@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2016 Ingo Herbote
  * http://www.yetanotherforum.net/
- *
+ * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -112,7 +112,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     {
                         dnnUser.IsApproved = true;
                         Membership.UpdateUser(dnnUser);
-                    }
+                    } 
 
                     var yafUserId = LegacyDb.user_get(boardId, dnnUser.ProviderUserKey);
 
@@ -219,9 +219,12 @@ namespace YAF.DotNetNuke.Components.Utils
             if (dnnUserInfo.Profile.Website.IsSet())
             {
                 userProfile.Homepage = dnnUserInfo.Profile.Website;
-            }
+            } 
 
             userProfile.Save();
+
+            var autoWatchTopicsEnabled =
+                boardSettings.DefaultNotificationSetting.Equals(UserNotificationSetting.TopicsIPostToOrSubscribeTo);
 
             // Save User
             LegacyDb.user_save(
@@ -237,15 +240,11 @@ namespace YAF.DotNetNuke.Components.Utils
                 null,
                 null,
                 null,
+                boardSettings.DefaultNotificationSetting,
+                autoWatchTopicsEnabled,
                 null,
                 null,
-                null,
-                null,
-                null,
-                dnnUserInfo.Membership.LastLoginDate.ToUniversalTime());
-
-            var autoWatchTopicsEnabled =
-                boardSettings.DefaultNotificationSetting.Equals(UserNotificationSetting.TopicsIPostToOrSubscribeTo);
+                null);
 
             // save notification Settings
             LegacyDb.user_savenotification(
