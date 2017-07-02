@@ -268,7 +268,7 @@ namespace YAF.DotNetNuke
                             }
                             else if (parser["g"].IsSet())
                             {
-                                return "{0}{1}".FormatWith(this.GetBaseUrl(yafBoardSettings, yafTab), boardNameOrPageName);
+                                return this.GetBaseUrl(yafBoardSettings, yafTab);
                             }
                         }
 
