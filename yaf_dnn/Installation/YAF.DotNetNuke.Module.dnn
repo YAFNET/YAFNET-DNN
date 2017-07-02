@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="YetAnotherForumDotNet" type="Module" version="02.23.05744">
+    <package name="YetAnotherForumDotNet" type="Module" version="02.24.05750">
       <friendlyName>YAF.NET Forums</friendlyName>
       <description>
         &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; as DNN Module. Yet Another Forum.NET (YAF) is an open source ASP.NET forum system.&lt;br /&gt;
@@ -16,7 +16,7 @@
       <license src="License.html" />
       <releaseNotes src="ReadMe.html" />
       <dependencies>
-        <dependency type="CoreVersion">07.00.00</dependency>
+        <dependency type="CoreVersion">08.00.00</dependency>
       </dependencies>
       <components>
         <component type="Module">
@@ -210,6 +210,9 @@
             <install>
               <configuration>
                 <nodes>
+                  <node path="/configuration/dotnetnuke/sitemap/providers" action="update" key="name" collision="overwrite">
+                    <add name="yafSitemapProvider" type="YAF.DotNetNuke.Components.Integration.Sitemap, YAF.DotNetNuke.Module" providerPath="~\DesktopModules\YetAnotherForumDotNet\" />
+                  </node>
                   <node path="/configuration/system.net" action="remove" />
                   <node path="/configuration/appSettings" action="update" key="key" collision="ignore">
                     <add key="YAF.BoardID" value="1" />
@@ -354,6 +357,7 @@
                   <node path="/configuration/appSettings/add[starts-with(@key,'YAF.')]" action="remove" />
                   <node path="/configuration/system.web/httpHandlers/add[starts-with(@type,'AjaxPro.')]" action="remove" />
                   <node path="/configuration/system.web/httpHandlers/add[starts-with(@type,'YAF.')]" action="remove"></node>
+                  <node path="/configuration/dotnetnuke/sitemap/providers/add[@name='yafSitemapProvider']" action="remove" />
                 </nodes>
               </configuration>
             </uninstall>
@@ -374,10 +378,6 @@
               <name>01.96.10.SqlDataProvider</name>
               <version>01.96.10</version>
             </script>
-            <script type="Install">
-              <name>02.30.00.SqlDataProvider</name>
-              <version>02.30.00</version>
-            </script>
             <script type="UnInstall">
               <name>Uninstall.SqlDataProvider</name>
             </script>
@@ -385,7 +385,7 @@
         </component>
       </components>
     </package>
-    <package name="YAF.WhatsNew" type="Module" version="02.23.05744">
+    <package name="YAF.WhatsNew" type="Module" version="02.24.05750">
       <friendlyName>YAF.NET Forums What's New</friendlyName>
       <description>
         &lt;p&gt;This Module displays the Latest Posts from a  &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; Module. Based on the Current Users Authorization Level. You can define Which Forum should been used, and how many Posts should displayed.
@@ -402,7 +402,7 @@
       <license src="License.html" />
       <releaseNotes />
       <dependencies>
-        <dependency type="CoreVersion">07.00.00</dependency>
+        <dependency type="CoreVersion">08.00.00</dependency>
       </dependencies>
       <components>
         <component type="Module">

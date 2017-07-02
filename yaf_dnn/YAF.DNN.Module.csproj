@@ -104,7 +104,10 @@
     </Compile>
     <Compile Include="Components\Controllers\Data.cs" />
     <Compile Include="Components\Controllers\Profile.cs" />
-    <Compile Include="Components\Controllers\Search.cs" />
+    <Compile Include="Components\Controllers\Search.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Components\Integration\Sitemap.cs" />
     <Compile Include="Components\Utils\CombinedUserDataHelper.cs" />
     <Compile Include="Components\Integration\DnnRichEditor.cs" />
     <Compile Include="Components\Integration\Journal.cs" />
