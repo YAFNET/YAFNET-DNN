@@ -24,7 +24,9 @@
             <moduleName>YetAnotherForumDotNet</moduleName>
             <foldername>YetAnotherForumDotNet</foldername>
             <businessControllerClass>YAF.DotNetNuke.Components.Controllers.Search, YAF.DotNetNuke.Module</businessControllerClass>
-            <supportedFeatures />
+            <supportedFeatures>
+              <supportedFeature type="Searchable" />
+            </supportedFeatures>
             <moduleDefinitions>
               <moduleDefinition>
                 <friendlyName>YAF</friendlyName>
@@ -365,7 +367,7 @@
         </component>
         <component type="ResourceFile">
           <resourceFiles>
-            <basePath>DesktopModules/YetAnotherForumDotNet</basePath>
+            <basePath>DesktopModules\YetAnotherForumDotNet\</basePath>
             <resourceFile>
               <name>yafdnn-res.zip</name>
             </resourceFile>
@@ -377,10 +379,6 @@
             <script type="Install">
               <name>01.96.10.SqlDataProvider</name>
               <version>01.96.10</version>
-            </script>
-            <script type="Install">
-              <name>02.24.00.SqlDataProvider</name>
-              <version>02.24.00</version>
             </script>
             <script type="UnInstall">
               <name>Uninstall.SqlDataProvider</name>
