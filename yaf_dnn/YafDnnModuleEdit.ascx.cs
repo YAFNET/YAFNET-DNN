@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2016 Ingo Herbote
+ * Copyright (C) 2014-2017 Ingo Herbote
  * http://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,20 +27,25 @@ namespace YAF.DotNetNuke
     #region Using
 
     using System;
+    using System.Collections.Generic;
     using System.Data;
     using System.IO;
+    using System.Linq;
     using System.Web;
     using System.Web.Security;
     using System.Web.UI.WebControls;
 
     using global::DotNetNuke.Common;
+    using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Modules;
+    using global::DotNetNuke.Entities.Tabs;
     using global::DotNetNuke.Services.Localization;
 
-    using YAF.Classes;
     using YAF.Core;
     using YAF.Core.Model;
     using YAF.Core.Services.Import;
+    using YAF.DotNetNuke.Components.Controllers;
+    using YAF.DotNetNuke.Components.Utils;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
@@ -70,6 +75,85 @@ namespace YAF.DotNetNuke
         }
 
         /// <summary>
+        /// Handles the OnClick event of the ImportForums control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        protected void ImportForums_OnClick(object sender, EventArgs e)
+        {
+            // First Create new empty forum
+            var newBoardId = this.CreateBoard(false, "Import Board");
+
+            Data.ImportActiveForums(this.ActiveForums.SelectedValue.ToType<int>(), newBoardId);
+
+            var moduleController = new ModuleController();
+
+
+            moduleController.UpdateModuleSetting(this.ModuleId, "RemoveTabName", this.RemoveTabName.SelectedValue);
+            moduleController.UpdateModuleSetting(
+                this.ModuleId,
+                "InheritDnnLanguage",
+                this.InheritDnnLanguage.Checked.ToString());
+
+            var boardSettings =
+                    {
+                        DNNPageTab = this.TabId,
+                        DNNPortalId = this.PortalId,
+                        BaseUrlMask =
+                            "http://{0}/".FormatWith(
+                                HttpContext.Current.Request.ServerVariables[
+                                    "SERVER_NAME"])
+                    };
+
+            // save the settings to the database
+            boardSettings.SaveRegistry();
+
+            // Reload forum settings
+            YafContext.Current.BoardSettings = null;
+
+            this.Response.Redirect(Globals.NavigateURL(), true);
+        }
+
+        /// <summary>
+        /// Handles the OnClick event of the Create control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        protected void Create_OnClick(object sender, EventArgs e)
+        {
+            var newBoardId = this.CreateBoard(true, this.NewBoardName.Text.Trim());
+
+            var moduleController = new ModuleController();
+
+            moduleController.UpdateModuleSetting(this.ModuleId, "forumboardid", newBoardId.ToString());
+
+            moduleController.UpdateModuleSetting(this.ModuleId, "RemoveTabName", this.RemoveTabName.SelectedValue);
+            moduleController.UpdateModuleSetting(
+                this.ModuleId,
+                "InheritDnnLanguage",
+                this.InheritDnnLanguage.Checked.ToString());
+
+            var boardSettings =
+                new YafLoadBoardSettings(newBoardId)
+                    {
+                        DNNPageTab = this.TabId,
+                        DNNPortalId = this.PortalId,
+                        BaseUrlMask =
+                            "http://{0}/".FormatWith(
+                                HttpContext.Current.Request.ServerVariables[
+                                    "SERVER_NAME"])
+                    };
+
+            // save the settings to the database
+            boardSettings.SaveRegistry();
+
+            // Reload forum settings
+            YafContext.Current.BoardSettings = null;
+
+            this.Response.Redirect(Globals.NavigateURL(), true);
+        }
+
+        /// <summary>
         /// Cancel Editing.
         /// </summary>
         /// <param name="sender">The sender.</param>
@@ -89,13 +173,14 @@ namespace YAF.DotNetNuke
             this.update.Text = Localization.GetString("Update.Text", this.LocalResourceFile);
             this.cancel.Text = Localization.GetString("Cancel.Text", this.LocalResourceFile);
             this.create.Text = Localization.GetString("Create.Text", this.LocalResourceFile);
+            this.ImportForums.Text = Localization.GetString("Import.Text", this.LocalResourceFile);
 
             if (this.IsPostBack)
             {
                 return;
             }
 
-            using (DataTable dt = YafContext.Current.GetRepository<Board>().List())
+            using (var dt = YafContext.Current.GetRepository<Board>().List())
             {
                 this.BoardID.DataSource = dt;
                 this.BoardID.DataTextField = "Name";
@@ -103,13 +188,15 @@ namespace YAF.DotNetNuke
                 this.BoardID.DataBind();
                 if (this.Settings["forumboardid"] != null)
                 {
-                    ListItem item = this.BoardID.Items.FindByValue(this.Settings["forumboardid"].ToString());
+                    var item = this.BoardID.Items.FindByValue(this.Settings["forumboardid"].ToString());
                     if (item != null)
                     {
                         item.Selected = true;
                     }
                 }
             }
+
+            this.FillActiveForumsList();
 
             // Load Remove Tab Name Setting
             this.RemoveTabName.Items.Add(
@@ -124,7 +211,7 @@ namespace YAF.DotNetNuke
                                                    : "1";
 
             // Load Inherit DNN Language Setting
-            bool ineritDnnLang = true;
+            var ineritDnnLang = true;
 
             if ((string)this.Settings["InheritDnnLanguage"] != null)
             {
@@ -132,6 +219,67 @@ namespace YAF.DotNetNuke
             }
 
             this.InheritDnnLanguage.Checked = ineritDnnLang;
+        }
+
+        /// <summary>
+        /// Fills the active forums list.
+        /// </summary>
+        private void FillActiveForumsList()
+        {
+            var objTabController = new TabController();
+
+            var objDesktopModuleInfo =
+                DesktopModuleController.GetDesktopModuleByModuleName("Active Forums", this.PortalId);
+
+            var tabs = TabController.GetPortalTabs(this.PortalSettings.PortalId, -1, true, true);
+
+            foreach (var tabInfo in tabs.Where(tab => !tab.IsDeleted))
+            {
+                var moduleController = new ModuleController();
+
+                foreach (var pair in moduleController.GetTabModules(tabInfo.TabID))
+                {
+                    var moduleInfo = pair.Value;
+
+                    if (moduleInfo.IsDeleted)
+                    {
+                        continue;
+                    }
+
+                    if (moduleInfo.DesktopModuleID != objDesktopModuleInfo.DesktopModuleID)
+                    {
+                        continue;
+                    }
+
+                    var path = tabInfo.TabName;
+                    var tabSelected = tabInfo;
+
+                    while (tabSelected.ParentId != Null.NullInteger)
+                    {
+                        tabSelected = objTabController.GetTab(tabSelected.ParentId, tabInfo.PortalID, false);
+                        if (tabSelected == null)
+                        {
+                            break;
+                        }
+
+                        path = "{0} -> {1}".FormatWith(tabSelected.TabName, path);
+                    }
+
+                    var objListItem = new ListItem
+                                          {
+                                              Value =
+                                                  moduleInfo.ModuleID.ToString(),
+                                              Text = "{0} -> {1}".FormatWith(path, moduleInfo.ModuleTitle)
+                                          };
+
+                    this.ActiveForums.Items.Add(objListItem);
+                }
+            }
+
+            if (this.ActiveForums.Items.Count == 0)
+            {
+                this.ImportForums.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -151,17 +299,30 @@ namespace YAF.DotNetNuke
                 "InheritDnnLanguage",
                 this.InheritDnnLanguage.Checked.ToString());
 
-            var boardSettings = new YafLoadBoardSettings(this.BoardID.SelectedValue.ToType<int>())
-                                    {
-                                        DNNPageTab = this.TabId,
-                                        DNNPortalId = this.PortalId,
-                                        BaseUrlMask =
-                                            "http://{0}/".FormatWith(
-                                                HttpContext.Current.Request.ServerVariables["SERVER_NAME"])
-                                    };
+            var boardSettings =
+                new YafLoadBoardSettings(this.BoardID.SelectedValue.ToType<int>())
+                    {
+                        DNNPageTab = this.TabId,
+                        DNNPortalId = this.PortalId,
+                        BaseUrlMask =
+                            "http://{0}/".FormatWith(
+                                HttpContext.Current
+                                    .Request
+                                    .ServerVariables[
+                                        "SERVER_NAME"])
+                    };
 
             // save the settings to the database
             boardSettings.SaveRegistry();
+
+            string message;
+
+            // Import Users & Roles
+            UserImporter.ImportUsers(
+                this.BoardID.SelectedValue.ToType<int>(),
+                this.PortalSettings.PortalId,
+                this.PortalSettings.GUID,
+                out message);
 
             // Reload forum settings
             YafContext.Current.BoardSettings = null;
@@ -172,25 +333,29 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// The create board.
         /// </summary>
-        /// <returns></returns>
-       private int CreateBoard()
+        /// <param name="importUsers">if set to <c>true</c> [import users].</param>
+        /// <param name="BoardName">Name of the board.</param>
+        /// <returns>
+        /// Returns the Board ID of the new Board.
+        /// </returns>
+        private int CreateBoard(bool importUsers, string boardName)
         {
-                // new admin
-                MembershipUser newAdmin = UserMembershipHelper.GetUser();
+            // new admin
+            var newAdmin = UserMembershipHelper.GetUser();
 
-                // Create Board
-                var newBoardID = this.CreateBoardDatabase(
-                    this.NewBoardName.Text.Trim(),
-                    YafContext.Current.Get<MembershipProvider>().ApplicationName,
-                    YafContext.Current.Get<RoleProvider>().ApplicationName,
-                    "english.xml",
-                    newAdmin);
+            // Create Board
+            var newBoardId = this.CreateBoardDatabase(
+                boardName,
+                YafContext.Current.Get<MembershipProvider>().ApplicationName,
+                YafContext.Current.Get<RoleProvider>().ApplicationName,
+                "english.xml",
+                newAdmin);
 
-
-            if (newBoardID > 0 && Config.MultiBoardFolders)
+            if (newBoardId > 0 && global::YAF.Classes.Config.MultiBoardFolders)
             {
                 // Successfully created the new board
-                string boardFolder = this.Server.MapPath(Path.Combine(Config.BoardRoot, "{0}/".FormatWith(newBoardID)));
+                var boardFolder = this.Server.MapPath(
+                    Path.Combine(global::YAF.Classes.Config.BoardRoot, "{0}/".FormatWith(newBoardId)));
 
                 // Create New Folders.
                 if (!Directory.Exists(Path.Combine(boardFolder, "Images")))
@@ -220,7 +385,18 @@ namespace YAF.DotNetNuke
                 }
             }
 
-            return newBoardID;
+            // Import Users & Roles
+            if (importUsers)
+            {
+                string message;
+                UserImporter.ImportUsers(
+                    newBoardId,
+                    this.PortalSettings.PortalId,
+                    this.PortalSettings.GUID,
+                    out message);
+            }
+
+            return newBoardId;
         }
 
         /// <summary>
@@ -231,7 +407,7 @@ namespace YAF.DotNetNuke
         /// <param name="boardRolesAppName">Name of the board roles application.</param>
         /// <param name="langFile">The language file.</param>
         /// <param name="newAdmin">The new admin.</param>
-        /// <returns></returns>
+        /// <returns>Returns the Board ID of the new Board.</returns>
         private int CreateBoardDatabase(
             string boardName,
             string boardMembershipAppName,
@@ -239,7 +415,7 @@ namespace YAF.DotNetNuke
             string langFile,
             MembershipUser newAdmin)
         {
-            int newBoardID = YafContext.Current.GetRepository<Board>()
+            var newBoardId = YafContext.Current.GetRepository<Board>()
                 .Create(
                     boardName,
                     "en-US",
@@ -250,77 +426,41 @@ namespace YAF.DotNetNuke
                     newAdmin.Email,
                     newAdmin.ProviderUserKey.ToString(),
                     this.PortalSettings.UserInfo.IsSuperUser,
-                    Config.CreateDistinctRoles && Config.IsAnyPortal ? "YAF " : string.Empty);
+                    global::YAF.Classes.Config.CreateDistinctRoles && global::YAF.Classes.Config.IsAnyPortal
+                        ? "YAF "
+                        : string.Empty);
 
             var loadWrapper = new Action<string, Action<Stream>>(
                 (file, streamAction) =>
-                {
-                    var fullFile = YafContext.Current.Get<HttpRequestBase>().MapPath(file);
-
-                    if (!File.Exists(fullFile))
                     {
-                        return;
-                    }
+                        var fullFile = YafContext.Current.Get<HttpRequestBase>().MapPath(file);
 
-                    // import into board...
-                    using (var stream = new StreamReader(fullFile))
-                    {
-                        streamAction(stream.BaseStream);
-                        stream.Close();
-                    }
-                });
+                        if (!File.Exists(fullFile))
+                        {
+                            return;
+                        }
+
+                        // import into board...
+                        using (var stream = new StreamReader(fullFile))
+                        {
+                            streamAction(stream.BaseStream);
+                            stream.Close();
+                        }
+                    });
 
             // load default bbcode if available...
-            loadWrapper("install/bbCodeExtensions.xml", s => DataImport.BBCodeExtensionImport(newBoardID, s));
+            loadWrapper("install/bbCodeExtensions.xml", s => DataImport.BBCodeExtensionImport(newBoardId, s));
 
             // load default extensions if available...
-            loadWrapper("install/fileExtensions.xml", s => DataImport.FileExtensionImport(newBoardID, s));
+            loadWrapper("install/fileExtensions.xml", s => DataImport.FileExtensionImport(newBoardId, s));
 
             // load default topic status if available...
-            loadWrapper("install/TopicStatusList.xml", s => DataImport.TopicStatusImport(newBoardID, s));
+            loadWrapper("install/TopicStatusList.xml", s => DataImport.TopicStatusImport(newBoardId, s));
 
             // load default spam word if available...
-            loadWrapper("install/SpamWords.xml", s => DataImport.SpamWordsImport(newBoardID, s));
+            loadWrapper("install/SpamWords.xml", s => DataImport.SpamWordsImport(newBoardId, s));
 
-
-            return newBoardID;
-        }
-
-        /// <summary>
-        /// Handles the OnClick event of the Create control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        protected void Create_OnClick(object sender, EventArgs e)
-        {
-            var newBoardId = this.CreateBoard();
-
-            var moduleController = new ModuleController();
-
-            moduleController.UpdateModuleSetting(this.ModuleId, "forumboardid", newBoardId.ToString());
-
-            moduleController.UpdateModuleSetting(this.ModuleId, "RemoveTabName", this.RemoveTabName.SelectedValue);
-            moduleController.UpdateModuleSetting(
-                this.ModuleId,
-                "InheritDnnLanguage",
-                this.InheritDnnLanguage.Checked.ToString());
-
-            var boardSettings = new YafLoadBoardSettings(newBoardId)
-                                    {
-                                        DNNPageTab = this.TabId,
-                                        DNNPortalId = this.PortalId,
-                                        BaseUrlMask =
-                                            "http://{0}/".FormatWith(
-                                                HttpContext.Current.Request.ServerVariables["SERVER_NAME"])
-                                    };
-
-            // save the settings to the database
-            boardSettings.SaveRegistry();
-
-            // Reload forum settings
-            YafContext.Current.BoardSettings = null;
-
-            this.Response.Redirect(Globals.NavigateURL(), true);
+            return newBoardId;
         }
 
         #endregion

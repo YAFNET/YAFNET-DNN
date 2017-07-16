@@ -172,7 +172,7 @@
     <None Include="BuildScripts\MSBuild.Community.Tasks.Targets" />
     <None Include="BuildScripts\MSBuild.Extended.Tasks.Targets" />
     <Content Include="Installation\01.96.10.SqlDataProvider" />
-    <Content Include="Installation\02.30.00.SqlDataProvider" />
+    <Content Include="Installation\02.24.00.SqlDataProvider" />
     <None Include="Installation\Uninstall.SqlDataProvider" />
     <Content Include="web.config" />
     <Content Include="web.Debug.config">

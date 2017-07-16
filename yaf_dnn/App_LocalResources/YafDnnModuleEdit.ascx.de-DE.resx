@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ActiveForumsImport.Help" xml:space="preserve">
+    <value>Imports the selected ActiveForums as YAF Forums</value>
+  </data>
+  <data name="ActiveForumsImport.Text" xml:space="preserve">
+    <value>Or Select ActiveForums to Import</value>
+  </data>
   <data name="AllCategories.Text" xml:space="preserve">
     <value>[Alle Kategorien]</value>
   </data>
@@ -135,6 +141,12 @@
   <data name="Create.Text" xml:space="preserve">
     <value>Neues Board erstellen</value>
   </data>
+  <data name="CreateOrSelect.Text" xml:space="preserve">
+    <value>Ein Board erstellen, auswählen oder importieren...</value>
+  </data>
+  <data name="Import.Text" xml:space="preserve">
+    <value>Import Selected Forums</value>
+  </data>
   <data name="InheritLanguage.Help" xml:space="preserve">
     <value>YAF Sprache von DotNetNuke vererben</value>
   </data>
@@ -146,6 +158,31 @@
   </data>
   <data name="NewBoard.Text" xml:space="preserve">
     <value>Or Create a New Board</value>
+  </data>
+  <data name="NoteAF.Text" xml:space="preserve">
+    <value>&lt;p&gt;&lt;strong&gt;Import Note:&lt;/strong&gt;&lt;/p&gt;
+&lt;strong&gt;What will be migrated?&lt;/strong&gt;
+&lt;ul&gt;
+    &lt;li&gt;AF Module → YAF.Net Board&lt;/li&gt;
+    &lt;li&gt;AF ForumGroups → YAF.Net Categories&lt;/li&gt;
+    &lt;li&gt;AF Forums → YAF.Net Forums&lt;/li&gt;
+    &lt;li&gt;AF Threads → YAF.Net Topics&lt;/li&gt;
+    &lt;li&gt;AF Topics &amp;amp; Replies → YAF.Net Messages&lt;/li&gt;
+    &lt;li&gt;AF Attachments → YAF.Net Attachments&lt;/li&gt;
+    &lt;li&gt;AF Notifications → YAF.Net Forum &amp;amp; Topic Watches&lt;/li&gt;
+    &lt;li&gt;DNN Users with forum posts → YAF.Net Users&lt;/li&gt;
+    &lt;li&gt;DNN Roles with AF module permission → YAF.Net Groups &amp;amp; ASP.net Roles&lt;/li&gt;
+&lt;/ul&gt;
+&lt;strong&gt;What will not be migrated?&lt;/strong&gt;
+&lt;ul&gt;
+    &lt;li&gt;Permissions and a number of settings for forums and forum groups&lt;/li&gt;
+    &lt;li&gt;Messages (if you are still using AF Messages, I suggest migrating it to Core Messages) - You should inform your users to dismiss all notification messages, as they will get lost during migration.&lt;/li&gt;
+    &lt;li&gt;YAF.Net does not support forums for DNN Social Groups, i.e. those AF forum modules cannot be migrated atm!&lt;/li&gt;
+    &lt;li&gt;Data from Polls - Make sure, there are no open polls, because those will not be copied over.&lt;/li&gt;
+&lt;/ul&gt;</value>
+  </data>
+  <data name="OtherSettings.Text" xml:space="preserve">
+    <value>Weitere Einstellungen...</value>
   </data>
   <data name="RemoveTabName0.Text" xml:space="preserve">
     <value>Nicht entfernen</value>

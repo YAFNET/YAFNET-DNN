@@ -1,3 +1,7 @@
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_ImportActiveForums') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE {databaseOwner}{objectQualifier}yaf_ImportActiveForums
+GO
+
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_topic_latest_in_category') AND Objectproperty(id,N'IsProcedure') = 1)
 drop procedure {databaseOwner}{objectQualifier}yaf_topic_latest_in_category
 GO
@@ -1973,4 +1977,49 @@ GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_topic_similarlist') AND Objectproperty(id,N'IsProcedure') = 1)
 drop procedure {databaseOwner}{objectQualifier}yaf_topic_similarlist
+GO
+
+/** FUNCTIONS **/
+IF  exists(select top 1 1 from sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_registry_value') AND type in (N'FN', N'IF', N'TF'))
+DROP FUNCTION {databaseOwner}{objectQualifier}yaf_registry_value
+GO
+
+IF  exists(select top 1 1 from sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_Split') AND type in (N'FN', N'IF', N'TF'))
+DROP FUNCTION {databaseOwner}{objectQualifier}yaf_Split
+GO
+
+IF  exists(select top 1 1 from sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_forum_lastposted') AND type in (N'FN', N'IF', N'TF', N'FS', N'FT'))
+DROP FUNCTION {databaseOwner}{objectQualifier}yaf_forum_lastposted
+GO
+
+IF  exists(select top 1 1 from sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_forum_lasttopic') AND type in (N'FN', N'IF', N'TF'))
+DROP FUNCTION {databaseOwner}{objectQualifier}yaf_forum_lasttopic
+GO
+
+IF  exists(select top 1 1 from sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_forum_posts') AND type in (N'FN', N'IF', N'TF'))
+DROP FUNCTION {databaseOwner}{objectQualifier}yaf_forum_posts
+GO
+
+IF  exists(select top 1 1 from sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_forum_save_parentschecker') AND type in (N'FN', N'IF', N'TF'))
+DROP FUNCTION {databaseOwner}{objectQualifier}yaf_forum_save_parentschecker
+GO
+
+IF  exists(select top 1 1 from sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_forum_topics') AND type in (N'FN', N'IF', N'TF'))
+DROP FUNCTION {databaseOwner}{objectQualifier}yaf_forum_topics
+GO
+
+IF  exists(select top 1 1 from sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_medal_getribbonsetting') AND type in (N'FN', N'IF', N'TF'))
+DROP FUNCTION {databaseOwner}{objectQualifier}yaf_medal_getribbonsetting
+GO
+
+IF  exists(select top 1 1 from sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_medal_getsortorder') AND type in (N'FN', N'IF', N'TF'))
+DROP FUNCTION {databaseOwner}{objectQualifier}yaf_medal_getsortorder
+GO
+
+IF  exists(select top 1 1 from sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_medal_gethide') AND type in (N'FN', N'IF', N'TF'))
+DROP FUNCTION {databaseOwner}{objectQualifier}yaf_medal_gethide
+GO
+
+IF  exists(select top 1 1 from sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_message_getthanksinfo') AND type in (N'FN', N'IF', N'TF'))
+DROP FUNCTION {databaseOwner}{objectQualifier}yaf_message_getthanksinfo
 GO

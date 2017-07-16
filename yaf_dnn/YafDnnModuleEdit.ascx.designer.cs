@@ -58,6 +58,33 @@ namespace YAF.DotNetNuke {
         protected global::System.Web.UI.WebControls.LinkButton create;
         
         /// <summary>
+        /// ActiveForumsImport-Steuerelement
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.UserControl ActiveForumsImport;
+        
+        /// <summary>
+        /// ActiveForums-Steuerelement
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ActiveForums;
+        
+        /// <summary>
+        /// ImportForums-Steuerelement
+        /// </summary>
+        /// <remarks>
+        /// Automatisch generiertes Feld
+        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton ImportForums;
+        
+        /// <summary>
         /// RemoveTabNameLabel-Steuerelement
         /// </summary>
         /// <remarks>

@@ -1,7 +1,7 @@
 /* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2016 Ingo Herbote
+ * Copyright (C) 2014-2017 Ingo Herbote
  * http://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,6 +35,7 @@ namespace YAF.DotNetNuke.Components.Controllers
 
     using YAF.Classes.Data;
     using YAF.DotNetNuke.Components.Objects;
+    using YAF.Types;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
     using YAF.Types.Interfaces.Data;
@@ -63,7 +64,6 @@ namespace YAF.DotNetNuke.Components.Controllers
                 cmd.CommandType = CommandType.StoredProcedure;
 
                 cmd.Parameters.AddWithValue("BoardID", null);
-
 
                 var mesagesTable = LegacyDb.DbAccess.GetData(cmd);
 
@@ -311,6 +311,24 @@ namespace YAF.DotNetNuke.Components.Controllers
             }
 
             return forumAccessList;
+        }
+
+        /// <summary>
+        /// Imports the active forums.
+        /// </summary>
+        /// <param name="moduleId">The module identifier.</param>
+        /// <param name="boardId">The board identifier.</param>
+        public static void ImportActiveForums([NotNull] int moduleId, [NotNull] int boardId)
+        {
+            using (var cmd = DbHelpers.GetCommand("ImportActiveForums"))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.AddParam("oModuleID", moduleId);
+                cmd.AddParam("tplBoardID", boardId);
+
+                LegacyDb.DbAccess.ExecuteNonQuery(cmd);
+            }
         }
 
         #endregion
