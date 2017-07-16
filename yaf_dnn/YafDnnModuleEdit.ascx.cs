@@ -88,6 +88,7 @@ namespace YAF.DotNetNuke
 
             var moduleController = new ModuleController();
 
+            moduleController.UpdateModuleSetting(this.ModuleId, "forumboardid", (newBoardId + 1).ToString());
 
             moduleController.UpdateModuleSetting(this.ModuleId, "RemoveTabName", this.RemoveTabName.SelectedValue);
             moduleController.UpdateModuleSetting(
@@ -96,6 +97,7 @@ namespace YAF.DotNetNuke
                 this.InheritDnnLanguage.Checked.ToString());
 
             var boardSettings =
+                new YafLoadBoardSettings(newBoardId + 1)
                     {
                         DNNPageTab = this.TabId,
                         DNNPortalId = this.PortalId,
