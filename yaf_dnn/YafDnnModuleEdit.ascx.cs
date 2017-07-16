@@ -41,6 +41,7 @@ namespace YAF.DotNetNuke
     using global::DotNetNuke.Entities.Tabs;
     using global::DotNetNuke.Services.Localization;
 
+    using YAF.Classes;
     using YAF.Core;
     using YAF.Core.Model;
     using YAF.Core.Services.Import;
@@ -85,6 +86,8 @@ namespace YAF.DotNetNuke
             var newBoardId = this.CreateBoard(false, "Import Board");
 
             Data.ImportActiveForums(this.ActiveForums.SelectedValue.ToType<int>(), newBoardId);
+
+            this.MigrateAttachments();
 
             var moduleController = new ModuleController();
 
@@ -233,6 +236,12 @@ namespace YAF.DotNetNuke
             var objDesktopModuleInfo =
                 DesktopModuleController.GetDesktopModuleByModuleName("Active Forums", this.PortalId);
 
+            if (objDesktopModuleInfo == null)
+            {
+                this.ActiveForumsPlaceHolder.Visible = false;
+                return;
+            }
+
             var tabs = TabController.GetPortalTabs(this.PortalSettings.PortalId, -1, true, true);
 
             foreach (var tabInfo in tabs.Where(tab => !tab.IsDeleted))
@@ -269,8 +278,7 @@ namespace YAF.DotNetNuke
 
                     var objListItem = new ListItem
                                           {
-                                              Value =
-                                                  moduleInfo.ModuleID.ToString(),
+                                              Value = moduleInfo.ModuleID.ToString(),
                                               Text = "{0} -> {1}".FormatWith(path, moduleInfo.ModuleTitle)
                                           };
 
@@ -280,7 +288,7 @@ namespace YAF.DotNetNuke
 
             if (this.ActiveForums.Items.Count == 0)
             {
-                this.ImportForums.Enabled = false;
+                this.ActiveForumsPlaceHolder.Visible = false;
             }
         }
 
@@ -463,6 +471,25 @@ namespace YAF.DotNetNuke
             loadWrapper("install/SpamWords.xml", s => DataImport.SpamWordsImport(newBoardId, s));
 
             return newBoardId;
+        }
+
+        /// <summary>
+        /// Migrates the Active Forums Attachments.
+        /// </summary>
+        private void MigrateAttachments()
+        {
+            var attachActiveFolderPath = Path.Combine(this.PortalSettings.HomeDirectoryMapPath, "activeforums_Upload");
+            var attachYafFolderPath = HttpContext.Current.Request.MapPath(
+                Path.Combine("DesktopModules\\YetAnotherForumDotNet", YafBoardFolders.Current.Uploads));
+
+            if (Directory.Exists(attachActiveFolderPath))
+            {
+                foreach (var attachment in Directory.GetFiles(attachActiveFolderPath))
+                {
+                    var fileName = Path.GetFileName(attachment);
+                    File.Copy(attachment, "{0}\\{1}.yafupload".FormatWith(attachYafFolderPath, fileName));
+                }
+            }
         }
 
         #endregion

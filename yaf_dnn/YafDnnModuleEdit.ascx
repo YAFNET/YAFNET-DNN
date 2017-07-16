@@ -38,6 +38,7 @@
             <asp:LinkButton runat="server" id="create" CssClass="dnnPrimaryAction" OnClick="Create_OnClick" />
         </div>
         <hr/>
+        <asp:PlaceHolder runat="server" ID="ActiveForumsPlaceHolder">
         <div class="dnnFormItem">
             <dnn:label id="ActiveForumsImport" runat="server" controlname="ActiveForums" Suffix="?"></dnn:label>
             <asp:DropDownList id="ActiveForums" runat="server" 
@@ -46,6 +47,7 @@
             <asp:LinkButton runat="server" id="ImportForums" CssClass="dnnPrimaryAction" OnClick="ImportForums_OnClick" />
         <div class="dnnFormMessage dnnFormInfo"><%= this.LocalizeString("NoteAF")%></div>
         </div>
+        </asp:PlaceHolder>
     </fieldset>
     <h2 id="Other" class="dnnFormSectionHead"><a href="#">
         <%= this.LocalizeString("OtherSettings")%>
