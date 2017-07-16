@@ -17,6 +17,8 @@
       <Output PropertyName="YAFVersion" TaskParameter="Result" />
     </StringReplace>
 
+    <RemoveDir Directories ="$(MSBuildProjectDirectory)\deploy\" />
+
     <ItemGroup>
       <DefaultExclude Include="**\.svn\**" />
       <DefaultExclude Include="**\bin\**" />
@@ -59,8 +61,11 @@
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.timeago.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ui.datepicker-farsi.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.yafmodaldialog.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-2.1.4.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-2.1.4-vsdoc.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.1.1.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.1.1.intellisense.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.1.1.slim.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.1.1.slim.min.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.1.1-vsdoc.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-ui-1.11.4.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-ui-i18n.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jsdifflib.js" />
@@ -153,11 +158,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <yafsrcInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\**\*.*" Exclude="$(MSBuildProjectDirectory)\..\yaf_dnn\.vs\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\deploy\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\.vs\**\*.*;$(MSBuildProjectDirectory)\.nuget\nuget.exe;$(MSBuildProjectDirectory)\..\yafsrc\.nuget\nuget.exe;$(MSBuildProjectDirectory)\..\yafsrc\packages\**\*.*;$(MSBuildProjectDirectory)\packages\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\Tools\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\YAF.Extras\**\*.*;$(MSBuildProjectDirectory)\..\**\*.ReSharper;$(MSBuildProjectDirectory)\..\**\*.testsettings;$(MSBuildProjectDirectory)\..\**\*.chm;$(MSBuildProjectDirectory)\..\**\*.psd;$(MSBuildProjectDirectory)\..\**\TestResults\**;$(MSBuildProjectDirectory)\..\**\nStuff.UpdateControls\**;$(MSBuildProjectDirectory)\..\**\Dependencies\**;$(MSBuildProjectDirectory)\..\**\CookComputing.XmlRpc\**;$(MSBuildProjectDirectory)\..\**\obj\**;$(MSBuildProjectDirectory)\..\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\**\bin\**;$(MSBuildProjectDirectory)\..\**\*.zip;$(MSBuildProjectDirectory)\**\Thumbs.db;$(MSBuildProjectDirectory)\..\**\*.user;$(MSBuildProjectDirectory)\..\**\.svn\**;$(MSBuildProjectDirectory)\..\**\*.suo;$(MSBuildProjectDirectory)\..\**\Tools\**;$(MSBuildProjectDirectory)\..\**\YAF.Extras\**;$(MSBuildProjectDirectory)\..\**\Autofac.2.6.1.841\**;" />
+      <yafsrcInclude 
+        Include="$(MSBuildProjectDirectory)\..\yafsrc\**\*.*" 
+        Exclude="$(MSBuildProjectDirectory)\..\yafsrc\.vs\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\deploy\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\packages\**\*.*;$(MSBuildProjectDirectory)\.nuget\nuget.exe;$(MSBuildProjectDirectory)\..\yafsrc\.nuget\nuget.exe;$(MSBuildProjectDirectory)\..\yafsrc\Tools\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\YAF.Extras\**\*.*;$(MSBuildProjectDirectory)\..\**\*.ReSharper;$(MSBuildProjectDirectory)\..\**\*.testsettings;$(MSBuildProjectDirectory)\..\**\*.chm;$(MSBuildProjectDirectory)\..\**\*.psd;$(MSBuildProjectDirectory)\..\**\TestResults\**;$(MSBuildProjectDirectory)\..\**\nStuff.UpdateControls\**;$(MSBuildProjectDirectory)\..\**\Dependencies\**;$(MSBuildProjectDirectory)\..\**\CookComputing.XmlRpc\**;$(MSBuildProjectDirectory)\..\**\obj\**;$(MSBuildProjectDirectory)\..\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\**\bin\**;$(MSBuildProjectDirectory)\..\**\*.zip;$(MSBuildProjectDirectory)\**\Thumbs.db;$(MSBuildProjectDirectory)\..\**\*.user;$(MSBuildProjectDirectory)\..\**\.svn\**;$(MSBuildProjectDirectory)\..\**\*.suo;$(MSBuildProjectDirectory)\..\**\Tools\**;$(MSBuildProjectDirectory)\..\**\YAF.Extras\**;$(MSBuildProjectDirectory)\..\**\Autofac.2.6.1.841\**;" />
     </ItemGroup>
 
     <ItemGroup>
-      <yaf_dnnInclude Include="$(MSBuildProjectDirectory)\**\*.*" Exclude="$(MSBuildProjectDirectory)\**\obj\**;$(MSBuildProjectDirectory)\**\_ReSharper*\**;$(MSBuildProjectDirectory)\**\bin\**;$(MSBuildProjectDirectory)\**\*.zip;$(MSBuildProjectDirectory)\**\Thumbs.db;$(MSBuildProjectDirectory)\**\*.user;$(MSBuildProjectDirectory)\**\.svn\**;$(MSBuildProjectDirectory)\**\*.suo;" />
+      <yaf_dnnInclude 
+        Include="$(MSBuildProjectDirectory)\**\*.*" 
+        Exclude="$(MSBuildProjectDirectory)\**\obj\**;$(MSBuildProjectDirectory)\**\packages\**;$(MSBuildProjectDirectory)\**\.vs\**;$(MSBuildProjectDirectory)\**\_ReSharper*\**;$(MSBuildProjectDirectory)\**\bin\**;$(MSBuildProjectDirectory)\**\*.zip;$(MSBuildProjectDirectory)\**\Thumbs.db;$(MSBuildProjectDirectory)\**\*.user;$(MSBuildProjectDirectory)\**\.svn\**;$(MSBuildProjectDirectory)\**\*.suo;" />
     </ItemGroup>    
 
     <CreateItem Include="$(MSBuildProjectDirectory)\Installation\$(DNNFileName).dnn">
@@ -216,13 +225,13 @@
     <CreateItem Include="$(MSBuildProjectDirectory)\Package\**\*.*">
       <Output TaskParameter="Include" ItemName="OutputContent" />
     </CreateItem>
-
-    <RemoveDir Directories ="$(MSBuildProjectDirectory)\deploy" />
+    
+    <MakeDir Directories="$(MSBuildProjectDirectory)\deploy" />
 
     <!-- Create the Install package -->    
     <Zip Files="@(OutputContent)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="$(PackageName)_$(YAFVersion).$(Extension)" />
     <!-- Copy the Install package to the Packages folder -->
-    <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion).$(Extension)" DestinationFolder="deploy/" />
+    <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion).$(Extension)" DestinationFolder="deploy" />
 
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\Package" />
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources" />
