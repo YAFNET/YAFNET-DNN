@@ -26,12 +26,13 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
+    using System.Linq;
 
     using global::DotNetNuke.Entities.Portals;
     using global::DotNetNuke.Services.Sitemap;
 
     using YAF.Classes.Data;
+    using YAF.Core;
     using YAF.Types.Constants;
     using YAF.Utils;
 
@@ -56,27 +57,29 @@
         {
             var urls = new List<SitemapUrl>();
 
-            var forumListDataTable = LegacyDb.forum_simplelist(1, 100);
-
-            foreach (DataRow drow in forumListDataTable.Rows)
+            if (YafContext.Current == null)
             {
-                var pageUrl = new SitemapUrl
-                                  {
-                                      Url =
-                                          YafBuildLink.GetLinkNotEscaped(
-                                              ForumPages.topics,
-                                              true,
-                                              "f={0}",
-                                              drow["ForumID"]),
-                                      Priority = (float)0.8,
-                                      LastModified = DateTime.Now,
-                                      ChangeFrequency = SitemapChangeFrequency.Always
-                                  };
-
-
-
-                urls.Add(pageUrl);
+                return urls;
             }
+
+            var forumList = LegacyDb.ForumListAll(
+                YafContext.Current.BoardSettings.BoardID,
+                UserMembershipHelper.GuestUserId);
+
+            urls.AddRange(
+                forumList.Select(
+                    forum => new SitemapUrl
+                                 {
+                                     Url =
+                                         YafBuildLink.GetLinkNotEscaped(
+                                             ForumPages.topics,
+                                             true,
+                                             "f={0}",
+                                             forum.ForumID),
+                                     Priority = (float)0.8,
+                                     LastModified = DateTime.Now,
+                                     ChangeFrequency = SitemapChangeFrequency.Always
+                                 }));
 
             return urls;
         }
