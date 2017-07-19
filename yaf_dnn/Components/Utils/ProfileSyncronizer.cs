@@ -30,7 +30,6 @@ namespace YAF.DotNetNuke.Components.Utils
     using System.Web;
     using System.Web.Security;
 
-    using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Users;
 
@@ -59,7 +58,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="yafCurrentUserData">The YAF current user data.</param>
         /// <param name="dnnUserInfo">DNN UserInfo of current User</param>
         /// <param name="membershipUser">MemberShip of current User</param>
-        /// <param name="portalID">The portal ID.</param>
+        /// <param name="portalId">The portal ID.</param>
         /// <param name="portalGuid">The portal GUID.</param>
         /// <param name="boardSettings">The board settings.</param>
         /// <param name="ignoreLastUpdated">if set to <c>true</c> [ignore last updated].</param>
@@ -69,7 +68,7 @@ namespace YAF.DotNetNuke.Components.Utils
             [CanBeNull] IUserData yafCurrentUserData,
             [NotNull] UserInfo dnnUserInfo,
             [NotNull] MembershipUser membershipUser,
-            [NotNull] int portalID,
+            [NotNull] int portalId,
             [NotNull] Guid portalGuid,
             [NotNull] YafBoardSettings boardSettings,
             [CanBeNull] bool ignoreLastUpdated = false)
@@ -92,7 +91,6 @@ namespace YAF.DotNetNuke.Components.Utils
                     yafUserProfile,
                     yafCurrentUserData,
                     dnnUserInfo,
-                    portalGuid,
                     boardSettings);
             }
             catch (Exception ex)
@@ -161,9 +159,8 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="yafUserProfile">The YAF user profile.</param>
         /// <param name="yafUserData">The YAF user data.</param>
         /// <param name="dnnUserInfo">The DNN user info.</param>
-        /// <param name="portalGUID">The portal GUID.</param>
         /// <param name="boardSettings">The board settings.</param>
-        private static void SyncYafProfile(int yafUserId, YafUserProfile yafUserProfile, IUserData yafUserData, UserInfo dnnUserInfo, Guid portalGUID, YafBoardSettings boardSettings)
+        private static void SyncYafProfile(int yafUserId, YafUserProfile yafUserProfile, IUserData yafUserData, UserInfo dnnUserInfo, YafBoardSettings boardSettings)
         {
             /*var userCuluture = new YafCultureInfo
             {
@@ -236,12 +233,10 @@ namespace YAF.DotNetNuke.Components.Utils
 
             try
             {
-                if (dnnUserInfo.Profile.Photo.IsSet() && !dnnUserInfo.Profile.PhotoURL.Contains("no_avatar.gif"))
+                if (dnnUserInfo.Profile.Photo.IsSet() && !dnnUserInfo.Profile.PhotoURL.Contains("no_avatar.gif")
+                    && dnnUserInfo.Profile.Photo.ToType<int>() > 0)
                 {
-                    SaveDnnAvatar(
-                        "fileid={0}".FormatWith(dnnUserInfo.Profile.Photo),
-                        yafUserId,
-                        portalGUID);
+                    SaveDnnAvatar(dnnUserInfo.Profile.PhotoURL, yafUserId);
                 }
                 else
                 {
@@ -250,7 +245,6 @@ namespace YAF.DotNetNuke.Components.Utils
             }
             catch (Exception)
             {
-                
             }
 
             YafContext.Current.Get<IRaiseEvent>().Raise(new UpdateUserEvent(yafUserId));
@@ -261,30 +255,15 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <summary>
         /// Save DNN Avatar as YAF Remote Avatar with relative Path.
         /// </summary>
-        /// <param name="fileId">The file id.</param>
+        /// <param name="photoUrl">The photo URL.</param>
         /// <param name="yafUserId">The YAF user id.</param>
-        /// <param name="portalGUID">The portal GUID.</param>
-        private static void SaveDnnAvatar(string fileId, int yafUserId, Guid portalGUID)
+        private static void SaveDnnAvatar(string photoUrl, int yafUserId)
         {
-            var basePath = BaseUrlBuilder.GetBaseUrlFromVariables() + BaseUrlBuilder.AppPath;
+            var basePath = "{0}://{1}".FormatWith(
+                HttpContext.Current.Request.Url.Scheme,
+                HttpContext.Current.Request.Url.Host);
 
-            if (!basePath.EndsWith("/"))
-            {
-                basePath = "{0}/".FormatWith(basePath);
-            }
-
-            if (!basePath.EndsWith("/"))
-            {
-                basePath = "{0}/".FormatWith(basePath);
-            }
-
-            LegacyDb.user_saveavatar(
-                yafUserId,
-                "{0}LinkClick.aspx?fileticket={1}".FormatWith(
-                    basePath,
-                    UrlUtils.EncryptParameter(UrlUtils.GetParameterValue(fileId), portalGUID.ToString())),
-                null,
-                null);
+            LegacyDb.user_saveavatar(yafUserId, "{0}{1}".FormatWith(basePath, photoUrl), null, null);
         }
     }
 }
