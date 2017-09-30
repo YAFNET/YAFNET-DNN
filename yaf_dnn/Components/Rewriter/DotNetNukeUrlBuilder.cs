@@ -268,7 +268,13 @@ namespace YAF.DotNetNuke
                             }
                             else if (parser["g"].IsSet())
                             {
-                                return "{0}{1}".FormatWith(this.GetBaseUrl(yafBoardSettings, yafTab), boardNameOrPageName);
+                                var baseUrl = this.GetBaseUrl(yafBoardSettings, yafTab);
+
+                                return baseUrl.EndsWith(yafTab.TabName, StringComparison.InvariantCultureIgnoreCase)
+                                           ? baseUrl
+                                           : "{0}{1}".FormatWith(
+                                               this.GetBaseUrl(yafBoardSettings, yafTab),
+                                               boardNameOrPageName);
                             }
                         }
 
@@ -323,7 +329,7 @@ namespace YAF.DotNetNuke
         {
             var baseUrl = Globals.NavigateURL(yafBoardSettings.DNNPageTab, Null.NullString);
 
-            if (baseUrl.EndsWith(yafTab.TabName))
+            if (baseUrl.EndsWith(yafTab.TabName, StringComparison.InvariantCultureIgnoreCase))
             {
                 baseUrl = baseUrl.Replace(yafTab.TabName, string.Empty);
             }
