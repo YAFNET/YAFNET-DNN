@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2016 Ingo Herbote
  * http://www.yetanotherforum.net/
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -31,12 +31,13 @@ namespace YAF.DotNetNuke
     using System.Text.RegularExpressions;
     using System.Web;
     using System.Web.Security;
+    using System.Web.UI;
     using System.Web.UI.WebControls;
 
     using global::DotNetNuke.Common;
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Users;
-    using global::DotNetNuke.Framework;
+    using global::DotNetNuke.Framework.JavaScriptLibraries;
     using global::DotNetNuke.Services.Exceptions;
     using global::DotNetNuke.Services.Localization;
 
@@ -51,8 +52,7 @@ namespace YAF.DotNetNuke
     using YAF.Types.Interfaces;
     using YAF.Utils.Helpers;
     using YAF.Utils.Helpers.StringUtils;
-    using System.Web.UI;
-    using global::DotNetNuke.Framework.JavaScriptLibraries;
+
     #endregion
 
     /// <summary>
@@ -66,7 +66,7 @@ namespace YAF.DotNetNuke
         ///   Use Relative Time Setting
         /// </summary>
         private bool useRelativeTime;
-        
+
         /// <summary>
         ///   The YAF board id.
         /// </summary>
@@ -105,7 +105,7 @@ namespace YAF.DotNetNuke
         #endregion
 
         #region Methods
-        
+
         /// <summary>
         /// The latest posts_ item data bound.
         /// </summary>
@@ -165,7 +165,7 @@ namespace YAF.DotNetNuke
         {
             this.LoadSettings();
 
-            Type csType = typeof(Page);
+            var csType = typeof(Page);
 
             if (this.useRelativeTime)
             {
@@ -178,7 +178,7 @@ namespace YAF.DotNetNuke
                 this.ResolveUrl("~/DesktopModules/YAF.WhatsNew/jquery.timeago.js"));
 
                 var timeagoLoadJs = @"Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(loadTimeAgo);
-            function loadTimeAgo() {{				      	
+            function loadTimeAgo() {{
             {0}
               jQuery('abbr.timeago').timeago();	
 			      }}".FormatWith(Localization.GetString("TIMEAGO_JS", this.LocalResourceFile));
@@ -192,29 +192,29 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// Get the YAF Board id from ModuleId and the Module Settings
         /// </summary>
-        /// <param name="iModuleId">
+        /// <param name="moduleID">
         /// The Module id of the YAF Module Instance
         /// </param>
         /// <returns>
         /// The Board Id From the Settings
         /// </returns>
-        private static int GetYafBoardId(int iModuleId)
+        private static int GetYafBoardId(int moduleID)
         {
             var moduleController = new ModuleController();
-            var moduleSettings = moduleController.GetModuleSettings(iModuleId);
+            var moduleSettings = moduleController.GetModuleSettings(moduleID);
 
-            int iForumId;
+            int forumId;
 
             try
             {
-                iForumId = int.Parse((string)moduleSettings["forumboardid"]);
+                forumId = moduleSettings["forumboardid"].ToType<int>();
             }
             catch (Exception)
             {
-                iForumId = -1;
+                forumId = -1;
             }
 
-            return iForumId;
+            return forumId;
         }
 
         /// <summary>
@@ -240,12 +240,12 @@ namespace YAF.DotNetNuke
                 }
                 else
                 {
-                    this.lInfo.Text = string.Empty;
+                 // this.lInfo.Text = string.Empty;
                 }
             }
             catch (Exception exc)
             {
-                // Module failed to load 
+                // Module failed to load
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
@@ -276,13 +276,13 @@ namespace YAF.DotNetNuke
             }
 
             // Get current DNN user
-            var dnnUserInfo = UserController.GetCurrentUserInfo();
+            var dnnUserInfo = UserController.Instance.GetCurrentUserInfo();
 
             return UserImporter.CreateYafUser(
-                dnnUserInfo, 
-                dnnUser, 
-                this.boardId, 
-                this.PortalSettings.PortalId, 
+                dnnUserInfo,
+                dnnUser,
+                this.boardId,
+                this.PortalSettings.PortalId,
                 YafContext.Current.Get<YafBoardSettings>());
         }
 
@@ -293,9 +293,7 @@ namespace YAF.DotNetNuke
         {
             try
             {
-                var objModuleController = new ModuleController();
-
-                var moduleSettings = objModuleController.GetTabModuleSettings(this.TabModuleId);
+                var moduleSettings = this.Settings;
 
                 if (moduleSettings["YafPage"].ToType<string>().IsSet())
                 {
@@ -309,7 +307,7 @@ namespace YAF.DotNetNuke
                         this.Response.Redirect(
                             this.ResolveUrl(
                                 "~/tabid/{0}/ctl/Module/ModuleId/{1}/Default.aspx".FormatWith(
-                                    this.PortalSettings.ActiveTab.TabID, 
+                                    this.PortalSettings.ActiveTab.TabID,
                                     this.ModuleId)));
                     }
                     else
@@ -331,7 +329,7 @@ namespace YAF.DotNetNuke
                         this.Response.Redirect(
                             this.ResolveUrl(
                                 "~/tabid/{0}/ctl/Module/ModuleId/{1}/Default.aspx".FormatWith(
-                                    this.PortalSettings.ActiveTab.TabID, 
+                                    this.PortalSettings.ActiveTab.TabID,
                                     this.ModuleId)));
                     }
                     else
@@ -352,7 +350,7 @@ namespace YAF.DotNetNuke
                         this.Response.Redirect(
                             this.ResolveUrl(
                                 "~/tabid/{0}/ctl/Module/ModuleId/{1}/Default.aspx".FormatWith(
-                                    this.PortalSettings.ActiveTab.TabID, 
+                                    this.PortalSettings.ActiveTab.TabID,
                                     this.ModuleId)));
                     }
                     else
@@ -361,25 +359,27 @@ namespace YAF.DotNetNuke
                         this.lInfo.Style.Add("font-style", "italic");
                     }
                 }
-
-                this.maxPosts = moduleSettings["YafMaxPosts"].ToType<string>().IsSet()
+                else
+                {
+                    this.maxPosts = moduleSettings["YafMaxPosts"].ToType<string>().IsSet()
                                     ? moduleSettings["YafMaxPosts"].ToType<int>()
                                     : 10;
 
-                this.useRelativeTime = !moduleSettings["YafUseRelativeTime"].ToType<string>().IsSet()
-                                       || moduleSettings["YafUseRelativeTime"].ToType<bool>();
+                    this.useRelativeTime = !moduleSettings["YafUseRelativeTime"].ToType<string>().IsSet()
+                                           || moduleSettings["YafUseRelativeTime"].ToType<bool>();
 
-                this.headerTemplate = moduleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
-                                          ? moduleSettings["YafWhatsNewHeader"].ToType<string>()
-                                          : "<ul>";
+                    this.headerTemplate = moduleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
+                                              ? moduleSettings["YafWhatsNewHeader"].ToType<string>()
+                                              : "<ul>";
 
-                this.itemTemplate = moduleSettings["YafWhatsNewItemTemplate"].ToType<string>().IsSet()
-                                        ? moduleSettings["YafWhatsNewItemTemplate"].ToType<string>()
-                                        : "<li class=\"YafPosts\">[LASTPOSTICON]&nbsp;<strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />\"[LASTMESSAGE:150]\"<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
+                    this.itemTemplate = moduleSettings["YafWhatsNewItemTemplate"].ToType<string>().IsSet()
+                                            ? moduleSettings["YafWhatsNewItemTemplate"].ToType<string>()
+                                            : "<li class=\"YafPosts\">[LASTPOSTICON]&nbsp;<strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />\"[LASTMESSAGE:150]\"<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
 
-                this.footerTemplate = moduleSettings["YafWhatsNewFooter"].ToType<string>().IsSet()
-                                          ? moduleSettings["YafWhatsNewFooter"].ToType<string>()
-                                          : "</ul>";
+                    this.footerTemplate = moduleSettings["YafWhatsNewFooter"].ToType<string>().IsSet()
+                                              ? moduleSettings["YafWhatsNewFooter"].ToType<string>()
+                                              : "</ul>";
+                }
             }
             catch (Exception exc)
             {
@@ -408,13 +408,13 @@ namespace YAF.DotNetNuke
         private string ProcessItem(RepeaterItemEventArgs e)
         {
             var currentRow = (DataRowView)e.Item.DataItem;
-            
+
             var currentItem = this.itemTemplate;
-            
+
             var messageUrl =
                 this.ResolveUrl(
                     "~/Default.aspx?tabid={1}&g=posts&m={0}#post{0}".FormatWith(
-                        currentRow["LastMessageID"], 
+                        currentRow["LastMessageID"],
                         this.yafTabId));
 
             // make message url...
@@ -423,8 +423,8 @@ namespace YAF.DotNetNuke
                 messageUrl =
                     Globals.ResolveUrl(
                         "~/tabid/{0}/g/posts/m/{1}/{2}.aspx#post{1}".FormatWith(
-                            this.yafTabId, 
-                            currentRow["LastMessageID"], 
+                            this.yafTabId,
+                            currentRow["LastMessageID"],
                             UrlRewriteHelper.CleanStringForURL(YafContext.Current.Get<IBadWordReplace>().Replace(currentRow["Topic"].ToString()))));
             }
 
@@ -447,15 +447,15 @@ namespace YAF.DotNetNuke
             }
             catch (Exception)
             {
-                
-            }    
+
+            }
 
             // Render [TOPICLINK]
             var textMessageLink = new HyperLink
                                       {
                                           Text =
                                               YafContext.Current.Get<IBadWordReplace>()
-                                              .Replace(currentRow["Topic"].ToString()), 
+                                              .Replace(currentRow["Topic"].ToString()),
                                           NavigateUrl = messageUrl
                                       };
 
@@ -464,17 +464,17 @@ namespace YAF.DotNetNuke
             // Render [FORUMLINK]
             var forumLink = new HyperLink
                                 {
-                                    Text = currentRow["Forum"].ToString(), 
+                                    Text = currentRow["Forum"].ToString(),
                                     NavigateUrl =
                                         Classes.Config.EnableURLRewriting
                                             ? Globals.ResolveUrl(
                                                 "~/tabid/{0}/g/topics/f/{1}/{2}.aspx".FormatWith(
-                                                    this.yafTabId, 
-                                                    currentRow["ForumID"], 
+                                                    this.yafTabId,
+                                                    currentRow["ForumID"],
                                                     currentRow["Forum"]))
                                             : this.ResolveUrl(
                                                 "~/Default.aspx?tabid={1}&g=topics&f={0}".FormatWith(
-                                                    currentRow["ForumID"], 
+                                                    currentRow["ForumID"],
                                                     this.yafTabId))
                                 };
 
@@ -482,7 +482,7 @@ namespace YAF.DotNetNuke
 
             // Render [BYTEXT]
             currentItem = currentItem.Replace(
-                "[BYTEXT]", 
+                "[BYTEXT]",
                 YafContext.Current.Get<IHaveLocalization>().GetText("SEARCH", "BY"));
 
             // Render [LASTUSERLINK]
@@ -497,18 +497,18 @@ namespace YAF.DotNetNuke
 
                 var lastUserLink = new HyperLink
                                        {
-                                           Text = userName, 
-                                           ToolTip = userName, 
+                                           Text = userName,
+                                           ToolTip = userName,
                                            NavigateUrl =
                                                Classes.Config.EnableURLRewriting
                                                    ? Globals.ResolveUrl(
                                                        "~/tabid/{0}/g/profile/u/{1}/{2}.aspx".FormatWith(
-                                                           this.yafTabId, 
-                                                           currentRow["LastUserID"], 
+                                                           this.yafTabId,
+                                                           currentRow["LastUserID"],
                                                            userName))
                                                    : this.ResolveUrl(
                                                        "~/Default.aspx?tabid={1}&g=profile&u={0}".FormatWith(
-                                                           currentRow["LastUserID"], 
+                                                           currentRow["LastUserID"],
                                                            this.yafTabId))
                                        };
 
@@ -530,7 +530,7 @@ namespace YAF.DotNetNuke
                     var messageLimit = match.Groups["count"].Value.ToType<int>();
 
                     currentItem = currentItem.Replace(
-                        "[LASTMESSAGE:{0}]".FormatWith(match.Groups["count"].Value), 
+                        "[LASTMESSAGE:{0}]".FormatWith(match.Groups["count"].Value),
                         lastMessage.Truncate(messageLimit));
                 }
                 else
@@ -547,7 +547,7 @@ namespace YAF.DotNetNuke
             var displayDateTime = new DisplayDateTime { DateTime = currentRow["LastPosted"].ToType<DateTime>() };
 
             currentItem = currentItem.Replace("[LASTPOSTEDDATETIME]", displayDateTime.RenderToString());
-            
+
             return currentItem;
         }
 
