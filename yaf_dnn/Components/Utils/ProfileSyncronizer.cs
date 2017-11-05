@@ -86,12 +86,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     return;
                 }
 
-                SyncYafProfile(
-                    yafUserId,
-                    yafUserProfile,
-                    yafCurrentUserData,
-                    dnnUserInfo,
-                    boardSettings);
+                SyncYafProfile(yafUserId, yafUserProfile, yafCurrentUserData, dnnUserInfo, boardSettings);
             }
             catch (Exception ex)
             {
@@ -145,10 +140,10 @@ namespace YAF.DotNetNuke.Components.Utils
         /// </summary>
         /// <param name="countryEnglishName">Name of the country english.</param>
         /// <returns>The RegionInfo for the Country</returns>
-        public static RegionInfo GetRegionInfoFromCountryName([NotNull]string countryEnglishName)
+        public static RegionInfo GetRegionInfoFromCountryName([NotNull] string countryEnglishName)
         {
-            return
-                CultureInfo.GetCultures(CultureTypes.SpecificCultures).Select(ci => new RegionInfo(ci.LCID)).FirstOrDefault(region => region.EnglishName.Equals(countryEnglishName));
+            return CultureInfo.GetCultures(CultureTypes.SpecificCultures).Select(ci => new RegionInfo(ci.LCID))
+                .FirstOrDefault(region => region.EnglishName.Equals(countryEnglishName));
         }
 
         /// <summary>
@@ -160,7 +155,12 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="yafUserData">The YAF user data.</param>
         /// <param name="dnnUserInfo">The DNN user info.</param>
         /// <param name="boardSettings">The board settings.</param>
-        private static void SyncYafProfile(int yafUserId, YafUserProfile yafUserProfile, IUserData yafUserData, UserInfo dnnUserInfo, YafBoardSettings boardSettings)
+        private static void SyncYafProfile(
+            int yafUserId,
+            YafUserProfile yafUserProfile,
+            IUserData yafUserData,
+            UserInfo dnnUserInfo,
+            YafBoardSettings boardSettings)
         {
             /*var userCuluture = new YafCultureInfo
             {
@@ -208,7 +208,7 @@ namespace YAF.DotNetNuke.Components.Utils
             if (dnnUserInfo.Profile.Country.IsSet() && !dnnUserInfo.Profile.Country.Equals("N/A"))
             {
                 var regionInfo = GetRegionInfoFromCountryName(dnnUserInfo.Profile.Country);
-                
+
                 if (regionInfo != null)
                 {
                     yafUserProfile.Country = regionInfo.TwoLetterISORegionName;
@@ -218,7 +218,7 @@ namespace YAF.DotNetNuke.Components.Utils
             if (dnnUserInfo.Profile.City.IsSet())
             {
                 yafUserProfile.City = dnnUserInfo.Profile.City;
-            } 
+            }
 
             if (dnnUserInfo.Profile.Website.IsSet())
             {
@@ -259,11 +259,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="yafUserId">The YAF user id.</param>
         private static void SaveDnnAvatar(string photoUrl, int yafUserId)
         {
-            var basePath = "{0}://{1}".FormatWith(
-                HttpContext.Current.Request.Url.Scheme,
-                HttpContext.Current.Request.Url.Host);
-
-            LegacyDb.user_saveavatar(yafUserId, "{0}{1}".FormatWith(basePath, photoUrl), null, null);
+            LegacyDb.user_saveavatar(yafUserId, photoUrl, null, null);
         }
     }
 }
