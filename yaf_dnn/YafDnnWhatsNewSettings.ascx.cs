@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2016 Ingo Herbote
  * http://www.yetanotherforum.net/
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -27,7 +27,6 @@ namespace YAF.DotNetNuke
     #region Using
 
     using System;
-    using System.Collections.Generic;
     using System.Web.UI.WebControls;
 
     using global::DotNetNuke.Common.Utilities;
@@ -47,7 +46,7 @@ namespace YAF.DotNetNuke
     /// <summary>
     /// The Settings class manages Module Settings
     /// </summary>
-    /// <history> 
+    /// <history>
     /// </history>
     /// -----------------------------------------------------------------------------
     public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
@@ -58,7 +57,7 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// LoadSettings loads the settings from the Database and displays them
         /// </summary>
-        /// <history> 
+        /// <history>
         /// </history>
         /// -----------------------------------------------------------------------------
         public override void LoadSettings()
@@ -83,6 +82,10 @@ namespace YAF.DotNetNuke
                     }
                 }
 
+                this.SortOrder.SelectedValue = this.TabModuleSettings["YafSortOrder"].ToType<string>().IsSet()
+                                             ? this.TabModuleSettings["YafSortOrder"].ToType<string>()
+                                             : "lastpost";
+
                 this.txtMaxResult.Text = this.TabModuleSettings["YafMaxPosts"].ToType<string>().IsSet()
                                              ? this.TabModuleSettings["YafMaxPosts"].ToType<string>()
                                              : "10";
@@ -106,7 +109,7 @@ namespace YAF.DotNetNuke
             }
             catch (Exception exc)
             {
-                // Module failed to load 
+                // Module failed to load
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
@@ -115,7 +118,7 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// UpdateSettings saves the modified settings to the Database
         /// </summary>
-        /// <history> 
+        /// <history>
         /// </history>
         /// -----------------------------------------------------------------------------
         public override void UpdateSettings()
@@ -126,7 +129,7 @@ namespace YAF.DotNetNuke
 
                 if (this.YafInstances.Items.Count > 0)
                 {
-                    string[] values = this.YafInstances.SelectedValue.Split(Convert.ToChar("-"));
+                    var values = this.YafInstances.SelectedValue.Split(Convert.ToChar("-"));
 
                     if (values.Length == 2)
                     {
@@ -134,6 +137,12 @@ namespace YAF.DotNetNuke
                         objModules.UpdateTabModuleSetting(this.TabModuleId, "YafModuleId", values[1]);
                     }
                 }
+
+                objModules.UpdateTabModuleSetting(
+                    this.TabModuleId,
+                    "YafSortOrder",
+                    this.SortOrder.SelectedValue);
+
 
                 if (ValidationHelper.IsNumeric(this.txtMaxResult.Text) || this.txtMaxResult.Text.IsSet())
                 {
@@ -147,8 +156,7 @@ namespace YAF.DotNetNuke
                 objModules.UpdateTabModuleSetting(
                     this.TabModuleId,
                     "YafUseRelativeTime",
-                    this.UseRelativeTime.Checked.ToString()
-                    );
+                    this.UseRelativeTime.Checked.ToString());
 
                 if (this.HtmlHeader.Text.IsSet())
                 {
@@ -167,7 +175,7 @@ namespace YAF.DotNetNuke
             }
             catch (Exception exc)
             {
-                // Module failed to load 
+                // Module failed to load
                 Exceptions.ProcessModuleLoadException(this, exc);
             }
         }
@@ -183,9 +191,9 @@ namespace YAF.DotNetNuke
         {
             var objTabController = new TabController();
 
-            List<TabInfo> objTabs = TabController.GetPortalTabs(this.PortalSettings.PortalId, -1, true, true);
+            var objTabs = TabController.GetPortalTabs(this.PortalSettings.PortalId, -1, true, true);
 
-            DesktopModuleInfo objDesktopModuleInfo =
+            var objDesktopModuleInfo =
                 DesktopModuleController.GetDesktopModuleByModuleName("YetAnotherForumDotNet", this.PortalId);
 
             if (objDesktopModuleInfo == null)
@@ -193,7 +201,7 @@ namespace YAF.DotNetNuke
                 return;
             }
 
-            foreach (TabInfo objTab in objTabs)
+            foreach (var objTab in objTabs)
             {
                 if (objTab == null || objTab.IsDeleted)
                 {
@@ -202,9 +210,9 @@ namespace YAF.DotNetNuke
 
                 var objModules = new ModuleController();
 
-                foreach (KeyValuePair<int, ModuleInfo> pair in objModules.GetTabModules(objTab.TabID))
+                foreach (var pair in objModules.GetTabModules(objTab.TabID))
                 {
-                    ModuleInfo objModule = pair.Value;
+                    var objModule = pair.Value;
 
                     if (objModule.IsDeleted || objModule.DesktopModuleID != objDesktopModuleInfo.DesktopModuleID)
                     {
@@ -212,7 +220,7 @@ namespace YAF.DotNetNuke
                     }
 
                     var strPath = objTab.TabName;
-                    TabInfo objTabSelected = objTab;
+                    var objTabSelected = objTab;
 
                     while (objTabSelected.ParentId != Null.NullInteger)
                     {

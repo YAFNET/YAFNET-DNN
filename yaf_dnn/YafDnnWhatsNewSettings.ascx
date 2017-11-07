@@ -12,6 +12,14 @@
              </asp:DropDownList>
     </div>
     <div class="dnnFormItem">
+        <dnn:label id="SortOrderLabel" runat="server" controlname="SportOrder" suffix=":"></dnn:label>
+        <asp:DropDownList id="SortOrder" Width="325" runat="server">
+            <asp:ListItem Text="Last Post" value="lastpost"></asp:ListItem>
+            <asp:ListItem Text="Views" value="views"></asp:ListItem>
+            <asp:ListItem Text="Replies" value="replies"></asp:ListItem>
+        </asp:DropDownList>
+    </div>
+    <div class="dnnFormItem">
         <dnn:label id="lblMaxResult" runat="server" controlname="txtMaxResult" suffix=":"></dnn:label>
         <asp:TextBox ID="txtMaxResult" runat="server"></asp:TextBox>
     </div>

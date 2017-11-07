@@ -88,6 +88,11 @@ namespace YAF.DotNetNuke
         private int yafTabId;
 
         /// <summary>
+        /// The sort order
+        /// </summary>
+        private string sortOrder;
+
+        /// <summary>
         /// The header Template
         /// </summary>
         private string headerTemplate;
@@ -165,7 +170,7 @@ namespace YAF.DotNetNuke
         {
             this.LoadSettings();
 
-            var csType = typeof(Page);
+            var type = typeof(Page);
 
             if (this.useRelativeTime)
             {
@@ -173,7 +178,7 @@ namespace YAF.DotNetNuke
 
                 ScriptManager.RegisterClientScriptInclude(
                 this,
-                csType,
+                type,
                 "timeagojs",
                 this.ResolveUrl("~/DesktopModules/YAF.WhatsNew/jquery.timeago.js"));
 
@@ -183,7 +188,7 @@ namespace YAF.DotNetNuke
               jQuery('abbr.timeago').timeago();	
 			      }}".FormatWith(Localization.GetString("TIMEAGO_JS", this.LocalResourceFile));
 
-                ScriptManager.RegisterStartupScript(this, csType, "timeagoloadjs", timeagoLoadJs, true);
+                ScriptManager.RegisterStartupScript(this, type, "timeagoloadjs", timeagoLoadJs, true);
             }
 
             this.BindData();
@@ -192,16 +197,20 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// Get the YAF Board id from ModuleId and the Module Settings
         /// </summary>
-        /// <param name="moduleID">
-        /// The Module id of the YAF Module Instance
+        /// <param name="moduleId">
+        ///     The Module id of the YAF Module Instance
+        /// </param>
+        /// <param name="tabId">
+        /// The Tab ID of the YAF Module Instance
         /// </param>
         /// <returns>
         /// The Board Id From the Settings
         /// </returns>
-        private static int GetYafBoardId(int moduleID)
+        private static int GetYafBoardId(int moduleId, int tabId)
         {
-            var moduleController = new ModuleController();
-            var moduleSettings = moduleController.GetModuleSettings(moduleID);
+            var moduleInfo = new ModuleController().GetModule(moduleId, tabId);
+
+            var moduleSettings = moduleInfo.ModuleSettings;
 
             int forumId;
 
@@ -230,6 +239,23 @@ namespace YAF.DotNetNuke
 
                 var activeTopics = Data.TopicLatest(this.boardId, this.maxPosts, yafUserId, false, true);
 
+                // Resort the table
+                switch (this.sortOrder)
+                {
+                    case "views":
+                        activeTopics.DefaultView.Sort = "Views DESC";
+                        break;
+                    case "replies":
+                        activeTopics.DefaultView.Sort = "NumPosts DESC";
+                        break;
+                    case "lastpost":
+                        activeTopics.DefaultView.Sort = "LastPosted DESC";
+                        break;
+                    default:
+                        activeTopics.DefaultView.Sort = "LastPosted DESC";
+                        break;
+                }
+
                 this.LatestPosts.DataSource = activeTopics;
                 this.LatestPosts.DataBind();
 
@@ -237,10 +263,11 @@ namespace YAF.DotNetNuke
                 {
                     this.lInfo.Text = Localization.GetString("NoMessages.Text", this.LocalResourceFile);
                     this.lInfo.Style.Add("font-style", "italic");
+                    this.lInfo.Visible = true;
                 }
                 else
                 {
-                 // this.lInfo.Text = string.Empty;
+                  this.lInfo.Visible = false;
                 }
             }
             catch (Exception exc)
@@ -340,7 +367,7 @@ namespace YAF.DotNetNuke
                 }
 
                 // Get and Set Board Id
-                this.boardId = GetYafBoardId(this.yafModuleId);
+                this.boardId = GetYafBoardId(this.yafModuleId, this.yafTabId);
 
                 if (this.boardId.Equals(-1))
                 {
@@ -361,6 +388,10 @@ namespace YAF.DotNetNuke
                 }
                 else
                 {
+                    this.sortOrder = moduleSettings["YafSortOrder"].ToType<string>().IsSet()
+                                        ? moduleSettings["YafSortOrder"].ToType<string>()
+                                        : "lastpost";
+
                     this.maxPosts = moduleSettings["YafMaxPosts"].ToType<string>().IsSet()
                                     ? moduleSettings["YafMaxPosts"].ToType<int>()
                                     : 10;
@@ -447,7 +478,7 @@ namespace YAF.DotNetNuke
             }
             catch (Exception)
             {
-
+                currentItem = currentItem.Replace("[LASTPOSTICON]", string.Empty);
             }
 
             // Render [TOPICLINK]

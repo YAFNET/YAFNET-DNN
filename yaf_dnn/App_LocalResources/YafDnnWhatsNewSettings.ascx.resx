@@ -159,4 +159,10 @@
   <data name="lblRelativeTime.Text" xml:space="preserve">
     <value>Show Relative Time</value>
   </data>
+  <data name="SortOrderLabel.Help" xml:space="preserve">
+    <value>The default Sort order for the Posts</value>
+  </data>
+  <data name="SortOrderLabel.Text" xml:space="preserve">
+    <value>Sort Order</value>
+  </data>
 </root>
