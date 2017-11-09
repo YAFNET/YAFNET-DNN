@@ -58,9 +58,9 @@ namespace YAF.DotNetNuke.Components.Utils
         /// </returns>
         public static int ImportUsers(int boardId, int portalId, out string info)
         {
-            var portalGUID = new PortalController().GetPortal(portalId).GUID;
+            var portalGuid = new PortalController().GetPortal(portalId).GUID;
 
-            return ImportUsers(boardId, portalId, portalGUID, out info);
+            return ImportUsers(boardId, portalId, portalGuid, out info);
         }
 
         /// <summary>
@@ -68,12 +68,12 @@ namespace YAF.DotNetNuke.Components.Utils
         /// </summary>
         /// <param name="boardId">The board id.</param>
         /// <param name="portalId">The portal id.</param>
-        /// <param name="portalGUID">The portal unique identifier.</param>
+        /// <param name="portalGuid">The portal unique identifier.</param>
         /// <param name="info">The information text.</param>
         /// <returns>
         /// Returns the Number of Users that where imported
         /// </returns>
-        public static int ImportUsers(int boardId, int portalId, Guid portalGUID,  out string info)
+        public static int ImportUsers(int boardId, int portalId, Guid portalGuid,  out string info)
         {
             var newUserCount = 0;
 
@@ -131,7 +131,7 @@ namespace YAF.DotNetNuke.Components.Utils
                             dnnUserInfo,
                             dnnUser,
                             portalId,
-                            portalGUID,
+                            portalGuid,
                             boardSettings,
                             true);
                     }
@@ -166,8 +166,8 @@ namespace YAF.DotNetNuke.Components.Utils
         /// </summary>
         /// <param name="dnnUserInfo">The DNN user info.</param>
         /// <param name="dnnUser">The DNN user.</param>
-        /// <param name="boardID">The board ID.</param>
-        /// <param name="portalID">The portal identifier.</param>
+        /// <param name="boardId">The board ID.</param>
+        /// <param name="portalId">The portal identifier.</param>
         /// <param name="boardSettings">The board settings.</param>
         /// <returns>
         /// Returns the User ID of the new User
@@ -175,15 +175,15 @@ namespace YAF.DotNetNuke.Components.Utils
         public static int CreateYafUser(
             UserInfo dnnUserInfo,
             MembershipUser dnnUser,
-            int boardID,
-            int portalID,
+            int boardId,
+            int portalId,
             YafBoardSettings boardSettings)
         {
             // setup roles
-            RoleMembershipHelper.SetupUserRoles(boardID, dnnUser.UserName);
+            RoleMembershipHelper.SetupUserRoles(boardId, dnnUser.UserName);
 
             // create the user in the YAF DB so profile can gets created...
-            var yafUserId = RoleMembershipHelper.CreateForumUser(dnnUser, dnnUserInfo.DisplayName, boardID);
+            var yafUserId = RoleMembershipHelper.CreateForumUser(dnnUser, dnnUserInfo.DisplayName, boardId);
 
             if (yafUserId == null)
             {
@@ -229,11 +229,11 @@ namespace YAF.DotNetNuke.Components.Utils
             // Save User
             LegacyDb.user_save(
                 yafUserId,
-                boardID,
+                boardId,
                 dnnUserInfo.Username,
                 dnnUserInfo.DisplayName,
                 dnnUserInfo.Email,
-                0,
+                ProfileSyncronizer.GetUserTimeZoneOffset(dnnUserInfo),
                 null,
                 null,
                 null,
@@ -242,7 +242,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 null,
                 boardSettings.DefaultNotificationSetting,
                 autoWatchTopicsEnabled,
-                null,
+                dnnUserInfo.Profile.PreferredTimeZone.SupportsDaylightSavingTime,
                 null,
                 null);
 
@@ -254,7 +254,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 boardSettings.DefaultNotificationSetting,
                 boardSettings.DefaultSendDigestEmail);
 
-            RoleSyncronizer.SynchronizeUserRoles(boardID, portalID, yafUserId.ToType<int>(), dnnUserInfo);
+            RoleSyncronizer.SynchronizeUserRoles(boardId, portalId, yafUserId.ToType<int>(), dnnUserInfo);
 
             return yafUserId.ToType<int>();
         }

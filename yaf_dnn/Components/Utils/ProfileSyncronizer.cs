@@ -27,9 +27,9 @@ namespace YAF.DotNetNuke.Components.Utils
     using System;
     using System.Globalization;
     using System.Linq;
-    using System.Web;
     using System.Web.Security;
 
+    using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Users;
 
@@ -99,41 +99,34 @@ namespace YAF.DotNetNuke.Components.Utils
             }
         }
 
-        /*
         /// <summary>
         /// The get user time zone offset.
         /// </summary>
         /// <param name="userInfo">
         /// The user info.
         /// </param>
-        /// <param name="portalSettings">
-        /// Current Portal Settings
-        /// </param>
         /// <returns>
         /// Returns the User Time Zone Offset Value
         /// </returns>
-        public static int GetUserTimeZoneOffset(UserInfo userInfo, PortalSettings portalSettings)
+        public static int GetUserTimeZoneOffset(UserInfo userInfo)
         {
-            int timeZone;
+            var timeZone = 0;
 
-            if ((userInfo != null) && (userInfo.UserID != Null.NullInteger))
+            if (userInfo == null || userInfo.UserID == Null.NullInteger)
             {
-                timeZone = userInfo.Profile.TimeZone;
+                return timeZone;
             }
-            else
-            {
-                if (portalSettings != null)
-                {
-                    timeZone = portalSettings.TimeZoneOffset;
-                }
-                else
-                {
-                    timeZone = -480;
-                }
-            }
+
+            var utcOffSet = userInfo.Profile.PreferredTimeZone.BaseUtcOffset;
+
+            var timeZoneUser = utcOffSet < TimeSpan.Zero
+                                   ? "-{0}".FormatWith(utcOffSet.ToString("hh"))
+                                   : utcOffSet.ToString("hh");
+
+            timeZone = (timeZoneUser.ToType<decimal>() * 60).ToType<int>();
 
             return timeZone;
-        }*/
+        }
 
         /// <summary>
         /// Gets the name of the region info from country (English Name).
@@ -184,10 +177,10 @@ namespace YAF.DotNetNuke.Components.Utils
             LegacyDb.user_save(
                 yafUserId,
                 boardSettings.BoardID,
-                null,
+                dnnUserInfo.Username,
                 dnnUserInfo.DisplayName,
                 dnnUserInfo.Email,
-                yafUserData.TimeZone,
+                GetUserTimeZoneOffset(dnnUserInfo),
                 yafUserData.LanguageFile.IsSet() ? yafUserData.LanguageFile : null,
                 yafUserData.CultureUser,
                 yafUserData.ThemeFile,
@@ -196,7 +189,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 null,
                 null,
                 null,
-                yafUserData.DSTUser,
+                dnnUserInfo.Profile.PreferredTimeZone.SupportsDaylightSavingTime,
                 yafUserData.IsActiveExcluded,
                 null);
 
