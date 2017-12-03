@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2016 Ingo Herbote
  * http://www.yetanotherforum.net/
- *
+ * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -96,7 +96,7 @@ namespace YAF.DotNetNuke.Components.Integration
                 ji.SocialGroupId = SocialGroupId;
             }*/
 
-            JournalController.Instance.SaveJournalItem(ji, null);
+            JournalController.Instance.SaveJournalItem(ji, -1);
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace YAF.DotNetNuke.Components.Integration
 
             var user = UserController.Instance.GetCurrentUserInfo();
             var portalSettings = PortalSettings.Current;
-
+            
             var ji = new JournalItem
                          {
                              PortalId = portalSettings.PortalId,
@@ -146,7 +146,7 @@ namespace YAF.DotNetNuke.Components.Integration
             {
                 JournalController.Instance.DeleteJournalItemByKey(portalSettings.PortalId, ji.ObjectKey);
             }
-
+            
             // TODO:
             /*if (SocialGroupId > 0)
             {

@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2016 Ingo Herbote
  * http://www.yetanotherforum.net/
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -34,22 +34,15 @@ namespace YAF.DotNetNuke
     using System.Web.UI;
     using System.Web.UI.WebControls;
 
-    using global::DotNetNuke.Common;
     using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Modules;
-
     using global::DotNetNuke.Entities.Modules.Actions;
-
     using global::DotNetNuke.Entities.Portals;
-    using global::DotNetNuke.Entities.Tabs;
     using global::DotNetNuke.Entities.Users;
-
     using global::DotNetNuke.Framework;
-
+    using global::DotNetNuke.Framework.JavaScriptLibraries;
     using global::DotNetNuke.Security;
-
     using global::DotNetNuke.Services.Exceptions;
-
     using global::DotNetNuke.Services.Localization;
 
     using YAF.Classes;
@@ -61,7 +54,6 @@ namespace YAF.DotNetNuke
     using YAF.Types.Attributes;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
-    using global::DotNetNuke.Framework.JavaScriptLibraries;
 
     #endregion
 
@@ -104,28 +96,26 @@ namespace YAF.DotNetNuke
         {
             get
             {
-                ModuleActionCollection actions = new ModuleActionCollection
+                var actions = new ModuleActionCollection
                                                      {
-                                                         {
-                                                             this.GetNextActionID(),
-                                                             Localization.GetString(
-                                                                 "EditYafSettings.Text",
-                                                                 this.LocalResourceFile),
-                                                             ModuleActionType.AddContent,
-                                                             string.Empty, string.Empty,
-                                                             this.EditUrl(), false,
-                                                             SecurityAccessLevel.Host, true, false
-                                                         },
-                                                         {
-                                                             this.GetNextActionID(),
-                                                             Localization.GetString(
-                                                                 "UserImporter.Text",
-                                                                 this.LocalResourceFile),
-                                                             ModuleActionType.AddContent,
-                                                             string.Empty, string.Empty,
-                                                             this.EditUrl("Import"), false,
-                                                             SecurityAccessLevel.Host, true, false
-                                                         }
+                                                             {
+                                                                 this.GetNextActionID(),
+                                                                 Localization.GetString(
+                                                                     "EditYafSettings.Text",
+                                                                     this.LocalResourceFile),
+                                                                 ModuleActionType.AddContent,
+                                                                 string.Empty, string.Empty, this.EditUrl(), false,
+                                                                 SecurityAccessLevel.Host, true, false
+                                                             },
+                                                             {
+                                                                 this.GetNextActionID(),
+                                                                 Localization.GetString(
+                                                                     "UserImporter.Text",
+                                                                     this.LocalResourceFile),
+                                                                 ModuleActionType.AddContent,
+                                                                 string.Empty, string.Empty, this.EditUrl("Import"), false,
+                                                                 SecurityAccessLevel.Host, true, false
+                                                             }
                                                      };
 
                 return actions;
@@ -193,7 +183,8 @@ namespace YAF.DotNetNuke
         {
             get
             {
-                return this.portalSettings ?? (this.portalSettings = PortalController.GetCurrentPortalSettings());
+                return this.portalSettings
+                       ?? (this.portalSettings = PortalController.Instance.GetCurrentPortalSettings());
             }
         }
 
@@ -207,7 +198,7 @@ namespace YAF.DotNetNuke
         /// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
         protected override void OnError(EventArgs e)
         {
-            Exception x = this.Server.GetLastError();
+            var x = this.Server.GetLastError();
 
             YafContext.Current.Get<ILogger>().Error(x, "Error on the DNN Module");
 
@@ -252,7 +243,7 @@ namespace YAF.DotNetNuke
         {
             while (true)
             {
-                Control parent = control.Parent;
+                var parent = control.Parent;
 
                 if (parent == null)
                 {
@@ -271,7 +262,7 @@ namespace YAF.DotNetNuke
         }
 
         /// <summary>
-        /// Change YAF Language based on DNN Language, 
+        /// Change YAF Language based on DNN Language,
         ///   will <c>override</c> the YAF Language Setting
         /// </summary>
         private static void SetDnnLangToYaf()
@@ -298,7 +289,7 @@ namespace YAF.DotNetNuke
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void DotNetNukeModule_Load(object sender, EventArgs e)
+        private void DotNetNukeModuleLoad(object sender, EventArgs e)
         {
             if (this.Page.IsPostBack)
             {
@@ -349,10 +340,10 @@ namespace YAF.DotNetNuke
         private void CreateOrUpdateUser()
         {
             // Get current DNN user
-            var dnnUserInfo = UserController.GetCurrentUserInfo();
+            var dnnUserInfo = UserController.Instance.GetCurrentUserInfo();
 
             // get the user from the membership provider
-            MembershipUser dnnMembershipUser = Membership.GetUser(dnnUserInfo.Username, true);
+            var dnnMembershipUser = Membership.GetUser(dnnUserInfo.Username, true);
 
             if (dnnMembershipUser == null)
             {
@@ -378,7 +369,7 @@ namespace YAF.DotNetNuke
                 // super admin check...
                 if (dnnUserInfo.IsSuperUser)
                 {
-                    UserImporter.CreateYafHostUser(yafUserId, this.forum1.BoardID);
+                    UserImporter.SetYafHostUser(yafUserId, this.forum1.BoardID);
                 }
             }
             else
@@ -456,7 +447,7 @@ namespace YAF.DotNetNuke
 
             this.pnlModuleContent.Controls.Add(this.forum1);
 
-            this.Load += this.DotNetNukeModule_Load;
+            this.Load += this.DotNetNukeModuleLoad;
             this.forum1.PageTitleSet += this.Forum1_PageTitleSet;
 
             // This will create an error if there is no setting for forumboardid
@@ -469,10 +460,11 @@ namespace YAF.DotNetNuke
                                              ? YafContext.Current.BoardSettings.DNNPageTab
                                              : new YafLoadBoardSettings(this.forum1.BoardID).DNNPageTab;
 
-                if (boardSettingsTabId.Equals(-1) || !boardSettingsTabId.Equals(this.TabId) && !this.CurrentPortalSettings.ContentLocalizationEnabled)
+                if (boardSettingsTabId.Equals(-1)
+                    || !boardSettingsTabId.Equals(this.TabId) && !this.CurrentPortalSettings.ContentLocalizationEnabled)
                 {
                     if (HttpContext.Current.User.Identity.IsAuthenticated
-                        && UserController.GetCurrentUserInfo().IsSuperUser)
+                        && UserController.Instance.GetCurrentUserInfo().IsSuperUser)
                     {
                         this.Response.Redirect(
                             this.ResolveUrl(
@@ -480,27 +472,26 @@ namespace YAF.DotNetNuke
                                     this.PortalSettings.ActiveTab.TabID,
                                     this.ModuleId)));
                     }
+
                     /*else
-                    {
-                        boardSettings.DNNPageTab = this.TabId;
-
-                        // save the settings to the database
-                        boardSettings.SaveRegistry();
-
-                        // Reload forum settings
-                        YafContext.Current.BoardSettings = null;
-                    }*/
+                                        {
+                                            boardSettings.DNNPageTab = this.TabId;
+                    
+                                            // save the settings to the database
+                                            boardSettings.SaveRegistry();
+                    
+                                            // Reload forum settings
+                                            YafContext.Current.BoardSettings = null;
+                                        }*/
                 }
 
                 if (YafContext.Current.BoardSettings.DNNPortalId.Equals(-1))
                 {
                     var boardSettings = new YafLoadBoardSettings(this.forum1.BoardID)
-                    {
-                        DNNPageTab =
-                                            this.TabId,
-                        DNNPortalId =
-                                            this.PortalId
-                    };
+                                            {
+                                                DNNPageTab = this.TabId,
+                                                DNNPortalId = this.PortalId
+                                            };
 
                     // save the settings to the database
                     boardSettings.SaveRegistry();
@@ -521,7 +512,8 @@ namespace YAF.DotNetNuke
             }
             else
             {
-                if (HttpContext.Current.User.Identity.IsAuthenticated && UserController.GetCurrentUserInfo().IsSuperUser)
+                if (HttpContext.Current.User.Identity.IsAuthenticated
+                    && UserController.Instance.GetCurrentUserInfo().IsSuperUser)
                 {
                     this.Response.Redirect(
                         this.ResolveUrl(

@@ -27,7 +27,6 @@ namespace YAF.DotNetNuke
     #region Using
 
     using System;
-    using System.Collections;
     using System.Data;
     using System.IO;
     using System.Linq;
@@ -96,7 +95,7 @@ namespace YAF.DotNetNuke
         /// <param name="e">An <see cref="T:System.EventArgs" /> object that contains the event data.</param>
         protected override void OnInit(EventArgs e)
         {
-            this.Load += this.DotNetNukeModuleImport_Load;
+            this.Load += this.DotNetNukeModuleImportLoad;
 
             this.btnImportUsers.Click += this.ImportClick;
             this.Close.Click += this.CloseClick;
@@ -117,10 +116,10 @@ namespace YAF.DotNetNuke
         private static int GetIdOfScheduleClient(string typeFullName)
         {
             // get array list of schedule items
-            ArrayList schduleItems = SchedulingProvider.Instance().GetSchedule();
+            var schduleItems = SchedulingProvider.Instance().GetSchedule();
 
             // find schedule item with matching TypeFullName
-            foreach (object item in
+            foreach (var item in
                 schduleItems.Cast<object>().Where(item => ((ScheduleItem)item).TypeFullName == typeFullName))
             {
                 return ((ScheduleItem)item).ScheduleID;
@@ -157,7 +156,7 @@ namespace YAF.DotNetNuke
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void DotNetNukeModuleImport_Load(object sender, EventArgs e)
+        private void DotNetNukeModuleImportLoad(object sender, EventArgs e)
         {
             this.btnImportUsers.Text = Localization.GetString("ImportNow.Text", this.LocalResourceFile);
             this.Close.Text = Localization.GetString("Close.Text", this.LocalResourceFile);
@@ -179,11 +178,11 @@ namespace YAF.DotNetNuke
 
             var importFile = "{0}App_Data/YafImports.xml".FormatWith(HttpRuntime.AppDomainAppPath);
 
-            var dsSettings = new DataSet();
+            var settings = new DataSet();
 
             try
             {
-                dsSettings.ReadXml(importFile);
+                settings.ReadXml(importFile);
             }
             catch (Exception)
             {
@@ -201,12 +200,12 @@ namespace YAF.DotNetNuke
 
             var updateXml = false;
 
-            foreach (DataRow oRow in dsSettings.Tables[0].Rows)
+            foreach (DataRow dataRow in settings.Tables[0].Rows)
             {
-                int iPortal = oRow["PortalId"].ToType<int>();
-                int iBoard = oRow["BoardId"].ToType<int>();
+                var portalId = dataRow["PortalId"].ToType<int>();
+                var boardID = dataRow["BoardId"].ToType<int>();
 
-                if (iPortal.Equals(this.PortalId) && iBoard.Equals(this.boardId))
+                if (portalId.Equals(this.PortalId) && boardID.Equals(this.boardId))
                 {
                     updateXml = false;
                     break;
@@ -217,14 +216,14 @@ namespace YAF.DotNetNuke
 
             if (updateXml)
             {
-                DataRow dr = dsSettings.Tables["Import"].NewRow();
+                var dr = settings.Tables["Import"].NewRow();
 
                 dr["PortalId"] = this.PortalId.ToString();
                 dr["BoardId"] = this.boardId.ToString();
+                
+                settings.Tables[0].Rows.Add(dr);
 
-                dsSettings.Tables[0].Rows.Add(dr);
-
-                dsSettings.WriteXml(importFile);
+                settings.WriteXml(importFile);
             }
 
             this.btnAddScheduler.CommandArgument = "delete";
@@ -269,13 +268,13 @@ namespace YAF.DotNetNuke
             // add item
             SchedulingProvider.Instance().AddSchedule(item);
 
-            var dsSettings = new DataSet();
+            var settings = new DataSet();
 
             var filePath = "{0}App_Data/YafImports.xml".FormatWith(HttpRuntime.AppDomainAppPath);
 
             try
             {
-                dsSettings.ReadXml(filePath);
+                settings.ReadXml(filePath);
             }
             catch (Exception)
             {

@@ -99,6 +99,15 @@ namespace YAF.DotNetNuke.Components.Utils
                 }
                 else
                 {
+                    // ADD dnn super user manually to the administrator role
+                    if (role.RoleName.Equals("Administrators") && dnnUserInfo.IsSuperUser)
+                    {
+                        if (!yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
+                        {
+                            UpdateUserRole(role, yafUserId, dnnUserInfo.Username, true);
+                        }
+                    }
+
                     if (!dnnUserInfo.Roles.Any(dnnRole => dnnRole.Equals(boardRole.Name)))
                     {
                         continue;
@@ -119,7 +128,7 @@ namespace YAF.DotNetNuke.Components.Utils
 
             // Remove user from dnn role if no longer included
             foreach (
-                RoleInfo role in
+                var role in
                     roleController.GetPortalRoles(portalId)
                                   .Cast<RoleInfo>()
                                   .Where(

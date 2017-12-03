@@ -25,7 +25,6 @@
 namespace YAF.DotNetNuke.Components.Utils
 {
     using System;
-    using System.Data;
     using System.Web.Security;
 
     using global::DotNetNuke.Common.Utilities;
@@ -78,6 +77,9 @@ namespace YAF.DotNetNuke.Components.Utils
             var newUserCount = 0;
 
             var users = UserController.GetUsers(portalId);
+
+            // Inject SU here
+            users.AddRange(UserController.GetUsers(false, true, Null.NullInteger));
 
             users.Sort(new UserComparer());
 
@@ -137,11 +139,11 @@ namespace YAF.DotNetNuke.Components.Utils
                     }
 
                     rolesChanged = RoleSyncronizer.SynchronizeUserRoles(boardId, portalId, yafUserId, dnnUserInfo);
-
+                    
                     // super admin check...
                     if (dnnUserInfo.IsSuperUser)
                     {
-                        CreateYafHostUser(yafUserId, boardId);
+                        SetYafHostUser(yafUserId, boardId);
                     }
                 }
 
@@ -260,11 +262,11 @@ namespace YAF.DotNetNuke.Components.Utils
         }
 
         /// <summary>
-        /// Adds the User as Host user if not already
+        /// Set the User as Host user if not already
         /// </summary>
         /// <param name="yafUserId">The YAF user id.</param>
         /// <param name="boardId">The board id.</param>
-        public static void CreateYafHostUser(int yafUserId, int boardId)
+        public static void SetYafHostUser(int yafUserId, int boardId)
         {
             // get this user information...
             var userInfoTable = LegacyDb.user_list(boardId, yafUserId, null, null, null);
@@ -274,7 +276,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 return;
             }
 
-            DataRow row = userInfoTable.Rows[0];
+            var row = userInfoTable.Rows[0];
 
             if (row["IsHostAdmin"].ToType<bool>())
             {
