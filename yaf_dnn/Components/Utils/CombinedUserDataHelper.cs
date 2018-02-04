@@ -370,9 +370,34 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <summary>
         ///   Gets TimeZone.
         /// </summary>
+        public TimeZoneInfo TimeZoneInfo
+        {
+            get
+            {
+                TimeZoneInfo timeZoneInfo;
+
+                try
+                {
+                    timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(this.DBRow.Field<string>("TimeZone"));
+                }
+                catch (Exception)
+                {
+                    timeZoneInfo = TimeZoneInfo.Local;
+                }
+
+                return timeZoneInfo;
+            }
+        }
+
+        /// <summary>
+        ///   Gets TimeZone.
+        /// </summary>
         public int? TimeZone
         {
-            get { return this.DBRow.Field<int>("TimeZone"); }
+            get
+            {
+                return DateTimeHelper.GetTimeZoneOffset(this.TimeZoneInfo);
+            }
         }
 
         /// <summary>

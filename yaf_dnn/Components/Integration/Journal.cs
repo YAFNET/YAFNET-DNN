@@ -60,7 +60,7 @@ namespace YAF.DotNetNuke.Components.Integration
                     HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
                     .RemoveMultipleWhitespace();
 
-            var user = UserController.Instance.GetCurrentUserInfo();
+            var user = UserController.GetCurrentUserInfo();
             var portalSettings = PortalSettings.Current;
 
             var ji = new JournalItem
@@ -113,7 +113,7 @@ namespace YAF.DotNetNuke.Components.Integration
                     HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
                     .RemoveMultipleWhitespace();
 
-            var user = UserController.Instance.GetCurrentUserInfo();
+            var user = UserController.GetCurrentUserInfo();
             var portalSettings = PortalSettings.Current;
             
             var ji = new JournalItem

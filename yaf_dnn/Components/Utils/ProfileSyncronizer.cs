@@ -100,35 +100,6 @@ namespace YAF.DotNetNuke.Components.Utils
         }
 
         /// <summary>
-        /// The get user time zone offset.
-        /// </summary>
-        /// <param name="userInfo">
-        /// The user info.
-        /// </param>
-        /// <returns>
-        /// Returns the User Time Zone Offset Value
-        /// </returns>
-        public static int GetUserTimeZoneOffset(UserInfo userInfo)
-        {
-            var timeZone = 0;
-
-            if (userInfo == null || userInfo.UserID == Null.NullInteger)
-            {
-                return timeZone;
-            }
-
-            var utcOffSet = userInfo.Profile.PreferredTimeZone.BaseUtcOffset;
-
-            var timeZoneUser = utcOffSet < TimeSpan.Zero
-                                   ? "-{0}".FormatWith(utcOffSet.ToString("hh"))
-                                   : utcOffSet.ToString("hh");
-
-            timeZone = (timeZoneUser.ToType<decimal>() * 60).ToType<int>();
-
-            return timeZone;
-        }
-
-        /// <summary>
         /// Gets the name of the region info from country (English Name).
         /// </summary>
         /// <param name="countryEnglishName">Name of the country english.</param>
@@ -173,14 +144,14 @@ namespace YAF.DotNetNuke.Components.Utils
                     userCuluture.Culture = row["CultureTag"].ToString();
                 }
             }*/
-
+            
             LegacyDb.user_save(
                 yafUserId,
                 boardSettings.BoardID,
                 dnnUserInfo.Username,
                 dnnUserInfo.DisplayName,
                 dnnUserInfo.Email,
-                GetUserTimeZoneOffset(dnnUserInfo),
+                dnnUserInfo.Profile.PreferredTimeZone.Id,
                 yafUserData.LanguageFile.IsSet() ? yafUserData.LanguageFile : null,
                 yafUserData.CultureUser,
                 yafUserData.ThemeFile,

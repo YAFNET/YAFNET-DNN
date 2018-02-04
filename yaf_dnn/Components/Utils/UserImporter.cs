@@ -235,7 +235,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 dnnUserInfo.Username,
                 dnnUserInfo.DisplayName,
                 dnnUserInfo.Email,
-                ProfileSyncronizer.GetUserTimeZoneOffset(dnnUserInfo),
+                dnnUserInfo.Profile.PreferredTimeZone.Id,
                 null,
                 null,
                 null,

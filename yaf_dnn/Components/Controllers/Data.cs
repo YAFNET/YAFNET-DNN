@@ -41,6 +41,8 @@ namespace YAF.DotNetNuke.Components.Controllers
     using YAF.Types.Interfaces.Data;
     using YAF.Types.Models;
 
+    using ForumAccess = YAF.DotNetNuke.Components.Objects.ForumAccess;
+
     #endregion
 
     /// <summary>
