@@ -40,8 +40,9 @@ namespace YAF.DotNetNuke.Components.Utils
     using YAF.Core;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
+    using YAF.Types.Objects;
     using YAF.Utils.Helpers;
-    using System.Text.RegularExpressions;
+
     /// <summary>
     /// Helper Class to inject the Bread Crumb
     /// </summary>
@@ -51,12 +52,12 @@ namespace YAF.DotNetNuke.Components.Utils
         /// Append YAF Bread Crumb to the DNN Bread Crumb
         /// </summary>
         /// <param name="control">The control.</param>
-        /// <param name="dnnBreadCrumbID">The DNN bread crumb unique identifier.</param>
+        /// <param name="dnnBreadCrumbId">The DNN bread crumb unique identifier.</param>
         /// <param name="portalSettings">The portal settings.</param>
         /// <returns>
         /// Returns if the Bread Crumb was successfully appended
         /// </returns>
-        public static bool UpdateDnnBreadCrumb(Control control, string dnnBreadCrumbID, PortalSettings portalSettings)
+        public static bool UpdateDnnBreadCrumb(Control control, string dnnBreadCrumbId, PortalSettings portalSettings)
         {
             try
             {
@@ -72,7 +73,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     return false;
                 }
 
-                var breadCrumbControl = FindDnnBreadCrumbControl(control, dnnBreadCrumbID);
+                var breadCrumbControl = FindDnnBreadCrumbControl(control, dnnBreadCrumbId);
 
                 if (breadCrumbControl == null)
                 {
