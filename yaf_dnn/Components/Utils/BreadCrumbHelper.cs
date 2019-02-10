@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2016 Ingo Herbote
+ * Copyright (C) 2014-2019 Ingo Herbote
  * http://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -40,9 +40,8 @@ namespace YAF.DotNetNuke.Components.Utils
     using YAF.Core;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
-    using YAF.Types.Objects;
     using YAF.Utils.Helpers;
-
+    using System.Text.RegularExpressions;
     /// <summary>
     /// Helper Class to inject the Bread Crumb
     /// </summary>
@@ -52,12 +51,12 @@ namespace YAF.DotNetNuke.Components.Utils
         /// Append YAF Bread Crumb to the DNN Bread Crumb
         /// </summary>
         /// <param name="control">The control.</param>
-        /// <param name="dnnBreadCrumbId">The DNN bread crumb unique identifier.</param>
+        /// <param name="dnnBreadCrumbID">The DNN bread crumb unique identifier.</param>
         /// <param name="portalSettings">The portal settings.</param>
         /// <returns>
         /// Returns if the Bread Crumb was successfully appended
         /// </returns>
-        public static bool UpdateDnnBreadCrumb(Control control, string dnnBreadCrumbId, PortalSettings portalSettings)
+        public static bool UpdateDnnBreadCrumb(Control control, string dnnBreadCrumbID, PortalSettings portalSettings)
         {
             try
             {
@@ -73,7 +72,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     return false;
                 }
 
-                var breadCrumbControl = FindDnnBreadCrumbControl(control, dnnBreadCrumbId);
+                var breadCrumbControl = FindDnnBreadCrumbControl(control, dnnBreadCrumbID);
 
                 if (breadCrumbControl == null)
                 {

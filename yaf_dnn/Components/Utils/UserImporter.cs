@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2016 Ingo Herbote
+ * Copyright (C) 2014-2019 Ingo Herbote
  * http://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -230,23 +230,23 @@ namespace YAF.DotNetNuke.Components.Utils
 
             // Save User
             LegacyDb.user_save(
-                yafUserId,
-                boardId,
-                dnnUserInfo.Username,
-                dnnUserInfo.DisplayName,
-                dnnUserInfo.Email,
-                dnnUserInfo.Profile.PreferredTimeZone.Id,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                boardSettings.DefaultNotificationSetting,
-                autoWatchTopicsEnabled,
-                dnnUserInfo.Profile.PreferredTimeZone.SupportsDaylightSavingTime,
-                null,
-                null);
+                userID: yafUserId,
+                boardID: boardId,
+                userName: dnnUserInfo.Username,
+                displayName: dnnUserInfo.DisplayName,
+                email: dnnUserInfo.Email,
+                timeZone: dnnUserInfo.Profile.PreferredTimeZone.Id,
+                languageFile: null,
+                culture: null,
+                themeFile: null,
+                textEditor: null,
+                useMobileTheme: null,
+                approved: null,
+                pmNotification: boardSettings.DefaultNotificationSetting,
+                autoWatchTopics: autoWatchTopicsEnabled,
+                dSTUser: dnnUserInfo.Profile.PreferredTimeZone.SupportsDaylightSavingTime,
+                hideUser: null,
+                notificationType: null);
 
             // save notification Settings
             LegacyDb.user_savenotification(
