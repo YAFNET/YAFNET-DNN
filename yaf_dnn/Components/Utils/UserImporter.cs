@@ -230,23 +230,23 @@ namespace YAF.DotNetNuke.Components.Utils
 
             // Save User
             LegacyDb.user_save(
-                userID: yafUserId,
-                boardID: boardId,
-                userName: dnnUserInfo.Username,
-                displayName: dnnUserInfo.DisplayName,
-                email: dnnUserInfo.Email,
-                timeZone: dnnUserInfo.Profile.PreferredTimeZone.Id,
-                languageFile: null,
-                culture: null,
-                themeFile: null,
-                textEditor: null,
-                useMobileTheme: null,
-                approved: null,
-                pmNotification: boardSettings.DefaultNotificationSetting,
-                autoWatchTopics: autoWatchTopicsEnabled,
-                dSTUser: dnnUserInfo.Profile.PreferredTimeZone.SupportsDaylightSavingTime,
-                hideUser: null,
-                notificationType: null);
+                yafUserId,
+                boardId,
+                dnnUserInfo.Username,
+                dnnUserInfo.DisplayName,
+                dnnUserInfo.Email,
+                dnnUserInfo.Profile.PreferredTimeZone.Id,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                boardSettings.DefaultNotificationSetting,
+                autoWatchTopicsEnabled,
+                dnnUserInfo.Profile.PreferredTimeZone.SupportsDaylightSavingTime,
+                null,
+                null);
 
             // save notification Settings
             LegacyDb.user_savenotification(

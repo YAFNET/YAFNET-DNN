@@ -64,7 +64,7 @@ namespace YAF.DotNetNuke.Components.Utils
 
             var yafUserRoles = Data.GetYafUserRoles(boardId, yafUserId);
 
-            var yafBoardRoles = YafContext.Current.GetRepository<Group>().ListTyped(boardId: boardId);
+            var yafBoardRoles = YafContext.Current.GetRepository<Group>().List(boardId: boardId);
 
             var rolesChanged = false;
 
