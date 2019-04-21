@@ -81,9 +81,6 @@
     </Compile>
     <Compile Include="Components\Controllers\Data.cs" />
     <Compile Include="Components\Controllers\Profile.cs" />
-    <Compile Include="Components\Controllers\Search.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="Components\Integration\Sitemap.cs" />
     <Compile Include="Components\Utils\CombinedUserDataHelper.cs" />
     <Compile Include="Components\Integration\DnnRichEditor.cs" />
@@ -290,4 +287,9 @@
   <Import Project="BuildScripts\ModulePackage.Targets" />
   <Target Name="AfterBuild" DependsOnTargets="PackageModule">
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>del "$(TargetDir)\DotNetNuke.dll"
+del "$(TargetDir)\DotNetNuke.pdb"
+del "$(TargetDir)\Microsoft.ApplicationBlocks.Data.dll"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

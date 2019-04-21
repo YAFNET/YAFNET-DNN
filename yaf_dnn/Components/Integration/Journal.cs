@@ -27,6 +27,7 @@ namespace YAF.DotNetNuke.Components.Integration
     using System.Linq;
     using System.Text;
 
+    using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Portals;
     using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Security.Roles;
@@ -60,7 +61,7 @@ namespace YAF.DotNetNuke.Components.Integration
                     HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
                     .RemoveMultipleWhitespace();
 
-            var user = UserController.GetCurrentUserInfo();
+            var user = UserController.Instance.GetCurrentUserInfo();
             var portalSettings = PortalSettings.Current;
 
             var ji = new JournalItem
@@ -113,7 +114,7 @@ namespace YAF.DotNetNuke.Components.Integration
                     HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
                     .RemoveMultipleWhitespace();
 
-            var user = UserController.GetCurrentUserInfo();
+            var user = UserController.Instance.GetCurrentUserInfo();
             var portalSettings = PortalSettings.Current;
             
             var ji = new JournalItem
@@ -166,7 +167,7 @@ namespace YAF.DotNetNuke.Components.Integration
         {
             var forumAccessList = Data.GetReadAccessListForForum(forumID);
 
-            var dnnRoles = new RoleController().GetPortalRoles(portalID).Cast<RoleInfo>().ToList();
+            var dnnRoles = new RoleController().GetRoles(portalID).ToList();
 
             var securitySet = new StringBuilder();
 

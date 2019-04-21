@@ -64,7 +64,7 @@ namespace YAF.DotNetNuke.Components.Utils
 
             var yafUserRoles = Data.GetYafUserRoles(boardId, yafUserId);
 
-            var yafBoardRoles = YafContext.Current.GetRepository<Group>().List(boardId: boardId);
+            var yafBoardRoles = YafContext.Current.GetRepository<Group>().ListTyped(boardId: boardId);
 
             var rolesChanged = false;
 
@@ -129,8 +129,7 @@ namespace YAF.DotNetNuke.Components.Utils
             // Remove user from dnn role if no longer included
             foreach (
                 var role in
-                    roleController.GetPortalRoles(portalId)
-                                  .Cast<RoleInfo>()
+                    roleController.GetRoles(portalId)
                                   .Where(
                                       role =>
                                       !dnnUserInfo.Roles.Any(existRole => existRole.Equals(role.RoleName))

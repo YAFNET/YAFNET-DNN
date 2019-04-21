@@ -29,6 +29,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using System.Linq;
     using System.Web.Security;
 
+    using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Users;
 
