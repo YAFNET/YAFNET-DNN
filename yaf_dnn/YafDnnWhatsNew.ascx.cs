@@ -180,7 +180,7 @@ namespace YAF.DotNetNuke
                 this,
                 type,
                 "timeagojs",
-                this.ResolveUrl("~/DesktopModules/YAF.WhatsNew/jquery.timeago.js"));
+                this.ResolveUrl("~/DesktopModules/YAF.WhatsNew/jquery.ForumExtensions.min.js"));
 
                 var timeagoLoadJs = @"Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(loadTimeAgo);
             function loadTimeAgo() {{
