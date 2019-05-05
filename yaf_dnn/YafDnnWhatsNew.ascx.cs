@@ -36,10 +36,12 @@ namespace YAF.DotNetNuke
 
     using global::DotNetNuke.Common;
     using global::DotNetNuke.Entities.Modules;
+    using global::DotNetNuke.Entities.Tabs;
     using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Framework.JavaScriptLibraries;
     using global::DotNetNuke.Services.Exceptions;
     using global::DotNetNuke.Services.Localization;
+    using global::DotNetNuke.Services.Url.FriendlyUrl;
 
     using YAF.Classes;
     using YAF.Classes.Data;
@@ -86,6 +88,11 @@ namespace YAF.DotNetNuke
         ///   The YAF tab id.
         /// </summary>
         private int yafTabId;
+
+        /// <summary>
+        /// The YAF TabInfo.
+        /// </summary>
+        private TabInfo yafTabInfo;
 
         /// <summary>
         /// The sort order
@@ -325,6 +332,8 @@ namespace YAF.DotNetNuke
                 if (moduleSettings["YafPage"].ToType<string>().IsSet())
                 {
                     this.yafTabId = moduleSettings["YafPage"].ToType<int>();
+
+                    this.yafTabInfo = new TabController().GetTab(this.yafTabId, this.PortalSettings.PortalId, true);
                 }
                 else
                 {
@@ -442,22 +451,14 @@ namespace YAF.DotNetNuke
 
             var currentItem = this.itemTemplate;
 
-            var messageUrl =
-                this.ResolveUrl(
-                    "~/Default.aspx?tabid={1}&g=posts&m={0}#post{0}".FormatWith(
-                        currentRow["LastMessageID"],
-                        this.yafTabId));
-
-            // make message url...
-            if (Classes.Config.EnableURLRewriting)
-            {
-                messageUrl =
-                    Globals.ResolveUrl(
-                        "~/tabid/{0}/g/posts/m/{1}/{2}.aspx#post{1}".FormatWith(
-                            this.yafTabId,
-                            currentRow["LastMessageID"],
-                            UrlRewriteHelper.CleanStringForURL(YafContext.Current.Get<IBadWordReplace>().Replace(currentRow["Topic"].ToString()))));
-            }
+            var messageUrl = FriendlyUrlProvider.Instance().FriendlyUrl(
+                this.yafTabInfo,
+                "{0}&g=posts&m={1}".FormatWith(
+                    Globals.ApplicationURL(this.yafTabInfo.TabID),
+                    currentRow["LastMessageID"]),
+                UrlRewriteHelper.CleanStringForURL(
+                    YafContext.Current.Get<IBadWordReplace>().Replace(currentRow["Topic"].ToString())),
+                this.PortalSettings);
 
             try
             {
@@ -496,17 +497,15 @@ namespace YAF.DotNetNuke
             var forumLink = new HyperLink
                                 {
                                     Text = currentRow["Forum"].ToString(),
-                                    NavigateUrl =
-                                        Classes.Config.EnableURLRewriting
-                                            ? Globals.ResolveUrl(
-                                                "~/tabid/{0}/g/topics/f/{1}/{2}.aspx".FormatWith(
-                                                    this.yafTabId,
-                                                    currentRow["ForumID"],
-                                                    currentRow["Forum"]))
-                                            : this.ResolveUrl(
-                                                "~/Default.aspx?tabid={1}&g=topics&f={0}".FormatWith(
-                                                    currentRow["ForumID"],
-                                                    this.yafTabId))
+                                    NavigateUrl = FriendlyUrlProvider.Instance().FriendlyUrl(
+                                        this.yafTabInfo,
+                                        "{0}&g=topics&f={1}".FormatWith(
+                                            Globals.ApplicationURL(this.yafTabInfo.TabID),
+                                            currentRow["ForumID"]),
+                                        UrlRewriteHelper.CleanStringForURL(
+                                            YafContext.Current.Get<IBadWordReplace>()
+                                                .Replace(currentRow["Forum"].ToString())),
+                                        this.PortalSettings)
                                 };
 
             currentItem = currentItem.Replace("[FORUMLINK]", forumLink.RenderToString());
@@ -530,17 +529,13 @@ namespace YAF.DotNetNuke
                                        {
                                            Text = userName,
                                            ToolTip = userName,
-                                           NavigateUrl =
-                                               Classes.Config.EnableURLRewriting
-                                                   ? Globals.ResolveUrl(
-                                                       "~/tabid/{0}/g/profile/u/{1}/{2}.aspx".FormatWith(
-                                                           this.yafTabId,
-                                                           currentRow["LastUserID"],
-                                                           userName))
-                                                   : this.ResolveUrl(
-                                                       "~/Default.aspx?tabid={1}&g=profile&u={0}".FormatWith(
-                                                           currentRow["LastUserID"],
-                                                           this.yafTabId))
+                                           NavigateUrl = FriendlyUrlProvider.Instance().FriendlyUrl(
+                                               this.yafTabInfo,
+                                               "{0}&g=profile&u={1}".FormatWith(
+                                                   Globals.ApplicationURL(this.yafTabInfo.TabID),
+                                                   currentRow["LastUserID"]),
+                                               userName,
+                                               this.PortalSettings)
                                        };
 
                 currentItem = currentItem.Replace("[LASTUSERLINK]", lastUserLink.RenderToString());
