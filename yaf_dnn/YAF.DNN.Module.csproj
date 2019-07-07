@@ -300,10 +300,11 @@
   <PropertyGroup>
     <PostBuildEvent>del "$(TargetDir)\DotNetNuke.dll"
 del "$(TargetDir)\DotNetNuke.pdb"
-del "$(TargetDir)\Microsoft.ApplicationBlocks.Data.dll"</PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PreBuildEvent>cd $(TargetDir)
+del "$(TargetDir)\DotNetNuke.Web.dll"
+del "$(TargetDir)\DotNetNuke.Web.pdb"
+del "$(TargetDir)\DotNetNuke.WebUtility.dll"
+del "$(TargetDir)\DotNetNuke.WebUtility.pdb"
+del "$(TargetDir)\Microsoft.ApplicationBlocks.Data.dll"
 del Lucene.Net.Contrib.SpellChecker.dll
 del Lucene.Net.Contrib.SpellChecker.pdb
 del Lucene.Net.Contrib.Snowball.dll
@@ -321,6 +322,10 @@ del Lucene.Net.Contrib.FastVectorHighlighter.pdb
 del Lucene.Net.Contrib.Core.dll
 del Lucene.Net.Contrib.Core.pdb
 del Lucene.Net.Contrib.Analyzers.dll
-del Lucene.Net.Contrib.Analyzers.pdb</PreBuildEvent>
+del Lucene.Net.Contrib.Analyzers.pdb</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>
