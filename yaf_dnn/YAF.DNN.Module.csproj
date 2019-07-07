@@ -37,6 +37,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -48,6 +49,7 @@
     <DocumentationFile>
     </DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Deploy|AnyCPU'">
     <OutputPath>..\yafsrc\YetAnotherForum.NET\Bin\</OutputPath>
@@ -57,6 +59,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -81,6 +84,10 @@
     </Compile>
     <Compile Include="Components\Controllers\Data.cs" />
     <Compile Include="Components\Controllers\Profile.cs" />
+    <Compile Include="Components\WebAPI\AlbumController.cs" />
+    <Compile Include="Components\WebAPI\AttachmentController.cs" />
+    <Compile Include="Components\WebAPI\MultiQuoteController.cs" />
+    <Compile Include="Components\WebAPI\RouteMapper.cs" />
     <Compile Include="Components\Integration\Sitemap.cs" />
     <Compile Include="Components\Utils\CombinedUserDataHelper.cs" />
     <Compile Include="Components\Integration\DnnRichEditor.cs" />
@@ -102,6 +109,10 @@
     </Compile>
     <Compile Include="Components\Utils\UserComparer.cs" />
     <Compile Include="Components\Utils\UserImporter.cs" />
+    <Compile Include="Components\WebAPI\FavoriteTopicController.cs" />
+    <Compile Include="Components\WebAPI\SearchController.cs" />
+    <Compile Include="Components\WebAPI\ThankYouController.cs" />
+    <Compile Include="Components\WebAPI\TopicController.cs" />
     <Compile Include="YafDnnWhatsNew.ascx.cs">
       <DependentUpon>YafDnnWhatsNew.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -231,6 +242,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -240,6 +252,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DotNetNuke.Core">
+      <Version>9.3.2</Version>
+    </PackageReference>
+    <PackageReference Include="DotNetNuke.WebApi">
       <Version>9.3.2</Version>
     </PackageReference>
   </ItemGroup>
