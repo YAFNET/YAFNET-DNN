@@ -126,27 +126,6 @@
   <data name="NotConfigured.Text" xml:space="preserve">
     <value>Module needs to be configured in the Module Settings.</value>
   </data>
-  <data name="TIMEAGO_JS.Text" xml:space="preserve">
-    <value>// english
-      jQuery.timeago.settings.strings = {
-      prefixAgo: null,
-      prefixFromNow: null,
-      suffixAgo: "ago",
-      suffixFromNow: "from now",
-      seconds: "less than a minute",
-      minute: "about a minute",
-      minutes: "%d minutes",
-      hour: "about an hour",
-      hours: "about %d hours",
-      day: "a day",
-      days: "%d days",
-      month: "about a month",
-      months: "%d months",
-      year: "about a year",
-      years: "%d years",
-      numbers: []
-      };</value>
-  </data>
   <data name="NoMessages.Text" xml:space="preserve">
     <value>Currently the Forum doesnt contain any Messages.</value>
   </data>

@@ -96,15 +96,15 @@ namespace YAF.DotNetNuke
 
                 this.HtmlHeader.Text = this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
                                            ? this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>()
-                                           : "<ul>";
+                                           : @"<div class=""card"" style=""width: 20rem;""><ul class=""list-group list-group-flush"">";
 
                 this.HtmlItem.Text = this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>().IsSet()
                                          ? this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>()
-                                         : "<li class=\"YafPosts\">[LASTPOSTICON]&nbsp;<strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />\"[LASTMESSAGE:150]\"<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
+                                         : "<li class=\"list-group-item\">[LASTPOSTICON]&nbsp;<strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />\"[LASTMESSAGE:150]\"<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
 
                 this.HtmlFooter.Text = this.TabModuleSettings["YafWhatsNewFooter"].ToType<string>().IsSet()
                                            ? this.TabModuleSettings["YafWhatsNewFooter"].ToType<string>()
-                                           : "</ul>";
+                                           : "</ul></div>";
             }
             catch (Exception exc)
             {

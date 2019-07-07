@@ -191,13 +191,18 @@ namespace YAF.DotNetNuke
                 "timeagojs",
                 this.ResolveUrl("~/DesktopModules/YAF.WhatsNew/jquery.ForumExtensions.min.js"));
 
-                var timeagoLoadJs = $@"Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(loadTimeAgo);
+                var momentLoadJs = $@"Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(loadTimeAgo);
             function loadTimeAgo() {{
-            {Localization.GetString("TIMEAGO_JS", this.LocalResourceFile)}
-              jQuery('abbr.timeago').timeago();	
-			      }}";
+            
+		    moment.locale('{(YafContext.Current.CultureUser.IsSet()
+                                 ? YafContext.Current.CultureUser.Substring(0, 2)
+                                 : YafContext.Current.Get<YafBoardSettings>().Culture.Substring(0, 2))}');
+            jQuery('abbr.timeago').html(function(index, value) {{
+                 
+            return moment(value).fromNow();
+            }});}}";
 
-                ScriptManager.RegisterStartupScript(this, type, "timeagoloadjs", timeagoLoadJs, true);
+                ScriptManager.RegisterStartupScript(this, type, "timeagoloadjs", momentLoadJs, true);
             }
 
             this.BindData();
@@ -406,15 +411,15 @@ namespace YAF.DotNetNuke
 
                     this.headerTemplate = moduleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
                                               ? moduleSettings["YafWhatsNewHeader"].ToType<string>()
-                                              : "<ul>";
+                                              : @"<div class=""card"" style=""width: 20rem;""><ul class=""list-group list-group-flush"">";
 
                     this.itemTemplate = moduleSettings["YafWhatsNewItemTemplate"].ToType<string>().IsSet()
                                             ? moduleSettings["YafWhatsNewItemTemplate"].ToType<string>()
-                                            : "<li class=\"YafPosts\">[LASTPOSTICON]&nbsp;<strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />\"[LASTMESSAGE:150]\"<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
+                                            : "<li class=\"list-group-item\">[LASTPOSTICON]&nbsp;<strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />\"[LASTMESSAGE:150]\"<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
 
                     this.footerTemplate = moduleSettings["YafWhatsNewFooter"].ToType<string>().IsSet()
                                               ? moduleSettings["YafWhatsNewFooter"].ToType<string>()
-                                              : "</ul>";
+                                              : "</ul></div>";
                 }
             }
             catch (Exception exc)
@@ -454,26 +459,9 @@ namespace YAF.DotNetNuke
                     YafContext.Current.Get<IBadWordReplace>().Replace(currentRow["Topic"].ToString())),
                 this.PortalSettings);
 
-            try
-            {
-                // Render [LASTPOSTICON]
-                var lastPostedImage = new ThemeButton
-                                          {
-                    Size = ButtonSize.Small,
-                    Icon = "share-square",
-                    Type = ButtonAction.OutlineSecondary,
-                    TextLocalizedTag = "GO_LAST_POST",
-                    CssClass = "mr-1"
-                };
+            currentItem = currentItem.Replace("[LASTPOSTICON]", string.Empty);
 
-                currentItem = currentItem.Replace("[LASTPOSTICON]", lastPostedImage.RenderToString());
-            }
-            catch (Exception)
-            {
-                currentItem = currentItem.Replace("[LASTPOSTICON]", string.Empty);
-            }
-
-            // Render [TOPICLINK]
+            // Render TOPICLINK
             var textMessageLink = new HyperLink
                                       {
                                           Text =
@@ -484,7 +472,7 @@ namespace YAF.DotNetNuke
 
             currentItem = currentItem.Replace("[TOPICLINK]", textMessageLink.RenderToString());
 
-            // Render [FORUMLINK]
+            // Render FORUMLINK
             var forumLink = new HyperLink
                                 {
                                     Text = currentRow["Forum"].ToString(),
@@ -499,12 +487,12 @@ namespace YAF.DotNetNuke
 
             currentItem = currentItem.Replace("[FORUMLINK]", forumLink.RenderToString());
 
-            // Render [BYTEXT]
+            // Render BYTEXT
             currentItem = currentItem.Replace(
                 "[BYTEXT]",
                 YafContext.Current.Get<IHaveLocalization>().GetText("SEARCH", "BY"));
 
-            // Render [LASTUSERLINK]
+            // Render LASTUSERLINK
             // Just in case...
             if (currentRow["LastUserID"] != DBNull.Value)
             {
@@ -528,7 +516,7 @@ namespace YAF.DotNetNuke
                 currentItem = currentItem.Replace("[LASTUSERLINK]", lastUserLink.RenderToString());
             }
 
-            // Render [LASTMESSAGE]
+            // Render LASTMESSAGE
             var lastMessage =
                 BBCodeHelper.StripBBCode(
                     HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(currentRow["LastMessage"].ToType<string>())))
@@ -556,7 +544,7 @@ namespace YAF.DotNetNuke
                 currentItem = currentItem.Replace("[LASTMESSAGE]", lastMessage);
             }
 
-            // Render [LASTPOSTEDDATETIME]
+            // Render LASTPOSTEDDATETIME
             var displayDateTime = new DisplayDateTime { DateTime = currentRow["LastPosted"].ToType<DateTime>() };
 
             currentItem = currentItem.Replace("[LASTPOSTEDDATETIME]", displayDateTime.RenderToString());
