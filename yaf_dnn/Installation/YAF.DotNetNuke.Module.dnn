@@ -89,6 +89,9 @@
               <name>Lucene.Net.dll</name>
             </assembly>
             <assembly>
+              <name>Newtonsoft.Json.dll</name>
+            </assembly>
+            <assembly>
               <name>ServiceStack.dll</name>
             </assembly>
             <assembly>
@@ -258,6 +261,16 @@
                     <add key="YAF.RadEditorToolsFile" value="~/DesktopModules/YetAnotherForumDotNet/editors/radEditor/toolsFile.xml" />
                     <add key="YAF.ConfigPassword" value="pass" />
                     <add key="YAF.URLRewritingMode" value="Unicode" />
+                  </node>
+                  <node path="/configuration/system.webServer" targetpath="/configuration/system.webServer/staticContent" action="update" collision="ignore">
+                    <staticContent>
+                    </staticContent>
+                  </node>
+                  <node path="/configuration/system.webServer/staticContent" action="update" key="fileExtension" collision="ignore">
+                    <remove fileExtension=".woff" />
+                    <mimeMap fileExtension=".woff" mimeType="application/x-font-woff" />
+                    <remove fileExtension=".woff2" />
+                    <mimeMap fileExtension=".woff2" mimeType="font/woff2" />
                   </node>
                   <node path="/configuration/system.webServer/modules" action="update" key="name" collision="overwrite">
                      <remove name="YafTaskModule" />
