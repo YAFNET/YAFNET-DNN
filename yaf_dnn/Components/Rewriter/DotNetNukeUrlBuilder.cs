@@ -53,7 +53,7 @@ namespace YAF.DotNetNuke
     /// <summary>
     /// The DotNetNuke URL builder.
     /// </summary>
-    public class DotNetNukeUrlBuilder : StandardUrlRewriter
+    public class DotNetNukeUrlBuilder : AdvancedUrlRewriter
     {
         #region Public Methods
 
@@ -147,7 +147,7 @@ namespace YAF.DotNetNuke
             {
                 if (!fullUrl)
                 {
-                    return Globals.ResolveUrl("{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), url));
+                    return Globals.ResolveUrl($"{Globals.ApplicationURL(yafTab.TabID)}&{url}");
                 }
 
                 var baseUrlMask = yafBoardSettings.BaseUrlMask;
@@ -157,9 +157,8 @@ namespace YAF.DotNetNuke
                     baseUrlMask = baseUrlMask.Remove(baseUrlMask.Length - 1);
                 }
 
-                return "{0}{1}".FormatWith(
-                    baseUrlMask,
-                    Globals.ResolveUrl("{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), url)));
+                return
+                    $"{baseUrlMask}{Globals.ResolveUrl($"{Globals.ApplicationURL(yafTab.TabID)}&{url}")}";
             }
 
             var newUrl = new StringBuilder();
@@ -285,8 +284,8 @@ namespace YAF.DotNetNuke
                 FriendlyUrlProvider.Instance()
                     .FriendlyUrl(
                         yafTab,
-                        "{0}&{1}".FormatWith(Globals.ApplicationURL(yafTab.TabID), parser.CreateQueryString(new[] { "name" })),
-                        "{0}.aspx".FormatWith(boardNameOrPageName),
+                        $"{Globals.ApplicationURL(yafTab.TabID)}&{parser.CreateQueryString(new[] { "name" })}",
+                        $"{boardNameOrPageName}.aspx",
                         portalSettings));
 
             // add anchor
@@ -328,14 +327,14 @@ namespace YAF.DotNetNuke
                 baseUrl = baseUrl.Replace(yafTab.TabName, string.Empty);
             }
 
-            if (baseUrl.EndsWith("{0}.aspx".FormatWith(yafTab.TabName)))
+            if (baseUrl.EndsWith($"{yafTab.TabName}.aspx"))
             {
-                baseUrl = baseUrl.Replace("{0}.aspx".FormatWith(yafTab.TabName), string.Empty);
+                baseUrl = baseUrl.Replace($"{yafTab.TabName}.aspx", string.Empty);
             }
 
-            if (baseUrl.EndsWith("{0}.aspx".FormatWith(yafTab.TabName.ToLower())))
+            if (baseUrl.EndsWith($"{yafTab.TabName.ToLower()}.aspx"))
             {
-                baseUrl = baseUrl.Replace("{0}.aspx".FormatWith(yafTab.TabName.ToLower()), string.Empty);
+                baseUrl = baseUrl.Replace($"{yafTab.TabName.ToLower()}.aspx", string.Empty);
             }
 
             return baseUrl;
@@ -358,7 +357,7 @@ namespace YAF.DotNetNuke
             return FriendlyUrlProvider.Instance()
                 .FriendlyUrl(
                     activeTab,
-                    "{0}&{1}".FormatWith(Globals.ApplicationURL(activeTab.TabID), url),
+                    $"{Globals.ApplicationURL(activeTab.TabID)}&{url}",
                     boardNameOrPageName,
                     portalSettings);
         }

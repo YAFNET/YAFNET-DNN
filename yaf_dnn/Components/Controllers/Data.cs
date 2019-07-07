@@ -26,18 +26,19 @@ namespace YAF.DotNetNuke.Components.Controllers
 {
     #region Using
 
-    using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
 
     using global::DotNetNuke.Security.Roles;
 
-    using YAF.Classes.Data;
-    using YAF.DotNetNuke.Components.Objects;
+    using YAF.Core;
+    using YAF.Core.Extensions;
+    using YAF.Core.Model;
     using YAF.Types;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
+    using YAF.Types.Interfaces;
     using YAF.Types.Interfaces.Data;
     using YAF.Types.Models;
 
@@ -61,16 +62,10 @@ namespace YAF.DotNetNuke.Components.Controllers
         public static List<Board> ListBoards()
         {
             var boards = new List<Board>();
-            using (var cmd = DbHelpers.GetCommand("board_list"))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("BoardID", null);
+            var messagesTable = YafContext.Current.GetRepository<Board>().List();
 
-                var mesagesTable = LegacyDb.DbAccess.GetData(cmd);
-
-                boards.AddRange(from DataRow row in mesagesTable.Rows select new Board { ID = row["ID"].ToType<int>() });
-            }
+            boards.AddRange(from DataRow row in messagesTable.Rows select new Board { ID = row["ID"].ToType<int>() });
 
             return boards;
         }
@@ -95,19 +90,13 @@ namespace YAF.DotNetNuke.Components.Controllers
             bool showNoCountPosts,
             bool findLastRead = false)
         {
-            using (var cmd = DbHelpers.GetCommand("topic_latest"))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("BoardID", boardId);
-                cmd.Parameters.AddWithValue("NumPosts", numOfPostsToRetrieve);
-                cmd.Parameters.AddWithValue("PageUserID", pageUserId);
-                cmd.Parameters.AddWithValue("StyledNicks", useStyledNicks);
-                cmd.Parameters.AddWithValue("ShowNoCountPosts", showNoCountPosts);
-                cmd.Parameters.AddWithValue("FindLastRead", findLastRead);
-
-                return LegacyDb.DbAccess.GetData(cmd);
-            }
+            return YafContext.Current.GetRepository<Topic>().LatestAsDataTable(
+                boardId.ToType<int>(),
+                numOfPostsToRetrieve.ToType<int>(),
+                pageUserId.ToType<int>(),
+                useStyledNicks,
+                showNoCountPosts,
+                findLastRead);
         }
 
         /// <summary>
@@ -121,79 +110,7 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// </returns>
         public static DataTable ActiveAccessUser(object boardId, object userId, bool isGuest)
         {
-            using (var cmd = DbHelpers.GetCommand("pageaccess"))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("BoardID", boardId);
-                cmd.Parameters.AddWithValue("UserID", userId);
-                cmd.Parameters.AddWithValue("IsGuest", isGuest);
-                cmd.Parameters.AddWithValue("UTCTIMESTAMP", DateTime.UtcNow);
-
-                return LegacyDb.DbAccess.GetData(cmd);
-            }
-        }
-
-        /// <summary>
-        /// Get all <see cref="Messages"/> From The Forum
-        /// </summary>
-        /// <returns>
-        /// Message List
-        /// </returns>
-        public static List<Messages> YafDnnGetMessages()
-        {
-            var messagesList = new List<Messages>();
-
-            using (var cmd = DbHelpers.GetCommand("YafDnn_Messages"))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                var mesagesTable = LegacyDb.DbAccess.GetData(cmd);
-
-                messagesList.AddRange(
-                    from DataRow row in mesagesTable.Rows
-                    select
-                        new Messages
-                            {
-                                Message = row["Message"].ToType<string>(),
-                                MessageId = row["MessageID"].ToType<int>(),
-                                TopicId = row["TopicID"].ToType<int>(),
-                                Posted = row["Posted"].ToType<DateTime>()
-                            });
-            }
-
-            return messagesList;
-        }
-
-        /// <summary>
-        /// Get all <see cref="Messages"/> From The Forum
-        /// </summary>
-        /// <returns>
-        /// Topics List
-        /// </returns>
-        public static List<Topics> YafDnnGetTopics()
-        {
-            var topicsList = new List<Topics>();
-
-            using (var cmd = DbHelpers.GetCommand("YafDnn_Topics"))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                var topicsTable = LegacyDb.DbAccess.GetData(cmd);
-
-                topicsList.AddRange(
-                    from DataRow row in topicsTable.Rows
-                    select
-                        new Topics
-                            {
-                                TopicName = row["Topic"].ToType<string>(),
-                                TopicId = row["TopicID"].ToType<int>(),
-                                ForumId = row["ForumID"].ToType<int>(),
-                                Posted = row["Posted"].ToType<DateTime>()
-                            });
-            }
-
-            return topicsList;
+            return YafContext.Current.GetRepository<ActiveAccess>().PageAccessAsDataTable(boardId, userId, isGuest);
         }
 
         /// <summary>
@@ -205,20 +122,9 @@ namespace YAF.DotNetNuke.Components.Controllers
         {
             var roles = new List<RoleInfo>();
 
-            using (var cmd = DbHelpers.GetCommand("group_list"))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
+            var groups = YafContext.Current.GetRepository<Group>().Get(g => g.BoardID == boardId);
 
-                cmd.Parameters.AddWithValue("BoardID", boardId);
-                cmd.AddParam("GroupID", null);
-
-                var groupsTable = LegacyDb.DbAccess.GetData(cmd);
-
-                roles.AddRange(
-                    from DataRow row in groupsTable.Rows
-                    select
-                        new RoleInfo { RoleName = row["Name"].ToType<string>(), RoleID = row["GroupID"].ToType<int>(), });
-            }
+            roles.AddRange(from Group row in groups select new RoleInfo { RoleName = row.Name, RoleID = row.ID, });
 
             return roles;
         }
@@ -232,26 +138,17 @@ namespace YAF.DotNetNuke.Components.Controllers
         {
             var roles = new List<RoleInfo>();
 
-            using (var cmd = DbHelpers.GetCommand("accessmask_list"))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
+            var masks = YafContext.Current.GetRepository<AccessMask>().Get(a => a.BoardID == boardId);
 
-                cmd.Parameters.AddWithValue("BoardID", boardId);
-                cmd.AddParam("AccessMaskID", null);
-                cmd.AddParam("ExcludeFlags", 0);
-
-                var accessmasksTable = LegacyDb.DbAccess.GetData(cmd);
-
-                roles.AddRange(
-                    from DataRow row in accessmasksTable.Rows
-                    select
-                        new RoleInfo
-                            {
-                                RoleName = Convert.ToString(row["Name"]),
-                                RoleID = row["AccessMaskID"].ToType<int>(),
-                                RoleGroupID = row["Flags"].ToType<int>()
-                            });
-            }
+            roles.AddRange(
+                from AccessMask row in masks
+                select
+                    new RoleInfo
+                        {
+                            RoleName = row.Name,
+                            RoleID = row.ID,
+                            RoleGroupID = row.Flags
+                        });
 
             return roles;
         }
@@ -259,26 +156,18 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// <summary>
         /// Gets the YAF user roles.
         /// </summary>
-        /// <param name="boardId">The board id.</param>
         /// <param name="yafUserId">The YAF user id.</param>
         /// <returns>Returns List of YAF user roles</returns>
-        public static List<RoleInfo> GetYafUserRoles(int boardId, int yafUserId)
+        public static List<RoleInfo> GetYafUserRoles(int yafUserId)
         {
             var roles = new List<RoleInfo>();
 
-            using (var cmd = DbHelpers.GetCommand("usergroup_list"))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
+            var rolesTable = YafContext.Current.GetRepository<UserGroup>().ListAsDataTable(yafUserId);
 
-                cmd.Parameters.AddWithValue("UserID", yafUserId);
-
-                var rolesTable = LegacyDb.DbAccess.GetData(cmd);
-
-                roles.AddRange(
-                    from DataRow row in rolesTable.Rows
-                    select
-                        new RoleInfo { RoleName = row["Name"].ToType<string>(), RoleID = row["GroupID"].ToType<int>(), });
-            }
+            roles.AddRange(
+                from DataRow row in rolesTable.Rows
+                select
+                    new RoleInfo { RoleName = row["Name"].ToType<string>(), RoleID = row["GroupID"].ToType<int>(), });
 
             return roles;
         }
@@ -292,25 +181,18 @@ namespace YAF.DotNetNuke.Components.Controllers
         {
             var forumAccessList = new List<ForumAccess>();
 
-            using (var cmd = DbHelpers.GetCommand("GetReadAccessListForForum"))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
+            var accessListTable = (DataTable)YafContext.Current.Get<IDbFunction>().GetData.GetReadAccessListForForum(ForumID: forumId);
 
-                cmd.Parameters.AddWithValue("ForumID", forumId);
-
-                var accessListTable = LegacyDb.DbAccess.GetData(cmd);
-
-                forumAccessList.AddRange(
-                    from DataRow row in accessListTable.Rows
-                    select
-                        new ForumAccess
-                            {
-                                GroupID = row["GroupID"].ToType<int>(),
-                                GroupName = row["GroupName"].ToType<string>(),
-                                AccessMaskName = row["AccessMaskName"].ToType<string>(),
-                                Flags = new AccessFlags(row["Flags"])
-                            });
-            }
+            forumAccessList.AddRange(
+                from DataRow row in accessListTable.Rows
+                select
+                    new ForumAccess
+                        {
+                            GroupID = row["GroupID"].ToType<int>(),
+                            GroupName = row["GroupName"].ToType<string>(),
+                            AccessMaskName = row["AccessMaskName"].ToType<string>(),
+                            Flags = new AccessFlags(row["Flags"])
+                        });
 
             return forumAccessList;
         }
@@ -322,15 +204,8 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// <param name="boardId">The board identifier.</param>
         public static void ImportActiveForums([NotNull] int moduleId, [NotNull] int boardId)
         {
-            using (var cmd = DbHelpers.GetCommand("ImportActiveForums"))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.AddParam("oModuleID", moduleId);
-                cmd.AddParam("tplBoardID", boardId);
-
-                LegacyDb.DbAccess.ExecuteNonQuery(cmd);
-            }
+            YafContext.Current.Get<IDbFunction>().Scalar
+                .ImportActiveForums(oModuleID: moduleId, tplBoardID: boardId);
         }
 
         #endregion

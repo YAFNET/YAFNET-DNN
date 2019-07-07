@@ -12,7 +12,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>YAF.DotNetNuke</RootNamespace>
     <AssemblyName>YAF.DotNetNuke.Module</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>4.0</OldToolsVersion>
@@ -164,11 +164,6 @@
       <Name>YAF.Classes.Config</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\yafsrc\YAF.Classes\YAF.Classes.Data\YAF.Classes.Data.csproj">
-      <Project>{9A454596-56DC-4834-A043-F3C1443F859B}</Project>
-      <Name>YAF.Classes.Data</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\yafsrc\YAF.Controls\YAF.Controls.csproj">
       <Project>{C72A5FC8-4B1C-4A24-A306-FB550729DBF0}</Project>
       <Name>YAF.Controls</Name>
@@ -291,5 +286,26 @@
     <PostBuildEvent>del "$(TargetDir)\DotNetNuke.dll"
 del "$(TargetDir)\DotNetNuke.pdb"
 del "$(TargetDir)\Microsoft.ApplicationBlocks.Data.dll"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>cd $(TargetDir)
+del Lucene.Net.Contrib.SpellChecker.dll
+del Lucene.Net.Contrib.SpellChecker.pdb
+del Lucene.Net.Contrib.Snowball.dll
+del Lucene.Net.Contrib.Snowball.pdb
+del Lucene.Net.Contrib.SimpleFacetedSearch.dll
+del Lucene.Net.Contrib.SimpleFacetedSearch.pdb
+del Lucene.Net.Contrib.Regex.dll
+del Lucene.Net.Contrib.Regex.pdb
+del Lucene.Net.Contrib.Queries.dll
+del Lucene.Net.Contrib.Queries.pdb
+del Lucene.Net.Contrib.Memory.dll
+del Lucene.Net.Contrib.Memory.pdb
+del Lucene.Net.Contrib.FastVectorHighlighter.dll
+del Lucene.Net.Contrib.FastVectorHighlighter.pdb
+del Lucene.Net.Contrib.Core.dll
+del Lucene.Net.Contrib.Core.pdb
+del Lucene.Net.Contrib.Analyzers.dll
+del Lucene.Net.Contrib.Analyzers.pdb</PreBuildEvent>
   </PropertyGroup>
 </Project>

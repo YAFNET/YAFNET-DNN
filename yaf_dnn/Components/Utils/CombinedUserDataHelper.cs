@@ -31,13 +31,14 @@ namespace YAF.DotNetNuke.Components.Utils
     using System.Web.Security;
 
     using YAF.Classes;
-    using YAF.Classes.Data;
     using YAF.Core;
     using YAF.Core.Extensions;
+    using YAF.Core.Model;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
     using YAF.Types.Interfaces;
+    using YAF.Types.Models;
     using YAF.Utils;
     using YAF.Utils.Helpers;
 
@@ -103,34 +104,25 @@ namespace YAF.DotNetNuke.Components.Utils
             {
                 int value = this.DBRow.Field<int?>("NotificationType") ?? 0;
 
-                return (this.DBRow.Field<bool?>("AutoWatchTopics") ?? false)
-                       || value.ToEnum<UserNotificationSetting>() == UserNotificationSetting.TopicsIPostToOrSubscribeTo;
+                return (this.DBRow.Field<bool?>("AutoWatchTopics") ?? false) || value.ToEnum<UserNotificationSetting>()
+                       == UserNotificationSetting.TopicsIPostToOrSubscribeTo;
             }
         }
 
         /// <summary>
         ///   Gets Avatar.
         /// </summary>
-        public string Avatar
-        {
-            get { return this.DBRow.Field<string>("Avatar"); }
-        }
+        public string Avatar => this.DBRow.Field<string>("Avatar");
 
         /// <summary>
         ///   Gets Culture.
         /// </summary>
-        public string CultureUser
-        {
-            get { return this.DBRow.Field<string>("CultureUser"); }
-        }
+        public string CultureUser => this.DBRow.Field<string>("CultureUser");
 
         /// <summary>
         ///   Gets User's Text Editor.
         /// </summary>
-        public string TextEditor
-        {
-            get { return this.DBRow.Field<string>("TextEditor"); }
-        }
+        public string TextEditor => this.DBRow.Field<string>("TextEditor");
 
         /// <summary>
         ///   Gets DBRow.
@@ -141,10 +133,7 @@ namespace YAF.DotNetNuke.Components.Utils
             {
                 if (this._userDBRow == null && this._userId.HasValue)
                 {
-                    this._userDBRow = this.GetUserRowForID(
-                        this.boardId,
-                        this._userId.Value,
-                        true);
+                    this._userDBRow = this.GetUserRowForID(this.boardId, this._userId.Value, true);
                 }
 
                 return this._userDBRow;
@@ -154,33 +143,19 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <summary>
         ///   Gets a value indicating whether  DST is Enabled.
         /// </summary>
-        public bool DSTUser
-        {
-            get
-            {
-                return this.DBRow != null && new UserFlags(this.DBRow["Flags"]).IsDST;
-            }
-        }
+        public bool DSTUser => this.DBRow != null && new UserFlags(this.DBRow["Flags"]).IsDST;
 
         /// <summary>
         /// Gets a value indicating whether DailyDigest.
         /// </summary>
-        public bool DailyDigest
-        {
-            get
-            {
-                return this.DBRow.Field<bool?>("DailyDigest") ??
-                       YafContext.Current.Get<YafBoardSettings>().DefaultSendDigestEmail;
-            }
-        }
+        public bool DailyDigest =>
+            this.DBRow.Field<bool?>("DailyDigest")
+            ?? YafContext.Current.Get<YafBoardSettings>().DefaultSendDigestEmail;
 
         /// <summary>
         ///   Gets DisplayName.
         /// </summary>
-        public string DisplayName
-        {
-            get { return this._userId.HasValue ? this.DBRow.Field<string>("DisplayName") : this.UserName; }
-        }
+        public string DisplayName => this._userId.HasValue ? this.DBRow.Field<string>("DisplayName") : this.UserName;
 
         /// <summary>
         ///   Gets Email.
@@ -191,17 +166,12 @@ namespace YAF.DotNetNuke.Components.Utils
             {
                 if (this.Membership == null && !this.IsGuest)
                 {
-                    YafContext.Current.Get<ILogger>()
-                        .Log(
-                            this.UserID,
-                            "CombinedUserDataHelper.get_Email",
-                            "ATTENTION! The user with id {0} and name {1} is very possibly is not in your Membership \r\n "
-                                .FormatWith(
-                                    this.UserID, this.UserName)
-                            +
-                            "data but it's still in you YAF user table. The situation should not normally happen. \r\n "
-                            + "You should create a Membership data for the user first and " +
-                            "then delete him from YAF user table or leave him.");
+                    YafContext.Current.Get<ILogger>().Log(
+                        this.UserID,
+                        "CombinedUserDataHelper.get_Email",
+                        $"ATTENTION! The user with id {this.UserID} and name {this.UserName} is very possibly is not in your Membership \r\n "
+                        + "data but it's still in you YAF user table. The situation should not normally happen. \r\n " + "You should create a Membership data for the user first and "
+                        + "then delete him from YAF user table or leave him.");
                 }
 
                 return this.IsGuest ? this.DBRow.Field<string>("Email") : this.Membership.Email;
@@ -211,56 +181,32 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <summary>
         ///   Gets a value indicating whether HasAvatarImage.
         /// </summary>
-        public bool HasAvatarImage
-        {
-            get
-            {
-                return this.DBRow != null && (this.DBRow["HasAvatarImage"].ToType<bool?>() ?? false);
-            }
-        }
+        public bool HasAvatarImage => this.DBRow != null && (this.DBRow["HasAvatarImage"].ToType<bool?>() ?? false);
 
         /// <summary>
         ///   Gets a value indicating whether IsActiveExcluded.
         /// </summary>
-        public bool IsActiveExcluded
-        {
-            get
-            {
-                return this.DBRow != null && new UserFlags(this.DBRow["Flags"]).IsActiveExcluded;
-            }
-        }
+        public bool IsActiveExcluded => this.DBRow != null && new UserFlags(this.DBRow["Flags"]).IsActiveExcluded;
 
         /// <summary>
         ///   Gets a value indicating whether IsGuest.
         /// </summary>
-        public bool IsGuest
-        {
-            get { return this.DBRow != null && (this.DBRow["IsGuest"].ToType<bool?>() ?? false); }
-        }
+        public bool IsGuest => this.DBRow != null && (this.DBRow["IsGuest"].ToType<bool?>() ?? false);
 
         /// <summary>
         ///   Gets Joined.
         /// </summary>
-        public DateTime? Joined
-        {
-            get { return this.DBRow.Field<DateTime>("Joined"); }
-        }
+        public DateTime? Joined => this.DBRow.Field<DateTime>("Joined");
 
         /// <summary>
         ///   Gets LanguageFile.
         /// </summary>
-        public string LanguageFile
-        {
-            get { return this.DBRow.Field<string>("LanguageFile"); }
-        }
+        public string LanguageFile => this.DBRow.Field<string>("LanguageFile");
 
         /// <summary>
         ///   Gets LastVisit.
         /// </summary>
-        public DateTime? LastVisit
-        {
-            get { return this.DBRow.Field<DateTime>("LastVisit"); }
-        }
+        public DateTime? LastVisit => this.DBRow.Field<DateTime>("LastVisit");
 
         /// <summary>
         /// Gets the last IP.
@@ -268,18 +214,12 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <value>
         /// The last IP.
         /// </value>
-        public string LastIP
-        {
-            get { return this.DBRow.Field<string>("IP"); }
-        }
+        public string LastIP => this.DBRow.Field<string>("IP");
 
         /// <summary>
         ///   Gets Membership.
         /// </summary>
-        public MembershipUser Membership
-        {
-            get { return this.MembershipUser; }
-        }
+        public MembershipUser Membership => this.MembershipUser;
 
         /// <summary>
         /// Gets NotificationSetting.
@@ -297,34 +237,17 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <summary>
         ///   Gets Number of Posts.
         /// </summary>
-        public int? NumPosts
-        {
-            get { return this.DBRow.Field<int>("NumPosts"); }
-        }
-
-        /// <summary>
-        ///   Gets a value indicating whether UseMobileTheme.
-        /// </summary>
-        public bool UseMobileTheme
-        {
-            get { return this.DBRow.Field<bool?>("OverrideDefaultThemes") ?? true; }
-        }
+        public int? NumPosts => this.DBRow.Field<int>("NumPosts");
 
         /// <summary>
         ///   Gets a value indicating whether PMNotification.
         /// </summary>
-        public bool PMNotification
-        {
-            get { return this.DBRow.Field<bool?>("PMNotification") ?? true; }
-        }
+        public bool PMNotification => this.DBRow.Field<bool?>("PMNotification") ?? true;
 
         /// <summary>
         ///   Gets Points.
         /// </summary>
-        public int? Points
-        {
-            get { return this.DBRow.Field<int>("Points"); }
-        }
+        public int? Points => this.DBRow.Field<int>("Points");
 
         /// <summary>
         ///   Gets Profile.
@@ -346,26 +269,22 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <summary>
         ///   Gets RankName.
         /// </summary>
-        public string RankName
-        {
-            get { return this.DBRow.Field<string>("RankName"); }
-        }
+        public string RankName => this.DBRow.Field<string>("RankName");
 
         /// <summary>
         ///   Gets Signature.
         /// </summary>
-        public string Signature
-        {
-            get { return this.DBRow.Field<string>("Signature"); }
-        }
+        public string Signature => this.DBRow.Field<string>("Signature");
 
         /// <summary>
         ///   Gets ThemeFile.
         /// </summary>
-        public string ThemeFile
-        {
-            get { return this.DBRow.Field<string>("ThemeFile"); }
-        }
+        public string ThemeFile => this.DBRow.Field<string>("ThemeFile");
+
+        /// <summary>
+        /// The block.
+        /// </summary>
+        public UserBlockFlags Block => new UserBlockFlags(this.DBRow.Field<int>("BlockFlags"));
 
         /// <summary>
         ///   Gets TimeZone.
@@ -392,24 +311,12 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <summary>
         ///   Gets TimeZone.
         /// </summary>
-        public int? TimeZone
-        {
-            get
-            {
-                return DateTimeHelper.GetTimeZoneOffset(this.TimeZoneInfo);
-            }
-        }
+        public int? TimeZone => DateTimeHelper.GetTimeZoneOffset(this.TimeZoneInfo);
 
         /// <summary>
         ///   Gets UserID.
         /// </summary>
-        public int UserID
-        {
-            get
-            {
-                return this._userId != null ? this._userId.ToType<int>() : 0;
-            }
-        }
+        public int UserID => this._userId != null ? this._userId.ToType<int>() : 0;
 
         /// <summary>
         ///   Gets UserName.
@@ -442,10 +349,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 return this._membershipUser;
             }
 
-            set
-            {
-                this._membershipUser = value;
-            }
+            set => this._membershipUser = value;
         }
 
         #endregion
@@ -464,7 +368,8 @@ namespace YAF.DotNetNuke.Components.Utils
                 if (this._userId == null)
                 {
                     // get the user id
-                    this._userId = UserMembershipHelper.GetUserIDFromProviderUserKey(this.MembershipUser.ProviderUserKey);
+                    this._userId =
+                        UserMembershipHelper.GetUserIDFromProviderUserKey(this.MembershipUser.ProviderUserKey);
                 }
             }
 
@@ -487,15 +392,15 @@ namespace YAF.DotNetNuke.Components.Utils
         {
             if (!allowUserInfoCaching)
             {
-                return LegacyDb.user_list(boardID, userID, DBNull.Value).GetFirstRow();
+                return YafContext.Current.GetRepository<User>().ListAsDataTable(boardID, userID, DBNull.Value)
+                    .GetFirstRow();
             }
 
             // get the item cached...
-            return
-                YafContext.Current.Get<IDataCache>().GetOrSet(
-                    Constants.Cache.UserListForID.FormatWith(userID),
-                    () => LegacyDb.user_list(boardID, userID, DBNull.Value),
-                    TimeSpan.FromMinutes(5)).GetFirstRow();
+            return YafContext.Current.Get<IDataCache>().GetOrSet(
+                string.Format(Constants.Cache.UserListForID, userID),
+                () => YafContext.Current.GetRepository<User>().ListAsDataTable(boardID, userID, DBNull.Value),
+                TimeSpan.FromMinutes(5)).GetFirstRow();
         }
 
         #endregion

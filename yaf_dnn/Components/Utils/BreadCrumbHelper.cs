@@ -40,8 +40,9 @@ namespace YAF.DotNetNuke.Components.Utils
     using YAF.Core;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
+    using YAF.Types.Objects;
     using YAF.Utils.Helpers;
-    using System.Text.RegularExpressions;
+
     /// <summary>
     /// Helper Class to inject the Bread Crumb
     /// </summary>
@@ -51,12 +52,12 @@ namespace YAF.DotNetNuke.Components.Utils
         /// Append YAF Bread Crumb to the DNN Bread Crumb
         /// </summary>
         /// <param name="control">The control.</param>
-        /// <param name="dnnBreadCrumbID">The DNN bread crumb unique identifier.</param>
+        /// <param name="dnnBreadCrumbId">The DNN bread crumb unique identifier.</param>
         /// <param name="portalSettings">The portal settings.</param>
         /// <returns>
         /// Returns if the Bread Crumb was successfully appended
         /// </returns>
-        public static bool UpdateDnnBreadCrumb(Control control, string dnnBreadCrumbID, PortalSettings portalSettings)
+        public static bool UpdateDnnBreadCrumb(Control control, string dnnBreadCrumbId, PortalSettings portalSettings)
         {
             try
             {
@@ -72,7 +73,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     return false;
                 }
 
-                var breadCrumbControl = FindDnnBreadCrumbControl(control, dnnBreadCrumbID);
+                var breadCrumbControl = FindDnnBreadCrumbControl(control, dnnBreadCrumbId);
 
                 if (breadCrumbControl == null)
                 {
@@ -82,17 +83,17 @@ namespace YAF.DotNetNuke.Components.Utils
                 var separator =
                     breadCrumbControl.GetType()
                         .GetProperty("Separator")
-                        .GetValue(breadCrumbControl, BindingFlags.Public | BindingFlags.NonPublic, null, null, null)
+                        ?.GetValue(breadCrumbControl, BindingFlags.Public | BindingFlags.NonPublic, null, null, null)
                         .ToString();
 
-                if (separator.IndexOf("src=") != -1 && !separator.Contains(portalSettings.ActiveTab.SkinPath))
+                if (separator != null && (separator.IndexOf("src=", StringComparison.Ordinal) != -1 && !separator.Contains(portalSettings.ActiveTab.SkinPath)))
                 {
-                    separator = separator.Replace("src=\"", "src=\"{0}".FormatWith(portalSettings.ActiveTab.SkinPath));
+                    separator = separator.Replace("src=\"", $"src=\"{portalSettings.ActiveTab.SkinPath}");
                 }
 
                 var cssObject = breadCrumbControl.GetType()
                     .GetProperty("CssClass")
-                    .GetValue(breadCrumbControl, BindingFlags.Public | BindingFlags.NonPublic, null, null, null);
+                    ?.GetValue(breadCrumbControl, BindingFlags.Public | BindingFlags.NonPublic, null, null, null);
 
                 var cssClass = "SkinObject";
 
@@ -157,19 +158,19 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="theControl">
         /// The control.
         /// </param>
-        /// <param name="dnnBreadCrumbID">
+        /// <param name="dnnBreadCrumbId">
         /// The DNN bread crumb unique identifier.
         /// </param>
         /// <returns>
         /// Returns the Control if found
         /// </returns>
-        private static Control FindDnnBreadCrumbControl(Control theControl, string dnnBreadCrumbID)
+        private static Control FindDnnBreadCrumbControl(Control theControl, string dnnBreadCrumbId)
         {
             Control foundControl;
 
             if (theControl.Parent != null)
             {
-                var control = theControl.Parent.FindControlAs<SkinObjectBase>(dnnBreadCrumbID);
+                var control = theControl.Parent.FindControlAs<SkinObjectBase>(dnnBreadCrumbId);
 
                 if (control != null && control.TemplateControl.AppRelativeVirtualPath.ToLowerInvariant()
                              .Contains("breadcrumb.ascx"))
@@ -177,7 +178,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     return control;
                 }
 
-                foundControl = FindDnnBreadCrumbControl(theControl.Parent, dnnBreadCrumbID);
+                foundControl = FindDnnBreadCrumbControl(theControl.Parent, dnnBreadCrumbId);
             }
             else
             {

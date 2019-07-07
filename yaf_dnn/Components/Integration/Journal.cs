@@ -27,7 +27,6 @@ namespace YAF.DotNetNuke.Components.Integration
     using System.Linq;
     using System.Text;
 
-    using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Portals;
     using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Security.Roles;
@@ -79,11 +78,7 @@ namespace YAF.DotNetNuke.Components.Integration
                              Body = message,
                              JournalTypeId = 5,
                              SecuritySet = this.GetSecuritySet(forumID, portalSettings.PortalId),
-                             ObjectKey =
-                                 "{0}:{1}:{2}".FormatWith(
-                                     forumID.ToString(),
-                                     topicID.ToString(),
-                                     messageID.ToString())
+                             ObjectKey = $"{forumID.ToString()}:{topicID.ToString()}:{messageID.ToString()}"
                          };
 
             if (JournalController.Instance.GetJournalItemByKey(portalSettings.PortalId, ji.ObjectKey) != null)
@@ -136,11 +131,7 @@ namespace YAF.DotNetNuke.Components.Integration
                              Body = message,
                              JournalTypeId = 6,
                              SecuritySet = this.GetSecuritySet(forumID, portalSettings.PortalId),
-                             ObjectKey =
-                                 "{0}:{1}:{2}".FormatWith(
-                                     forumID.ToString(),
-                                     topicID.ToString(),
-                                     messageID.ToString())
+                             ObjectKey = $"{forumID.ToString()}:{topicID.ToString()}:{messageID.ToString()}"
                          };
 
             if (JournalController.Instance.GetJournalItemByKey(portalSettings.PortalId, ji.ObjectKey) != null)

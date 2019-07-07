@@ -32,7 +32,6 @@ namespace YAF.DotNetNuke.Components.Utils
     using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Security.Roles;
 
-    using YAF.Classes.Data;
     using YAF.Core;
     using YAF.Core.Extensions;
     using YAF.Core.Model;
@@ -60,11 +59,11 @@ namespace YAF.DotNetNuke.Components.Utils
         public static bool SynchronizeUserRoles(int boardId, int portalId, int yafUserId, UserInfo dnnUserInfo)
         {
             // Make sure are roles exist
-            ImportDNNRoles(boardId, dnnUserInfo.Roles);
+            ImportDnnRoles(boardId, dnnUserInfo.Roles);
 
-            var yafUserRoles = Data.GetYafUserRoles(boardId, yafUserId);
+            var yafUserRoles = Data.GetYafUserRoles(yafUserId);
 
-            var yafBoardRoles = YafContext.Current.GetRepository<Group>().ListTyped(boardId: boardId);
+            var yafBoardRoles = YafContext.Current.GetRepository<Group>().List(boardId: boardId);
 
             var rolesChanged = false;
 
@@ -155,7 +154,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// </summary>
         /// <param name="boardId">The board id.</param>
         /// <param name="roles">The <paramref name="roles" />.</param>
-        public static void ImportDNNRoles(int boardId, string[] roles)
+        public static void ImportDnnRoles(int boardId, string[] roles)
         {
             var yafBoardRoles = Data.GetYafBoardRoles(boardId);
 
@@ -204,7 +203,7 @@ namespace YAF.DotNetNuke.Components.Utils
             }
 
             // Role exists in membership but not in yaf itself simply add it to yaf
-            return LegacyDb.group_save(
+            return YafContext.Current.GetRepository<Group>().Save(
                 DBNull.Value,
                 boardId,
                 roleName,
@@ -234,7 +233,7 @@ namespace YAF.DotNetNuke.Components.Utils
         public static void UpdateUserRole(RoleInfo role, int yafUserId, string userName, bool addRole)
         {
             // save user in role
-            LegacyDb.usergroup_save(yafUserId, role.RoleID, addRole);
+            YafContext.Current.GetRepository<UserGroup>().Save(yafUserId, role.RoleID, addRole);
 
             if (addRole && !RoleMembershipHelper.IsUserInRole(userName, role.RoleName))
             {

@@ -176,7 +176,7 @@ namespace YAF.DotNetNuke
                 return;
             }
 
-            var importFile = "{0}App_Data/YafImports.xml".FormatWith(HttpRuntime.AppDomainAppPath);
+            var importFile = $"{HttpRuntime.AppDomainAppPath}App_Data/YafImports.xml";
 
             var settings = new DataSet();
 
@@ -191,7 +191,7 @@ namespace YAF.DotNetNuke
 
                 sw.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
                 sw.WriteLine("<YafImports>");
-                sw.WriteLine("<Import PortalId=\"{0}\" BoardId=\"{1}\"/>".FormatWith(this.PortalId, this.boardId));
+                sw.WriteLine($"<Import PortalId=\"{this.PortalId}\" BoardId=\"{this.boardId}\"/>");
                 sw.WriteLine("</YafImports>");
 
                 sw.Close();
@@ -270,7 +270,7 @@ namespace YAF.DotNetNuke
 
             var settings = new DataSet();
 
-            var filePath = "{0}App_Data/YafImports.xml".FormatWith(HttpRuntime.AppDomainAppPath);
+            var filePath = $"{HttpRuntime.AppDomainAppPath}App_Data/YafImports.xml";
 
             try
             {
@@ -283,7 +283,7 @@ namespace YAF.DotNetNuke
 
                 sw.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
                 sw.WriteLine("<YafImports>");
-                sw.WriteLine("<Import PortalId=\"{0}\" BoardId=\"{1}\"/>".FormatWith(this.PortalId, this.boardId));
+                sw.WriteLine($"<Import PortalId=\"{this.PortalId}\" BoardId=\"{this.boardId}\"/>");
                 sw.WriteLine("</YafImports>");
 
                 sw.Close();

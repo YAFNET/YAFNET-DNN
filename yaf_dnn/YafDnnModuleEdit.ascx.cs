@@ -104,10 +104,7 @@ namespace YAF.DotNetNuke
                     {
                         DNNPageTab = this.TabId,
                         DNNPortalId = this.PortalId,
-                        BaseUrlMask =
-                            "http://{0}/".FormatWith(
-                                HttpContext.Current.Request.ServerVariables[
-                                    "SERVER_NAME"])
+                        BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/"
                     };
 
             // save the settings to the database
@@ -143,10 +140,7 @@ namespace YAF.DotNetNuke
                     {
                         DNNPageTab = this.TabId,
                         DNNPortalId = this.PortalId,
-                        BaseUrlMask =
-                            "http://{0}/".FormatWith(
-                                HttpContext.Current.Request.ServerVariables[
-                                    "SERVER_NAME"])
+                        BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/"
                     };
 
             // save the settings to the database
@@ -273,13 +267,13 @@ namespace YAF.DotNetNuke
                             break;
                         }
 
-                        path = "{0} -> {1}".FormatWith(tabSelected.TabName, path);
+                        path = $"{tabSelected.TabName} -> {path}";
                     }
 
                     var objListItem = new ListItem
                                           {
                                               Value = moduleInfo.ModuleID.ToString(),
-                                              Text = "{0} -> {1}".FormatWith(path, moduleInfo.ModuleTitle)
+                                              Text = $"{path} -> {moduleInfo.ModuleTitle}"
                                           };
 
                     this.ActiveForums.Items.Add(objListItem);
@@ -314,12 +308,7 @@ namespace YAF.DotNetNuke
                     {
                         DNNPageTab = this.TabId,
                         DNNPortalId = this.PortalId,
-                        BaseUrlMask =
-                            "http://{0}/".FormatWith(
-                                HttpContext.Current
-                                    .Request
-                                    .ServerVariables[
-                                        "SERVER_NAME"])
+                        BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/"
                     };
 
             // save the settings to the database
@@ -365,7 +354,7 @@ namespace YAF.DotNetNuke
             {
                 // Successfully created the new board
                 var boardFolder = this.Server.MapPath(
-                    Path.Combine(global::YAF.Classes.Config.BoardRoot, "{0}/".FormatWith(newBoardId)));
+                    Path.Combine(global::YAF.Classes.Config.BoardRoot, $"{newBoardId}/"));
 
                 // Create New Folders.
                 if (!Directory.Exists(Path.Combine(boardFolder, "Images")))
@@ -464,9 +453,6 @@ namespace YAF.DotNetNuke
             // load default extensions if available...
             loadWrapper("install/fileExtensions.xml", s => DataImport.FileExtensionImport(newBoardId, s));
 
-            // load default topic status if available...
-            loadWrapper("install/TopicStatusList.xml", s => DataImport.TopicStatusImport(newBoardId, s));
-
             // load default spam word if available...
             loadWrapper("install/SpamWords.xml", s => DataImport.SpamWordsImport(newBoardId, s));
 
@@ -487,7 +473,7 @@ namespace YAF.DotNetNuke
                 foreach (var attachment in Directory.GetFiles(attachActiveFolderPath))
                 {
                     var fileName = Path.GetFileName(attachment);
-                    File.Copy(attachment, "{0}\\{1}.yafupload".FormatWith(attachYafFolderPath, fileName));
+                    File.Copy(attachment, $"{attachYafFolderPath}\\{fileName}.yafupload");
                 }
             }
         }

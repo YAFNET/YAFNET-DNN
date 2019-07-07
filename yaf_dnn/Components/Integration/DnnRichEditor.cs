@@ -83,51 +83,26 @@ namespace YAF.Editors
         /// <summary>
         /// Gets a value indicating whether Active.
         /// </summary>
-        public override bool Active
-        {
-            get
-            {
-                return this._editorLoaded;
-            }
-        }
+        public override bool Active => this._editorLoaded;
 
         /// <summary>
         /// Gets Description.
         /// </summary>
-        public override string Description
-        {
-            get
-            {
-                return "DotNetNuke Text Editor (HTML)";
-            }
-        }
+        public override string Description => "DotNetNuke Text Editor (HTML)";
 
         /// <summary>
         /// Gets ModuleId.
         /// </summary>
-        public override string ModuleId
-        {
-            get
-            {
-                // backward compatibility...
-                return "9";
-            }
-        }
+        public override string ModuleId => "9";
 
         /// <summary>
         /// Gets or sets StyleSheet.
         /// </summary>
         public override string StyleSheet
         {
-            get
-            {
-                return this._styleSheet;
-            }
+            get => this._styleSheet;
 
-            set
-            {
-                this._styleSheet = value;
-            }
+            set => this._styleSheet = value;
         }
 
         /// <summary>
@@ -135,10 +110,7 @@ namespace YAF.Editors
         /// </summary>
         public override string Text
         {
-            get
-            {
-                return !this._editorLoaded ? string.Empty : this._editor.Text;
-            }
+            get => !this._editorLoaded ? string.Empty : this._editor.Text;
 
             set
             {
@@ -154,24 +126,12 @@ namespace YAF.Editors
         /// <summary>
         /// Gets a value indicating whether UsesBBCode.
         /// </summary>
-        public override bool UsesBBCode
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool UsesBBCode => false;
 
         /// <summary>
         /// Gets a value indicating whether UsesHTML.
         /// </summary>
-        public override bool UsesHTML
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool UsesHTML => true;
 
         #endregion
 
@@ -231,27 +191,23 @@ namespace YAF.Editors
                 case "Telerik.DNN.Providers.RadEditorProvider":
                     YafContext.Current.PageElements.RegisterJsBlock(
                         "insertsmiley",
-                        @"function insertAttachment(id,url){{var editor = $find('{0}');editor.pasteHtml('[attach]' + id + '[/attach]');}}"
-                            .FormatWith(editor.ClientID));
+                        $@"function insertAttachment(id,url){{var editor = $find('{editor.ClientID}');editor.pasteHtml('[attach]' + id + '[/attach]');}}");
                     break;
                 case "DotNetNuke.HtmlEditor.FckHtmlEditorProvider.FckHtmlEditorProvider":
                     YafContext.Current.PageElements.RegisterJsBlock(
                         "insertsmiley",
-                        @"function insertAttachment(id, url) {{var oEditor = FCKeditorAPI.GetInstance('{0}'); oEditor.InsertHtml( '[attach]' + id + '[/attach]' );}}"
-                            .FormatWith(editor.ClientID.Replace("$", "_")));
+                        $@"function insertAttachment(id, url) {{var oEditor = FCKeditorAPI.GetInstance('{editor.ClientID.Replace("$", "_")}'); oEditor.InsertHtml( '[attach]' + id + '[/attach]' );}}");
                     break;
                 case "DNNConnect.CKEditorProvider.CKHtmlEditorProvider":
                 case "WatchersNET.CKEditor.CKHtmlEditorProvider":
                     YafContext.Current.PageElements.RegisterJsBlock(
                         "insertsmiley",
-                        @"function insertAttachment(id,url) {{var ckEditor = CKEDITOR.instances.{0}; ckEditor.insertHtml( '[attach]' + id + '[/attach]' );}}"
-                            .FormatWith(editor.ClientID));
+                        $@"function insertAttachment(id,url) {{var ckEditor = CKEDITOR.instances.{editor.ClientID}; ckEditor.insertHtml( '[attach]' + id + '[/attach]' );}}");
                     break;
                 case "DotNetNuke.HtmlEditor.TelerikEditorProvider.EditorProvider":
                     YafContext.Current.PageElements.RegisterJsBlock(
                         "insertsmiley",
-                        @"function insertAttachment(id,url){{var editor = $find('{0}');editor.pasteHtml('[attach]' + id + '[/attach]');}}"
-                            .FormatWith(editor.ClientID));
+                        $@"function insertAttachment(id,url){{var editor = $find('{editor.ClientID}');editor.pasteHtml('[attach]' + id + '[/attach]');}}");
                     break;
             }
         }

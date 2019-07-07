@@ -76,9 +76,8 @@ namespace YAF.DotNetNuke
                     if (this.TabModuleSettings["YafPage"].ToType<string>().IsSet()
                         && this.TabModuleSettings["YafModuleId"].ToType<string>().IsSet())
                     {
-                        this.YafInstances.SelectedValue = "{0}-{1}".FormatWith(
-                            this.TabModuleSettings["YafPage"],
-                            this.TabModuleSettings["YafModuleId"]);
+                        this.YafInstances.SelectedValue =
+                            $"{this.TabModuleSettings["YafPage"]}-{this.TabModuleSettings["YafModuleId"]}";
                     }
                 }
 
@@ -142,7 +141,6 @@ namespace YAF.DotNetNuke
                     this.TabModuleId,
                     "YafSortOrder",
                     this.SortOrder.SelectedValue);
-
 
                 if (ValidationHelper.IsNumeric(this.txtMaxResult.Text) || this.txtMaxResult.Text.IsSet())
                 {
@@ -230,13 +228,13 @@ namespace YAF.DotNetNuke
                             break;
                         }
 
-                        strPath = "{0} -> {1}".FormatWith(objTabSelected.TabName, strPath);
+                        strPath = $"{objTabSelected.TabName} -> {strPath}";
                     }
 
                     var objListItem = new ListItem
                                           {
-                                              Value = "{0}-{1}".FormatWith(objModule.TabID, objModule.ModuleID),
-                                              Text = "{0} -> {1}".FormatWith(strPath, objModule.ModuleTitle)
+                                              Value = $"{objModule.TabID}-{objModule.ModuleID}",
+                                              Text = $"{strPath} -> {objModule.ModuleTitle}"
                                           };
 
                     this.YafInstances.Items.Add(objListItem);

@@ -33,12 +33,13 @@ namespace YAF.DotNetNuke.Components.Utils
     using global::DotNetNuke.Services.Exceptions;
 
     using YAF.Classes;
-    using YAF.Classes.Data;
     using YAF.Core;
+    using YAF.Core.Model;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
     using YAF.Types.Interfaces;
+    using YAF.Types.Models;
     using YAF.Utils;
 
     /// <summary>
@@ -116,7 +117,7 @@ namespace YAF.DotNetNuke.Components.Utils
                         Membership.UpdateUser(dnnUser);
                     } 
 
-                    var yafUserId = LegacyDb.user_get(boardId, dnnUser.ProviderUserKey);
+                    var yafUserId = YafContext.Current.GetRepository<User>().GetUserId(boardId, dnnUser.ProviderUserKey.ToString());
 
                     if (yafUserId.Equals(0))
                     {
@@ -156,9 +157,8 @@ namespace YAF.DotNetNuke.Components.Utils
                 Exceptions.LogException(ex);
             }
 
-            info = "{0} User(s) Imported, all user profiles are synchronized{1}".FormatWith(
-                newUserCount,
-                rolesChanged ? ", but all User Roles are synchronized!" : ", User Roles already synchronized!");
+            info =
+                $"{newUserCount} User(s) Imported, all user profiles are synchronized{(rolesChanged ? ", but all User Roles are synchronized!" : ", User Roles already synchronized!")}";
 
             return newUserCount;
         }
@@ -229,7 +229,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 boardSettings.DefaultNotificationSetting.Equals(UserNotificationSetting.TopicsIPostToOrSubscribeTo);
 
             // Save User
-            LegacyDb.user_save(
+            YafContext.Current.GetRepository<User>().Save(
                 userID: yafUserId,
                 boardID: boardId,
                 userName: dnnUserInfo.Username,
@@ -240,7 +240,6 @@ namespace YAF.DotNetNuke.Components.Utils
                 culture: null,
                 themeFile: null,
                 textEditor: null,
-                useMobileTheme: null,
                 approved: null,
                 pmNotification: boardSettings.DefaultNotificationSetting,
                 autoWatchTopics: autoWatchTopicsEnabled,
@@ -249,8 +248,8 @@ namespace YAF.DotNetNuke.Components.Utils
                 notificationType: null);
 
             // save notification Settings
-            LegacyDb.user_savenotification(
-                yafUserId,
+            YafContext.Current.GetRepository<User>().SaveNotification(
+                yafUserId.Value,
                 true,
                 autoWatchTopicsEnabled,
                 boardSettings.DefaultNotificationSetting,
@@ -269,7 +268,7 @@ namespace YAF.DotNetNuke.Components.Utils
         public static void SetYafHostUser(int yafUserId, int boardId)
         {
             // get this user information...
-            var userInfoTable = LegacyDb.user_list(boardId, yafUserId, null, null, null);
+            var userInfoTable = YafContext.Current.GetRepository<User>().ListAsDataTable(boardId, yafUserId, null);
 
             if (userInfoTable.Rows.Count <= 0)
             {
@@ -287,14 +286,14 @@ namespace YAF.DotNetNuke.Components.Utils
             var userFlags = new UserFlags(row["Flags"]) { IsHostAdmin = true };
 
             // update...
-            LegacyDb.user_adminsave(
+            YafContext.Current.GetRepository<User>().AdminSave(
                 boardId,
                 yafUserId,
-                row["Name"],
-                row["DisplayName"],
-                row["Email"],
+                row["Name"].ToString(),
+                row["DisplayName"].ToString(),
+                row["Email"].ToString(),
                 userFlags.BitValue,
-                row["RankID"]);
+                row["RankID"].ToType<int>());
         }
     }
 }

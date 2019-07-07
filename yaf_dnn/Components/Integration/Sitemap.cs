@@ -31,9 +31,11 @@
     using global::DotNetNuke.Entities.Portals;
     using global::DotNetNuke.Services.Sitemap;
 
-    using YAF.Classes.Data;
     using YAF.Core;
+    using YAF.Core.Model;
     using YAF.Types.Constants;
+    using YAF.Types.Interfaces;
+    using YAF.Types.Models;
     using YAF.Utils;
 
     /// <summary>
@@ -62,7 +64,7 @@
                 return urls;
             }
 
-            var forumList = LegacyDb.ForumListAll(
+            var forumList = YafContext.Current.GetRepository<Forum>().ForumListAll(
                 YafContext.Current.BoardSettings.BoardID,
                 UserMembershipHelper.GuestUserId);
 

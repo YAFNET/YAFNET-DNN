@@ -46,14 +46,17 @@ namespace YAF.DotNetNuke
     using global::DotNetNuke.Services.Localization;
 
     using YAF.Classes;
-    using YAF.Classes.Data;
     using YAF.Core;
+    using YAF.Core.Model;
     using YAF.DotNetNuke.Components.Objects;
     using YAF.DotNetNuke.Components.Utils;
     using YAF.Types;
     using YAF.Types.Attributes;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
+    using YAF.Types.Models;
+
+    using Forum = YAF.Forum;
 
     #endregion
 
@@ -125,27 +128,13 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// Gets the session user key name.
         /// </summary>
-        public string SessionUserKeyName
-        {
-            get
-            {
-                return "yaf_dnn_boardid{0}_userid{1}_portalid{2}".FormatWith(
-                    this.forum1.BoardID,
-                    this.UserId,
-                    this.CurrentPortalSettings.PortalId);
-            }
-        }
+        public string SessionUserKeyName =>
+            $"yaf_dnn_boardid{this.forum1.BoardID}_userid{this.UserId}_portalid{this.CurrentPortalSettings.PortalId}";
 
         /// <summary>
         /// Gets the Base Page
         /// </summary>
-        public CDefault BasePage
-        {
-            get
-            {
-                return this.basePage ?? (this.basePage = GetDefault(this));
-            }
-        }
+        public CDefault BasePage => this.basePage ?? (this.basePage = GetDefault(this));
 
         /// <summary>
         /// Gets the YAF Cultures
@@ -154,13 +143,13 @@ namespace YAF.DotNetNuke
         {
             get
             {
-                const string CACHEKEY = "YAF_Cultures";
+                const string Cachekey = "YAF_Cultures";
 
                 List<YafCultureInfo> cultures;
 
-                if (DataCache.GetCache(CACHEKEY) is List<YafCultureInfo>)
+                if (DataCache.GetCache(Cachekey) is List<YafCultureInfo>)
                 {
-                    cultures = DataCache.GetCache(CACHEKEY).ToType<List<YafCultureInfo>>();
+                    cultures = DataCache.GetCache(Cachekey).ToType<List<YafCultureInfo>>();
 
                     if (cultures.Count == 0)
                     {
@@ -179,14 +168,9 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// Gets CurrentPortalSettings.
         /// </summary>
-        private PortalSettings CurrentPortalSettings
-        {
-            get
-            {
-                return this.portalSettings
-                       ?? (this.portalSettings = PortalController.Instance.GetCurrentPortalSettings());
-            }
-        }
+        private PortalSettings CurrentPortalSettings =>
+            this.portalSettings
+            ?? (this.portalSettings = PortalController.Instance.GetCurrentPortalSettings());
 
         #endregion
 
@@ -320,7 +304,7 @@ namespace YAF.DotNetNuke
         private void CheckForRoles(UserInfo dnnUser, int yafUserId)
         {
             // see if the roles have been synchronized...
-            if (this.Session["{0}_rolesloaded".FormatWith(this.SessionUserKeyName)] != null)
+            if (this.Session[$"{this.SessionUserKeyName}_rolesloaded"] != null)
             {
                 return;
             }
@@ -331,7 +315,7 @@ namespace YAF.DotNetNuke
                 yafUserId,
                 dnnUser);
 
-            this.Session["{0}_rolesloaded".FormatWith(this.SessionUserKeyName)] = true;
+            this.Session[$"{this.SessionUserKeyName}_rolesloaded"] = true;
         }
 
         /// <summary>
@@ -351,7 +335,7 @@ namespace YAF.DotNetNuke
             }
 
             // Check if the user exists in yaf
-            var yafUserId = LegacyDb.user_get(this.forum1.BoardID, dnnMembershipUser.ProviderUserKey);
+            var yafUserId = YafContext.Current.GetRepository<User>().GetUserId(this.forum1.BoardID, dnnMembershipUser.ProviderUserKey.ToString());
 
             var boardSettings = YafContext.Current == null
                                     ? new YafLoadBoardSettings(this.forum1.BoardID)
@@ -426,7 +410,7 @@ namespace YAF.DotNetNuke
             {
                 this.BasePage.Title =
                     this.BasePage.Title.Replace(
-                        "> {0}".FormatWith(this.CurrentPortalSettings.ActiveTab.TabName),
+                        $"> {this.CurrentPortalSettings.ActiveTab.TabName}",
                         string.Empty);
             }
 
@@ -468,9 +452,7 @@ namespace YAF.DotNetNuke
                     {
                         this.Response.Redirect(
                             this.ResolveUrl(
-                                "~/tabid/{0}/ctl/Edit/mid/{1}/Default.aspx".FormatWith(
-                                    this.PortalSettings.ActiveTab.TabID,
-                                    this.ModuleId)));
+                                $"~/tabid/{this.PortalSettings.ActiveTab.TabID}/ctl/Edit/mid/{this.ModuleId}/Default.aspx"));
                     }
 
                     /*else
@@ -517,9 +499,7 @@ namespace YAF.DotNetNuke
                 {
                     this.Response.Redirect(
                         this.ResolveUrl(
-                            "~/tabid/{0}/ctl/Edit/mid/{1}/Default.aspx".FormatWith(
-                                this.PortalSettings.ActiveTab.TabID,
-                                this.ModuleId)));
+                            $"~/tabid/{this.PortalSettings.ActiveTab.TabID}/ctl/Edit/mid/{this.ModuleId}/Default.aspx"));
                 }
                 else
                 {

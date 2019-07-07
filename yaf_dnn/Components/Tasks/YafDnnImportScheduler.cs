@@ -94,7 +94,7 @@ namespace YAF.DotNetNuke
             catch (Exception exc)
             {
                 this.ScheduleHistoryItem.Succeeded = false;
-                this.ScheduleHistoryItem.AddLogNote("EXCEPTION: {0}".FormatWith(exc));
+                this.ScheduleHistoryItem.AddLogNote($"EXCEPTION: {exc}");
                 this.Errored(ref exc);
 
                 Exceptions.LogException(exc);
@@ -112,7 +112,7 @@ namespace YAF.DotNetNuke
         {
             var settings = new DataSet();
 
-            var filePath = "{0}App_Data/YafImports.xml".FormatWith(HttpRuntime.AppDomainAppPath);
+            var filePath = $"{HttpRuntime.AppDomainAppPath}App_Data/YafImports.xml";
 
             try
             {

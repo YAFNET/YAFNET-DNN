@@ -29,19 +29,19 @@ namespace YAF.DotNetNuke.Components.Utils
     using System.Linq;
     using System.Web.Security;
 
-    using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Users;
 
     using YAF.Classes;
-    using YAF.Classes.Data;
     using YAF.Core;
+    using YAF.Core.Model;
     using YAF.DotNetNuke.Components.Controllers;
     using YAF.Types;
     using YAF.Types.Constants;
     using YAF.Types.EventProxies;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
+    using YAF.Types.Models;
     using YAF.Utils;
 
     /// <summary>
@@ -144,8 +144,8 @@ namespace YAF.DotNetNuke.Components.Utils
                     userCuluture.Culture = row["CultureTag"].ToString();
                 }
             }*/
-            
-            LegacyDb.user_save(
+
+            YafContext.Current.GetRepository<User>().Save(
                 yafUserId,
                 boardSettings.BoardID,
                 dnnUserInfo.Username,
@@ -156,7 +156,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 yafUserData.CultureUser,
                 yafUserData.ThemeFile,
                 yafUserData.TextEditor,
-                yafUserData.UseMobileTheme,
+                true,
                 null,
                 null,
                 null,
@@ -198,13 +198,13 @@ namespace YAF.DotNetNuke.Components.Utils
             try
             {
                 if (dnnUserInfo.Profile.Photo.IsSet() && !dnnUserInfo.Profile.PhotoURL.Contains("no_avatar.gif")
-                    && dnnUserInfo.Profile.Photo.ToType<int>() > 0)
+                                                      && dnnUserInfo.Profile.Photo.ToType<int>() > 0)
                 {
                     SaveDnnAvatar(dnnUserInfo.Profile.PhotoURL, yafUserId);
                 }
                 else
                 {
-                    LegacyDb.user_deleteavatar(yafUserId);
+                    YafContext.Current.GetRepository<User>().DeleteAvatar(yafUserId);
                 }
             }
             catch (Exception)
@@ -223,7 +223,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="yafUserId">The YAF user id.</param>
         private static void SaveDnnAvatar(string photoUrl, int yafUserId)
         {
-            LegacyDb.user_saveavatar(yafUserId, photoUrl, null, null);
+            YafContext.Current.GetRepository<User>().SaveAvatar(yafUserId, photoUrl, null, null);
         }
     }
 }
