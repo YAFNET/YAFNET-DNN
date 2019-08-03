@@ -1,4 +1,4 @@
-![YAFNET](https://yaf.s3.amazonaws.com/images/logos/YAFNET-Logo-200px.png)
+﻿[![YAF logo](http://yetanotherforum.net/forum/Content/images/YAFLogo.svg)](http://www.yetanotherforum.net)
 
 *YetAnotherForum.NET* _(YAF.NET)_ is an Open Source Discussion Forum for sites running ASP.NET. 100% written in C#. YAF.NET runs on any web server that supports ASP.NET v4.0 and SQL Server 2005 or above.
 
