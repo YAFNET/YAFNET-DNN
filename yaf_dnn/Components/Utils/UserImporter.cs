@@ -32,7 +32,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Services.Exceptions;
 
-    using YAF.Classes;
+    using YAF.Configuration;
     using YAF.Core;
     using YAF.Core.Model;
     using YAF.Types.Constants;

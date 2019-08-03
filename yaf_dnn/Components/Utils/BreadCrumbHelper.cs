@@ -35,13 +35,13 @@ namespace YAF.DotNetNuke.Components.Utils
     using global::DotNetNuke.Entities.Portals;
     using global::DotNetNuke.UI.Skins;
 
-    using YAF.Classes;
-    using YAF.Controls;
+    using YAF.Configuration;
     using YAF.Core;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Types.Objects;
     using YAF.Utils.Helpers;
+    using YAF.Web.Controls;
 
     /// <summary>
     /// Helper Class to inject the Bread Crumb

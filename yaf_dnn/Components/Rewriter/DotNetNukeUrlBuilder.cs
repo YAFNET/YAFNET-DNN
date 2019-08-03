@@ -39,7 +39,7 @@ namespace YAF.DotNetNuke
     using global::DotNetNuke.Services.Localization;
     using global::DotNetNuke.Services.Url.FriendlyUrl;
 
-    using YAF.Classes;
+    using YAF.Configuration;
     using YAF.Core;
     using YAF.Core.Helpers;
     using YAF.Core.URLBuilder;
@@ -143,7 +143,7 @@ namespace YAF.DotNetNuke
                 return this.GetBaseUrl(yafBoardSettings, yafTab);
             }
 
-            if (!global::YAF.Classes.Config.EnableURLRewriting)
+            if (!Configuration.Config.EnableURLRewriting)
             {
                 if (!fullUrl)
                 {
@@ -172,17 +172,17 @@ namespace YAF.DotNetNuke
             var getDescription = false;
 
             if (pageName.IsSet())
+            {
+                try
                 {
-                    try
-                    {
-                        forumPage = pageName.ToEnum<ForumPages>();
-                        getDescription = true;
-                    }
-                    catch (Exception)
-                    {
-                        getDescription = false;
-                    }
+                    forumPage = pageName.ToEnum<ForumPages>();
+                    getDescription = true;
                 }
+                catch (Exception)
+                {
+                    getDescription = false;
+                }
+            }
 
             if (getDescription)
             {

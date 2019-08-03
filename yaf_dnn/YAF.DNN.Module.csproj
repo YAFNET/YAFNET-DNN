@@ -158,27 +158,14 @@
     <None Include="BuildScripts\MSBuild.Extended.Tasks.Targets" />
     <Content Include="Installation\01.96.10.SqlDataProvider" />
     <None Include="Installation\Uninstall.SqlDataProvider" />
-    <Content Include="web.config" />
-    <Content Include="web.Debug.config">
-      <DependentUpon>web.config</DependentUpon>
-    </Content>
-    <Content Include="web.Release.config">
-      <DependentUpon>web.config</DependentUpon>
-    </Content>
     <None Include="Installation\YAF.DotNetNuke.Module.dnn">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\yafsrc\YAF.Classes\YAF.Classes.Config\YAF.Classes.Config.csproj">
-      <Project>{05E50D2F-9527-4CE8-A0F8-168281C426CB}</Project>
-      <Name>YAF.Classes.Config</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\yafsrc\YAF.Controls\YAF.Controls.csproj">
-      <Project>{C72A5FC8-4B1C-4A24-A306-FB550729DBF0}</Project>
-      <Name>YAF.Controls</Name>
-      <Private>False</Private>
+    <ProjectReference Include="..\yafsrc\YAF.Configuration\YAF.Configuration.csproj">
+      <Project>{e0360673-49cb-4e81-aed7-312f21ae8951}</Project>
+      <Name>YAF.Configuration</Name>
     </ProjectReference>
     <ProjectReference Include="..\yafsrc\YAF.Core\YAF.Core.csproj">
       <Project>{BCEFE9BE-7417-47FB-A0E8-75E0201E88E8}</Project>
@@ -196,6 +183,10 @@
     <ProjectReference Include="..\yafsrc\YAF.Utils\YAF.Utils.csproj">
       <Project>{F80E0025-E57E-4BB5-89F2-CFBCAC1AFCF4}</Project>
       <Name>YAF.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\yafsrc\YAF.Web\YAF.Web.csproj">
+      <Project>{5509f241-c7b0-41ca-8c05-28c411fdf99f}</Project>
+      <Name>YAF.Web</Name>
     </ProjectReference>
     <ProjectReference Include="..\yafsrc\YetAnotherForum.NET\YAF.csproj">
       <Project>{555357e5-a150-4c4d-bc81-97f4ae19086a}</Project>

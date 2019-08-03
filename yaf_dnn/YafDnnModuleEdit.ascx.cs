@@ -27,8 +27,6 @@ namespace YAF.DotNetNuke
     #region Using
 
     using System;
-    using System.Collections.Generic;
-    using System.Data;
     using System.IO;
     using System.Linq;
     using System.Web;
@@ -41,7 +39,7 @@ namespace YAF.DotNetNuke
     using global::DotNetNuke.Entities.Tabs;
     using global::DotNetNuke.Services.Localization;
 
-    using YAF.Classes;
+    using YAF.Configuration;
     using YAF.Core;
     using YAF.Core.Model;
     using YAF.Core.Services.Import;
@@ -210,14 +208,14 @@ namespace YAF.DotNetNuke
                                                    : "1";
 
             // Load Inherit DNN Language Setting
-            var ineritDnnLang = true;
+            var inheritDnnLang = true;
 
             if ((string)this.Settings["InheritDnnLanguage"] != null)
             {
-                bool.TryParse((string)this.Settings["InheritDnnLanguage"], out ineritDnnLang);
+                bool.TryParse((string)this.Settings["InheritDnnLanguage"], out inheritDnnLang);
             }
 
-            this.InheritDnnLanguage.Checked = ineritDnnLang;
+            this.InheritDnnLanguage.Checked = inheritDnnLang;
         }
 
         /// <summary>
@@ -333,7 +331,7 @@ namespace YAF.DotNetNuke
         /// The create board.
         /// </summary>
         /// <param name="importUsers">if set to <c>true</c> [import users].</param>
-        /// <param name="BoardName">Name of the board.</param>
+        /// <param name="boardName">Name of the board.</param>
         /// <returns>
         /// Returns the Board ID of the new Board.
         /// </returns>
@@ -350,11 +348,11 @@ namespace YAF.DotNetNuke
                 "english.xml",
                 newAdmin);
 
-            if (newBoardId > 0 && global::YAF.Classes.Config.MultiBoardFolders)
+            if (newBoardId > 0 && Configuration.Config.MultiBoardFolders)
             {
                 // Successfully created the new board
                 var boardFolder = this.Server.MapPath(
-                    Path.Combine(global::YAF.Classes.Config.BoardRoot, $"{newBoardId}/"));
+                    Path.Combine(Configuration.Config.BoardRoot, $"{newBoardId}/"));
 
                 // Create New Folders.
                 if (!Directory.Exists(Path.Combine(boardFolder, "Images")))
@@ -425,7 +423,7 @@ namespace YAF.DotNetNuke
                     newAdmin.Email,
                     newAdmin.ProviderUserKey.ToString(),
                     this.PortalSettings.UserInfo.IsSuperUser,
-                    global::YAF.Classes.Config.CreateDistinctRoles && global::YAF.Classes.Config.IsAnyPortal
+                    Configuration.Config.CreateDistinctRoles && Configuration.Config.IsAnyPortal
                         ? "YAF "
                         : string.Empty);
 

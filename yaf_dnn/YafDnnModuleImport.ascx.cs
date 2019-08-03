@@ -116,11 +116,11 @@ namespace YAF.DotNetNuke
         private static int GetIdOfScheduleClient(string typeFullName)
         {
             // get array list of schedule items
-            var schduleItems = SchedulingProvider.Instance().GetSchedule();
+            var scheduleItems = SchedulingProvider.Instance().GetSchedule();
 
             // find schedule item with matching TypeFullName
             foreach (var item in
-                schduleItems.Cast<object>().Where(item => ((ScheduleItem)item).TypeFullName == typeFullName))
+                scheduleItems.Cast<object>().Where(item => ((ScheduleItem)item).TypeFullName == typeFullName))
             {
                 return ((ScheduleItem)item).ScheduleID;
             }

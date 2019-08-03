@@ -28,8 +28,8 @@
             var routeFavorite = mapRouteManager.MapHttpRoute(
                 "YetAnotherForumDotNet",
                 "favorite",
-                "{controller}/{action}/{topicId}",
-                 new { action = RouteParameter.Optional, topicId = RouteParameter.Optional },
+                "{controller}/{action}/{id}",
+                 new { action = RouteParameter.Optional, id = RouteParameter.Optional },
                 new[] { "YAF.DotNetNuke.Components.WebAPI" });
 
             routeFavorite.ForEach(r => r.RouteHandler = new SessionBasedControllerRouteHandler());

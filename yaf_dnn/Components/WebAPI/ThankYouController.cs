@@ -28,8 +28,9 @@ namespace YAF.DotNetNuke.Components.WebAPI
 
     using global::DotNetNuke.Web.Api;
 
-    using YAF.Classes;
+    using YAF.Configuration;
     using YAF.Core;
+    using YAF.Core.Extensions;
     using YAF.Core.Model;
     using YAF.Types;
     using YAF.Types.Extensions;
@@ -54,7 +55,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
         /// <summary>
         /// Add Thanks to post
         /// </summary>
-        /// <param name="messageId">
+        /// <param name="id">
         /// The message Id.
         /// </param>
         /// <returns>
@@ -62,7 +63,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
         /// </returns>
         [DnnAuthorize]
         [HttpPost]
-        public IHttpActionResult AddThanks([NotNull] int messageId)
+        public IHttpActionResult AddThanks([NotNull] int id)
         {
             var membershipUser = UserMembershipHelper.GetUser();
 
@@ -71,10 +72,17 @@ namespace YAF.DotNetNuke.Components.WebAPI
                 return this.NotFound();
             }
 
+            var fromUserId = UserMembershipHelper.GetUserIDFromProviderUserKey(membershipUser.ProviderUserKey);
+
+            var message = this.GetRepository<Message>().GetById(id);
+
             var username = this.GetRepository<Thanks>().AddMessageThanks(
-                UserMembershipHelper.GetUserIDFromProviderUserKey(membershipUser.ProviderUserKey),
-                messageId,
+                fromUserId,
+                id,
                 this.Get<YafBoardSettings>().EnableDisplayName);
+
+            this.Get<IActivityStream>().AddThanksReceivedToStream(message.UserID, message.TopicID, id, fromUserId);
+            this.Get<IActivityStream>().AddThanksGivenToStream(fromUserId, message.TopicID, id, message.UserID);
 
             // if the user is empty, return a null object...
             return username.IsNotSet()
@@ -84,13 +92,13 @@ namespace YAF.DotNetNuke.Components.WebAPI
                                new UnicodeEncoder().XSSEncode(username),
                                "BUTTON_THANKSDELETE",
                                "BUTTON_THANKSDELETE_TT",
-                               messageId));
+                               id));
         }
 
         /// <summary>
         /// This method is called asynchronously when the user clicks on "Remove Thank" button.
         /// </summary>
-        /// <param name="messageId">
+        /// <param name="id">
         /// The message Id.
         /// </param>
         /// <returns>
@@ -98,15 +106,18 @@ namespace YAF.DotNetNuke.Components.WebAPI
         /// </returns>
         [DnnAuthorize]
         [HttpPost]
-        public IHttpActionResult RemoveThanks([NotNull] int messageId)
+        public IHttpActionResult RemoveThanks([NotNull] int id)
         {
             var username = this.GetRepository<Thanks>().RemoveMessageThanks(
                 UserMembershipHelper.GetUserIDFromProviderUserKey(UserMembershipHelper.GetUser().ProviderUserKey),
-                messageId,
+                id,
                 this.Get<YafBoardSettings>().EnableDisplayName);
 
+            this.GetRepository<Activity>()
+                .Delete(a => a.MessageID == id && (a.Flags == 1024 || a.Flags == 4096));
+
             return this.Ok(
-                this.Get<IThankYou>().CreateThankYou(username, "BUTTON_THANKS", "BUTTON_THANKS_TT", messageId));
+                this.Get<IThankYou>().CreateThankYou(username, "BUTTON_THANKS", "BUTTON_THANKS_TT", id));
         }
     }
 }

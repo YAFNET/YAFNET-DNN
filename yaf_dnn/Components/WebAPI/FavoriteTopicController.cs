@@ -47,13 +47,22 @@ namespace YAF.DotNetNuke.Components.WebAPI
 
         #endregion
 
+        /// <summary>
+        /// The add favorite topic.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IHttpActionResult"/>.
+        /// </returns>
         [HttpPost]
         [DnnAuthorize]
-        public IHttpActionResult AddFavoriteTopic(int topicId)
+        public IHttpActionResult AddFavoriteTopic(int id)
         {
             try
             {
-                return this.Ok(this.Get<IFavoriteTopic>().AddFavoriteTopic(topicId));
+                return this.Ok(this.Get<IFavoriteTopic>().AddFavoriteTopic(id));
             }
             catch (Exception ex)
             {
@@ -66,7 +75,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
         /// <summary>
         /// The remove favorite topic.
         /// </summary>
-        /// <param name="topicId">
+        /// <param name="id">
         /// The favorite topic id.
         /// </param>
         /// <returns>
@@ -74,9 +83,9 @@ namespace YAF.DotNetNuke.Components.WebAPI
         /// </returns>
         [HttpPost]
         [DnnAuthorize]
-        public int RemoveFavoriteTopic(int topicId)
+        public int RemoveFavoriteTopic(int id)
         {
-            return this.Get<IFavoriteTopic>().RemoveFavoriteTopic(topicId);
+            return this.Get<IFavoriteTopic>().RemoveFavoriteTopic(id);
         }
     }
 }

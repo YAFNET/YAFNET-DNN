@@ -43,19 +43,18 @@ namespace YAF.DotNetNuke
     using global::DotNetNuke.Services.Localization;
     using global::DotNetNuke.Services.Url.FriendlyUrl;
 
-    using YAF.Classes;
-    using YAF.Controls;
+    using YAF.Configuration;
     using YAF.Core;
     using YAF.Core.Helpers;
     using YAF.Core.Model;
     using YAF.DotNetNuke.Components.Controllers;
     using YAF.DotNetNuke.Components.Utils;
-    using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
     using YAF.Utils.Helpers;
     using YAF.Utils.Helpers.StringUtils;
+    using YAF.Web.Controls;
 
     #endregion
 

@@ -32,10 +32,10 @@ namespace YAF.Editors
 
     using global::DotNetNuke.Modules.HTMLEditorProvider;
 
-    using YAF.Classes;
+    using YAF.Configuration;
     using YAF.Core;
-    using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
+    using YAF.Web.Editors;
 
     #endregion
 
@@ -179,8 +179,8 @@ namespace YAF.Editors
         /// </summary>
         protected virtual void RegisterSmilieyScript()
         {
-            Type editorType = this._editor.GetType();
-            Control editor = this.FindControl(this._editor.ControlID);
+            var editorType = this._editor.GetType();
+            var editor = this.FindControl(this._editor.ControlID);
             if (editor == null)
             {
                 return;

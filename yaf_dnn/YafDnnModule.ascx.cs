@@ -45,7 +45,7 @@ namespace YAF.DotNetNuke
     using global::DotNetNuke.Services.Exceptions;
     using global::DotNetNuke.Services.Localization;
 
-    using YAF.Classes;
+    using YAF.Configuration;
     using YAF.Core;
     using YAF.Core.Model;
     using YAF.DotNetNuke.Components.Objects;
@@ -55,8 +55,9 @@ namespace YAF.DotNetNuke
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
+    using YAF.Web.Controls;
 
-    using Forum = YAF.Forum;
+    using Forum = YAF.Web.Controls.Forum;
 
     #endregion
 
@@ -234,9 +235,7 @@ namespace YAF.DotNetNuke
                     return null;
                 }
 
-                var cDefault = parent as CDefault;
-
-                if (cDefault != null)
+                if (parent is CDefault cDefault)
                 {
                     return cDefault;
                 }

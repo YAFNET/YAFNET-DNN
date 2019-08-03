@@ -24,6 +24,7 @@
 
 namespace YAF.DotNetNuke.Components.Integration
 {
+    using System;
     using System.Linq;
     using System.Text;
 
@@ -32,11 +33,15 @@ namespace YAF.DotNetNuke.Components.Integration
     using global::DotNetNuke.Security.Roles;
     using global::DotNetNuke.Services.Journal;
 
+    using YAF.Core;
+    using YAF.Core.Extensions;
     using YAF.DotNetNuke.Components.Controllers;
     using YAF.Types.Attributes;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
+    using YAF.Types.Flags;
     using YAF.Types.Interfaces;
+    using YAF.Types.Models;
     using YAF.Utils;
     using YAF.Utils.Helpers;
 
@@ -77,7 +82,7 @@ namespace YAF.DotNetNuke.Components.Integration
                              Summary = message.Truncate(150),
                              Body = message,
                              JournalTypeId = 5,
-                             SecuritySet = this.GetSecuritySet(forumID, portalSettings.PortalId),
+                             SecuritySet = GetSecuritySet(forumID, portalSettings.PortalId),
                              ObjectKey = $"{forumID.ToString()}:{topicID.ToString()}:{messageID.ToString()}"
                          };
 
@@ -130,7 +135,7 @@ namespace YAF.DotNetNuke.Components.Integration
                              Summary = message.Truncate(150),
                              Body = message,
                              JournalTypeId = 6,
-                             SecuritySet = this.GetSecuritySet(forumID, portalSettings.PortalId),
+                             SecuritySet = GetSecuritySet(forumID, portalSettings.PortalId),
                              ObjectKey = $"{forumID.ToString()}:{topicID.ToString()}:{messageID.ToString()}"
                          };
 
@@ -149,12 +154,153 @@ namespace YAF.DotNetNuke.Components.Integration
         }
 
         /// <summary>
+        /// Add Mention to Users Stream
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="topicId">
+        /// The topic id.
+        /// </param>
+        /// <param name="messageId">
+        /// The message id.
+        /// </param>
+        /// <param name="fromUserId">
+        /// The from user id.
+        /// </param>
+        public void AddMentionToStream(int userId, int topicId, int messageId, int fromUserId)
+        {
+            var flags = new ActivityFlags { WasMentioned = true };
+
+            var activity = new Activity
+            {
+                Flags = flags.BitValue,
+                FromUserID = fromUserId,
+                TopicID = topicId,
+                MessageID = messageId,
+                UserID = userId,
+                Notification = true,
+                Created = DateTime.UtcNow
+            };
+
+            YafContext.Current.GetRepository<Activity>().Insert(activity);
+
+            YafContext.Current.Get<IDataCache>().Remove(
+                string.Format(Constants.Cache.ActiveUserLazyData, userId));
+        }
+
+        /// <summary>
+        /// Add Quoting to Users Stream
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="topicId">
+        /// The topic id.
+        /// </param>
+        /// <param name="messageId">
+        /// The message id.
+        /// </param>
+        /// <param name="fromUserId">
+        /// The from user id.
+        /// </param>
+        public void AddQuotingToStream(int userId, int topicId, int messageId, int fromUserId)
+        {
+            var flags = new ActivityFlags { WasQuoted = true };
+
+            var activity = new Activity
+            {
+                Flags = flags.BitValue,
+                FromUserID = fromUserId,
+                TopicID = topicId,
+                MessageID = messageId,
+                UserID = userId,
+                Notification = true,
+                Created = DateTime.UtcNow
+            };
+
+            YafContext.Current.GetRepository<Activity>().Insert(activity);
+
+            YafContext.Current.Get<IDataCache>().Remove(
+                string.Format(Constants.Cache.ActiveUserLazyData, userId));
+        }
+
+        /// <summary>
+        /// The add thanks received to stream.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="topicId">
+        /// The topic id.
+        /// </param>
+        /// <param name="messageId">
+        /// The message id.
+        /// </param>
+        /// <param name="fromUserId">
+        /// The from user id.
+        /// </param>
+        public void AddThanksReceivedToStream(int userId, int topicId, int messageId, int fromUserId)
+        {
+            var flags = new ActivityFlags { ReceivedThanks = true };
+
+            var activity = new Activity
+            {
+                Flags = flags.BitValue,
+                FromUserID = fromUserId,
+                TopicID = topicId,
+                MessageID = messageId,
+                UserID = userId,
+                Notification = true,
+                Created = DateTime.UtcNow
+            };
+
+            YafContext.Current.GetRepository<Activity>().Insert(activity);
+
+            YafContext.Current.Get<IDataCache>().Remove(
+                string.Format(Constants.Cache.ActiveUserLazyData, userId));
+        }
+
+        /// <summary>
+        /// The add thanks given to stream.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="topicId">
+        /// The topic id.
+        /// </param>
+        /// <param name="messageId">
+        /// The message id.
+        /// </param>
+        /// <param name="fromUserId">
+        /// The from user id.
+        /// </param>
+        public void AddThanksGivenToStream(int userId, int topicId, int messageId, int fromUserId)
+        {
+            var flags = new ActivityFlags { GivenThanks = true };
+
+            var activity = new Activity
+            {
+                Flags = flags.BitValue,
+                FromUserID = fromUserId,
+                TopicID = topicId,
+                MessageID = messageId,
+                UserID = userId,
+                Notification = false,
+                Created = DateTime.UtcNow
+            };
+
+            YafContext.Current.GetRepository<Activity>().Insert(activity);
+        }
+
+        /// <summary>
         /// Gets the security set for the forum.
         /// </summary>
         /// <param name="forumID">The forum unique identifier.</param>
         /// <param name="portalID">The portal unique identifier.</param>
         /// <returns>Returns The Security Set for the Forum including all Roles which have Read Access</returns>
-        private string GetSecuritySet(int forumID, int portalID)
+        private static string GetSecuritySet(int forumID, int portalID)
         {
             var forumAccessList = Data.GetReadAccessListForForum(forumID);
 
@@ -162,31 +308,30 @@ namespace YAF.DotNetNuke.Components.Integration
 
             var securitySet = new StringBuilder();
 
-            foreach (var forumAccess in forumAccessList)
-            {
-                if (!forumAccess.Flags.ReadAccess)
-                {
-                    continue;
-                }
+            forumAccessList.ForEach(
+                forumAccess =>
+                    {
+                        if (forumAccess.Flags.ReadAccess)
+                        {
+                            RoleInfo role = null;
 
-                RoleInfo role = null;
+                            if (dnnRoles.Any(r => r.RoleName == forumAccess.GroupName))
+                            {
+                                role = dnnRoles.First(r => r.RoleName == forumAccess.GroupName);
+                            }
 
-                if (dnnRoles.Any(r => r.RoleName == forumAccess.GroupName))
-                {
-                    role = dnnRoles.First(r => r.RoleName == forumAccess.GroupName);
-                }
+                            if (role != null)
+                            {
+                                securitySet.AppendFormat("R{0},", role.RoleID);
+                            }
 
-                if (role != null)
-                {
-                    securitySet.AppendFormat("R{0},", role.RoleID);
-                }
-
-                // Guest Access
-                if (forumAccess.GroupName == "Guests")
-                {
-                    securitySet.Append("E,");
-                }
-            }
+                            // Guest Access
+                            if (forumAccess.GroupName == "Guests")
+                            {
+                                securitySet.Append("E,");
+                            }
+                        }
+                    });
 
             return securitySet.ToString();
         }

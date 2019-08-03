@@ -16,7 +16,7 @@
       <license src="License.html" />
       <releaseNotes src="ReadMe.html" />
       <dependencies>
-        <dependency type="CoreVersion">09.03.01</dependency>
+        <dependency type="CoreVersion">09.03.01</dependency>C
       </dependencies>
       <components>
         <component type="Module">
@@ -110,10 +110,10 @@
               <name>ServiceStack.Text.dll</name>
             </assembly>
             <assembly>
-              <name>YAF.Classes.Config.dll</name>
+              <name>YAF.Configuration.dll</name>
             </assembly>
             <assembly>
-              <name>YAF.Controls.dll</name>
+              <name>YAF.Web.dll</name>
             </assembly>
             <assembly>
               <name>YAF.Core.dll</name>
@@ -227,6 +227,14 @@
             </file>
             <file>
               <path>bin</path>
+              <name>YAF.Classes.Config.dll</name>
+            </file>
+            <file>
+              <path>bin</path>
+              <name>YAF.Controls.dll</name>
+            </file>
+            <file>
+              <path>bin</path>
               <name>FarsiLibrary.dll</name>
             </file>
           </files>
@@ -288,19 +296,13 @@
                      <add assembly="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089" />
                   </node>
                   <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
-                    <add tagPrefix="YAF" namespace="YAF.Controls" assembly="YAF.Controls" />
-                  </node>
-                  <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
-                    <add tagPrefix="YAF" namespace="YAF.Controls.Statistics" assembly="YAF.Controls" />
+                    <add tagPrefix="YAF" namespace="YAF.Web.Controls" assembly="YAF.Web" />
                   </node>
                   <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
                     <add tagPrefix="YAF" namespace="YAF.Classes" />
                   </node>
                   <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
                     <add tagPrefix="YAF" namespace="YAF" />
-                  </node>
-                  <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
-                    <add tagPrefix="editor" namespace="YAF.Editors" />
                   </node>
                   <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
                     <add tagPrefix="asp" namespace="System.Web.UI.HtmlControls" assembly="System.Web"/>
@@ -310,7 +312,7 @@
                     <add namespace="YAF.Core"/>
                   </node>
                   <node path="/configuration/system.web/pages/namespaces" action="update" key="namespace" collision="overwrite">
-                    <add namespace="YAF.Controls"/>
+                    <add namespace="YAF.Web.Controls"/>
                   </node>
                   <node path="/configuration/system.web/pages/namespaces" action="update" key="namespace" collision="overwrite">
                     <add namespace="YAF.Utils"/>
