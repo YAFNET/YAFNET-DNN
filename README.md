@@ -13,7 +13,7 @@
 
 ## DNN® (DotNetNuke) Module
 
-This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 06.02.00 or higher).
+This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 09.03.01 or higher).
 
 ### Screen Shots
 
