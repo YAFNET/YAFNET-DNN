@@ -92,9 +92,6 @@
               <name>Newtonsoft.Json.dll</name>
             </assembly>
             <assembly>
-              <name>ServiceStack.dll</name>
-            </assembly>
-            <assembly>
               <name>ServiceStack.Common.dll</name>
             </assembly>
             <assembly>
@@ -232,6 +229,10 @@
             <file>
               <path>bin</path>
               <name>YAF.Controls.dll</name>
+            </file>
+            <file>
+              <path>bin</path>
+              <name>ServiceStack.dll</name>
             </file>
             <file>
               <path>bin</path>

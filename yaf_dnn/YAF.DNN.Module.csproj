@@ -306,7 +306,6 @@ del Lucene.Net.Contrib.Regex.dll
 del Lucene.Net.Contrib.Regex.pdb
 del Lucene.Net.Contrib.Queries.dll
 del Lucene.Net.Contrib.Queries.pdb
-del Lucene.Net.Contrib.Memory.dll
 del Lucene.Net.Contrib.Memory.pdb
 del Lucene.Net.Contrib.FastVectorHighlighter.dll
 del Lucene.Net.Contrib.FastVectorHighlighter.pdb
