@@ -55,7 +55,7 @@ namespace YAF.DotNetNuke
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
-    using YAF.Web.Controls;
+    using YAF.Web.EventsArgs;
 
     using Forum = YAF.Web.Controls.Forum;
 
