@@ -209,10 +209,8 @@ namespace YAF.DotNetNuke
         /// </param>
         protected override void OnPreRender([NotNull] EventArgs e)
         {
-            // setup jQuery and Jquery Ui Tabs.
+            // setup jQuery
             JavaScript.RequestRegistration(CommonJs.jQuery);
-
-            JavaScript.RequestRegistration(CommonJs.jQueryUI);
 
             base.OnPreRender(e);
         }

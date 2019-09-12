@@ -61,13 +61,7 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// </returns>
         public static List<Board> ListBoards()
         {
-            var boards = new List<Board>();
-
-            var messagesTable = YafContext.Current.GetRepository<Board>().List();
-
-            boards.AddRange(from DataRow row in messagesTable.Rows select new Board { ID = row["ID"].ToType<int>() });
-
-            return boards;
+            return YafContext.Current.GetRepository<Board>().GetAll().Select(b => new Board { ID = b.ID }).ToList();
         }
 
         /// <summary>

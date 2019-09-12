@@ -41,6 +41,7 @@ namespace YAF.DotNetNuke
 
     using YAF.Configuration;
     using YAF.Core;
+    using YAF.Core.Extensions;
     using YAF.Core.Model;
     using YAF.Core.Services.Import;
     using YAF.DotNetNuke.Components.Controllers;
@@ -177,12 +178,14 @@ namespace YAF.DotNetNuke
                 return;
             }
 
-            using (var dt = YafContext.Current.GetRepository<Board>().List())
-            {
+            var dt = YafContext.Current.GetRepository<Board>().GetAll();
+            
                 this.BoardID.DataSource = dt;
                 this.BoardID.DataTextField = "Name";
-                this.BoardID.DataValueField = "BoardID";
+                this.BoardID.DataValueField = "ID";
+
                 this.BoardID.DataBind();
+
                 if (this.Settings["forumboardid"] != null)
                 {
                     var item = this.BoardID.Items.FindByValue(this.Settings["forumboardid"].ToString());
@@ -191,9 +194,8 @@ namespace YAF.DotNetNuke
                         item.Selected = true;
                     }
                 }
-            }
 
-            this.FillActiveForumsList();
+                this.FillActiveForumsList();
 
             // Load Remove Tab Name Setting
             this.RemoveTabName.Items.Add(
