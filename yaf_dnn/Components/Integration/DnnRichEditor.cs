@@ -27,7 +27,6 @@ namespace YAF.Editors
     #region Using
 
     using System;
-    using System.Web.UI;
     using System.Web.UI.WebControls;
 
     using global::DotNetNuke.Modules.HTMLEditorProvider;

@@ -86,7 +86,7 @@ namespace YAF.DotNetNuke.Components.Utils
                         ?.GetValue(breadCrumbControl, BindingFlags.Public | BindingFlags.NonPublic, null, null, null)
                         .ToString();
 
-                if (separator != null && (separator.IndexOf("src=", StringComparison.Ordinal) != -1 && !separator.Contains(portalSettings.ActiveTab.SkinPath)))
+                if (separator != null && separator.IndexOf("src=", StringComparison.Ordinal) != -1 && !separator.Contains(portalSettings.ActiveTab.SkinPath))
                 {
                     separator = separator.Replace("src=\"", $"src=\"{portalSettings.ActiveTab.SkinPath}");
                 }

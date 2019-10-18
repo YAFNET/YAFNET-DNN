@@ -34,6 +34,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using YAF.Core;
     using YAF.Core.Extensions;
     using YAF.Core.Model;
+    using YAF.Core.UsersRoles;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
@@ -66,7 +67,10 @@ namespace YAF.DotNetNuke.Components.Utils
         /// </summary>
         private int? _userId;
 
-        private int boardId;
+        /// <summary>
+        /// The board id.
+        /// </summary>
+        private readonly int boardId;
 
         /// <summary>
         ///   The _user profile.
@@ -78,11 +82,17 @@ namespace YAF.DotNetNuke.Components.Utils
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Core.CombinedUserDataHelper" /> class.
+        /// Initializes a new instance of the <see cref="CustomCombinedUserDataHelper"/> class. 
         /// </summary>
-        /// <param name="membershipUser">The membership user.</param>
-        /// <param name="userID">The user id.</param>
-        /// <param name="boardID">The board identifier.</param>
+        /// <param name="membershipUser">
+        /// The membership user.
+        /// </param>
+        /// <param name="userID">
+        /// The user id.
+        /// </param>
+        /// <param name="boardID">
+        /// The board identifier.
+        /// </param>
         public CustomCombinedUserDataHelper(MembershipUser membershipUser, int userID, int boardID)
         {
             this._userId = userID;

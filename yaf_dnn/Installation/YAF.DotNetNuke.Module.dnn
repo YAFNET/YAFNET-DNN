@@ -6,7 +6,7 @@
         &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; as DNN Module. Yet Another Forum.NET (YAF) is an open source ASP.NET forum system.&lt;br /&gt;
         &lt;em&gt;Please visit: &lt;a href=&quot;http://www.yetanotherforum.net&quot;&gt;http://www.yetanotherforum.net&lt;/a&gt; for more information.&lt;/em&gt;
       </description>
-      <iconFile>yaf.png</iconFile>
+      <iconFile>yaf.svg</iconFile>
       <owner>
         <name>Ingo Herbote</name>
         <organization>Yet Another Forum.NET</organization>
@@ -65,8 +65,8 @@
           <files>
             <basePath>DesktopModules\YetAnotherForumDotNet</basePath>
             <file>
-              <name>yaf.png</name>
-              <sourceFileName>yaf.png</sourceFileName>
+              <name>yaf.svg</name>
+              <sourceFileName>yaf.svg</sourceFileName>
             </file>
           </files>
         </component>
@@ -78,15 +78,6 @@
             </assembly>
             <assembly>
               <name>ICSharpCode.SharpZipLib.dll</name>
-            </assembly>
-            <assembly>
-              <name>Lucene.Net.Contrib.Highlighter.dll</name>
-            </assembly>
-            <assembly>
-              <name>Lucene.Net.Contrib.Memory.dll</name>
-            </assembly>
-            <assembly>
-              <name>Lucene.Net.dll</name>
             </assembly>
             <assembly>
               <name>Newtonsoft.Json.dll</name>
@@ -114,6 +105,21 @@
             </assembly>
             <assembly>
               <name>YAF.Core.dll</name>
+            </assembly>
+            <assembly>
+              <name>YAF.Lucene.Net.Analysis.Common.dll</name>
+            </assembly>
+            <assembly>
+              <name>YAF.Lucene.Net.dll</name>
+            </assembly>
+            <assembly>
+              <name>YAF.Lucene.Net.Highlighter.dll</name>
+            </assembly>
+            <assembly>
+              <name>YAF.Lucene.Net.Queries.dll</name>
+            </assembly>
+            <assembly>
+              <name>YAF.Lucene.Net.QueryParser.dll</name>
             </assembly>
             <assembly>
               <name>YAF.Data.MsSql.dll</name>
@@ -297,18 +303,17 @@
                      <add assembly="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089" />
                   </node>
                   <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
-                    <add tagPrefix="YAF" namespace="YAF.Web.Controls" assembly="YAF.Web" />
-                  </node>
-                  <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
-                    <add tagPrefix="YAF" namespace="YAF.Classes" />
-                  </node>
-                  <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
                     <add tagPrefix="YAF" namespace="YAF" />
                   </node>
                   <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
-                    <add tagPrefix="asp" namespace="System.Web.UI.HtmlControls" assembly="System.Web"/>
+                    <add tagPrefix="YAF" namespace="YAF.Configuration" />
                   </node>
-
+                  <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
+                    <add tagPrefix="YAF" namespace="YAF.Web.Controls" assembly="YAF.Web" />
+                  </node>
+                  <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
+                    <add tagPrefix="asp" namespace="System.Web.UI.HtmlControls" assembly="System.Web" />
+                  </node>
                   <node path="/configuration/system.web/pages/namespaces" action="update" key="namespace" collision="overwrite">
                     <add namespace="YAF.Core"/>
                   </node>
@@ -353,6 +358,10 @@
                   <node path="/configuration/system.web/pages/controls/add[@tagPrefix='DotNetAge']" action="remove" />
                   <node path="/configuration/system.web/httpHandlers/add[starts-with(@type,'AjaxPro.')]" action="remove"></node>
                   <node path="/configuration/system.webServer/handlers/add[@name='AjaxPro']" action="remove" />
+                  <node path="/configuration/system.web/pages/controls/add[starts-with(@namespace,'YAF.Controls.Statistics')]" action="remove" />
+                  <node path="/configuration/system.web/pages/controls/add[starts-with(@namespace,'YAF.Controls')]" action="remove" />
+                  <node path="/configuration/system.web/pages/controls/add[starts-with(@namespace,'YAF.Classes')]" action="remove" />
+                  <node path="/configuration/system.web/pages/controls/add[starts-with(@namespace,'YAF.Editors')]" action="remove" />
                   <node path="/configuration/system.web/pages/controls/add[starts-with(@namespace,'YAF.Classes.Utils')]" action="remove" />
                   <node path="/configuration/system.web/pages/controls/add[starts-with(@namespace,'YAF.Classes.Core')]" action="remove" />
                   <node path="/configuration/system.web/pages/controls/add[starts-with(@namespace,'YAF.Classes.Data')]" action="remove" />
@@ -389,6 +398,11 @@
                   <node path="/configuration/system.web/pages/controls/add[starts-with(@namespace,'YAF')]" action="remove" />
                   <node path="/configuration/system.web/pages/controls/add[starts-with(@namespace,'YAF')]" action="remove" />
                   <node path="/configuration/system.web/pages/controls/add[starts-with(@namespace,'YAF')]" action="remove" />
+                  <node path="/configuration/system.web/pages/namespaces/add[starts-with(@namespace,'YAF')]" action="remove" />
+                  <node path="/configuration/system.web/pages/namespaces/add[starts-with(@namespace,'YAF')]" action="remove" />
+                  <node path="/configuration/system.web/pages/namespaces/add[starts-with(@namespace,'YAF')]" action="remove" />
+                  <node path="/configuration/system.web/pages/namespaces/add[starts-with(@namespace,'YAF')]" action="remove" />
+                  <node path="/configuration/system.web/pages/namespaces/add[starts-with(@namespace,'YAF')]" action="remove" />
                   <node path="/configuration/system.web/profile[starts-with(@inherits,'YAF')]" action="remove" />
                   <node path="/configuration/appSettings/add[starts-with(@key,'YAF.')]" action="remove" />
                   <node path="/configuration/appSettings/add[starts-with(@key,'YAF.')]" action="remove" />
@@ -443,7 +457,7 @@
         &lt;/p&gt;
         &lt;p&gt;The Posts are rendered as nested List for easy Skinning.&lt;/p&gt;
       </description>
-      <iconFile>yaf.png</iconFile>
+      <iconFile>yaf.svg</iconFile>
       <owner>
         <name>Ingo Herbote</name>
         <organization>Yet Another Forum.NET</organization>
@@ -500,8 +514,8 @@
               <sourceFileName>YafDnnWhatsNew.ascx</sourceFileName>
             </file>
             <file>
-              <name>yaf.png</name>
-              <sourceFileName>yaf.png</sourceFileName>
+              <name>yaf.svg</name>
+              <sourceFileName>yaf.svg</sourceFileName>
             </file>
           </files>
         </component>

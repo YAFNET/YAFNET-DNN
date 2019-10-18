@@ -35,6 +35,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using YAF.Core;
     using YAF.Core.Extensions;
     using YAF.Core.Model;
+    using YAF.Core.UsersRoles;
     using YAF.DotNetNuke.Components.Controllers;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;

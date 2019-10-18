@@ -27,7 +27,6 @@ namespace YAF.DotNetNuke.Components.Utils
     using System;
     using System.Globalization;
     using System.Linq;
-    using System.Web.Security;
 
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Users;
@@ -58,9 +57,6 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="yafUserProfile">The YAF user profile.</param>
         /// <param name="yafCurrentUserData">The YAF current user data.</param>
         /// <param name="dnnUserInfo">DNN UserInfo of current User</param>
-        /// <param name="membershipUser">MemberShip of current User</param>
-        /// <param name="portalId">The portal ID.</param>
-        /// <param name="portalGuid">The portal GUID.</param>
         /// <param name="boardSettings">The board settings.</param>
         /// <param name="ignoreLastUpdated">if set to <c>true</c> [ignore last updated].</param>
         public static void UpdateUserProfile(
@@ -68,9 +64,6 @@ namespace YAF.DotNetNuke.Components.Utils
             [CanBeNull] YafUserProfile yafUserProfile,
             [CanBeNull] IUserData yafCurrentUserData,
             [NotNull] UserInfo dnnUserInfo,
-            [NotNull] MembershipUser membershipUser,
-            [NotNull] int portalId,
-            [NotNull] Guid portalGuid,
             [NotNull] YafBoardSettings boardSettings,
             [CanBeNull] bool ignoreLastUpdated = false)
         {
@@ -127,25 +120,6 @@ namespace YAF.DotNetNuke.Components.Utils
             UserInfo dnnUserInfo,
             YafBoardSettings boardSettings)
         {
-            /*var userCuluture = new YafCultureInfo
-            {
-                LanguageFile = yafUserData.LanguageFile,
-                Culture = yafUserData.CultureUser
-            };
-
-            if (dnnUserInfo.Profile.PreferredLocale.IsSet())
-            {
-                CultureInfo newCulture = new CultureInfo(dnnUserInfo.Profile.PreferredLocale);
-
-                foreach (DataRow row in
-                    StaticDataHelper.Cultures().Rows.Cast<DataRow>().Where(
-                        row => dnnUserInfo.Profile.PreferredLocale == row["CultureTag"].ToString() || newCulture.TwoLetterISOLanguageName == row["CultureTag"].ToString()))
-                {
-                    userCuluture.LanguageFile = row["CultureFile"].ToString();
-                    userCuluture.Culture = row["CultureTag"].ToString();
-                }
-            }*/
-
             YafContext.Current.GetRepository<User>().Save(
                 yafUserId,
                 boardSettings.BoardID,
@@ -162,8 +136,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 null,
                 null,
                 dnnUserInfo.Profile.PreferredTimeZone.SupportsDaylightSavingTime,
-                yafUserData.IsActiveExcluded,
-                null);
+                yafUserData.IsActiveExcluded);
 
             if (dnnUserInfo.Profile.FullName.IsSet())
             {

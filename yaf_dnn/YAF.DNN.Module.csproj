@@ -62,6 +62,11 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Lucene.Net.Contrib.Highlighter">
+      <HintPath>Libaries\Lucene.Net.Contrib.Highlighter.dll</HintPath>
+      <Aliases>lucene3</Aliases>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -94,8 +99,6 @@
     <Compile Include="Components\Integration\Journal.cs" />
     <Compile Include="Components\Integration\SendMail.cs" />
     <Compile Include="Components\Objects\ForumAccess.cs" />
-    <Compile Include="Components\Objects\Messages.cs" />
-    <Compile Include="Components\Objects\Topics.cs" />
     <Compile Include="Components\Objects\YafCultureInfo.cs" />
     <Compile Include="Components\Rewriter\DotNetNukeUrlBuilder.cs" />
     <Compile Include="Components\Tasks\YafDnnImportScheduler.cs" />

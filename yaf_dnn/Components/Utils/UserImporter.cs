@@ -28,13 +28,13 @@ namespace YAF.DotNetNuke.Components.Utils
     using System.Web.Security;
 
     using global::DotNetNuke.Common.Utilities;
-    using global::DotNetNuke.Entities.Portals;
     using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Services.Exceptions;
 
     using YAF.Configuration;
     using YAF.Core;
     using YAF.Core.Model;
+    using YAF.Core.UsersRoles;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
@@ -57,23 +57,6 @@ namespace YAF.DotNetNuke.Components.Utils
         /// Returns the Number of Users that where imported
         /// </returns>
         public static int ImportUsers(int boardId, int portalId, out string info)
-        {
-            var portalGuid = new PortalController().GetPortal(portalId).GUID;
-
-            return ImportUsers(boardId, portalId, portalGuid, out info);
-        }
-
-        /// <summary>
-        /// Imports the users.
-        /// </summary>
-        /// <param name="boardId">The board id.</param>
-        /// <param name="portalId">The portal id.</param>
-        /// <param name="portalGuid">The portal unique identifier.</param>
-        /// <param name="info">The information text.</param>
-        /// <returns>
-        /// Returns the Number of Users that where imported
-        /// </returns>
-        public static int ImportUsers(int boardId, int portalId, Guid portalGuid,  out string info)
         {
             var newUserCount = 0;
 
@@ -102,7 +85,7 @@ namespace YAF.DotNetNuke.Components.Utils
                         continue;
                     }
 
-                    // unapprove soft deleted user in yaf
+                    // un-approve soft deleted user in yaf
                     if (dnnUserInfo.IsDeleted && dnnUser.IsApproved)
                     {
                         dnnUser.IsApproved = false;
@@ -132,9 +115,6 @@ namespace YAF.DotNetNuke.Components.Utils
                             YafUserProfile.GetProfile(dnnUser.UserName),
                             new CustomCombinedUserDataHelper(dnnUser, yafUserId, boardId),
                             dnnUserInfo,
-                            dnnUser,
-                            portalId,
-                            portalGuid,
                             boardSettings,
                             true);
                     }

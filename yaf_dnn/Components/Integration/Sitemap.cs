@@ -33,6 +33,7 @@
 
     using YAF.Core;
     using YAF.Core.Model;
+    using YAF.Core.UsersRoles;
     using YAF.Types.Constants;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;

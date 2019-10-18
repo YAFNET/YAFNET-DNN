@@ -237,9 +237,7 @@ namespace YAF.DotNetNuke
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void ImportClick(object sender, EventArgs e)
         {
-            string info;
-
-            UserImporter.ImportUsers(this.boardId, this.PortalSettings.PortalId, this.PortalSettings.GUID, out info);
+            UserImporter.ImportUsers(this.boardId, this.PortalSettings.PortalId, out var info);
 
             this.lInfo.Text = info;
         }

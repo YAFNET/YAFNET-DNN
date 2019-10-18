@@ -362,9 +362,6 @@ namespace YAF.DotNetNuke
                     YafContext.Current.Profile,
                     YafContext.Current.CurrentUserData,
                     dnnUserInfo,
-                    dnnMembershipUser,
-                    this.CurrentPortalSettings.PortalId,
-                    this.CurrentPortalSettings.GUID,
                     boardSettings);
             }
         }

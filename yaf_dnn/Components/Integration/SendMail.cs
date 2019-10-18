@@ -32,6 +32,7 @@ namespace YAF.DotNetNuke.Components.Integration
     using System.Linq;
     using System.Net.Mail;
 
+    using global::DotNetNuke.Collections;
     using global::DotNetNuke.Entities.Host;
     using global::DotNetNuke.Services.Mail;
 
@@ -123,26 +124,27 @@ namespace YAF.DotNetNuke.Components.Integration
 
             CodeContracts.VerifyNotNull(mailMessages, "messages");
 
-            foreach (var mailMessage in mailMessages)
-            {
-                try
+            mailMessages.ForEach(
+                mailMessage =>
                 {
-                    // send the message...
-                    this.Send(mailMessage);
-                }
-                catch (Exception ex)
-                {
-                    if (handleException != null)
+                    try
                     {
-                        handleException(mailMessage, ex);
+                        // send the message...
+                        this.Send(mailMessage);
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        // don't handle here...
-                        throw;
+                        if (handleException != null)
+                        {
+                            handleException(mailMessage, ex);
+                        }
+                        else
+                        {
+                            // don't handle here...
+                            throw;
+                        }
                     }
-                }
-            }
+                });
         }
 
         #endregion

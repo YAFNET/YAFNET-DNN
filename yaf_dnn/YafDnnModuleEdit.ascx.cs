@@ -44,6 +44,7 @@ namespace YAF.DotNetNuke
     using YAF.Core.Extensions;
     using YAF.Core.Model;
     using YAF.Core.Services.Import;
+    using YAF.Core.UsersRoles;
     using YAF.DotNetNuke.Components.Controllers;
     using YAF.DotNetNuke.Components.Utils;
     using YAF.Types.Constants;
@@ -314,14 +315,11 @@ namespace YAF.DotNetNuke
             // save the settings to the database
             boardSettings.SaveRegistry();
 
-            string message;
-
             // Import Users & Roles
             UserImporter.ImportUsers(
                 this.BoardID.SelectedValue.ToType<int>(),
                 this.PortalSettings.PortalId,
-                this.PortalSettings.GUID,
-                out message);
+                out _);
 
             // Reload forum settings
             YafContext.Current.BoardSettings = null;
@@ -387,12 +385,10 @@ namespace YAF.DotNetNuke
             // Import Users & Roles
             if (importUsers)
             {
-                string message;
                 UserImporter.ImportUsers(
                     newBoardId,
                     this.PortalSettings.PortalId,
-                    this.PortalSettings.GUID,
-                    out message);
+                    out _);
             }
 
             return newBoardId;
@@ -470,11 +466,12 @@ namespace YAF.DotNetNuke
 
             if (Directory.Exists(attachActiveFolderPath))
             {
-                foreach (var attachment in Directory.GetFiles(attachActiveFolderPath))
-                {
-                    var fileName = Path.GetFileName(attachment);
-                    File.Copy(attachment, $"{attachYafFolderPath}\\{fileName}.yafupload");
-                }
+                Directory.GetFiles(attachActiveFolderPath).ForEach(
+                    attachment =>
+                    {
+                        var fileName = Path.GetFileName(attachment);
+                        File.Copy(attachment, $"{attachYafFolderPath}\\{fileName}.yafupload");
+                    });
             }
         }
 

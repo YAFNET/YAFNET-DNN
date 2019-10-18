@@ -32,6 +32,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
     using YAF.Core;
     using YAF.Core.Extensions;
     using YAF.Core.Model;
+    using YAF.Core.UsersRoles;
     using YAF.Types;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
