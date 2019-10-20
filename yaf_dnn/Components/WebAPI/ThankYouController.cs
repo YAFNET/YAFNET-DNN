@@ -42,7 +42,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
     /// <summary>
     /// The YAF ThankYou controller.
     /// </summary>
-    public class ThankYouController : ApiController, IHaveServiceLocator
+    public class ThankYouController : DnnApiController, IHaveServiceLocator
     {
         #region Properties
 

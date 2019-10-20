@@ -41,7 +41,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
     /// <summary>
     /// The YAF Attachment controller.
     /// </summary>
-    public class AttachmentController : ApiController, IHaveServiceLocator
+    public class AttachmentController : DnnApiController, IHaveServiceLocator
     {
         #region Properties
 
@@ -63,7 +63,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
         /// </returns>
         [DnnAuthorize]
         [HttpPost]
-        public IHttpActionResult GetAttachments(PagedResults pagedResults)
+        public IHttpActionResult GetAttachments([FromBody] PagedResults pagedResults)
         {
             var userId = pagedResults.UserId;
             var pageSize = pagedResults.PageSize;

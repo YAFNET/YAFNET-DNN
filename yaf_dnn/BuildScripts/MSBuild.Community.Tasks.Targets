@@ -5,7 +5,7 @@
  <PropertyGroup>
    <MSBuildCommunityTasksPath Condition="'$(MSBuildCommunityTasksPath)' == ''">$(MSBuildProjectDirectory)\BuildScripts</MSBuildCommunityTasksPath>
    <MSBuildDnnBinPath Condition="'$(MSBuildDnnBinPath)' == ''">$(MSBuildProjectDirectory)\..\..\bin</MSBuildDnnBinPath>
-   <MSBuildCommunityTasksLib>$(MSBuildProjectDirectory)\Libaries\MSBuild\MSBuild.Community.Tasks.dll</MSBuildCommunityTasksLib>
+   <MSBuildCommunityTasksLib>$(SolutionDir)packages\MSBuildTasks.1.5.0.235\tools\MSBuild.Community.Tasks.dll</MSBuildCommunityTasksLib>
  </PropertyGroup>
 
  <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.AspNet.InstallAspNet" />
@@ -20,7 +20,6 @@
  <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.GetSolutionProjects" />
  <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.ILMerge" />
  <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.Mail" />
- <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.Move" />
 
  <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.Math.Add" />
  <UsingTask AssemblyFile="$(MSBuildCommunityTasksLib)" TaskName="MSBuild.Community.Tasks.Math.Divide" />

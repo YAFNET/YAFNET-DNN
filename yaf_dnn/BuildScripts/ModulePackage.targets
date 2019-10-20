@@ -2,8 +2,6 @@
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   
   <Import Project="MSBuild.Community.Tasks.Targets" />
-  <Import Project="MSBuild.Extended.Tasks.Targets" />
-  <Import Project="AjaxMin.tasks" />
     
   <Target Name="PackageModule" Condition=" '$(Configuration)' == 'Release' AND '$(CreateDnnPackages)' == 'true' ">
     <XmlRead Prefix="n"
@@ -13,9 +11,10 @@
       <Output TaskParameter="Value" PropertyName="Version" />
     </XmlRead>
 
-    <StringReplace Pattern="0(\d.)(\d+.\d)(\d+)" InputString="$(Version)" Replace="$1$2-$3">
-      <Output PropertyName="YAFVersion" TaskParameter="Result" />
-    </StringReplace>
+    <PropertyGroup>
+      <YAFVersion>$([System.Text.RegularExpressions.Regex]::Replace($(Version), '0(\d.)(\d+.\d)(\d+)', '$1$2-$3'))</YAFVersion>
+    </PropertyGroup>
+
 
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\deploy\" />
 
@@ -274,7 +273,6 @@
     <ItemGroup>
       <CSS Include="$(MSBuildProjectDirectory)\yafdnn-res\**\*.css" Exclude="**\*.min.css;**\*_src.css;$(MSBuildProjectDirectory)\yafdnn-res\themes\**\*.css;$(MSBuildProjectDirectory)\yafdnn-res\Scripts\**\*.css;$(MSBuildProjectDirectory)\yafdnn-res\Content\**\*.css;" />
     </ItemGroup>
-    <AjaxMin JsSourceFiles="@(JS)" JsSourceExtensionPattern="\.js$" JsTargetExtension=".js" CssSourceFiles="@(CSS)" CssSourceExtensionPattern="\.css$" CssTargetExtension=".css"  />
 
     <CreateItem Include="$(MSBuildProjectDirectory)\yafdnn-res\**\*.*">
       <Output TaskParameter="Include" ItemName="yafdnn-resContent" />

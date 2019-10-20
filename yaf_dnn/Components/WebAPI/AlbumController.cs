@@ -43,7 +43,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
     /// <summary>
     /// The YAF Album controller.
     /// </summary>
-    public class AlbumController : ApiController, IHaveServiceLocator
+    public class AlbumController : DnnApiController, IHaveServiceLocator
     {
         #region Properties
 

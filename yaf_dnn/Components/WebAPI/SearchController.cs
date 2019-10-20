@@ -35,7 +35,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
     /// <summary>
     /// The YAF Search controller.
     /// </summary>
-    public class SearchController : ApiController, IHaveServiceLocator
+    public class SearchController : DnnApiController, IHaveServiceLocator
     {
         #region Properties
 
@@ -57,7 +57,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
         /// </returns>
         [DnnAuthorize]
         [HttpPost]
-        public IHttpActionResult GetSimilarTitles(SearchTopic searchTopic)
+        public IHttpActionResult GetSimilarTitles([FromBody] SearchTopic searchTopic)
         {
             var results = this.Get<ISearch>().SearchSimilar(searchTopic.UserId, searchTopic.SearchTerm, "Topic");
 
@@ -79,7 +79,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
         /// </returns>
         [DnnAuthorize]
         [HttpPost]
-        public IHttpActionResult GetSearchResults(SearchTopic searchTopic)
+        public IHttpActionResult GetSearchResults([FromBody] SearchTopic searchTopic)
         {
             var results = this.Get<ISearch>().SearchPaged(
                 out var totalHits,

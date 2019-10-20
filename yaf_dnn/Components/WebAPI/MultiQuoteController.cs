@@ -38,7 +38,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
     /// <summary>
     /// The YAF MultiQuote Button controller.
     /// </summary>
-    public class MultiQuoteController : ApiController, IHaveServiceLocator
+    public class MultiQuoteController : DnnApiController, IHaveServiceLocator
     {
         #region Properties
 
