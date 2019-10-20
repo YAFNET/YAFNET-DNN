@@ -15,16 +15,6 @@
 
 This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 09.03.01 or higher).
 
-### Screen Shots
-
-![mainscreen](http://www.watchersnet.de/Portals/0/screenshots/dnn/YafScreenShot2.png)
-
-Admin Control Panel
-![adminpanel](http://www.watchersnet.de/Portals/0/screenshots/dnn/YafAdminPanel.png)
-
-There is also a Second Child Module the *YAF.NET Forums What's New* Module which shows The Latest Posts in a List
-![whatsnew](http://www.watchersnet.de/Portals/0/screenshots/dnn/ScreenshotYafLatestPosts.jpg)
-
 ## Demo Forum
 
 A "sandbox" test forum is available here: http://testforum.yetanotherforum.net/.
