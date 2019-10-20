@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="YetAnotherForumDotNet" type="Module" version="02.30.005900">
+    <package name="YetAnotherForumDotNet" type="Module" version="02.30.005901">
       <friendlyName>YAF.NET Forums</friendlyName>
       <description>
         &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; as DNN Module. Yet Another Forum.NET (YAF) is an open source ASP.NET forum system.&lt;br /&gt;
@@ -246,6 +246,7 @@
             </file>
           </files>
         </component>
+        <component type="Cleanup" version="02.30.005901" fileName="02.30.005901.txt" />
         <component type="Config">
           <config>
             <configFile>web.config</configFile>
@@ -450,7 +451,7 @@
         </component>
       </components>
     </package>
-    <package name="YAF.WhatsNew" type="Module" version="02.30.005900">
+    <package name="YAF.WhatsNew" type="Module" version="02.30.005901">
       <friendlyName>YAF.NET Forums What's New</friendlyName>
       <description>
         &lt;p&gt;This Module displays the Latest Posts from a  &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; Module. Based on the Current Users Authorization Level. You can define Which Forum should been used, and how many Posts should displayed.
@@ -526,6 +527,14 @@
               <name>YafDnnWhatsNewResources.zip</name>
             </resourceFile>
           </resourceFiles>
+        </component>
+        <component type="Cleanup" version="02.30.005901">
+          <files>
+            <file>
+              <path>DesktopModules\YAF.WhatsNew</path>
+              <name>yaf.png</name>
+            </file>
+          </files>
         </component>
       </components>
     </package>

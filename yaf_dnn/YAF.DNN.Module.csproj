@@ -196,6 +196,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Installation\02.30.005901.txt" />
     <Content Include="Installation\License.html" />
     <Content Include="Installation\ReadMe.html" />
     <Content Include="YafDnnWhatsNew.ascx" />
