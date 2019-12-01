@@ -34,7 +34,6 @@ There is also a Second Child Module the *YAF.NET Forums What's New* Module which
 ![whatsnew](http://www.watchersnet.de/Portals/0/screenshots/dnn/ScreenshotYafLatestPosts.jpg)
 
 
-
 ### Getting Started with Development
 
 This project is dependent upon the parent solution, YAFNET.  This requires that the steps you follow be specific.
