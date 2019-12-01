@@ -295,7 +295,9 @@
   <Target Name="AfterBuild" DependsOnTargets="PackageModule">
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>del "$(TargetDir)\DotNetNuke.Abstractions.dll"
+    <PostBuildEvent>del "$(TargetDir)\Microsoft.Extensions.DependencyInjection.Abstractions.dll"
+del "$(TargetDir)\Microsoft.Extensions.DependencyInjection.dll"
+del "$(TargetDir)\DotNetNuke.Abstractions.dll"
 del "$(TargetDir)\DotNetNuke.Abstractions.pdb"
 del "$(TargetDir)\DotNetNuke.DependencyInjection.dll"
 del "$(TargetDir)\DotNetNuke.DependencyInjection.pdb"

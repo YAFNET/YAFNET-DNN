@@ -216,7 +216,6 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\AutoFac.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\FarsiLibrary.Localization.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\FarsiLibrary.Utils.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ICSharpCode.SharpZipLib.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\Newtonsoft.Json.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.Common.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.Interfaces.dll" />
@@ -252,6 +251,7 @@
     <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\License.html" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
     <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\ReadMe.html" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
     <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\yaf.svg" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\02.30.005901.txt" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
 
     <!-- create the INSTALL YafDnnWhatsNewResources.ZIP file -->
     <Copy SourceFiles="@(YafDnnWhatsNewResourcesInclude)" DestinationFolder="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources\%(RecursiveDir)" />

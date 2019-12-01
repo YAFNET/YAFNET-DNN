@@ -77,9 +77,6 @@
               <name>Autofac.dll</name>
             </assembly>
             <assembly>
-              <name>ICSharpCode.SharpZipLib.dll</name>
-            </assembly>
-            <assembly>
               <name>Newtonsoft.Json.dll</name>
             </assembly>
             <assembly>
