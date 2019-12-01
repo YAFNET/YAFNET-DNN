@@ -240,11 +240,14 @@
     <AssemblyOriginatorKeyFile>YetAnotherForum.NET.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="DotNetNuke.Abstractions">
+      <Version>9.4.2</Version>
+    </PackageReference>
     <PackageReference Include="DotNetNuke.Core">
-      <Version>9.3.2</Version>
+      <Version>9.4.2</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.WebApi">
-      <Version>9.3.2</Version>
+      <Version>9.4.1</Version>
     </PackageReference>
     <PackageReference Include="MSBuildTasks">
       <Version>1.5.0.235</Version>
@@ -292,7 +295,11 @@
   <Target Name="AfterBuild" DependsOnTargets="PackageModule">
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>del "$(TargetDir)\DotNetNuke.dll"
+    <PostBuildEvent>del "$(TargetDir)\DotNetNuke.Abstractions.dll"
+del "$(TargetDir)\DotNetNuke.Abstractions.pdb"
+del "$(TargetDir)\DotNetNuke.DependencyInjection.dll"
+del "$(TargetDir)\DotNetNuke.DependencyInjection.pdb"
+del "$(TargetDir)\DotNetNuke.dll"
 del "$(TargetDir)\DotNetNuke.pdb"
 del "$(TargetDir)\DotNetNuke.Web.dll"
 del "$(TargetDir)\DotNetNuke.Web.pdb"
