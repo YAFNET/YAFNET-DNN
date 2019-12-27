@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="YetAnotherForumDotNet" type="Module" version="02.30.025902">
+    <package name="YetAnotherForumDotNet" type="Module" version="02.30.045904">
       <friendlyName>YAF.NET Forums</friendlyName>
       <description>
         &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; as DNN Module. Yet Another Forum.NET (YAF) is an open source ASP.NET forum system.&lt;br /&gt;
@@ -250,6 +250,12 @@
             <install>
               <configuration>
                 <nodes>
+				  <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http']" action="update" targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http']/ab:bindingRedirect" collision="save"  nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
+                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.3.0" />
+                  </node>
+				  <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http.WebHost']" action="update" targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http.WebHost']/ab:bindingRedirect" collision="save"  nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
+                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.3.0" />
+                  </node>
                   <node path="/configuration/dotnetnuke/sitemap/providers" action="update" key="name" collision="overwrite">
                     <add name="yafSitemapProvider" type="YAF.DotNetNuke.Components.Integration.Sitemap, YAF.DotNetNuke.Module" providerPath="~\DesktopModules\YetAnotherForumDotNet\" />
                   </node>
@@ -448,7 +454,7 @@
         </component>
       </components>
     </package>
-    <package name="YAF.WhatsNew" type="Module" version="02.30.025902">
+    <package name="YAF.WhatsNew" type="Module" version="02.30.045904">
       <friendlyName>YAF.NET Forums What's New</friendlyName>
       <description>
         &lt;p&gt;This Module displays the Latest Posts from a  &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; Module. Based on the Current Users Authorization Level. You can define Which Forum should been used, and how many Posts should displayed.
