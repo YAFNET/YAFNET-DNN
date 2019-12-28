@@ -251,10 +251,10 @@
               <configuration>
                 <nodes>
 				  <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http']" action="update" targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http']/ab:bindingRedirect" collision="save"  nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.3.0" />
+                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.3.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
                   </node>
 				  <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http.WebHost']" action="update" targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http.WebHost']/ab:bindingRedirect" collision="save"  nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.3.0" />
+                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.3.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
                   </node>
                   <node path="/configuration/dotnetnuke/sitemap/providers" action="update" key="name" collision="overwrite">
                     <add name="yafSitemapProvider" type="YAF.DotNetNuke.Components.Integration.Sitemap, YAF.DotNetNuke.Module" providerPath="~\DesktopModules\YetAnotherForumDotNet\" />
@@ -298,7 +298,7 @@
                      <add name="YafTaskModule" type="YAF.Core.YafTaskModule, YAF.Core" preCondition="managedHandler" />
                   </node>
                   <node path="/configuration/system.webServer/handlers" action="update" key="name" collision="overwrite">
-                    <add name="YafHandler" preCondition="integratedMode" verb="GET" path="Resource.ashx" type="YAF.YafResourceHandler, YAF" />
+                    <add name="YafHandler" preCondition="integratedMode" verb="GET" path="Resource.ashx" type="YAF.Core.Handlers.YafResourceHandler, YAF.Core" />
                   </node>
                   <node path="/configuration/system.web/httpModules" action="update" key="name" collision="overwrite">
                      <add name="YafTaskModule" type="YAF.Core.YafTaskModule, YAF.Core" />
