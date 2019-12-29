@@ -289,7 +289,7 @@
     <MakeDir Directories="$(MSBuildProjectDirectory)\deploy" />
 
     <!-- Create the Install package -->    
-    <Zip Files="@(OutputContent)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="$(PackageName)_$(YAFVersion).$(Extension)" />
+    <Zip Files="@(OutputContent)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="$(PackageName)-$(YAFVersion).$(Extension)" />
     <!-- Copy the Install package to the Packages folder -->
     <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion).$(Extension)" DestinationFolder="deploy" />
 
