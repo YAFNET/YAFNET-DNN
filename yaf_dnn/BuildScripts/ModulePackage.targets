@@ -291,7 +291,7 @@
     <!-- Create the Install package -->    
     <Zip Files="@(OutputContent)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="$(PackageName)-$(YAFVersion).$(Extension)" />
     <!-- Copy the Install package to the Packages folder -->
-    <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion).$(Extension)" DestinationFolder="deploy" />
+    <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)-$(YAFVersion).$(Extension)" DestinationFolder="deploy" />
 
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\Package" />
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources" />
