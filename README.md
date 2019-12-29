@@ -1,4 +1,4 @@
-﻿[![YAF logo](http://yetanotherforum.net/forum/Content/images/YAFLogo.svg)](http://www.yetanotherforum.net)
+﻿[![YAF logo](https://yetanotherforum.net/forum/Content/images/YAFLogo.svg)](http://www.yetanotherforum.net)
 
 *YetAnotherForum.NET* _(YAF.NET)_ is an Open Source Discussion Forum for sites running ASP.NET. 100% written in C#. YAF.NET runs on any web server that supports ASP.NET v4.72 (or above) and SQL Server 2012 or above.
 
@@ -21,14 +21,14 @@ A "sandbox" test forum is available here: http://testforum.yetanotherforum.net/.
 
 ### Screen Shots
 
-![mainscreen](http://yetanotherforum.net/assets/img/main.png)
+![mainscreen](https://yetanotherforum.net/assets/img/main.png)
 
-![forumsscreen](http://yetanotherforum.net/assets/img/forum.png)
+![forumsscreen](https://yetanotherforum.net/assets/img/forum.png)
 
-![topicsscreen](http://yetanotherforum.net/assets/img/topic.png)
+![topicsscreen](https://yetanotherforum.net/assets/img/topic.png)
 
 Admin Control Panel
-![adminpanel](http://yetanotherforum.net/assets/img/admin.png)
+![adminpanel](https://yetanotherforum.net/assets/img/admin.png)
 
 There is also a Second Child Module the *YAF.NET Forums What's New* Module which shows The Latest Posts in a List
 ![whatsnew](http://www.watchersnet.de/Portals/0/screenshots/dnn/ScreenshotYafLatestPosts.jpg)

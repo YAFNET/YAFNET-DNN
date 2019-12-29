@@ -12,7 +12,7 @@
     </XmlRead>
 
     <PropertyGroup>
-      <YAFVersion>$([System.Text.RegularExpressions.Regex]::Replace($(Version), '0(\d.)(\d+.\d)(\d+)', '$1$2-$3'))</YAFVersion>
+      <YAFVersion>$([System.Text.RegularExpressions.Regex]::Replace($(Version), '0([0-9]+.)([0-9]+.[0-9][0-9])([0-9]+)', '$1$2-$3'))</YAFVersion>
     </PropertyGroup>
 
 
@@ -216,7 +216,7 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\AutoFac.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\FarsiLibrary.Localization.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\FarsiLibrary.Utils.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\Newtonsoft.Json.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\J2N.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.Common.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.Interfaces.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.dll" />
@@ -307,8 +307,8 @@
       <Output TaskParameter="Include" ItemName="OutputSource" />
     </CreateItem>
 
-    <Zip Files="@(OutputSource)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="$(PackageName)_$(YAFVersion)-SRC.$(Extension)" />
-    <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)_$(YAFVersion)-SRC.$(Extension)" DestinationFolder="deploy/" />
+    <Zip Files="@(OutputSource)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="$(PackageName)-$(YAFVersion)-SRC.$(Extension)" />
+    <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)-$(YAFVersion)-SRC.$(Extension)" DestinationFolder="deploy/" />
 
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\Package" />
 

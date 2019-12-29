@@ -77,7 +77,7 @@
               <name>Autofac.dll</name>
             </assembly>
             <assembly>
-              <name>Newtonsoft.Json.dll</name>
+              <name>J2N.dll</name>
             </assembly>
             <assembly>
               <name>ServiceStack.Common.dll</name>
