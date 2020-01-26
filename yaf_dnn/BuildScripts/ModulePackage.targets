@@ -222,9 +222,6 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.SqlServer.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.Text.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\System.Net.Http.Formatting.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\System.Web.Http.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\System.Web.Http.WebHost.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\YAF.Configuration.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\YAF.Web.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\YAF.Core.dll" />
@@ -260,7 +257,12 @@
       <Output TaskParameter="Include" ItemName="YafDnnWhatsNewResourcesContent" />
     </CreateItem>
     
-    <Zip Files="@(YafDnnWhatsNewResourcesContent)" WorkingDirectory="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources" ZipFileName="YafDnnWhatsNewResources.$(Extension)" />
+    <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create"
+                                           CompressFiles="@(YafDnnWhatsNewResourcesContent)" 
+                                           CompressionLevel="BestCompression"
+                                           RemoveRoot="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources\" 
+                                           ZipFileName="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources.$(Extension)" />
+
     <Move SourceFiles="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources.$(Extension)" DestinationFolder="package/" />
     
     <!-- create the INSTALL yafdnn-res.ZIP file -->
@@ -278,7 +280,13 @@
       <Output TaskParameter="Include" ItemName="yafdnn-resContent" />
     </CreateItem>
 
-    <Zip Files="@(yafdnn-resContent)" WorkingDirectory="$(MSBuildProjectDirectory)\yafdnn-res" ZipFileName="yafdnn-res.$(Extension)" />
+    <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create"
+                                           CompressFiles="@(yafdnn-resContent)" 
+                                           CompressionLevel="BestCompression"
+                                           RemoveRoot="$(MSBuildProjectDirectory)\yafdnn-res\" 
+                                           ZipFileName="$(MSBuildProjectDirectory)\yafdnn-res.$(Extension)" />
+
+
     <Move SourceFiles="$(MSBuildProjectDirectory)\yafdnn-res.$(Extension)" DestinationFolder="package/" />
     
 
@@ -289,7 +297,12 @@
     <MakeDir Directories="$(MSBuildProjectDirectory)\deploy" />
 
     <!-- Create the Install package -->    
-    <Zip Files="@(OutputContent)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="$(PackageName)-$(YAFVersion).$(Extension)" />
+    <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create"
+                                           CompressFiles="@(OutputContent)" 
+                                           CompressionLevel="BestCompression"
+                                           RemoveRoot="$(MSBuildProjectDirectory)\Package\" 
+                                           ZipFileName="$(MSBuildProjectDirectory)\$(PackageName)-$(YAFVersion).$(Extension)" />
+
     <!-- Copy the Install package to the Packages folder -->
     <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)-$(YAFVersion).$(Extension)" DestinationFolder="deploy" />
 
@@ -307,7 +320,12 @@
       <Output TaskParameter="Include" ItemName="OutputSource" />
     </CreateItem>
 
-    <Zip Files="@(OutputSource)" WorkingDirectory="$(MSBuildProjectDirectory)\Package" ZipFileName="$(PackageName)-$(YAFVersion)-SRC.$(Extension)" />
+    <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create"
+                                           CompressFiles="@(OutputSource)" 
+                                           CompressionLevel="BestCompression"
+                                           RemoveRoot="$(MSBuildProjectDirectory)\Package\" 
+                                           ZipFileName="$(MSBuildProjectDirectory)\$(PackageName)-$(YAFVersion)-SRC.$(Extension)" />
+
     <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)-$(YAFVersion)-SRC.$(Extension)" DestinationFolder="deploy/" />
 
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\Package" />
