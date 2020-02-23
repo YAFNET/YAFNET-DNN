@@ -2,7 +2,7 @@
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2017 Ingo Herbote
- * http://www.yetanotherforum.net/
+ * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -12,7 +12,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -60,13 +60,13 @@
         {
             var urls = new List<SitemapUrl>();
 
-            if (YafContext.Current == null)
+            if (BoardContext.Current == null)
             {
                 return urls;
             }
 
-            var forumList = YafContext.Current.GetRepository<Forum>().ForumListAll(
-                YafContext.Current.BoardSettings.BoardID,
+            var forumList = BoardContext.Current.GetRepository<Forum>().ListAll(
+                BoardContext.Current.BoardSettings.BoardID,
                 UserMembershipHelper.GuestUserId);
 
             urls.AddRange(
@@ -74,11 +74,11 @@
                     forum => new SitemapUrl
                                  {
                                      Url =
-                                         YafBuildLink.GetLinkNotEscaped(
+                                         BuildLink.GetLinkNotEscaped(
                                              ForumPages.topics,
                                              true,
                                              "f={0}",
-                                             forum.ForumID),
+                                             forum.Item1.ID),
                                      Priority = (float)0.8,
                                      LastModified = DateTime.Now,
                                      ChangeFrequency = SitemapChangeFrequency.Always

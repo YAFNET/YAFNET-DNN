@@ -1,8 +1,8 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2019 Ingo Herbote
- * http://www.yetanotherforum.net/
+ * Copyright (C) 2014-2020 Ingo Herbote
+ * https://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -12,7 +12,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -64,10 +64,10 @@ namespace YAF.DotNetNuke.Components.Utils
             [CanBeNull] YafUserProfile yafUserProfile,
             [CanBeNull] IUserData yafCurrentUserData,
             [NotNull] UserInfo dnnUserInfo,
-            [NotNull] YafBoardSettings boardSettings,
+            [NotNull] BoardSettings boardSettings,
             [CanBeNull] bool ignoreLastUpdated = false)
         {
-            var logger = YafContext.Current.Get<ILogger>();
+            var logger = BoardContext.Current.Get<ILogger>();
 
             try
             {
@@ -118,9 +118,9 @@ namespace YAF.DotNetNuke.Components.Utils
             YafUserProfile yafUserProfile,
             IUserData yafUserData,
             UserInfo dnnUserInfo,
-            YafBoardSettings boardSettings)
+            BoardSettings boardSettings)
         {
-            YafContext.Current.GetRepository<User>().Save(
+            BoardContext.Current.GetRepository<User>().Save(
                 yafUserId,
                 boardSettings.BoardID,
                 dnnUserInfo.Username,
@@ -178,16 +178,16 @@ namespace YAF.DotNetNuke.Components.Utils
                 }
                 else
                 {
-                    YafContext.Current.GetRepository<User>().DeleteAvatar(yafUserId);
+                    BoardContext.Current.GetRepository<User>().DeleteAvatar(yafUserId);
                 }
             }
             catch (Exception)
             {
             }
 
-            YafContext.Current.Get<IRaiseEvent>().Raise(new UpdateUserEvent(yafUserId));
+            BoardContext.Current.Get<IRaiseEvent>().Raise(new UpdateUserEvent(yafUserId));
 
-            YafContext.Current.Get<IDataCache>().Clear();
+            BoardContext.Current.Get<IDataCache>().Clear();
         }
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="yafUserId">The YAF user id.</param>
         private static void SaveDnnAvatar(string photoUrl, int yafUserId)
         {
-            YafContext.Current.GetRepository<User>().SaveAvatar(yafUserId, photoUrl, null, null);
+            BoardContext.Current.GetRepository<User>().SaveAvatar(yafUserId, photoUrl, null, null);
         }
     }
 }

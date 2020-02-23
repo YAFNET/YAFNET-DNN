@@ -2,7 +2,7 @@
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2017 Ingo Herbote
- * http://www.yetanotherforum.net/
+ * https://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -12,7 +12,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -61,7 +61,7 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// </returns>
         public static List<Board> ListBoards()
         {
-            return YafContext.Current.GetRepository<Board>().GetAll().Select(b => new Board { ID = b.ID }).ToList();
+            return BoardContext.Current.GetRepository<Board>().GetAll().Select(b => new Board { ID = b.ID }).ToList();
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace YAF.DotNetNuke.Components.Controllers
             bool showNoCountPosts,
             bool findLastRead = false)
         {
-            return YafContext.Current.GetRepository<Topic>().LatestAsDataTable(
+            return BoardContext.Current.GetRepository<Topic>().LatestAsDataTable(
                 boardId.ToType<int>(),
                 numOfPostsToRetrieve.ToType<int>(),
                 pageUserId.ToType<int>(),
@@ -99,12 +99,9 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// <param name="boardId">The board id.</param>
         /// <param name="userId">The user id.</param>
         /// <param name="isGuest">if set to <c>true</c> [is guest].</param>
-        /// <returns>
-        /// Returns the Table of the Active Access User Table
-        /// </returns>
-        public static DataTable ActiveAccessUser(object boardId, object userId, bool isGuest)
+        public static void ActiveAccessUser(object boardId, object userId, bool isGuest)
         {
-            return YafContext.Current.GetRepository<ActiveAccess>().PageAccessAsDataTable(boardId, userId, isGuest);
+            BoardContext.Current.GetRepository<ActiveAccess>().PageAccessAsDataTable(boardId, userId, isGuest);
         }
 
         /// <summary>
@@ -116,7 +113,7 @@ namespace YAF.DotNetNuke.Components.Controllers
         {
             var roles = new List<RoleInfo>();
 
-            var groups = YafContext.Current.GetRepository<Group>().Get(g => g.BoardID == boardId);
+            var groups = BoardContext.Current.GetRepository<Group>().Get(g => g.BoardID == boardId);
 
             roles.AddRange(from Group row in groups select new RoleInfo { RoleName = row.Name, RoleID = row.ID, });
 
@@ -132,7 +129,7 @@ namespace YAF.DotNetNuke.Components.Controllers
         {
             var roles = new List<RoleInfo>();
 
-            var masks = YafContext.Current.GetRepository<AccessMask>().Get(a => a.BoardID == boardId);
+            var masks = BoardContext.Current.GetRepository<AccessMask>().Get(a => a.BoardID == boardId);
 
             roles.AddRange(
                 from AccessMask row in masks
@@ -156,12 +153,9 @@ namespace YAF.DotNetNuke.Components.Controllers
         {
             var roles = new List<RoleInfo>();
 
-            var rolesTable = YafContext.Current.GetRepository<UserGroup>().ListAsDataTable(yafUserId);
+            var userGroups = BoardContext.Current.GetRepository<UserGroup>().List(yafUserId);
 
-            roles.AddRange(
-                from DataRow row in rolesTable.Rows
-                select
-                    new RoleInfo { RoleName = row["Name"].ToType<string>(), RoleID = row["GroupID"].ToType<int>(), });
+            roles.AddRange(from Group row in userGroups select new RoleInfo { RoleName = row.Name, RoleID = row.ID });
 
             return roles;
         }
@@ -175,16 +169,16 @@ namespace YAF.DotNetNuke.Components.Controllers
         {
             var forumAccessList = new List<ForumAccess>();
 
-            var accessListTable = (DataTable)YafContext.Current.Get<IDbFunction>().GetData.GetReadAccessListForForum(ForumID: forumId);
+            var accessListTable = (DataTable)BoardContext.Current.Get<IDbFunction>().GetData.GetReadAccessListForForum(ForumID: forumId);
 
             forumAccessList.AddRange(
                 from DataRow row in accessListTable.Rows
                 select
                     new ForumAccess
                         {
-                            GroupID = row["GroupID"].ToType<int>(),
-                            GroupName = row["GroupName"].ToType<string>(),
-                            AccessMaskName = row["AccessMaskName"].ToType<string>(),
+                            GroupID = row.Field<int>("GroupID"),
+                            GroupName = row["GroupName"].ToString(),
+                            AccessMaskName = row["AccessMaskName"].ToString(),
                             Flags = new AccessFlags(row["Flags"])
                         });
 
@@ -198,7 +192,7 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// <param name="boardId">The board identifier.</param>
         public static void ImportActiveForums([NotNull] int moduleId, [NotNull] int boardId)
         {
-            YafContext.Current.Get<IDbFunction>().Scalar
+            BoardContext.Current.Get<IDbFunction>().Scalar
                 .ImportActiveForums(oModuleID: moduleId, tplBoardID: boardId);
         }
 

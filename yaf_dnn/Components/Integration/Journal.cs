@@ -1,8 +1,8 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2019 Ingo Herbote
- * http://www.yetanotherforum.net/
+ * Copyright (C) 2014-2020 Ingo Herbote
+ * https://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -12,7 +12,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -77,7 +77,7 @@ namespace YAF.DotNetNuke.Components.Integration
                              ItemData =
                                  new ItemData
                                      {
-                                         Url = YafBuildLink.GetLink(ForumPages.posts, "t={0}", topicID)
+                                         Url = BuildLink.GetLink(ForumPages.Posts, "t={0}", topicID)
                                      },
                              Summary = message.Truncate(150),
                              Body = message,
@@ -127,8 +127,8 @@ namespace YAF.DotNetNuke.Components.Integration
                                  new ItemData
                                      {
                                          Url =
-                                             YafBuildLink.GetLink(
-                                                 ForumPages.posts,
+                                             BuildLink.GetLink(
+                                                 ForumPages.Posts,
                                                  "m={0}#post{0}",
                                                  messageID)
                                      },
@@ -183,9 +183,9 @@ namespace YAF.DotNetNuke.Components.Integration
                 Created = DateTime.UtcNow
             };
 
-            YafContext.Current.GetRepository<Activity>().Insert(activity);
+            BoardContext.Current.GetRepository<Activity>().Insert(activity);
 
-            YafContext.Current.Get<IDataCache>().Remove(
+            BoardContext.Current.Get<IDataCache>().Remove(
                 string.Format(Constants.Cache.ActiveUserLazyData, userId));
         }
 
@@ -219,9 +219,9 @@ namespace YAF.DotNetNuke.Components.Integration
                 Created = DateTime.UtcNow
             };
 
-            YafContext.Current.GetRepository<Activity>().Insert(activity);
+            BoardContext.Current.GetRepository<Activity>().Insert(activity);
 
-            YafContext.Current.Get<IDataCache>().Remove(
+            BoardContext.Current.Get<IDataCache>().Remove(
                 string.Format(Constants.Cache.ActiveUserLazyData, userId));
         }
 
@@ -255,9 +255,9 @@ namespace YAF.DotNetNuke.Components.Integration
                 Created = DateTime.UtcNow
             };
 
-            YafContext.Current.GetRepository<Activity>().Insert(activity);
+            BoardContext.Current.GetRepository<Activity>().Insert(activity);
 
-            YafContext.Current.Get<IDataCache>().Remove(
+            BoardContext.Current.Get<IDataCache>().Remove(
                 string.Format(Constants.Cache.ActiveUserLazyData, userId));
         }
 
@@ -291,7 +291,7 @@ namespace YAF.DotNetNuke.Components.Integration
                 Created = DateTime.UtcNow
             };
 
-            YafContext.Current.GetRepository<Activity>().Insert(activity);
+            BoardContext.Current.GetRepository<Activity>().Insert(activity);
         }
 
         /// <summary>

@@ -1,8 +1,8 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2019 Ingo Herbote
- * http://www.yetanotherforum.net/
+ * Copyright (C) 2014-2020 Ingo Herbote
+ * https://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -12,7 +12,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -160,7 +160,12 @@ namespace YAF.DotNetNuke.Components.Utils
         /// </summary>
         public bool DailyDigest =>
             this.DBRow.Field<bool?>("DailyDigest")
-            ?? YafContext.Current.Get<YafBoardSettings>().DefaultSendDigestEmail;
+            ?? BoardContext.Current.Get<BoardSettings>().DefaultSendDigestEmail;
+
+        /// <summary>
+        /// Enable Activity Stream (If checked you get Notifications for Mentions, Quotes and Thanks.
+        /// </summary>
+        public bool Activity => this.DBRow.Field<bool>("Activity");
 
         /// <summary>
         ///   Gets DisplayName.
@@ -176,7 +181,7 @@ namespace YAF.DotNetNuke.Components.Utils
             {
                 if (this.Membership == null && !this.IsGuest)
                 {
-                    YafContext.Current.Get<ILogger>().Log(
+                    BoardContext.Current.Get<ILogger>().Log(
                         this.UserID,
                         "CombinedUserDataHelper.get_Email",
                         $"ATTENTION! The user with id {this.UserID} and name {this.UserName} is very possibly is not in your Membership \r\n "
@@ -326,7 +331,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <summary>
         ///   Gets UserID.
         /// </summary>
-        public int UserID => this._userId != null ? this._userId.ToType<int>() : 0;
+        public int UserID => _userId?.ToType<int>() ?? 0;
 
         /// <summary>
         ///   Gets UserName.
@@ -402,14 +407,14 @@ namespace YAF.DotNetNuke.Components.Utils
         {
             if (!allowUserInfoCaching)
             {
-                return YafContext.Current.GetRepository<User>().ListAsDataTable(boardID, userID, DBNull.Value)
+                return BoardContext.Current.GetRepository<User>().ListAsDataTable(boardID, userID, DBNull.Value)
                     .GetFirstRow();
             }
 
             // get the item cached...
-            return YafContext.Current.Get<IDataCache>().GetOrSet(
+            return BoardContext.Current.Get<IDataCache>().GetOrSet(
                 string.Format(Constants.Cache.UserListForID, userID),
-                () => YafContext.Current.GetRepository<User>().ListAsDataTable(boardID, userID, DBNull.Value),
+                () => BoardContext.Current.GetRepository<User>().ListAsDataTable(boardID, userID, DBNull.Value),
                 TimeSpan.FromMinutes(5)).GetFirstRow();
         }
 

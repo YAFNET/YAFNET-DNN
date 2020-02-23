@@ -2,7 +2,7 @@
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2017 Ingo Herbote
- * http://www.yetanotherforum.net/
+ * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -12,7 +12,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -111,7 +111,7 @@ namespace YAF.DotNetNuke
             boardSettings.SaveRegistry();
 
             // Reload forum settings
-            YafContext.Current.BoardSettings = null;
+            BoardContext.Current.BoardSettings = null;
 
             this.Response.Redirect(Globals.NavigateURL(), true);
         }
@@ -147,7 +147,7 @@ namespace YAF.DotNetNuke
             boardSettings.SaveRegistry();
 
             // Reload forum settings
-            YafContext.Current.BoardSettings = null;
+            BoardContext.Current.BoardSettings = null;
 
             this.Response.Redirect(Globals.NavigateURL(), true);
         }
@@ -179,7 +179,7 @@ namespace YAF.DotNetNuke
                 return;
             }
 
-            var dt = YafContext.Current.GetRepository<Board>().GetAll();
+            var dt = BoardContext.Current.GetRepository<Board>().GetAll();
             
                 this.BoardID.DataSource = dt;
                 this.BoardID.DataTextField = "Name";
@@ -322,9 +322,9 @@ namespace YAF.DotNetNuke
                 out _);
 
             // Reload forum settings
-            YafContext.Current.BoardSettings = null;
+            BoardContext.Current.BoardSettings = null;
 
-            YafBuildLink.Redirect(ForumPages.forum);
+            BuildLink.Redirect(ForumPages.forum);
         }
 
         /// <summary>
@@ -343,8 +343,8 @@ namespace YAF.DotNetNuke
             // Create Board
             var newBoardId = this.CreateBoardDatabase(
                 boardName,
-                YafContext.Current.Get<MembershipProvider>().ApplicationName,
-                YafContext.Current.Get<RoleProvider>().ApplicationName,
+                BoardContext.Current.Get<MembershipProvider>().ApplicationName,
+                BoardContext.Current.Get<RoleProvider>().ApplicationName,
                 "english.xml",
                 newAdmin);
 
@@ -410,7 +410,7 @@ namespace YAF.DotNetNuke
             string langFile,
             MembershipUser newAdmin)
         {
-            var newBoardId = YafContext.Current.GetRepository<Board>()
+            var newBoardId = BoardContext.Current.GetRepository<Board>()
                 .Create(
                     boardName,
                     "en-US",
@@ -428,7 +428,7 @@ namespace YAF.DotNetNuke
             var loadWrapper = new Action<string, Action<Stream>>(
                 (file, streamAction) =>
                     {
-                        var fullFile = YafContext.Current.Get<HttpRequestBase>().MapPath(file);
+                        var fullFile = BoardContext.Current.Get<HttpRequestBase>().MapPath(file);
 
                         if (!File.Exists(fullFile))
                         {
@@ -462,7 +462,7 @@ namespace YAF.DotNetNuke
         {
             var attachActiveFolderPath = Path.Combine(this.PortalSettings.HomeDirectoryMapPath, "activeforums_Upload");
             var attachYafFolderPath = HttpContext.Current.Request.MapPath(
-                Path.Combine("DesktopModules\\YetAnotherForumDotNet", YafBoardFolders.Current.Uploads));
+                Path.Combine("DesktopModules\\YetAnotherForumDotNet", BoardFolders.Current.Uploads));
 
             if (Directory.Exists(attachActiveFolderPath))
             {

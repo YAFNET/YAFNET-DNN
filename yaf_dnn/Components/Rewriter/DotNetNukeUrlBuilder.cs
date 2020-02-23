@@ -1,8 +1,8 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2019 Ingo Herbote
- * http://www.yetanotherforum.net/
+ * Copyright (C) 2014-2020 Ingo Herbote
+ * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -12,7 +12,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -68,7 +68,7 @@ namespace YAF.DotNetNuke
         /// </returns>
         public override string BuildUrlFull(string url)
         {
-            return this.BuildUrlComplete(YafContext.Current.Get<YafBoardSettings>(), url, true);
+            return this.BuildUrlComplete(BoardContext.Current.Get<BoardSettings>(), url, true);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace YAF.DotNetNuke
         /// </returns>
         public override string BuildUrl(string url)
         {
-            return this.BuildUrlComplete(YafContext.Current.Get<YafBoardSettings>(), url, false);
+            return this.BuildUrlComplete(BoardContext.Current.Get<BoardSettings>(), url, false);
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace YAF.DotNetNuke
         /// </returns>
         private string BuildUrlComplete(object boardSettings, string url, bool fullUrl)
         {
-            var yafBoardSettings = boardSettings.ToType<YafBoardSettings>();
+            var yafBoardSettings = boardSettings.ToType<BoardSettings>();
 
             var yafTab = new TabController().GetTab(yafBoardSettings.DNNPageTab, yafBoardSettings.DNNPortalId, true);
 
@@ -201,7 +201,7 @@ namespace YAF.DotNetNuke
                         }
 
                         break;
-                    case ForumPages.posts:
+                    case ForumPages.Posts:
                         {
                             if (parser["t"].IsSet())
                             {
@@ -241,7 +241,7 @@ namespace YAF.DotNetNuke
                         }
 
                         break;
-                    case ForumPages.profile:
+                    case ForumPages.Profile:
                         {
                             useKey = "u";
 
@@ -318,7 +318,7 @@ namespace YAF.DotNetNuke
         /// <returns>
         /// Returns the BaseUrl
         /// </returns>
-        private string GetBaseUrl(YafBoardSettings yafBoardSettings, TabInfo yafTab)
+        private string GetBaseUrl(BoardSettings yafBoardSettings, TabInfo yafTab)
         {
             var baseUrl = Globals.NavigateURL(yafBoardSettings.DNNPageTab, Null.NullString);
 

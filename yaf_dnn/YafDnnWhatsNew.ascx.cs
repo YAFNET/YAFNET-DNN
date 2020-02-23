@@ -1,8 +1,8 @@
 /* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2019 Ingo Herbote
- * http://www.yetanotherforum.net/
+ * Copyright (C) 2014-2020 Ingo Herbote
+ * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -12,7 +12,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -194,9 +194,9 @@ namespace YAF.DotNetNuke
                 var momentLoadJs = $@"Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(loadTimeAgo);
             function loadTimeAgo() {{
             
-		    moment.locale('{(YafContext.Current.CultureUser.IsSet()
-                                 ? YafContext.Current.CultureUser.Substring(0, 2)
-                                 : YafContext.Current.Get<YafBoardSettings>().Culture.Substring(0, 2))}');
+		    moment.locale('{(BoardContext.Current.CultureUser.IsSet()
+                                 ? BoardContext.Current.CultureUser.Substring(0, 2)
+                                 : BoardContext.Current.Get<BoardSettings>().Culture.Substring(0, 2))}');
             jQuery('abbr.timeago').html(function(index, value) {{
                  
             return moment(value).fromNow();
@@ -309,7 +309,7 @@ namespace YAF.DotNetNuke
             var dnnUser = Membership.GetUser(this.UserInfo.Username, true);
 
             // Check if the user exists in yaf
-            var yafUserId = YafContext.Current.GetRepository<User>().GetUserId(this.boardId, dnnUser.ProviderUserKey.ToString());
+            var yafUserId = BoardContext.Current.GetRepository<User>().GetUserId(this.boardId, dnnUser.ProviderUserKey.ToString());
 
             if (!yafUserId.Equals(0))
             {
@@ -324,7 +324,7 @@ namespace YAF.DotNetNuke
                 dnnUser,
                 this.boardId,
                 this.PortalSettings.PortalId,
-                YafContext.Current.Get<YafBoardSettings>());
+                BoardContext.Current.Get<BoardSettings>());
         }
 
         /// <summary>
@@ -456,8 +456,7 @@ namespace YAF.DotNetNuke
                 this.yafTabInfo,
                 $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=posts&m={currentRow["LastMessageID"]}",
                 UrlRewriteHelper.CleanStringForURL(
-                    YafContext.Current.Get<IBadWordReplace>().Replace(currentRow["Topic"].ToString())),
-                this.PortalSettings);
+                    BoardContext.Current.Get<IBadWordReplace>().Replace(currentRow["Topic"].ToString())));
 
             currentItem = currentItem.Replace("[LASTPOSTICON]", string.Empty);
 
@@ -465,7 +464,7 @@ namespace YAF.DotNetNuke
             var textMessageLink = new HyperLink
                                       {
                                           Text =
-                                              YafContext.Current.Get<IBadWordReplace>()
+                                              BoardContext.Current.Get<IBadWordReplace>()
                                               .Replace(currentRow["Topic"].ToString()),
                                           NavigateUrl = messageUrl
                                       };
@@ -480,9 +479,8 @@ namespace YAF.DotNetNuke
                                         this.yafTabInfo,
                                         $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=topics&f={currentRow["ForumID"]}",
                                         UrlRewriteHelper.CleanStringForURL(
-                                            YafContext.Current.Get<IBadWordReplace>()
-                                                .Replace(currentRow["Forum"].ToString())),
-                                        this.PortalSettings)
+                                            BoardContext.Current.Get<IBadWordReplace>()
+                                                .Replace(currentRow["Forum"].ToString())))
                                 };
 
             currentItem = currentItem.Replace("[FORUMLINK]", forumLink.RenderToString());
@@ -490,13 +488,13 @@ namespace YAF.DotNetNuke
             // Render BYTEXT
             currentItem = currentItem.Replace(
                 "[BYTEXT]",
-                YafContext.Current.Get<IHaveLocalization>().GetText("SEARCH", "BY"));
+                BoardContext.Current.Get<IHaveLocalization>().GetText("SEARCH", "BY"));
 
             // Render LASTUSERLINK
             // Just in case...
             if (currentRow["LastUserID"] != DBNull.Value)
             {
-                var userName = YafContext.Current.Get<YafBoardSettings>().EnableDisplayName
+                var userName = BoardContext.Current.Get<BoardSettings>().EnableDisplayName
                                    ? currentRow["LastUserDisplayName"].ToString()
                                    : currentRow["LastUserName"].ToString();
 
@@ -509,8 +507,7 @@ namespace YAF.DotNetNuke
                                            NavigateUrl = FriendlyUrlProvider.Instance().FriendlyUrl(
                                                this.yafTabInfo,
                                                $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=profile&u={currentRow["LastUserID"]}",
-                                               userName,
-                                               this.PortalSettings)
+                                               userName)
                                        };
 
                 currentItem = currentItem.Replace("[LASTUSERLINK]", lastUserLink.RenderToString());

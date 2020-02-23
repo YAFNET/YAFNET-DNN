@@ -1,8 +1,8 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2019 Ingo Herbote
- * http://www.yetanotherforum.net/
+ * Copyright (C) 2014-2020 Ingo Herbote
+ * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -12,7 +12,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -88,10 +88,10 @@ namespace YAF.DotNetNuke
         #region Properties
 
         /// <summary>
-        /// Gets or sets the Service Locator.
+        /// Gets the Service Locator.
         /// </summary>
         [Inject]
-        public IServiceLocator ServiceLocator { get; set; }
+        public IServiceLocator ServiceLocator { get; }
 
         /// <summary>
         ///  Gets Add Menu Entries to Module Container
@@ -127,30 +127,19 @@ namespace YAF.DotNetNuke
         }
 
         /// <summary>
-        /// Gets the session user key name.
-        /// </summary>
-        public string SessionUserKeyName =>
-            $"yaf_dnn_boardid{this.forum1.BoardID}_userid{this.UserId}_portalid{this.CurrentPortalSettings.PortalId}";
-
-        /// <summary>
-        /// Gets the Base Page
-        /// </summary>
-        public CDefault BasePage => this.basePage ?? (this.basePage = GetDefault(this));
-
-        /// <summary>
         /// Gets the YAF Cultures
         /// </summary>
         private static List<YafCultureInfo> YafCultures
         {
             get
             {
-                const string Cachekey = "YAF_Cultures";
+                const string CacheKey = "YAF_Cultures";
 
                 List<YafCultureInfo> cultures;
 
-                if (DataCache.GetCache(Cachekey) is List<YafCultureInfo>)
+                if (DataCache.GetCache(CacheKey) is List<YafCultureInfo>)
                 {
-                    cultures = DataCache.GetCache(Cachekey).ToType<List<YafCultureInfo>>();
+                    cultures = DataCache.GetCache(CacheKey).ToType<List<YafCultureInfo>>();
 
                     if (cultures.Count == 0)
                     {
@@ -165,13 +154,24 @@ namespace YAF.DotNetNuke
                 return cultures;
             }
         }
+        
+        /// <summary>
+         /// Gets the session user key name.
+         /// </summary>
+        private string SessionUserKeyName =>
+            $"yaf_dnn_boardid{this.forum1.BoardID}_userid{this.UserId}_portalid{this.CurrentPortalSettings.PortalId}";
+
+        /// <summary>
+        /// Gets the Base Page
+        /// </summary>
+        private CDefault BasePage => this.basePage ?? (this.basePage = GetDefault(this));
 
         /// <summary>
         /// Gets CurrentPortalSettings.
         /// </summary>
         private PortalSettings CurrentPortalSettings =>
             this.portalSettings
-            ?? (this.portalSettings = PortalController.Instance.GetCurrentPortalSettings());
+            ?? (this.portalSettings = this.ModuleContext.PortalSettings);
 
         #endregion
 
@@ -185,7 +185,7 @@ namespace YAF.DotNetNuke
         {
             var x = this.Server.GetLastError();
 
-            YafContext.Current.Get<ILogger>().Error(x, "Error on the DNN Module");
+            BoardContext.Current.Get<ILogger>().Error(x, "Error on the DNN Module");
 
             base.OnError(e);
         }
@@ -254,14 +254,14 @@ namespace YAF.DotNetNuke
 
                 var langCode = currentCulture.Name;
 
-                YafContext.Current.Get<YafBoardSettings>().Language =
+                BoardContext.Current.Get<BoardSettings>().Language =
                     YafCultures.Find(yafCult => yafCult.Culture.Equals(langCode)) != null
                         ? YafCultures.Find(yafCult => yafCult.Culture.Equals(langCode)).LanguageFile
                         : "english.xml";
             }
             catch (Exception)
             {
-                YafContext.Current.Get<YafBoardSettings>().Language = "english.xml";
+                BoardContext.Current.Get<BoardSettings>().Language = "english.xml";
             }
         }
 
@@ -332,11 +332,11 @@ namespace YAF.DotNetNuke
             }
 
             // Check if the user exists in yaf
-            var yafUserId = YafContext.Current.GetRepository<User>().GetUserId(this.forum1.BoardID, dnnMembershipUser.ProviderUserKey.ToString());
+            var yafUserId = BoardContext.Current.GetRepository<User>().GetUserId(this.forum1.BoardID, dnnMembershipUser.ProviderUserKey.ToString());
 
-            var boardSettings = YafContext.Current == null
+            var boardSettings = BoardContext.Current == null
                                     ? new YafLoadBoardSettings(this.forum1.BoardID)
-                                    : YafContext.Current.Get<YafBoardSettings>();
+                                    : BoardContext.Current.Get<BoardSettings>();
 
             if (yafUserId.Equals(0))
             {
@@ -359,8 +359,8 @@ namespace YAF.DotNetNuke
 
                 ProfileSyncronizer.UpdateUserProfile(
                     yafUserId,
-                    YafContext.Current.Profile,
-                    YafContext.Current.CurrentUserData,
+                    BoardContext.Current.Profile,
+                    BoardContext.Current.CurrentUserData,
                     dnnUserInfo,
                     boardSettings);
             }
@@ -381,9 +381,9 @@ namespace YAF.DotNetNuke
             }
 
             // Check if Tab Name/Title Matches the Forum Board Name
-            if (removeTabName.Equals(2) && YafContext.Current != null)
+            if (removeTabName.Equals(2) && BoardContext.Current != null)
             {
-                if (YafContext.Current.Get<YafBoardSettings>().Name.Equals(this.CurrentPortalSettings.ActiveTab.TabName))
+                if (BoardContext.Current.Get<BoardSettings>().Name.Equals(this.CurrentPortalSettings.ActiveTab.TabName))
                 {
                     removeTabName = 1;
                 }
@@ -391,7 +391,7 @@ namespace YAF.DotNetNuke
                 if (this.CurrentPortalSettings.ActiveTab.Title.IsSet())
                 {
                     if (
-                        YafContext.Current.Get<YafBoardSettings>()
+                        BoardContext.Current.Get<BoardSettings>()
                             .Name.Equals(this.CurrentPortalSettings.ActiveTab.Title))
                     {
                         removeTabName = 1;
@@ -433,9 +433,9 @@ namespace YAF.DotNetNuke
             {
                 this.forum1.BoardID = this.Settings["forumboardid"].ToType<int>();
 
-                var boardSettingsTabId = YafContext.Current.BoardSettings != null
-                                         && YafContext.Current.BoardSettings.BoardID.Equals(this.forum1.BoardID)
-                                             ? YafContext.Current.BoardSettings.DNNPageTab
+                var boardSettingsTabId = BoardContext.Current.BoardSettings != null
+                                         && BoardContext.Current.BoardSettings.BoardID.Equals(this.forum1.BoardID)
+                                             ? BoardContext.Current.BoardSettings.DNNPageTab
                                              : new YafLoadBoardSettings(this.forum1.BoardID).DNNPageTab;
 
                 if (boardSettingsTabId.Equals(-1)
@@ -457,11 +457,11 @@ namespace YAF.DotNetNuke
                                             boardSettings.SaveRegistry();
                     
                                             // Reload forum settings
-                                            YafContext.Current.BoardSettings = null;
+                                            BoardContext.Current.BoardSettings = null;
                                         }*/
                 }
 
-                if (YafContext.Current.BoardSettings.DNNPortalId.Equals(-1))
+                if (BoardContext.Current.BoardSettings.DNNPortalId.Equals(-1))
                 {
                     var boardSettings = new YafLoadBoardSettings(this.forum1.BoardID)
                                             {
@@ -474,14 +474,14 @@ namespace YAF.DotNetNuke
                 }
 
                 // Inherit Language from Dnn?
-                var ineritDnnLanguage = true;
+                var inheritDnnLanguage = true;
 
                 if (this.Settings["InheritDnnLanguage"] != null)
                 {
-                    ineritDnnLanguage = this.Settings["InheritDnnLanguage"].ToType<bool>();
+                    inheritDnnLanguage = this.Settings["InheritDnnLanguage"].ToType<bool>();
                 }
 
-                if (ineritDnnLanguage)
+                if (inheritDnnLanguage)
                 {
                     SetDnnLangToYaf();
                 }

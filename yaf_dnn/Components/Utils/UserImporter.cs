@@ -1,8 +1,8 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2019 Ingo Herbote
- * http://www.yetanotherforum.net/
+ * Copyright (C) 2014-2020 Ingo Herbote
+ * https://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -12,7 +12,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -68,9 +68,9 @@ namespace YAF.DotNetNuke.Components.Utils
             users.Sort(new UserComparer());
 
             // Load Yaf Board Settings if needed
-            var boardSettings = YafContext.Current == null
+            var boardSettings = BoardContext.Current == null
                                     ? new YafLoadBoardSettings(boardId)
-                                    : YafContext.Current.Get<YafBoardSettings>();
+                                    : BoardContext.Current.Get<BoardSettings>();
 
             var rolesChanged = false;
 
@@ -100,7 +100,7 @@ namespace YAF.DotNetNuke.Components.Utils
                         Membership.UpdateUser(dnnUser);
                     } 
 
-                    var yafUserId = YafContext.Current.GetRepository<User>().GetUserId(boardId, dnnUser.ProviderUserKey.ToString());
+                    var yafUserId = BoardContext.Current.GetRepository<User>().GetUserId(boardId, dnnUser.ProviderUserKey.ToString());
 
                     if (yafUserId.Equals(0))
                     {
@@ -128,7 +128,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     }
                 }
 
-                YafContext.Current.Get<IDataCache>().Clear();
+                BoardContext.Current.Get<IDataCache>().Clear();
 
                 DataCache.ClearCache();
             }
@@ -159,7 +159,7 @@ namespace YAF.DotNetNuke.Components.Utils
             MembershipUser dnnUser,
             int boardId,
             int portalId,
-            YafBoardSettings boardSettings)
+            BoardSettings boardSettings)
         {
             // setup roles
             RoleMembershipHelper.SetupUserRoles(boardId, dnnUser.UserName);
@@ -209,7 +209,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 boardSettings.DefaultNotificationSetting.Equals(UserNotificationSetting.TopicsIPostToOrSubscribeTo);
 
             // Save User
-            YafContext.Current.GetRepository<User>().Save(
+            BoardContext.Current.GetRepository<User>().Save(
                 userID: yafUserId,
                 boardID: boardId,
                 userName: dnnUserInfo.Username,
@@ -228,11 +228,11 @@ namespace YAF.DotNetNuke.Components.Utils
                 notificationType: null);
 
             // save notification Settings
-            YafContext.Current.GetRepository<User>().SaveNotification(
+            BoardContext.Current.GetRepository<User>().SaveNotification(
                 yafUserId.Value,
                 true,
                 autoWatchTopicsEnabled,
-                boardSettings.DefaultNotificationSetting,
+                boardSettings.DefaultNotificationSetting.ToInt(),
                 boardSettings.DefaultSendDigestEmail);
 
             RoleSyncronizer.SynchronizeUserRoles(boardId, portalId, yafUserId.ToType<int>(), dnnUserInfo);
@@ -248,7 +248,7 @@ namespace YAF.DotNetNuke.Components.Utils
         public static void SetYafHostUser(int yafUserId, int boardId)
         {
             // get this user information...
-            var userInfoTable = YafContext.Current.GetRepository<User>().ListAsDataTable(boardId, yafUserId, null);
+            var userInfoTable = BoardContext.Current.GetRepository<User>().ListAsDataTable(boardId, yafUserId, null);
 
             if (userInfoTable.Rows.Count <= 0)
             {
@@ -266,7 +266,7 @@ namespace YAF.DotNetNuke.Components.Utils
             var userFlags = new UserFlags(row["Flags"]) { IsHostAdmin = true };
 
             // update...
-            YafContext.Current.GetRepository<User>().AdminSave(
+            BoardContext.Current.GetRepository<User>().AdminSave(
                 boardId,
                 yafUserId,
                 row["Name"].ToString(),

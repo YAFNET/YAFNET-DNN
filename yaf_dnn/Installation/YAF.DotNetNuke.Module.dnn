@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="YetAnotherForumDotNet" type="Module" version="02.30.075907">
+    <package name="YetAnotherForumDotNet" type="Module" version="02.31.006000">
       <friendlyName>YAF.NET Forums</friendlyName>
       <description>
         &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; as DNN Module. Yet Another Forum.NET (YAF) is an open source ASP.NET forum system.&lt;br /&gt;
@@ -10,7 +10,7 @@
       <owner>
         <name>Ingo Herbote</name>
         <organization>Yet Another Forum.NET</organization>
-        <url>http://www.yetanotherforum.net/</url>
+        <url>https://www.yetanotherforum.net/</url>
         <email>support@yetanotherforum.net</email>
       </owner>
       <license src="License.html" />
@@ -295,15 +295,21 @@
                      <remove name="YafTaskModule" />
                   </node>
                   <node path="/configuration/system.webServer/modules" action="update" key="name" collision="overwrite">
-                     <add name="YafTaskModule" type="YAF.Core.YafTaskModule, YAF.Core" preCondition="managedHandler" />
+                     <add name="YafTaskModule" type="YAF.Core.TaskModule, YAF.Core" preCondition="managedHandler" />
                   </node>
                   <node path="/configuration/system.webServer/handlers" action="update" key="name" collision="overwrite">
-                    <add name="YafHandler" preCondition="integratedMode" verb="GET" path="Resource.ashx" type="YAF.Core.Handlers.YafResourceHandler, YAF.Core" />
+                    <add name="YafHandler" preCondition="integratedMode" verb="GET" path="Resource.ashx" type="YAF.Core.Handlers.ResourceHandler, YAF.Core" />
+					<add name="FileUploader" 
+           path="FileUploader.ashx" 
+           verb="*" 
+           type="YAF.Core.Handlers.FileUploader, YAF.Core" 
+           preCondition="integratedMode" />
                   </node>
                   <node path="/configuration/system.web/httpModules" action="update" key="name" collision="overwrite">
-                     <add name="YafTaskModule" type="YAF.Core.YafTaskModule, YAF.Core" />
+                     <add name="YafTaskModule" type="YAF.Core.TaskModule, YAF.Core" />
                   </node>
                   <node path="/configuration/system.web/compilation/assemblies" action="update" key="assembly" collision="overwrite">
+                     <add assembly="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
                      <add assembly="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089" />
                   </node>
                   <node path="/configuration/system.web/pages/controls" action="update" key="namespace" collision="overwrite">
@@ -335,7 +341,7 @@
                   </node>
 
                   <node path="/configuration/system.web/httpHandlers" action="update" key="type" collision="overwrite">
-                    <add verb="GET" path="Resource.ashx" type="YAF.YafResourceHandler, YAF" />
+                    <add verb="GET" path="Resource.ashx" type="YAF.Core.Handlers.ResourceHandler, YAF" />
                   </node>
                   <node path="/configuration/system.web" action="update" key="enabled" collision="overwrite">
                     <roleManager enabled="true" defaultProvider="AspNetSqlRoleProvider">
@@ -454,7 +460,7 @@
         </component>
       </components>
     </package>
-    <package name="YAF.WhatsNew" type="Module" version="02.30.075907">
+    <package name="YAF.WhatsNew" type="Module" version="02.31.006000">
       <friendlyName>YAF.NET Forums What's New</friendlyName>
       <description>
         &lt;p&gt;This Module displays the Latest Posts from a  &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; Module. Based on the Current Users Authorization Level. You can define Which Forum should been used, and how many Posts should displayed.
@@ -465,7 +471,7 @@
       <owner>
         <name>Ingo Herbote</name>
         <organization>Yet Another Forum.NET</organization>
-        <url>http://www.yetanotherforum.net/</url>
+        <url>https://www.yetanotherforum.net/</url>
         <email>support@yetanotherforum.net</email>
       </owner>
       <license src="License.html" />

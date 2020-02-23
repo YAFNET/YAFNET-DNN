@@ -1,8 +1,8 @@
 /* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2019 Ingo Herbote
- * http://www.yetanotherforum.net/
+ * Copyright (C) 2014-2020 Ingo Herbote
+ * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -12,7 +12,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -27,6 +27,7 @@ namespace YAF.DotNetNuke
     #region Using
 
     using System;
+    using System.Linq;
     using System.Web.UI.WebControls;
 
     using global::DotNetNuke.Common.Utilities;
@@ -199,47 +200,47 @@ namespace YAF.DotNetNuke
                 return;
             }
 
-            foreach (var objTab in objTabs)
-            {
-                if (objTab == null || objTab.IsDeleted)
-                {
-                    continue;
-                }
-
-                var objModules = new ModuleController();
-
-                foreach (var pair in objModules.GetTabModules(objTab.TabID))
-                {
-                    var objModule = pair.Value;
-
-                    if (objModule.IsDeleted || objModule.DesktopModuleID != objDesktopModuleInfo.DesktopModuleID)
+            objTabs.Where(tab => tab != null && !tab.IsDeleted).ForEach(
+                objTab =>
                     {
-                        continue;
-                    }
+                        var objModules = new ModuleController();
 
-                    var strPath = objTab.TabName;
-                    var objTabSelected = objTab;
-
-                    while (objTabSelected.ParentId != Null.NullInteger)
-                    {
-                        objTabSelected = objTabController.GetTab(objTabSelected.ParentId, objTab.PortalID, false);
-                        if (objTabSelected == null)
+                        foreach (var pair in objModules.GetTabModules(objTab.TabID))
                         {
-                            break;
+                            var objModule = pair.Value;
+
+                            if (objModule.IsDeleted
+                                || objModule.DesktopModuleID != objDesktopModuleInfo.DesktopModuleID)
+                            {
+                                continue;
+                            }
+
+                            var strPath = objTab.TabName;
+                            var objTabSelected = objTab;
+
+                            while (objTabSelected.ParentId != Null.NullInteger)
+                            {
+                                objTabSelected = objTabController.GetTab(
+                                    objTabSelected.ParentId,
+                                    objTab.PortalID,
+                                    false);
+                                if (objTabSelected == null)
+                                {
+                                    break;
+                                }
+
+                                strPath = $"{objTabSelected.TabName} -> {strPath}";
+                            }
+
+                            var objListItem = new ListItem
+                                                  {
+                                                      Value = $"{objModule.TabID}-{objModule.ModuleID}",
+                                                      Text = $"{strPath} -> {objModule.ModuleTitle}"
+                                                  };
+
+                            this.YafInstances.Items.Add(objListItem);
                         }
-
-                        strPath = $"{objTabSelected.TabName} -> {strPath}";
-                    }
-
-                    var objListItem = new ListItem
-                                          {
-                                              Value = $"{objModule.TabID}-{objModule.ModuleID}",
-                                              Text = $"{strPath} -> {objModule.ModuleTitle}"
-                                          };
-
-                    this.YafInstances.Items.Add(objListItem);
-                }
-            }
+                    });
         }
 
         #endregion

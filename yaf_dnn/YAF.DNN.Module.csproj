@@ -87,6 +87,7 @@
     <Compile Include="Components\WebAPI\AlbumController.cs" />
     <Compile Include="Components\WebAPI\AttachmentController.cs" />
     <Compile Include="Components\WebAPI\MultiQuoteController.cs" />
+    <Compile Include="Components\WebAPI\NotifyController.cs" />
     <Compile Include="Components\WebAPI\RouteMapper.cs" />
     <Compile Include="Components\Integration\Sitemap.cs" />
     <Compile Include="Components\Utils\CombinedUserDataHelper.cs" />
@@ -241,13 +242,13 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DotNetNuke.Abstractions">
-      <Version>9.4.2</Version>
+      <Version>9.4.4</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.Core">
-      <Version>9.4.2</Version>
+      <Version>9.4.4</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.WebApi">
-      <Version>9.4.1</Version>
+      <Version>9.4.4</Version>
     </PackageReference>
     <PackageReference Include="MSBuild.Extension.Pack">
       <Version>1.9.1</Version>

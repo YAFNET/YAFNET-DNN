@@ -56,7 +56,8 @@
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-image-gallery.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-notify.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-suggest.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\cookiealert-standalone.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-tagsinput.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-typeahead.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-select.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-select.min.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\InstallWizard.js" />
@@ -69,13 +70,9 @@
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.bootstrap-touchspin.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumAdminExtensions.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.selectedQuoting.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.syntaxhighligher.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.tablesorter.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.tablesorter.min.js" />      
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.tablesorter.pager.js" />      
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.timeago.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ui.datepicker-farsi.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.yafmodaldialog.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.4.1.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.4.1.min.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.4.1.intellisense.js" />
@@ -93,13 +90,14 @@
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\select2.min.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\spin.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\spin.min.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\yaf.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap.bundle.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\jquery.FileUpload\**\*.css" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\bootstrap\**\*.css" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\css\**\*.css" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\favicon\**\*.*" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\tablesorter\**\*.css" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\blueimp-gallery.css" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\bootstrap-tagsinput.css" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\bootstrap-datetimepicker.css" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\bootstrap-image-gallery.css" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\bootstrap-notify.css" />
@@ -188,9 +186,7 @@
                          Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_source\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\obj\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\bin\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Browsers\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Data\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.zip;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\Thumbs.db;" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.woff2"
                          Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_source\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\obj\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\bin\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Browsers\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Data\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.zip;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\Thumbs.db;" />
-      <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.ico"
-                         Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_source\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\obj\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\bin\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Browsers\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Data\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.zip;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\Thumbs.db;" />
-    </ItemGroup>
+     </ItemGroup>
 
     <ItemGroup>
       <yafsrcInclude 
@@ -217,11 +213,17 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\FarsiLibrary.Localization.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\FarsiLibrary.Utils.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\J2N.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\Microsoft.Bcl.AsyncInterfaces.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.Common.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.Interfaces.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.SqlServer.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.Text.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\System.Buffers.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\System.Memory.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\System.Runtime.CompilerServices.Unsafe.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\System.Threading.Tasks.Extensions.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\System.ValueTuple.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\YAF.Configuration.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\YAF.Web.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\YAF.Core.dll" />
