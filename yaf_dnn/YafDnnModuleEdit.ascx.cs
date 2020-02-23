@@ -100,7 +100,7 @@ namespace YAF.DotNetNuke
                 this.InheritDnnLanguage.Checked.ToString());
 
             var boardSettings =
-                new YafLoadBoardSettings(newBoardId + 1)
+                new LoadBoardSettings(newBoardId + 1)
                     {
                         DNNPageTab = this.TabId,
                         DNNPortalId = this.PortalId,
@@ -136,7 +136,7 @@ namespace YAF.DotNetNuke
                 this.InheritDnnLanguage.Checked.ToString());
 
             var boardSettings =
-                new YafLoadBoardSettings(newBoardId)
+                new LoadBoardSettings(newBoardId)
                     {
                         DNNPageTab = this.TabId,
                         DNNPortalId = this.PortalId,
@@ -305,7 +305,7 @@ namespace YAF.DotNetNuke
                 this.InheritDnnLanguage.Checked.ToString());
 
             var boardSettings =
-                new YafLoadBoardSettings(this.BoardID.SelectedValue.ToType<int>())
+                new LoadBoardSettings(this.BoardID.SelectedValue.ToType<int>())
                     {
                         DNNPageTab = this.TabId,
                         DNNPortalId = this.PortalId,

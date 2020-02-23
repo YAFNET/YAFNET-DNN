@@ -69,7 +69,7 @@ namespace YAF.DotNetNuke.Components.Utils
 
             // Load Yaf Board Settings if needed
             var boardSettings = BoardContext.Current == null
-                                    ? new YafLoadBoardSettings(boardId)
+                                    ? new LoadBoardSettings(boardId)
                                     : BoardContext.Current.Get<BoardSettings>();
 
             var rolesChanged = false;

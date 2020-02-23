@@ -335,7 +335,7 @@ namespace YAF.DotNetNuke
             var yafUserId = BoardContext.Current.GetRepository<User>().GetUserId(this.forum1.BoardID, dnnMembershipUser.ProviderUserKey.ToString());
 
             var boardSettings = BoardContext.Current == null
-                                    ? new YafLoadBoardSettings(this.forum1.BoardID)
+                                    ? new LoadBoardSettings(this.forum1.BoardID)
                                     : BoardContext.Current.Get<BoardSettings>();
 
             if (yafUserId.Equals(0))
@@ -436,7 +436,7 @@ namespace YAF.DotNetNuke
                 var boardSettingsTabId = BoardContext.Current.BoardSettings != null
                                          && BoardContext.Current.BoardSettings.BoardID.Equals(this.forum1.BoardID)
                                              ? BoardContext.Current.BoardSettings.DNNPageTab
-                                             : new YafLoadBoardSettings(this.forum1.BoardID).DNNPageTab;
+                                             : new LoadBoardSettings(this.forum1.BoardID).DNNPageTab;
 
                 if (boardSettingsTabId.Equals(-1)
                     || !boardSettingsTabId.Equals(this.TabId) && !this.CurrentPortalSettings.ContentLocalizationEnabled)
@@ -463,7 +463,7 @@ namespace YAF.DotNetNuke
 
                 if (BoardContext.Current.BoardSettings.DNNPortalId.Equals(-1))
                 {
-                    var boardSettings = new YafLoadBoardSettings(this.forum1.BoardID)
+                    var boardSettings = new LoadBoardSettings(this.forum1.BoardID)
                                             {
                                                 DNNPageTab = this.TabId,
                                                 DNNPortalId = this.PortalId
