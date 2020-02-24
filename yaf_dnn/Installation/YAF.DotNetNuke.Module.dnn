@@ -95,6 +95,21 @@
               <name>ServiceStack.Text.dll</name>
             </assembly>
             <assembly>
+              <name>System.Buffers.dll</name>
+            </assembly>
+            <assembly>
+              <name>System.Memory.dll</name>
+            </assembly>
+            <assembly>
+              <name>System.Runtime.CompilerServices.Unsafe.dll</name>
+            </assembly>
+            <assembly>
+              <name>System.Threading.Tasks.Extensions.dll</name>
+            </assembly>
+            <assembly>
+              <name>Microsoft.Bcl.AsyncInterfaces</name>
+            </assembly>
+            <assembly>
               <name>YAF.Configuration.dll</name>
             </assembly>
             <assembly>
