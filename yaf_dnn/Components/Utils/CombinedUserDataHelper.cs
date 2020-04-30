@@ -31,7 +31,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using System.Web.Security;
 
     using YAF.Configuration;
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.Core.Model;
     using YAF.Core.UsersRoles;
@@ -40,8 +40,9 @@ namespace YAF.DotNetNuke.Components.Utils
     using YAF.Types.Flags;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
-    using YAF.Utils;
     using YAF.Utils.Helpers;
+
+    using UserProfile = YAF.Utils.UserProfile;
 
     #endregion
 
@@ -53,19 +54,19 @@ namespace YAF.DotNetNuke.Components.Utils
         #region Constants and Fields
 
         /// <summary>
-        ///   The _membership user.
+        ///   The membership user.
         /// </summary>
-        private MembershipUser _membershipUser;
+        private MembershipUser membershipUser;
 
         /// <summary>
-        ///   The _user DB row.
+        ///   The user DB row.
         /// </summary>
-        private DataRow _userDBRow;
+        private DataRow userDBRow;
 
         /// <summary>
-        ///   The _user id.
+        ///   The user id.
         /// </summary>
-        private int? _userId;
+        private int? userId;
 
         /// <summary>
         /// The board id.
@@ -73,9 +74,9 @@ namespace YAF.DotNetNuke.Components.Utils
         private readonly int boardId;
 
         /// <summary>
-        ///   The _user profile.
+        ///   The user profile.
         /// </summary>
-        private YafUserProfile _userProfile;
+        private UserProfile userProfile;
 
         #endregion
 
@@ -95,7 +96,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// </param>
         public CustomCombinedUserDataHelper(MembershipUser membershipUser, int userID, int boardID)
         {
-            this._userId = userID;
+            this.userId = userID;
             this.MembershipUser = membershipUser;
             this.boardId = boardID;
             this.InitUserData();
@@ -112,7 +113,7 @@ namespace YAF.DotNetNuke.Components.Utils
         {
             get
             {
-                int value = this.DBRow.Field<int?>("NotificationType") ?? 0;
+                var value = this.DBRow.Field<int?>("NotificationType") ?? 0;
 
                 return (this.DBRow.Field<bool?>("AutoWatchTopics") ?? false) || value.ToEnum<UserNotificationSetting>()
                        == UserNotificationSetting.TopicsIPostToOrSubscribeTo;
@@ -141,12 +142,12 @@ namespace YAF.DotNetNuke.Components.Utils
         {
             get
             {
-                if (this._userDBRow == null && this._userId.HasValue)
+                if (this.userDBRow == null && this.userId.HasValue)
                 {
-                    this._userDBRow = this.GetUserRowForID(this.boardId, this._userId.Value, true);
+                    this.userDBRow = GetUserRowForID(this.boardId, this.userId.Value, true);
                 }
 
-                return this._userDBRow;
+                return this.userDBRow;
             }
         }
 
@@ -170,7 +171,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <summary>
         ///   Gets DisplayName.
         /// </summary>
-        public string DisplayName => this._userId.HasValue ? this.DBRow.Field<string>("DisplayName") : this.UserName;
+        public string DisplayName => this.userId.HasValue ? this.DBRow.Field<string>("DisplayName") : this.UserName;
 
         /// <summary>
         ///   Gets Email.
@@ -267,17 +268,17 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <summary>
         ///   Gets Profile.
         /// </summary>
-        public IYafUserProfile Profile
+        public IUserProfile Profile
         {
             get
             {
-                if (this._userProfile == null && this.UserName.IsSet())
+                if (this.userProfile == null && this.UserName.IsSet())
                 {
                     // init the profile...
-                    this._userProfile = YafUserProfile.GetProfile(this.UserName);
+                    this.userProfile = UserProfile.GetProfile(this.UserName);
                 }
 
-                return this._userProfile;
+                return this.userProfile;
             }
         }
 
@@ -331,7 +332,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <summary>
         ///   Gets UserID.
         /// </summary>
-        public int UserID => _userId?.ToType<int>() ?? 0;
+        public int UserID => this.userId?.ToType<int>() ?? 0;
 
         /// <summary>
         ///   Gets UserName.
@@ -345,7 +346,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     return this.MembershipUser.UserName;
                 }
 
-                return this._userId.HasValue ? this.DBRow.Field<string>("Name") : null;
+                return this.userId.HasValue ? this.DBRow.Field<string>("Name") : null;
             }
         }
 
@@ -356,15 +357,15 @@ namespace YAF.DotNetNuke.Components.Utils
         {
             get
             {
-                if (this._membershipUser == null && this._userId.HasValue)
+                if (this.membershipUser == null && this.userId.HasValue)
                 {
-                    this._membershipUser = UserMembershipHelper.GetMembershipUserById(this._userId.Value);
+                    this.membershipUser = UserMembershipHelper.GetMembershipUserById(this.userId.Value);
                 }
 
-                return this._membershipUser;
+                return this.membershipUser;
             }
 
-            set => this._membershipUser = value;
+            set => this.membershipUser = value;
         }
 
         #endregion
@@ -378,17 +379,12 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <exception cref="Exception">Cannot locate user information.</exception>
         private void InitUserData()
         {
-            if (this.MembershipUser != null && !this._userId.HasValue)
+            if (this.MembershipUser != null && !this.userId.HasValue)
             {
-                if (this._userId == null)
-                {
-                    // get the user id
-                    this._userId =
-                        UserMembershipHelper.GetUserIDFromProviderUserKey(this.MembershipUser.ProviderUserKey);
-                }
+                this.userId ??= UserMembershipHelper.GetUserIDFromProviderUserKey(this.MembershipUser.ProviderUserKey);
             }
 
-            if (!this._userId.HasValue)
+            if (!this.userId.HasValue)
             {
                 throw new Exception("Cannot locate user information.");
             }
@@ -403,7 +399,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <returns>
         /// Returns the User Row
         /// </returns>
-        private DataRow GetUserRowForID(int boardID, int userID, bool allowUserInfoCaching)
+        private static DataRow GetUserRowForID(int boardID, int userID, bool allowUserInfoCaching)
         {
             if (!allowUserInfoCaching)
             {

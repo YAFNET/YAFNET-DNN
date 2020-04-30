@@ -31,7 +31,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
 
     using global::DotNetNuke.Web.Api;
 
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;

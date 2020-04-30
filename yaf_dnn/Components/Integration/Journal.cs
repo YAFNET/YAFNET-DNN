@@ -33,7 +33,7 @@ namespace YAF.DotNetNuke.Components.Integration
     using global::DotNetNuke.Security.Roles;
     using global::DotNetNuke.Services.Journal;
 
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.DotNetNuke.Components.Controllers;
     using YAF.Types.Attributes;
@@ -311,25 +311,27 @@ namespace YAF.DotNetNuke.Components.Integration
             forumAccessList.ForEach(
                 forumAccess =>
                     {
-                        if (forumAccess.Flags.ReadAccess)
+                        if (!forumAccess.Flags.ReadAccess)
                         {
-                            RoleInfo role = null;
+                            return;
+                        }
 
-                            if (dnnRoles.Any(r => r.RoleName == forumAccess.GroupName))
-                            {
-                                role = dnnRoles.First(r => r.RoleName == forumAccess.GroupName);
-                            }
+                        RoleInfo role = null;
 
-                            if (role != null)
-                            {
-                                securitySet.AppendFormat("R{0},", role.RoleID);
-                            }
+                        if (dnnRoles.Any(r => r.RoleName == forumAccess.GroupName))
+                        {
+                            role = dnnRoles.First(r => r.RoleName == forumAccess.GroupName);
+                        }
 
-                            // Guest Access
-                            if (forumAccess.GroupName == "Guests")
-                            {
-                                securitySet.Append("E,");
-                            }
+                        if (role != null)
+                        {
+                            securitySet.AppendFormat("R{0},", role.RoleID);
+                        }
+
+                        // Guest Access
+                        if (forumAccess.GroupName == "Guests")
+                        {
+                            securitySet.Append("E,");
                         }
                     });
 

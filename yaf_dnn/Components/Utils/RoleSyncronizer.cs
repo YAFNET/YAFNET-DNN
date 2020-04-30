@@ -32,7 +32,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Security.Roles;
 
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.Core.Model;
     using YAF.Core.UsersRoles;
@@ -141,13 +141,15 @@ namespace YAF.DotNetNuke.Components.Utils
             }
 
             // empty out access table
-            if (rolesChanged && BoardContext.Current != null)
+            if (!rolesChanged || BoardContext.Current == null)
             {
-                BoardContext.Current.GetRepository<ActiveAccess>().DeleteAll();
-                BoardContext.Current.GetRepository<Active>().DeleteAll();
+                return rolesChanged;
             }
 
-            return rolesChanged;
+            BoardContext.Current.GetRepository<ActiveAccess>().DeleteAll();
+            BoardContext.Current.GetRepository<Active>().DeleteAll();
+
+            return true;
         }
 
         /// <summary>
@@ -162,14 +164,11 @@ namespace YAF.DotNetNuke.Components.Utils
             var yafBoardAccessMasks = Data.GetYafBoardAccessMasks(boardId);
 
             // Check If Dnn Roles Exists in Yaf
-            foreach (var role in from role in roles
-                                    where role.IsSet()
-                                    let any = yafBoardRoles.Any(yafRole => yafRole.RoleName.Equals(role))
-                                    where !any
-                                    select role)
-            {
-                CreateYafRole(role, boardId, yafBoardAccessMasks);
-            }
+            (from role in roles
+             where role.IsSet()
+             let any = yafBoardRoles.Any(yafRole => yafRole.RoleName.Equals(role))
+             where !any
+             select role).ForEach(role => CreateYafRole(role, boardId, yafBoardAccessMasks));
         }
 
         /// <summary>

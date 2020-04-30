@@ -31,7 +31,7 @@
     using global::DotNetNuke.Entities.Portals;
     using global::DotNetNuke.Services.Sitemap;
 
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Core.Model;
     using YAF.Core.UsersRoles;
     using YAF.Types.Constants;
@@ -75,7 +75,7 @@
                                  {
                                      Url =
                                          BuildLink.GetLinkNotEscaped(
-                                             ForumPages.topics,
+                                             ForumPages.Topics,
                                              true,
                                              "f={0}",
                                              forum.Item1.ID),

@@ -36,7 +36,7 @@ namespace YAF.DotNetNuke.Components.Integration
     using global::DotNetNuke.Entities.Host;
     using global::DotNetNuke.Services.Mail;
 
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Types;
     using YAF.Types.Attributes;
     using YAF.Types.Interfaces;

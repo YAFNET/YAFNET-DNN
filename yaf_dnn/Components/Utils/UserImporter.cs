@@ -33,6 +33,7 @@ namespace YAF.DotNetNuke.Components.Utils
 
     using YAF.Configuration;
     using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Core.Model;
     using YAF.Core.UsersRoles;
     using YAF.Types.Constants;
@@ -112,7 +113,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     {
                         ProfileSyncronizer.UpdateUserProfile(
                             yafUserId,
-                            YafUserProfile.GetProfile(dnnUser.UserName),
+                            YAF.Utils.UserProfile.GetProfile(dnnUser.UserName),
                             new CustomCombinedUserDataHelper(dnnUser, yafUserId, boardId),
                             dnnUserInfo,
                             boardSettings,
@@ -173,7 +174,7 @@ namespace YAF.DotNetNuke.Components.Utils
             }
 
             // create profile
-            var userProfile = YafUserProfile.GetProfile(dnnUser.UserName);
+            var userProfile = YAF.Utils.UserProfile.GetProfile(dnnUser.UserName);
 
             // setup their initial profile information
             userProfile.Initialize(dnnUser.UserName, true);
@@ -210,22 +211,21 @@ namespace YAF.DotNetNuke.Components.Utils
 
             // Save User
             BoardContext.Current.GetRepository<User>().Save(
-                userID: yafUserId,
-                boardID: boardId,
-                userName: dnnUserInfo.Username,
-                displayName: dnnUserInfo.DisplayName,
-                email: dnnUserInfo.Email,
-                timeZone: dnnUserInfo.Profile.PreferredTimeZone.Id,
-                languageFile: null,
-                culture: null,
-                themeFile: null,
-                textEditor: null,
-                approved: null,
-                pmNotification: boardSettings.DefaultNotificationSetting,
-                autoWatchTopics: autoWatchTopicsEnabled,
-                dSTUser: dnnUserInfo.Profile.PreferredTimeZone.SupportsDaylightSavingTime,
-                hideUser: null,
-                notificationType: null);
+                yafUserId,
+                boardId,
+                dnnUserInfo.Username,
+                dnnUserInfo.DisplayName,
+                dnnUserInfo.Email,
+                dnnUserInfo.Profile.PreferredTimeZone.Id,
+                null,
+                null,
+                null,
+                null,
+                boardSettings.DefaultNotificationSetting,
+                autoWatchTopicsEnabled,
+                dnnUserInfo.Profile.PreferredTimeZone.SupportsDaylightSavingTime,
+                null,
+                null);
 
             // save notification Settings
             BoardContext.Current.GetRepository<User>().SaveNotification(

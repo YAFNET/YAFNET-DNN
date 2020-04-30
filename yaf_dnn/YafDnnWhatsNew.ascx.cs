@@ -44,7 +44,7 @@ namespace YAF.DotNetNuke
     using global::DotNetNuke.Services.Url.FriendlyUrl;
 
     using YAF.Configuration;
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Core.Helpers;
     using YAF.Core.Model;
     using YAF.Core.UsersRoles;
@@ -254,22 +254,13 @@ namespace YAF.DotNetNuke
                 var activeTopics = Data.TopicLatest(this.boardId, this.maxPosts, yafUserId, false, true);
 
                 // Resort the table
-                switch (this.sortOrder)
+                activeTopics.DefaultView.Sort = this.sortOrder switch
                 {
-                    case "views":
-                        activeTopics.DefaultView.Sort = "Views DESC";
-                        break;
-                    case "replies":
-                        activeTopics.DefaultView.Sort = "NumPosts DESC";
-                        break;
-                    case "lastpost":
-                        activeTopics.DefaultView.Sort = "LastPosted DESC";
-                        break;
-                    default:
-                        activeTopics.DefaultView.Sort = "LastPosted DESC";
-                        break;
-                }
-
+                    "views" => "Views DESC",
+                    "replies" => "NumPosts DESC",
+                    "lastpost" => "LastPosted DESC",
+                    _ => "LastPosted DESC",
+                };
                 this.LatestPosts.DataSource = activeTopics;
                 this.LatestPosts.DataBind();
 

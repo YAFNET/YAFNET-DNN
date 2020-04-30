@@ -28,6 +28,7 @@ namespace YAF.DotNetNuke
 
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Web;
     using System.Web.Security;
@@ -47,14 +48,16 @@ namespace YAF.DotNetNuke
 
     using YAF.Configuration;
     using YAF.Core;
+    using YAF.Core.Context;
+    using YAF.Core.Helpers;
     using YAF.Core.Model;
-    using YAF.DotNetNuke.Components.Objects;
     using YAF.DotNetNuke.Components.Utils;
     using YAF.Types;
     using YAF.Types.Attributes;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
+    using YAF.Types.Objects;
     using YAF.Web.EventsArgs;
 
     using Forum = YAF.Web.Controls.Forum;
@@ -82,6 +85,17 @@ namespace YAF.DotNetNuke
         /// The basePage
         /// </summary>
         private CDefault basePage;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="YafDnnModule"/> class.
+        /// </summary>
+        /// <param name="serviceLocator">
+        /// The service locator.
+        /// </param>
+        public YafDnnModule(IServiceLocator serviceLocator)
+        {
+            this.ServiceLocator = serviceLocator;
+        }
 
         #endregion
 
@@ -129,26 +143,26 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// Gets the YAF Cultures
         /// </summary>
-        private static List<YafCultureInfo> YafCultures
+        private static IReadOnlyCollection<Culture> YafCultures
         {
             get
             {
                 const string CacheKey = "YAF_Cultures";
 
-                List<YafCultureInfo> cultures;
+                IReadOnlyCollection<Culture> cultures;
 
-                if (DataCache.GetCache(CacheKey) is List<YafCultureInfo>)
+                if (DataCache.GetCache(CacheKey) is IReadOnlyCollection<Culture>)
                 {
-                    cultures = DataCache.GetCache(CacheKey).ToType<List<YafCultureInfo>>();
+                    cultures = DataCache.GetCache(CacheKey).ToType<IReadOnlyCollection<Culture>>();
 
                     if (cultures.Count == 0)
                     {
-                        cultures = CultureUtilities.GetYafCultures();
+                        cultures = StaticDataHelper.Cultures();
                     }
                 }
                 else
                 {
-                    cultures = CultureUtilities.GetYafCultures();
+                    cultures = StaticDataHelper.Cultures();
                 }
 
                 return cultures;
@@ -228,17 +242,16 @@ namespace YAF.DotNetNuke
             {
                 var parent = control.Parent;
 
-                if (parent == null)
+                switch (parent)
                 {
-                    return null;
+                    case null:
+                        return null;
+                    case CDefault cDefault:
+                        return cDefault;
+                    default:
+                        control = parent;
+                        break;
                 }
-
-                if (parent is CDefault cDefault)
-                {
-                    return cDefault;
-                }
-
-                control = parent;
             }
         }
 
@@ -255,8 +268,8 @@ namespace YAF.DotNetNuke
                 var langCode = currentCulture.Name;
 
                 BoardContext.Current.Get<BoardSettings>().Language =
-                    YafCultures.Find(yafCult => yafCult.Culture.Equals(langCode)) != null
-                        ? YafCultures.Find(yafCult => yafCult.Culture.Equals(langCode)).LanguageFile
+                    YafCultures.FirstOrDefault(yafCult => yafCult.CultureTag.Equals(langCode)) != null
+                        ? YafCultures.FirstOrDefault(yafCult => yafCult.CultureTag.Equals(langCode))?.CultureFile
                         : "english.xml";
             }
             catch (Exception)

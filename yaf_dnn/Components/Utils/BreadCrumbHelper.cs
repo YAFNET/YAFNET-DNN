@@ -36,7 +36,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using global::DotNetNuke.UI.Skins;
 
     using YAF.Configuration;
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Types.Objects;
@@ -105,24 +105,22 @@ namespace YAF.DotNetNuke.Components.Utils
                 // add dnn CSS classes to YAF breadcrumb links
                 var yafBreadCrumb = new StringBuilder();
 
-                foreach (var link in yafPageLinks)
+                yafPageLinks.ForEach(link =>
                 {
                     var title = HttpUtility.HtmlEncode(link.Title.Trim());
 
-                    if (BoardContext.Current.Get<BoardSettings>().Name.Equals(title))
+                    if (!BoardContext.Current.Get<BoardSettings>().Name.Equals(title))
                     {
-                        continue;
+                        var url = link.URL.Trim();
+
+                        yafBreadCrumb.AppendFormat(
+                            @"{3}<a href=""{0}"" class=""{1}"">{2}</a>",
+                            url.IsNotSet() ? "#" : url,
+                            cssClass,
+                            title,
+                            separator);
                     }
-
-                    var url = link.URL.Trim();
-
-                    yafBreadCrumb.AppendFormat(
-                        @"{3}<a href=""{0}"" class=""{1}"">{2}</a>", 
-                        url.IsNotSet() ? "#" : url, 
-                        cssClass, 
-                        title, 
-                        separator);
-                }
+                });
 
                 breadCrumbControl.FindControlAs<Label>("lblBreadCrumb").Text += yafBreadCrumb.ToString();
 

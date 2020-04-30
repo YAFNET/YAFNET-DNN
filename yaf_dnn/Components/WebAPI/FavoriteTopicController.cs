@@ -30,7 +30,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
     using global::DotNetNuke.Services.Exceptions;
     using global::DotNetNuke.Web.Api;
 
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Types.Interfaces;
 
     /// <summary>

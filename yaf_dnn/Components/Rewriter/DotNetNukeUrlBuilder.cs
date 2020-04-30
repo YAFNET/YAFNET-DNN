@@ -40,7 +40,7 @@ namespace YAF.DotNetNuke
     using global::DotNetNuke.Services.Url.FriendlyUrl;
 
     using YAF.Configuration;
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Core.Helpers;
     using YAF.Core.URLBuilder;
     using YAF.Types.Constants;
@@ -168,7 +168,7 @@ namespace YAF.DotNetNuke
             var parser = new SimpleURLParameterParser(url);
 
             var pageName = parser["g"];
-            var forumPage = ForumPages.forum;
+            var forumPage = ForumPages.Board;
             var getDescription = false;
 
             if (pageName.IsSet())
@@ -189,7 +189,7 @@ namespace YAF.DotNetNuke
                 string useKey;
                 switch (forumPage)
                 {
-                    case ForumPages.topics:
+                    case ForumPages.Topics:
                         {
                             useKey = "f";
 
@@ -258,7 +258,7 @@ namespace YAF.DotNetNuke
                         }
 
                         break;
-                    case ForumPages.forum:
+                    case ForumPages.Board:
                         {
                             if (parser["c"].IsSet())
                             {

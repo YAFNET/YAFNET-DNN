@@ -36,7 +36,7 @@ namespace YAF.DotNetNuke
 
     using global::DotNetNuke.Services.Scheduling;
 
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Core.Model;
     using YAF.DotNetNuke.Components.Controllers;
     using YAF.DotNetNuke.Components.Utils;
@@ -138,7 +138,7 @@ namespace YAF.DotNetNuke
                              ? BoardContext.Current.GetRepository<Board>().ListTyped()
                              : Data.ListBoards();
 
-            foreach (DataRow dataRow in settings.Tables[0].Rows)
+            settings.Tables[0].Rows.Cast<DataRow>().ForEach(dataRow =>
             {
                 var boardId = dataRow["BoardId"].ToType<int>();
                 var portalId = dataRow["PortalId"].ToType<int>();
@@ -148,7 +148,7 @@ namespace YAF.DotNetNuke
                 {
                     UserImporter.ImportUsers(boardId, portalId, out this.info);
                 }
-            }
+            });
         }
 
         #endregion

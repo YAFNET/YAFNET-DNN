@@ -32,7 +32,7 @@ namespace YAF.DotNetNuke.Components.Utils
     using global::DotNetNuke.Entities.Users;
 
     using YAF.Configuration;
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Core.Model;
     using YAF.DotNetNuke.Components.Controllers;
     using YAF.Types;
@@ -42,7 +42,6 @@ namespace YAF.DotNetNuke.Components.Utils
     using YAF.Types.Interfaces;
     using YAF.Types.Interfaces.Events;
     using YAF.Types.Models;
-    using YAF.Utils;
 
     /// <summary>
     /// YAF DNN Profile Synchronization 
@@ -61,7 +60,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="ignoreLastUpdated">if set to <c>true</c> [ignore last updated].</param>
         public static void UpdateUserProfile(
             [NotNull] int yafUserId,
-            [CanBeNull] YafUserProfile yafUserProfile,
+            [CanBeNull] YAF.Utils.UserProfile yafUserProfile,
             [CanBeNull] IUserData yafCurrentUserData,
             [NotNull] UserInfo dnnUserInfo,
             [NotNull] BoardSettings boardSettings,
@@ -115,7 +114,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="boardSettings">The board settings.</param>
         private static void SyncYafProfile(
             int yafUserId,
-            YafUserProfile yafUserProfile,
+            YAF.Utils.UserProfile yafUserProfile,
             IUserData yafUserData,
             UserInfo dnnUserInfo,
             BoardSettings boardSettings)
@@ -130,7 +129,6 @@ namespace YAF.DotNetNuke.Components.Utils
                 yafUserData.LanguageFile.IsSet() ? yafUserData.LanguageFile : null,
                 yafUserData.CultureUser,
                 yafUserData.ThemeFile,
-                yafUserData.TextEditor,
                 true,
                 null,
                 null,

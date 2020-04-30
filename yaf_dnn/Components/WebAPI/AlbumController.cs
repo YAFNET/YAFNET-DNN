@@ -32,7 +32,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
 
     using Newtonsoft.Json.Linq;
 
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Core.Model;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
@@ -103,14 +103,14 @@ namespace YAF.DotNetNuke.Components.WebAPI
         [HttpPost]
         public IHttpActionResult GetAlbumImages(PagedResults pagedResults)
         {
-            var userId = pagedResults.UserId;
+            var userId = BoardContext.Current.PageUserID;
             var pageSize = pagedResults.PageSize;
             var pageNumber = pagedResults.PageNumber;
 
             var albumImages = this.GetRepository<UserAlbumImage>().GetUserAlbumImagesPaged(
-                userId: userId,
-                pageIndex: pageNumber,
-                pageSize: pageSize);
+                userId,
+                pageNumber,
+                pageSize);
 
             var images = new List<AttachmentItem>();
 
@@ -122,7 +122,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
                         var attachment = new AttachmentItem
                                              {
                                                  FileName = image.FileName,
-                                                 OnClick = $"setStyle('AlbumImgId', '{image.ID}')",
+                                                 OnClick = $"CKEDITOR.tools.insertAlbumImage('{image.ID}')",
                                                  IconImage =
                                                      $@"<img class=""popupitemIcon"" src=""{url}"" alt=""{(image.Caption.IsSet() ? image.Caption : image.FileName)}"" title=""{(image.Caption.IsSet() ? image.Caption : image.FileName)}"" width=""40"" height=""40"" />",
                                                  DataURL = url

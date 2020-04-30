@@ -41,6 +41,7 @@ namespace YAF.DotNetNuke
 
     using YAF.Configuration;
     using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.Core.Model;
     using YAF.Core.Services.Import;
@@ -324,7 +325,7 @@ namespace YAF.DotNetNuke
             // Reload forum settings
             BoardContext.Current.BoardSettings = null;
 
-            BuildLink.Redirect(ForumPages.forum);
+            BuildLink.Redirect(ForumPages.Board);
         }
 
         /// <summary>
@@ -445,9 +446,6 @@ namespace YAF.DotNetNuke
 
             // load default bbcode if available...
             loadWrapper("install/bbCodeExtensions.xml", s => DataImport.BBCodeExtensionImport(newBoardId, s));
-
-            // load default extensions if available...
-            loadWrapper("install/fileExtensions.xml", s => DataImport.FileExtensionImport(newBoardId, s));
 
             // load default spam word if available...
             loadWrapper("install/SpamWords.xml", s => DataImport.SpamWordsImport(newBoardId, s));

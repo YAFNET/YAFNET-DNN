@@ -30,7 +30,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
 
     using global::DotNetNuke.Web.Api;
 
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
@@ -65,14 +65,14 @@ namespace YAF.DotNetNuke.Components.WebAPI
         [HttpPost]
         public IHttpActionResult GetAttachments([FromBody] PagedResults pagedResults)
         {
-            var userId = pagedResults.UserId;
+            var userId = BoardContext.Current.PageUserID;
             var pageSize = pagedResults.PageSize;
             var pageNumber = pagedResults.PageNumber;
 
             var attachments = this.GetRepository<Attachment>().GetPaged(
                 a => a.UserID == userId,
-                pageIndex: pageNumber,
-                pageSize: pageSize);
+                pageNumber,
+                pageSize);
 
             var attachmentItems = new List<AttachmentItem>();
 
@@ -91,7 +91,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
                         var attachment = new AttachmentItem
                                              {
                                                  FileName = attach.FileName,
-                                                 OnClick = $"insertAttachment('{attach.ID}', '{url}')",
+                                                 OnClick = $"CKEDITOR.tools.insertAttachment('{attach.ID}')",
                                                  IconImage = $@"{iconImage}<span>{description}</span>"
                                              };
 
