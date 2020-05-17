@@ -212,6 +212,9 @@ namespace YAF.DotNetNuke
             // setup jQuery
             JavaScript.RequestRegistration(CommonJs.jQuery);
 
+            JavaScript.RequestRegistration("bootstrap-bundle");
+            JavaScript.Register(this.Page);
+
             base.OnPreRender(e);
         }
 

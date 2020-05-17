@@ -52,6 +52,7 @@
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootbox.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-bundle.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-bundle.min.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-datetimepicker.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-image-gallery.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-notify.js" />
@@ -65,10 +66,14 @@
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.blockUI.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.fileupload.comb.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumExtensions.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumExtensions.min.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumExtensionsDnn.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.hovercard.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.blueimp-gallery.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.bootstrap-touchspin.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumAdminExtensions.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumAdminExtensions.min.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumAdminExtensionsDnn.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.selectedQuoting.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.tablesorter.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.tablesorter.min.js" />      
@@ -127,7 +132,7 @@
       <YafDnnWhatsNewResourcesInclude Include="**\App_LocalResources\YafDnnWhatsNew.ascx.resx" />
       <YafDnnWhatsNewResourcesInclude Include="**\App_LocalResources\YafDnnWhatsNewSettings.ascx.de-DE.resx" />
       <YafDnnWhatsNewResourcesInclude Include="**\App_LocalResources\YafDnnWhatsNewSettings.ascx.resx" />
-      <YafDnnWhatsNewResourcesInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumExtensions.min.js" />
+      <YafDnnWhatsNewResourcesInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumExtensionsDnn.min.js" />
     </ItemGroup>
 
     <ItemGroup>
@@ -250,6 +255,7 @@
     <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\ReadMe.html" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
     <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\yaf.svg" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
     <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\02.30.005901.txt" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap.bundle.min.js" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
 
     <!-- create the INSTALL YafDnnWhatsNewResources.ZIP file -->
     <Copy SourceFiles="@(YafDnnWhatsNewResourcesInclude)" DestinationFolder="$(MSBuildProjectDirectory)\YafDnnWhatsNewResources\%(RecursiveDir)" />
