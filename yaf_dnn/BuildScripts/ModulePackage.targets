@@ -219,6 +219,8 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\FarsiLibrary.Utils.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\J2N.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\Microsoft.Bcl.AsyncInterfaces.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\Microsoft.Extensions.Configuration.Abstractions.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\Microsoft.Extensions.Primitives.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.Common.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.Interfaces.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.dll" />
