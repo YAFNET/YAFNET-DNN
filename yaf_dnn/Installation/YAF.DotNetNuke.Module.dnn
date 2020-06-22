@@ -101,6 +101,9 @@
               <name>System.Memory.dll</name>
             </assembly>
             <assembly>
+              <name>System.Numerics.Vectors.dll</name>
+            </assembly>
+            <assembly>
               <name>System.Runtime.CompilerServices.Unsafe.dll</name>
             </assembly>
             <assembly>
