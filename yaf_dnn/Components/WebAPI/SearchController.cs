@@ -58,7 +58,11 @@ namespace YAF.DotNetNuke.Components.WebAPI
         [HttpPost]
         public IHttpActionResult GetSimilarTitles([FromBody] SearchTopic searchTopic)
         {
-            var results = this.Get<ISearch>().SearchSimilar(searchTopic.UserId, searchTopic.SearchTerm, "Topic");
+            var results = this.Get<ISearch>().SearchSimilar(
+                searchTopic.UserId,
+                string.Empty,
+                searchTopic.SearchTerm,
+                "Topic");
 
             if (results == null)
             {
