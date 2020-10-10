@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="YetAnotherForumDotNet" type="Module" version="02.31.086010">
+    <package name="YetAnotherForumDotNet" type="Module" version="02.31.096011">
       <friendlyName>YAF.NET Forums</friendlyName>
       <description>
         &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; as DNN Module. Yet Another Forum.NET (YAF) is an open source ASP.NET forum system.&lt;br /&gt;
@@ -16,7 +16,7 @@
       <license src="License.html" />
       <releaseNotes src="ReadMe.html" />
       <dependencies>
-        <dependency type="CoreVersion">09.06.02</dependency>
+        <dependency type="CoreVersion">09.07.01</dependency>
       </dependencies>
       <components>
         <component type="Module">
@@ -35,7 +35,7 @@
                     <controlTitle>Forum</controlTitle>
                     <controlType>View</controlType>
                     <iconFile />
-                     <helpUrl>http://wiki.yetanotherforum.net/</helpUrl>
+                     <helpUrl>https://github.com/YAFNET/YAFNET-DNN/wiki</helpUrl>
                     <viewOrder>0</viewOrder>
                   </moduleControl>
                   <moduleControl>
@@ -45,7 +45,7 @@
                     <controlTitle>Edit YAF Settings</controlTitle>
                     <controlType>Edit</controlType>
                     <iconFile />
-                    <helpUrl>http://wiki.yetanotherforum.net/</helpUrl>
+                    <helpUrl>https://github.com/YAFNET/YAFNET-DNN/wiki</helpUrl>
                   </moduleControl>
                   <moduleControl>
                     <controlKey>Import</controlKey>
@@ -96,6 +96,9 @@
             </assembly>
             <assembly>
               <name>System.Buffers.dll</name>
+            </assembly>
+            <assembly>
+              <name>System.Diagnostics.DiagnosticSource.dll</name>
             </assembly>
             <assembly>
               <name>System.Memory.dll</name>
@@ -317,9 +320,6 @@
                     <add key="YAF.ForceScriptName" value="default.aspx" />
                     <add key="YAF.ShowToolBar" value="true" />
                     <add key="YAF.AllowLoginAndLogoff" value="false" />
-                    <add key="YAF.RadEditorSkin" value="Default" />
-                    <add key="YAF.UseRadEditorToolsFile" value="true" />
-                    <add key="YAF.RadEditorToolsFile" value="~/DesktopModules/YetAnotherForumDotNet/editors/radEditor/toolsFile.xml" />
                     <add key="YAF.ConfigPassword" value="pass" />
                     <add key="YAF.URLRewritingMode" value="Unicode" />
                   </node>
@@ -502,7 +502,7 @@
         </component>
       </components>
     </package>
-    <package name="YAF.WhatsNew" type="Module" version="02.31.086010">
+    <package name="YAF.WhatsNew" type="Module" version="02.31.096011">
       <friendlyName>YAF.NET Forums What's New</friendlyName>
       <description>
         &lt;p&gt;This Module displays the Latest Posts from a  &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; Module. Based on the Current Users Authorization Level. You can define Which Forum should been used, and how many Posts should displayed.
@@ -519,7 +519,7 @@
       <license src="License.html" />
       <releaseNotes />
       <dependencies>
-        <dependency type="CoreVersion">09.06.02</dependency>
+        <dependency type="CoreVersion">09.07.01</dependency>
       </dependencies>
       <components>
         <component type="Module">
