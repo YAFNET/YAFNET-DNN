@@ -292,7 +292,7 @@
                         targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='Microsoft.Extensions.Primitives']/ab:bindingRedirect"
                         collision="save"
                         nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="0.0.0.0-3.1.5.0" newVersion="3.1.5.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
+                    <bindingRedirect oldVersion="0.0.0.0-3.1.7.0" newVersion="3.1.7.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
                   </node>
                   <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Runtime.CompilerServices.Unsafe']"
                         action="update"
