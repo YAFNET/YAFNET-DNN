@@ -189,7 +189,7 @@ namespace YAF.DotNetNuke
                 this,
                 type,
                 "timeagojs",
-                this.ResolveUrl("~/DesktopModules/YAF.WhatsNew/jquery.ForumExtensions.min.js"));
+                this.ResolveUrl("~/DesktopModules/YAF.WhatsNew/jquery.ForumExtensionsDnn.min.js"));
 
                 var momentLoadJs = $@"Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(loadTimeAgo);
             function loadTimeAgo() {{

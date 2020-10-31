@@ -589,7 +589,7 @@
         </component>
       </components>
     </package>
-    <package name="bootstrap-bundle" type="JavaScript_Library" version="4.5.2">
+    <package name="bootstrap-bundle" type="JavaScript_Library" version="4.5.3">
       <friendlyName>Bootstrap JavaScript Bundle (width Popper.js)</friendlyName>
       <description>
         <![CDATA[<p>Bootstrap is a sleek, intuitive, and powerful front-end framework for faster and easier web development, created and maintained by <a href="http://twitter.com/mdo">Mark Otto</a> and <a href="http://twitter.com/fat">Jacob Thornton</a>.</p>
@@ -610,7 +610,7 @@
           <javaScriptLibrary>
             <libraryName>bootstrap-bundle</libraryName>
             <fileName>bootstrap.bundle.min.js</fileName>
-            <CDNPath>https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js</CDNPath>
+            <CDNPath>https://maxcdn.bootstrapcdn.com/bootstrap/4.5.3/js/bootstrap.bundle.min.js</CDNPath>
             <objectName>jQuery.fn.scrollspy</objectName>
           </javaScriptLibrary>
         </component>
