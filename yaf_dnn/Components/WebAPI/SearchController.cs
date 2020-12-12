@@ -26,6 +26,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
 {
     using System.Web.Http;
 
+    using global::DotNetNuke.Security;
     using global::DotNetNuke.Web.Api;
 
     using YAF.Core;
@@ -55,6 +56,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
         /// <returns>
         /// Returns the search Results.
         /// </returns>
+        [AllowAnonymous]
         [HttpPost]
         public IHttpActionResult GetSimilarTitles([FromBody] SearchTopic searchTopic)
         {
@@ -91,6 +93,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
         /// <returns>
         /// Returns the search Results.
         /// </returns>
+        [AllowAnonymous]
         [HttpPost]
         public IHttpActionResult GetSearchResults([FromBody] SearchTopic searchTopic)
         {

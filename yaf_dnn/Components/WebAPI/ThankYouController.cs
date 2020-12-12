@@ -26,6 +26,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
 {
     using System.Web.Http;
 
+    using global::DotNetNuke.Security;
     using global::DotNetNuke.Web.Api;
 
     using YAF.Configuration;
