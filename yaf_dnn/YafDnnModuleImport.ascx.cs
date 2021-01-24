@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2020 Ingo Herbote
+ * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -33,11 +33,13 @@ namespace YAF.DotNetNuke
     using System.Web;
     using System.Web.UI.WebControls;
 
-    using global::DotNetNuke.Common;
+    using global::DotNetNuke.Abstractions;
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Services.Localization;
 
     using global::DotNetNuke.Services.Scheduling;
+
+    using Microsoft.Extensions.DependencyInjection;
 
     using YAF.DotNetNuke.Components.Utils;
     using YAF.Types.Extensions;
@@ -61,9 +63,22 @@ namespace YAF.DotNetNuke
         /// </summary>
         private int boardId;
 
+        /// <summary>
+        /// The navigation manager.
+        /// </summary>
+        private readonly INavigationManager navigationManager;
+
         #endregion
 
-        #region Methods
+        #region Methods 
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="YafDnnModuleImport"/> class.
+        /// </summary>
+        public YafDnnModuleImport()
+        {
+            this.navigationManager = this.DependencyProvider.GetRequiredService<INavigationManager>();
+        }
 
         /// <summary>
         /// The add scheduler click.
@@ -149,7 +164,7 @@ namespace YAF.DotNetNuke
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void CloseClick(object sender, EventArgs e)
         {
-            this.Response.Redirect(Globals.NavigateURL(), true);
+            this.Response.Redirect(this.navigationManager.NavigateURL(), true);
         }
 
         /// <summary>

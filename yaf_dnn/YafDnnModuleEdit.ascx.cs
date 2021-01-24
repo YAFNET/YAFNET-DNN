@@ -33,11 +33,13 @@ namespace YAF.DotNetNuke
     using System.Web.Security;
     using System.Web.UI.WebControls;
 
-    using global::DotNetNuke.Common;
+    using global::DotNetNuke.Abstractions;
     using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Tabs;
     using global::DotNetNuke.Services.Localization;
+
+    using Microsoft.Extensions.DependencyInjection;
 
     using YAF.Configuration;
     using YAF.Core;
@@ -60,7 +62,20 @@ namespace YAF.DotNetNuke
     /// </summary>
     public partial class YafDnnModuleEdit : PortalModuleBase
     {
+        /// <summary>
+        /// The navigation manager.
+        /// </summary>
+        private readonly INavigationManager navigationManager;
+
         #region Methods
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="YafDnnModuleEdit"/> class.
+        /// </summary>
+        public YafDnnModuleEdit()
+        {
+            this.navigationManager = this.DependencyProvider.GetRequiredService<INavigationManager>();
+        }
 
         /// <summary>
         /// Raises the <see cref="E:System.Web.UI.Control.Init" /> event.
@@ -113,7 +128,7 @@ namespace YAF.DotNetNuke
             // Reload forum settings
             BoardContext.Current.BoardSettings = null;
 
-            this.Response.Redirect(Globals.NavigateURL(), true);
+            this.Response.Redirect(this.navigationManager.NavigateURL(), true);
         }
 
         /// <summary>
@@ -149,7 +164,7 @@ namespace YAF.DotNetNuke
             // Reload forum settings
             BoardContext.Current.BoardSettings = null;
 
-            this.Response.Redirect(Globals.NavigateURL(), true);
+            this.Response.Redirect(this.navigationManager.NavigateURL(), true);
         }
 
         /// <summary>
@@ -159,7 +174,7 @@ namespace YAF.DotNetNuke
         /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void CancelClick(object sender, EventArgs e)
         {
-            this.Response.Redirect(Globals.NavigateURL(), true);
+            this.Response.Redirect(this.navigationManager.NavigateURL(), true);
         }
 
         /// <summary>
