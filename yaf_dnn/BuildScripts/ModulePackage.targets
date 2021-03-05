@@ -1,8 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   
-  <Import Project="MSBuild.Community.Tasks.Targets" />
-    
   <Target Name="PackageModule" Condition=" '$(Configuration)' == 'Release' AND '$(CreateDnnPackages)' == 'true' ">
     <XmlRead Prefix="n"
                     Namespace="http://schemas.microsoft.com/developer/msbuild/2003"
@@ -308,11 +306,10 @@
     <MakeDir Directories="$(MSBuildProjectDirectory)\deploy" />
 
     <!-- Create the Install package -->    
-    <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create"
-                                           CompressFiles="@(OutputContent)" 
-                                           CompressionLevel="BestCompression"
-                                           RemoveRoot="$(MSBuildProjectDirectory)\Package\" 
-                                           ZipFileName="$(MSBuildProjectDirectory)\$(PackageName)-$(YAFVersion).$(Extension)" />
+    <Zip Files="@(OutputContent)" 
+	     ZipLevel="9"
+         WorkingDirectory="$(MSBuildProjectDirectory)\Package\" 
+         ZipFileName="$(MSBuildProjectDirectory)\$(PackageName)-$(YAFVersion).$(Extension)" />
 
     <!-- Copy the Install package to the Packages folder -->
     <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)-$(YAFVersion).$(Extension)" DestinationFolder="deploy" />
@@ -331,11 +328,10 @@
       <Output TaskParameter="Include" ItemName="OutputSource" />
     </CreateItem>
 
-    <MSBuild.ExtensionPack.Compression.Zip TaskAction="Create"
-                                           CompressFiles="@(OutputSource)" 
-                                           CompressionLevel="BestCompression"
-                                           RemoveRoot="$(MSBuildProjectDirectory)\Package\" 
-                                           ZipFileName="$(MSBuildProjectDirectory)\$(PackageName)-$(YAFVersion)-SRC.$(Extension)" />
+    <Zip Files="@(OutputSource)"
+         ZipLevel="9"
+         WorkingDirectory="$(MSBuildProjectDirectory)\Package\" 
+         ZipFileName="$(MSBuildProjectDirectory)\$(PackageName)-$(YAFVersion)-SRC.$(Extension)" />
 
     <Move SourceFiles="$(MSBuildProjectDirectory)\$(PackageName)-$(YAFVersion)-SRC.$(Extension)" DestinationFolder="deploy/" />
 

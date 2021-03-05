@@ -152,10 +152,10 @@
     <None Include="BuildScripts\ModulePackage.targets">
       <SubType>Designer</SubType>
     </None>
-    <None Include="BuildScripts\MSBuild.Community.Tasks.Targets" />
     <Content Include="Installation\01.96.10.SqlDataProvider" />
     <None Include="Installation\Uninstall.SqlDataProvider" />
-    <None Include="Installation\YAF.DotNetNuke.Module.dnn">
+    <Content Include="Installation\YAF.DotNetNuke.Module.dnn" />
+    <None Include="YAF.DotNetNuke.Module.dnn">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
@@ -291,7 +291,6 @@
     <Extension>zip</Extension>
     <DNNFileName>YAF.DotNetNuke.Module</DNNFileName>
     <PackageName>YAF-DNN</PackageName>
-    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\BuildScripts</MSBuildCommunityTasksPath>
     <CreatePackages>false</CreatePackages>
   </PropertyGroup>
   <Import Project="BuildScripts\ModulePackage.Targets" />
