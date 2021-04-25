@@ -47,6 +47,7 @@ namespace YAF.DotNetNuke
 
     using YAF.Configuration;
     using YAF.Core;
+    using YAF.Core.Extensions;
     using YAF.Core.Model;
     using YAF.DotNetNuke.Components.Objects;
     using YAF.DotNetNuke.Components.Utils;
@@ -56,6 +57,7 @@ namespace YAF.DotNetNuke
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
     using YAF.Web.EventsArgs;
+    using YAF.Web.Extensions;
 
     using Forum = YAF.Web.Controls.Forum;
 
@@ -154,7 +156,7 @@ namespace YAF.DotNetNuke
                 return cultures;
             }
         }
-        
+
         /// <summary>
          /// Gets the session user key name.
          /// </summary>
@@ -185,7 +187,7 @@ namespace YAF.DotNetNuke
         {
             var x = this.Server.GetLastError();
 
-            BoardContext.Current.Get<ILogger>().Error(x, "Error on the DNN Module");
+            this.Get<ILogger>().Error(x, "Error on the DNN Module");
 
             base.OnError(e);
         }
@@ -231,17 +233,16 @@ namespace YAF.DotNetNuke
             {
                 var parent = control.Parent;
 
-                if (parent == null)
+                switch (parent)
                 {
-                    return null;
+                    case null:
+                        return null;
+                    case CDefault cDefault:
+                        return cDefault;
+                    default:
+                        control = parent;
+                        break;
                 }
-
-                if (parent is CDefault cDefault)
-                {
-                    return cDefault;
-                }
-
-                control = parent;
             }
         }
 
@@ -249,7 +250,7 @@ namespace YAF.DotNetNuke
         /// Change YAF Language based on DNN Language,
         ///   will <c>override</c> the YAF Language Setting
         /// </summary>
-        private static void SetDnnLangToYaf()
+        private void SetDnnLangToYaf()
         {
             try
             {
@@ -257,14 +258,14 @@ namespace YAF.DotNetNuke
 
                 var langCode = currentCulture.Name;
 
-                BoardContext.Current.Get<BoardSettings>().Language =
+                this.Get<BoardSettings>().Language =
                     YafCultures.Find(yafCult => yafCult.Culture.Equals(langCode)) != null
                         ? YafCultures.Find(yafCult => yafCult.Culture.Equals(langCode)).LanguageFile
                         : "english.xml";
             }
             catch (Exception)
             {
-                BoardContext.Current.Get<BoardSettings>().Language = "english.xml";
+                this.Get<BoardSettings>().Language = "english.xml";
             }
         }
 
@@ -335,11 +336,11 @@ namespace YAF.DotNetNuke
             }
 
             // Check if the user exists in yaf
-            var yafUserId = BoardContext.Current.GetRepository<User>().GetUserId(this.forum1.BoardID, dnnMembershipUser.ProviderUserKey.ToString());
+            var yafUserId = this.GetRepository<User>().GetUserId(this.forum1.BoardID, dnnMembershipUser.ProviderUserKey.ToString());
 
             var boardSettings = BoardContext.Current == null
                                     ? new LoadBoardSettings(this.forum1.BoardID)
-                                    : BoardContext.Current.Get<BoardSettings>();
+                                    : this.Get<BoardSettings>();
 
             if (yafUserId.Equals(0))
             {
@@ -362,56 +363,11 @@ namespace YAF.DotNetNuke
 
                 ProfileSyncronizer.UpdateUserProfile(
                     yafUserId,
-                    BoardContext.Current.Profile,
-                    BoardContext.Current.CurrentUserData,
+                    this.PageContext().Profile,
+                    this.PageContext().CurrentUserData,
                     dnnUserInfo,
                     boardSettings);
             }
-        }
-
-        /// <summary>
-        /// Change Page Title
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="ForumPageTitleArgs" /> instance containing the event data.</param>
-        private void Forum1_PageTitleSet(object sender, ForumPageTitleArgs e)
-        {
-            var removeTabName = 1;
-
-            if (this.Settings["RemoveTabName"] != null)
-            {
-                removeTabName = this.Settings["RemoveTabName"].ToType<int>();
-            }
-
-            // Check if Tab Name/Title Matches the Forum Board Name
-            if (removeTabName.Equals(2) && BoardContext.Current != null)
-            {
-                if (BoardContext.Current.Get<BoardSettings>().Name.Equals(this.CurrentPortalSettings.ActiveTab.TabName))
-                {
-                    removeTabName = 1;
-                }
-
-                if (this.CurrentPortalSettings.ActiveTab.Title.IsSet())
-                {
-                    if (
-                        BoardContext.Current.Get<BoardSettings>()
-                            .Name.Equals(this.CurrentPortalSettings.ActiveTab.Title))
-                    {
-                        removeTabName = 1;
-                    }
-                }
-            }
-
-            // Remove Tab Title(Name) if already in the Page Title
-            if (removeTabName.Equals(1))
-            {
-                this.BasePage.Title =
-                    this.BasePage.Title.Replace(
-                        $"> {this.CurrentPortalSettings.ActiveTab.TabName}",
-                        string.Empty);
-            }
-
-            BreadCrumbHelper.UpdateDnnBreadCrumb(this, "dnnBreadcrumb", this.PortalSettings);
         }
 
         /// <summary>
@@ -437,8 +393,8 @@ namespace YAF.DotNetNuke
                 this.forum1.BoardID = this.Settings["forumboardid"].ToType<int>();
 
                 var boardSettingsTabId = BoardContext.Current.BoardSettings != null
-                                         && BoardContext.Current.BoardSettings.BoardID.Equals(this.forum1.BoardID)
-                                             ? BoardContext.Current.BoardSettings.DNNPageTab
+                                         && this.PageContext().BoardSettings.BoardID.Equals(this.forum1.BoardID)
+                                             ? this.PageContext().BoardSettings.DNNPageTab
                                              : new LoadBoardSettings(this.forum1.BoardID).DNNPageTab;
 
                 if (boardSettingsTabId.Equals(-1)
@@ -455,16 +411,16 @@ namespace YAF.DotNetNuke
                     /*else
                                         {
                                             boardSettings.DNNPageTab = this.TabId;
-                    
+
                                             // save the settings to the database
                                             boardSettings.SaveRegistry();
-                    
+
                                             // Reload forum settings
                                             BoardContext.Current.BoardSettings = null;
                                         }*/
                 }
 
-                if (BoardContext.Current.BoardSettings.DNNPortalId.Equals(-1))
+                if (this.PageContext().BoardSettings.DNNPortalId.Equals(-1))
                 {
                     var boardSettings = new LoadBoardSettings(this.forum1.BoardID)
                                             {
@@ -486,7 +442,7 @@ namespace YAF.DotNetNuke
 
                 if (inheritDnnLanguage)
                 {
-                    SetDnnLangToYaf();
+                    this.SetDnnLangToYaf();
                 }
             }
             else
@@ -510,6 +466,16 @@ namespace YAF.DotNetNuke
                             });
                 }
             }
+        }
+
+        /// <summary>
+        /// Change Page Title
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="ForumPageTitleArgs" /> instance containing the event data.</param>
+        private void Forum1_PageTitleSet(object sender, ForumPageTitleArgs e)
+        {
+            this.BasePage.Title = this.PageContext().CurrentForumPage.GeneratePageTitle();
         }
 
         #endregion

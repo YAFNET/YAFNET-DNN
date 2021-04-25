@@ -97,7 +97,6 @@
     <Compile Include="Components\Objects\YafCultureInfo.cs" />
     <Compile Include="Components\Rewriter\DotNetNukeUrlBuilder.cs" />
     <Compile Include="Components\Tasks\YafDnnImportScheduler.cs" />
-    <Compile Include="Components\Utils\BreadCrumbHelper.cs" />
     <Compile Include="Components\Utils\CultureUtilities.cs" />
     <Compile Include="Components\Utils\ProfileSyncronizer.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -241,13 +240,13 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DotNetNuke.Abstractions">
-      <Version>9.8.0</Version>
+      <Version>9.9.1</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.Core">
-      <Version>9.8.0</Version>
+      <Version>9.9.1</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.WebApi">
-      <Version>9.8.0</Version>
+      <Version>9.9.1</Version>
     </PackageReference>
     <PackageReference Include="MSBuild.Extension.Pack">
       <Version>1.9.1</Version>
