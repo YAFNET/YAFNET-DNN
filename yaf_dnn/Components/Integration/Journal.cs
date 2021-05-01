@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2020 Ingo Herbote
+ * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,7 +24,6 @@
 
 namespace YAF.DotNetNuke.Components.Integration
 {
-    using System;
     using System.Linq;
     using System.Text;
 
@@ -35,15 +34,17 @@ namespace YAF.DotNetNuke.Components.Integration
 
     using YAF.Core.Context;
     using YAF.Core.Extensions;
-    using YAF.DotNetNuke.Components.Controllers;
+    using YAF.Core.Model;
+    using YAF.Core.Services;
+    using YAF.Core.Utilities.Helpers;
     using YAF.Types.Attributes;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
-    using YAF.Utils;
-    using YAF.Utils.Helpers;
+
+    using DateTime = System.DateTime;
 
     /// <summary>
     /// Activity Stream DNN Integration Class
@@ -59,7 +60,7 @@ namespace YAF.DotNetNuke.Components.Integration
         /// <param name="messageID">The message unique identifier.</param>
         /// <param name="topicTitle">The topic title.</param>
         /// <param name="message">The message.</param>
-        public void AddTopicToStream(int forumID, long topicID, int messageID, string topicTitle, string message)
+        public void AddTopicToStream(int forumID, int topicID, int messageID, string topicTitle, string message)
         {
             message = BBCodeHelper.StripBBCode(
                     HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
@@ -69,22 +70,18 @@ namespace YAF.DotNetNuke.Components.Integration
             var portalSettings = PortalSettings.Current;
 
             var ji = new JournalItem
-                         {
-                             PortalId = portalSettings.PortalId,
-                             ProfileId = user.UserID,
-                             UserId = user.UserID,
-                             Title = topicTitle,
-                             ItemData =
-                                 new ItemData
-                                     {
-                                         Url = BuildLink.GetLink(ForumPages.Posts, "t={0}", topicID)
-                                     },
-                             Summary = message.Truncate(150),
-                             Body = message,
-                             JournalTypeId = 5,
-                             SecuritySet = GetSecuritySet(forumID, portalSettings.PortalId),
-                             ObjectKey = $"{forumID.ToString()}:{topicID.ToString()}:{messageID.ToString()}"
-                         };
+            {
+                PortalId = portalSettings.PortalId,
+                ProfileId = user.UserID,
+                UserId = user.UserID,
+                Title = topicTitle,
+                ItemData = new ItemData { Url = BoardContext.Current.Get<LinkBuilder>().GetTopicLink(topicID, topicTitle) },
+                Summary = message.Truncate(150),
+                Body = message,
+                JournalTypeId = 5,
+                SecuritySet = GetSecuritySet(forumID, portalSettings.PortalId),
+                ObjectKey = $"{forumID}:{topicID}:{messageID}"
+            };
 
             if (JournalController.Instance.GetJournalItemByKey(portalSettings.PortalId, ji.ObjectKey) != null)
             {
@@ -108,7 +105,7 @@ namespace YAF.DotNetNuke.Components.Integration
         /// <param name="messageID">The message unique identifier.</param>
         /// <param name="topicTitle">The topic title.</param>
         /// <param name="message">The message.</param>
-        public void AddReplyToStream(int forumID, long topicID, int messageID, string topicTitle, string message)
+        public void AddReplyToStream(int forumID, int topicID, int messageID, string topicTitle, string message)
         {
             message = BBCodeHelper.StripBBCode(
                     HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
@@ -116,28 +113,28 @@ namespace YAF.DotNetNuke.Components.Integration
 
             var user = UserController.Instance.GetCurrentUserInfo();
             var portalSettings = PortalSettings.Current;
-            
+
             var ji = new JournalItem
-                         {
-                             PortalId = portalSettings.PortalId,
-                             ProfileId = user.UserID,
-                             UserId = user.UserID,
-                             Title = topicTitle,
-                             ItemData =
-                                 new ItemData
-                                     {
-                                         Url =
-                                             BuildLink.GetLink(
-                                                 ForumPages.Posts,
-                                                 "m={0}#post{0}",
-                                                 messageID)
-                                     },
-                             Summary = message.Truncate(150),
-                             Body = message,
-                             JournalTypeId = 6,
-                             SecuritySet = GetSecuritySet(forumID, portalSettings.PortalId),
-                             ObjectKey = $"{forumID.ToString()}:{topicID.ToString()}:{messageID.ToString()}"
-                         };
+            {
+                PortalId = portalSettings.PortalId,
+                ProfileId = user.UserID,
+                UserId = user.UserID,
+                Title = topicTitle,
+                ItemData =
+                    new ItemData
+                    {
+                        Url = BoardContext.Current.Get<LinkBuilder>().GetLink(
+                            ForumPages.Posts,
+                            "m={0}&name={1}#post{0}",
+                            messageID,
+                            topicTitle)
+                    },
+                Summary = message.Truncate(150),
+                Body = message,
+                JournalTypeId = 6,
+                SecuritySet = GetSecuritySet(forumID, portalSettings.PortalId),
+                ObjectKey = $"{forumID}:{topicID}:{messageID}"
+            };
 
             if (JournalController.Instance.GetJournalItemByKey(portalSettings.PortalId, ji.ObjectKey) != null)
             {
@@ -297,30 +294,25 @@ namespace YAF.DotNetNuke.Components.Integration
         /// <summary>
         /// Gets the security set for the forum.
         /// </summary>
-        /// <param name="forumID">The forum unique identifier.</param>
-        /// <param name="portalID">The portal unique identifier.</param>
+        /// <param name="forumId">The forum unique identifier.</param>
+        /// <param name="portalId">The portal unique identifier.</param>
         /// <returns>Returns The Security Set for the Forum including all Roles which have Read Access</returns>
-        private static string GetSecuritySet(int forumID, int portalID)
+        private static string GetSecuritySet(int forumId, int portalId)
         {
-            var forumAccessList = Data.GetReadAccessListForForum(forumID);
+            var forumAccessList = BoardContext.Current.GetRepository<ForumAccess>().GetReadAccessList(forumId);
 
-            var dnnRoles = new RoleController().GetRoles(portalID).ToList();
+            var dnnRoles = new RoleController().GetRoles(portalId).ToList();
 
             var securitySet = new StringBuilder();
 
-            forumAccessList.ForEach(
+            forumAccessList.Where(x => x.Item2.AccessFlags.ReadAccess).ForEach(
                 forumAccess =>
                     {
-                        if (!forumAccess.Flags.ReadAccess)
-                        {
-                            return;
-                        }
-
                         RoleInfo role = null;
 
-                        if (dnnRoles.Any(r => r.RoleName == forumAccess.GroupName))
+                        if (dnnRoles.Any(r => r.RoleName == forumAccess.Item3.Name))
                         {
-                            role = dnnRoles.First(r => r.RoleName == forumAccess.GroupName);
+                            role = dnnRoles.First(r => r.RoleName == forumAccess.Item3.Name);
                         }
 
                         if (role != null)
@@ -329,7 +321,7 @@ namespace YAF.DotNetNuke.Components.Integration
                         }
 
                         // Guest Access
-                        if (forumAccess.GroupName == "Guests")
+                        if (forumAccess.Item3.Name == "Guests")
                         {
                             securitySet.Append("E,");
                         }

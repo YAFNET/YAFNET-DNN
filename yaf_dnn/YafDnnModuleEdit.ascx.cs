@@ -30,29 +30,30 @@ namespace YAF.DotNetNuke
     using System.IO;
     using System.Linq;
     using System.Web;
-    using System.Web.Security;
     using System.Web.UI.WebControls;
 
-    using global::DotNetNuke.Common;
+    using global::DotNetNuke.Abstractions;
     using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Tabs;
     using global::DotNetNuke.Services.Localization;
 
-    using YAF.Configuration;
-    using YAF.Core;
+    using Microsoft.Extensions.DependencyInjection;
+
+    using YAF.Core.BoardSettings;
     using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.Core.Model;
+    using YAF.Core.Services;
     using YAF.Core.Services.Import;
-    using YAF.Core.UsersRoles;
     using YAF.DotNetNuke.Components.Controllers;
     using YAF.DotNetNuke.Components.Utils;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
+    using YAF.Types.Interfaces.Identity;
     using YAF.Types.Models;
-    using YAF.Utils;
+    using YAF.Types.Models.Identity;
 
     #endregion
 
@@ -61,7 +62,20 @@ namespace YAF.DotNetNuke
     /// </summary>
     public partial class YafDnnModuleEdit : PortalModuleBase
     {
+        /// <summary>
+        /// The navigation manager.
+        /// </summary>
+        private readonly INavigationManager navigationManager;
+
         #region Methods
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="YafDnnModuleEdit"/> class.
+        /// </summary>
+        public YafDnnModuleEdit()
+        {
+            this.navigationManager = this.DependencyProvider.GetRequiredService<INavigationManager>();
+        }
 
         /// <summary>
         /// Raises the <see cref="E:System.Web.UI.Control.Init" /> event.
@@ -114,7 +128,7 @@ namespace YAF.DotNetNuke
             // Reload forum settings
             BoardContext.Current.BoardSettings = null;
 
-            this.Response.Redirect(Globals.NavigateURL(), true);
+            this.Response.Redirect(this.navigationManager.NavigateURL(), true);
         }
 
         /// <summary>
@@ -150,7 +164,7 @@ namespace YAF.DotNetNuke
             // Reload forum settings
             BoardContext.Current.BoardSettings = null;
 
-            this.Response.Redirect(Globals.NavigateURL(), true);
+            this.Response.Redirect(this.navigationManager.NavigateURL(), true);
         }
 
         /// <summary>
@@ -160,7 +174,7 @@ namespace YAF.DotNetNuke
         /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void CancelClick(object sender, EventArgs e)
         {
-            this.Response.Redirect(Globals.NavigateURL(), true);
+            this.Response.Redirect(this.navigationManager.NavigateURL(), true);
         }
 
         /// <summary>
@@ -181,7 +195,7 @@ namespace YAF.DotNetNuke
             }
 
             var dt = BoardContext.Current.GetRepository<Board>().GetAll();
-            
+
                 this.BoardID.DataSource = dt;
                 this.BoardID.DataTextField = "Name";
                 this.BoardID.DataValueField = "ID";
@@ -325,7 +339,7 @@ namespace YAF.DotNetNuke
             // Reload forum settings
             BoardContext.Current.BoardSettings = null;
 
-            BuildLink.Redirect(ForumPages.Board);
+            BoardContext.Current.Get<LinkBuilder>().Redirect(ForumPages.Board);
         }
 
         /// <summary>
@@ -339,13 +353,11 @@ namespace YAF.DotNetNuke
         private int CreateBoard(bool importUsers, string boardName)
         {
             // new admin
-            var newAdmin = UserMembershipHelper.GetUser();
+            var newAdmin = BoardContext.Current.Get<IAspNetUsersHelper>().GetUser();
 
             // Create Board
             var newBoardId = this.CreateBoardDatabase(
                 boardName,
-                BoardContext.Current.Get<MembershipProvider>().ApplicationName,
-                BoardContext.Current.Get<RoleProvider>().ApplicationName,
                 "english.xml",
                 newAdmin);
 
@@ -398,33 +410,33 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// Creates the board in the database.
         /// </summary>
-        /// <param name="boardName">Name of the board.</param>
-        /// <param name="boardMembershipAppName">Name of the board membership application.</param>
-        /// <param name="boardRolesAppName">Name of the board roles application.</param>
-        /// <param name="langFile">The language file.</param>
-        /// <param name="newAdmin">The new admin.</param>
-        /// <returns>Returns the Board ID of the new Board.</returns>
+        /// <param name="boardName">
+        /// Name of the board.
+        /// </param>
+        /// <param name="langFile">
+        /// The language file.
+        /// </param>
+        /// <param name="newAdmin">
+        /// The new admin.
+        /// </param>
+        /// <returns>
+        /// Returns the Board ID of the new Board.
+        /// </returns>
         private int CreateBoardDatabase(
             string boardName,
-            string boardMembershipAppName,
-            string boardRolesAppName,
             string langFile,
-            MembershipUser newAdmin)
+            AspNetUsers newAdmin)
         {
-            var newBoardId = BoardContext.Current.GetRepository<Board>()
-                .Create(
-                    boardName,
-                    "en-US",
-                    langFile,
-                    boardMembershipAppName,
-                    boardRolesAppName,
-                    newAdmin.UserName,
-                    newAdmin.Email,
-                    newAdmin.ProviderUserKey.ToString(),
-                    this.PortalSettings.UserInfo.IsSuperUser,
-                    Configuration.Config.CreateDistinctRoles && Configuration.Config.IsAnyPortal
-                        ? "YAF "
-                        : string.Empty);
+            var newBoardId = BoardContext.Current.GetRepository<Board>().Create(
+                boardName,
+                this.PortalSettings.Email,
+                "en-US",
+                langFile,
+                newAdmin.UserName,
+                newAdmin.Email,
+                newAdmin.Id,
+                this.PortalSettings.UserInfo.IsSuperUser,
+                Configuration.Config.CreateDistinctRoles && Configuration.Config.IsAnyPortal ? "YAF " : string.Empty);
 
             var loadWrapper = new Action<string, Action<Stream>>(
                 (file, streamAction) =>
@@ -437,11 +449,10 @@ namespace YAF.DotNetNuke
                         }
 
                         // import into board...
-                        using (var stream = new StreamReader(fullFile))
-                        {
-                            streamAction(stream.BaseStream);
-                            stream.Close();
-                        }
+                        using var stream = new StreamReader(fullFile);
+
+                        streamAction(stream.BaseStream);
+                        stream.Close();
                     });
 
             // load default bbcode if available...
@@ -460,7 +471,9 @@ namespace YAF.DotNetNuke
         {
             var attachActiveFolderPath = Path.Combine(this.PortalSettings.HomeDirectoryMapPath, "activeforums_Upload");
             var attachYafFolderPath = HttpContext.Current.Request.MapPath(
-                Path.Combine("DesktopModules\\YetAnotherForumDotNet", BoardFolders.Current.Uploads));
+                Path.Combine(
+                    "DesktopModules\\YetAnotherForumDotNet",
+                    BoardContext.Current.Get<BoardFolders>().Uploads));
 
             if (Directory.Exists(attachActiveFolderPath))
             {

@@ -1,7 +1,7 @@
 /* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2020 Ingo Herbote
+ * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,10 +27,9 @@ namespace YAF.DotNetNuke
     #region
 
     using System;
-    using System.Data;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using System.Web;
-    using System.Web.Security;
     using System.Web.UI;
     using System.Web.UI.WebControls;
 
@@ -47,14 +46,14 @@ namespace YAF.DotNetNuke
     using YAF.Core.Context;
     using YAF.Core.Helpers;
     using YAF.Core.Model;
-    using YAF.Core.UsersRoles;
+    using YAF.Core.Utilities.Helpers;
+    using YAF.Core.Utilities.Helpers.StringUtils;
     using YAF.DotNetNuke.Components.Controllers;
     using YAF.DotNetNuke.Components.Utils;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
+    using YAF.Types.Interfaces.Identity;
     using YAF.Types.Models;
-    using YAF.Utils.Helpers;
-    using YAF.Utils.Helpers.StringUtils;
     using YAF.Web.Controls;
 
     #endregion
@@ -189,13 +188,13 @@ namespace YAF.DotNetNuke
                 this,
                 type,
                 "timeagojs",
-                this.ResolveUrl("~/DesktopModules/YAF.WhatsNew/jquery.ForumExtensions.min.js"));
+                this.ResolveUrl("~/DesktopModules/YAF.WhatsNew/jquery.ForumExtensionsDnn.min.js"));
 
                 var momentLoadJs = $@"Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(loadTimeAgo);
             function loadTimeAgo() {{
             
-		    moment.locale('{(BoardContext.Current.CultureUser.IsSet()
-                                 ? BoardContext.Current.CultureUser.Substring(0, 2)
+		    moment.locale('{(BoardContext.Current.User.Culture.IsSet()
+                                 ? BoardContext.Current.User.Culture.Substring(0, 2)
                                  : BoardContext.Current.Get<BoardSettings>().Culture.Substring(0, 2))}');
             jQuery('abbr.timeago').html(function(index, value) {{
                  
@@ -251,20 +250,25 @@ namespace YAF.DotNetNuke
 
                 Data.ActiveAccessUser(this.boardId, yafUserId, HttpContext.Current.User.Identity.IsAuthenticated);
 
-                var activeTopics = Data.TopicLatest(this.boardId, this.maxPosts, yafUserId, false, true);
-
-                // Resort the table
-                activeTopics.DefaultView.Sort = this.sortOrder switch
+                var sortOrderTopics = this.sortOrder switch
                 {
-                    "views" => "Views DESC",
-                    "replies" => "NumPosts DESC",
-                    "lastpost" => "LastPosted DESC",
-                    _ => "LastPosted DESC",
+                    "views" => 1,
+                    "replies" => 2,
+                    _ => 0
                 };
+
+                var activeTopics = Data.TopicLatest(
+                    this.boardId,
+                    this.maxPosts,
+                    yafUserId,
+                    false,
+                    sortOrderTopics,
+                    true);
+
                 this.LatestPosts.DataSource = activeTopics;
                 this.LatestPosts.DataBind();
 
-                if (activeTopics.Rows.Count <= 0)
+                if (!activeTopics.Any())
                 {
                     this.lInfo.Text = Localization.GetString("NoMessages.Text", this.LocalResourceFile);
                     this.lInfo.Style.Add("font-style", "italic");
@@ -293,14 +297,14 @@ namespace YAF.DotNetNuke
             // Check for user
             if (!HttpContext.Current.User.Identity.IsAuthenticated)
             {
-                return UserMembershipHelper.GuestUserId;
+                return BoardContext.Current.Get<IAspNetUsersHelper>().GuestUserId;
             }
 
             // get the user from the membership provider
-            var dnnUser = Membership.GetUser(this.UserInfo.Username, true);
+            var dnnUser = BoardContext.Current.Get<IAspNetUsersHelper>().GetUserByName(this.UserInfo.Username);
 
             // Check if the user exists in yaf
-            var yafUserId = BoardContext.Current.GetRepository<User>().GetUserId(this.boardId, dnnUser.ProviderUserKey.ToString());
+            var yafUserId = BoardContext.Current.GetRepository<User>().GetUserId(this.boardId, dnnUser.Id);
 
             if (!yafUserId.Equals(0))
             {
@@ -439,15 +443,15 @@ namespace YAF.DotNetNuke
         /// </returns>
         private string ProcessItem(RepeaterItemEventArgs e)
         {
-            var currentRow = (DataRowView)e.Item.DataItem;
+            var dataItem = (dynamic)e.Item.DataItem;
 
             var currentItem = this.itemTemplate;
 
             var messageUrl = FriendlyUrlProvider.Instance().FriendlyUrl(
                 this.yafTabInfo,
-                $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=posts&m={currentRow["LastMessageID"]}",
+                $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=posts&m={dataItem.LastMessageID}",
                 UrlRewriteHelper.CleanStringForURL(
-                    BoardContext.Current.Get<IBadWordReplace>().Replace(currentRow["Topic"].ToString())));
+                    BoardContext.Current.Get<IBadWordReplace>().Replace(dataItem.Topic)));
 
             currentItem = currentItem.Replace("[LASTPOSTICON]", string.Empty);
 
@@ -456,7 +460,7 @@ namespace YAF.DotNetNuke
                                       {
                                           Text =
                                               BoardContext.Current.Get<IBadWordReplace>()
-                                              .Replace(currentRow["Topic"].ToString()),
+                                              .Replace(dataItem.Topic),
                                           NavigateUrl = messageUrl
                                       };
 
@@ -465,13 +469,13 @@ namespace YAF.DotNetNuke
             // Render FORUMLINK
             var forumLink = new HyperLink
                                 {
-                                    Text = currentRow["Forum"].ToString(),
+                                    Text = dataItem.Forum,
                                     NavigateUrl = FriendlyUrlProvider.Instance().FriendlyUrl(
                                         this.yafTabInfo,
-                                        $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=topics&f={currentRow["ForumID"]}",
+                                        $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=topics&f={dataItem.ForumID}",
                                         UrlRewriteHelper.CleanStringForURL(
                                             BoardContext.Current.Get<IBadWordReplace>()
-                                                .Replace(currentRow["Forum"].ToString())))
+                                                .Replace(dataItem.Forum.ToString())))
                                 };
 
             currentItem = currentItem.Replace("[FORUMLINK]", forumLink.RenderToString());
@@ -483,11 +487,11 @@ namespace YAF.DotNetNuke
 
             // Render LASTUSERLINK
             // Just in case...
-            if (currentRow["LastUserID"] != DBNull.Value)
+            if (((int?)dataItem.LastUserID).HasValue)
             {
                 var userName = BoardContext.Current.Get<BoardSettings>().EnableDisplayName
-                                   ? currentRow["LastUserDisplayName"].ToString()
-                                   : currentRow["LastUserName"].ToString();
+                                   ? dataItem.LastUserDisplayName
+                                   : dataItem.LastUserName;
 
                 userName = new UnicodeEncoder().XSSEncode(userName);
 
@@ -497,7 +501,7 @@ namespace YAF.DotNetNuke
                                            ToolTip = userName,
                                            NavigateUrl = FriendlyUrlProvider.Instance().FriendlyUrl(
                                                this.yafTabInfo,
-                                               $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=profile&u={currentRow["LastUserID"]}",
+                                               $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=profile&u={dataItem.LastUserID}",
                                                userName)
                                        };
 
@@ -507,7 +511,7 @@ namespace YAF.DotNetNuke
             // Render LASTMESSAGE
             var lastMessage =
                 BBCodeHelper.StripBBCode(
-                    HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(currentRow["LastMessage"].ToType<string>())))
+                    HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(dataItem.LastMessage)))
                     .RemoveMultipleWhitespace();
 
             try
@@ -533,7 +537,7 @@ namespace YAF.DotNetNuke
             }
 
             // Render LASTPOSTEDDATETIME
-            var displayDateTime = new DisplayDateTime { DateTime = currentRow["LastPosted"].ToType<DateTime>() };
+            var displayDateTime = new DisplayDateTime { DateTime = (DateTime)dataItem.LastPosted };
 
             currentItem = currentItem.Replace("[LASTPOSTEDDATETIME]", displayDateTime.RenderToString());
 

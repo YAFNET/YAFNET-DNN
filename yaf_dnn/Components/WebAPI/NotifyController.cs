@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2020 Ingo Herbote
+ * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -33,13 +33,13 @@ namespace YAF.DotNetNuke.Components.WebAPI
 
     using YAF.Core.Context;
     using YAF.Core.Extensions;
+    using YAF.Core.Services;
+    using YAF.Core.Utilities.Helpers;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
     using YAF.Types.Objects;
-    using YAF.Utils;
-    using YAF.Utils.Helpers;
 
     /// <summary>
     /// The Notifications controller.
@@ -88,18 +88,21 @@ namespace YAF.DotNetNuke.Components.WebAPI
                         var message = string.Empty;
                         var icon = string.Empty;
 
+                        var topic = this.GetRepository<Topic>().GetById(activity.TopicID.Value);
+
                         var topicLink = new HyperLink
                         {
                             NavigateUrl =
-                                                    BuildLink.GetLink(
-                                                        ForumPages.Posts,
-                                                        "m={0}#post{0}",
-                                                        activity.MessageID.Value),
+                                BoardContext.Current.Get<LinkBuilder>().GetLink(
+                                    ForumPages.Posts,
+                                    "m={0}&name{1}#post{0}",
+                                    activity.MessageID.Value,
+                                    topic.TopicName),
                             Text =
-                                $"<i class=\"fas fa-comment fa-fw mr-1\"></i>{this.GetRepository<Topic>().GetById(activity.TopicID.Value).TopicName}"
+                                $"<i class=\"fas fa-comment fa-fw me-1\"></i>{this.GetRepository<Topic>().GetById(activity.TopicID.Value).TopicName}"
                         };
 
-                        var name = this.Get<IUserDisplayName>().GetName(activity.FromUserID.Value);
+                        var name = this.Get<IUserDisplayName>().GetNameById(activity.FromUserID.Value);
 
                         if (activity.ActivityFlags.ReceivedThanks)
                         {

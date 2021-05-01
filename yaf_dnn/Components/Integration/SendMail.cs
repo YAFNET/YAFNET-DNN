@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2020 Ingo Herbote
+ * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -39,7 +39,7 @@ namespace YAF.DotNetNuke.Components.Integration
     using YAF.Core.Context;
     using YAF.Types;
     using YAF.Types.Attributes;
-    using YAF.Types.Interfaces;
+    using YAF.Types.Interfaces.Services;
 
     using MailPriority = global::DotNetNuke.Services.Mail.MailPriority;
 
@@ -49,7 +49,7 @@ namespace YAF.DotNetNuke.Components.Integration
     /// Functions to send email via SMTP
     /// </summary>
     [ExportService(ServiceLifetimeScope.Singleton)]
-    public class SendMail : ISendMail
+    public class SendMail : IMailService
     {
         #region Public Methods
 
@@ -73,10 +73,9 @@ namespace YAF.DotNetNuke.Components.Integration
 
                 mailIsHtml = altView.ContentType.MediaType.Equals("text/html");
 
-                using (var reader = new StreamReader(altView.ContentStream))
-                {
-                    body = reader.ReadToEnd();
-                }
+                using var reader = new StreamReader(altView.ContentStream);
+
+                body = reader.ReadToEnd();
             }
 
             string fromAddress;

@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2020 Ingo Herbote
+ * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,23 +25,24 @@
 namespace YAF.DotNetNuke.Components.Utils
 {
     using System;
-    using System.Web.Security;
+    using System.Linq;
 
     using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Services.Exceptions;
 
     using YAF.Configuration;
-    using YAF.Core;
+    using YAF.Core.BoardSettings;
     using YAF.Core.Context;
+    using YAF.Core.Extensions;
     using YAF.Core.Model;
-    using YAF.Core.UsersRoles;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
     using YAF.Types.Interfaces;
+    using YAF.Types.Interfaces.Identity;
     using YAF.Types.Models;
-    using YAF.Utils;
+    using YAF.Types.Models.Identity;
 
     /// <summary>
     /// YAF User Importer
@@ -70,16 +71,16 @@ namespace YAF.DotNetNuke.Components.Utils
 
             // Load Yaf Board Settings if needed
             var boardSettings = BoardContext.Current == null
-                                    ? new LoadBoardSettings(boardId)
-                                    : BoardContext.Current.Get<BoardSettings>();
+                ? new LoadBoardSettings(boardId)
+                : BoardContext.Current.Get<BoardSettings>();
 
             var rolesChanged = false;
 
             try
             {
-                foreach (UserInfo dnnUserInfo in users)
+                foreach (var dnnUserInfo in users.Cast<UserInfo>())
                 {
-                    var dnnUser = Membership.GetUser(dnnUserInfo.Username, true);
+                    var dnnUser = BoardContext.Current.Get<IAspNetUsersHelper>().GetUserByName(dnnUserInfo.Username);
 
                     if (dnnUser == null)
                     {
@@ -90,7 +91,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     if (dnnUserInfo.IsDeleted && dnnUser.IsApproved)
                     {
                         dnnUser.IsApproved = false;
-                        Membership.UpdateUser(dnnUser);
+                        BoardContext.Current.Get<IAspNetUsersHelper>().Update(dnnUser);
 
                         continue;
                     }
@@ -98,10 +99,10 @@ namespace YAF.DotNetNuke.Components.Utils
                     if (!dnnUserInfo.IsDeleted && !dnnUser.IsApproved)
                     {
                         dnnUser.IsApproved = true;
-                        Membership.UpdateUser(dnnUser);
-                    } 
+                        BoardContext.Current.Get<IAspNetUsersHelper>().Update(dnnUser);
+                    }
 
-                    var yafUserId = BoardContext.Current.GetRepository<User>().GetUserId(boardId, dnnUser.ProviderUserKey.ToString());
+                    var yafUserId = BoardContext.Current.GetRepository<User>().GetUserId(boardId, dnnUser.Id);
 
                     if (yafUserId.Equals(0))
                     {
@@ -109,19 +110,9 @@ namespace YAF.DotNetNuke.Components.Utils
                         yafUserId = CreateYafUser(dnnUserInfo, dnnUser, boardId, portalId, boardSettings);
                         newUserCount++;
                     }
-                    else
-                    {
-                        ProfileSyncronizer.UpdateUserProfile(
-                            yafUserId,
-                            YAF.Utils.UserProfile.GetProfile(dnnUser.UserName),
-                            new CustomCombinedUserDataHelper(dnnUser, yafUserId, boardId),
-                            dnnUserInfo,
-                            boardSettings,
-                            true);
-                    }
 
                     rolesChanged = RoleSyncronizer.SynchronizeUserRoles(boardId, portalId, yafUserId, dnnUserInfo);
-                    
+
                     // super admin check...
                     if (dnnUserInfo.IsSuperUser)
                     {
@@ -157,61 +148,57 @@ namespace YAF.DotNetNuke.Components.Utils
         /// </returns>
         public static int CreateYafUser(
             UserInfo dnnUserInfo,
-            MembershipUser dnnUser,
+            AspNetUsers dnnUser,
             int boardId,
             int portalId,
             BoardSettings boardSettings)
         {
             // setup roles
-            RoleMembershipHelper.SetupUserRoles(boardId, dnnUser.UserName);
+            BoardContext.Current.Get<IAspNetRolesHelper>().SetupUserRoles(boardId, dnnUser);
 
             // create the user in the YAF DB so profile can gets created...
-            var yafUserId = RoleMembershipHelper.CreateForumUser(dnnUser, dnnUserInfo.DisplayName, boardId);
+            var yafUserId = BoardContext.Current.Get<IAspNetRolesHelper>().CreateForumUser(dnnUser, dnnUserInfo.DisplayName, boardId);
 
             if (yafUserId == null)
             {
                 return 0;
             }
 
-            // create profile
-            var userProfile = YAF.Utils.UserProfile.GetProfile(dnnUser.UserName);
-
             // setup their initial profile information
-            userProfile.Initialize(dnnUser.UserName, true);
+            /*
+              if (dnnUserInfo.Profile.FullName.IsSet())
+              {
+                  userProfile.RealName = dnnUserInfo.Profile.FullName;
+              }
 
-            if (dnnUserInfo.Profile.FullName.IsSet())
-            {
-                userProfile.RealName = dnnUserInfo.Profile.FullName;
-            }
+              if (dnnUserInfo.Profile.Country.IsSet() && !dnnUserInfo.Profile.Country.Equals("N/A"))
+              {
+                  var regionInfo = ProfileSyncronizer.GetRegionInfoFromCountryName(dnnUserInfo.Profile.Country);
 
-            if (dnnUserInfo.Profile.Country.IsSet() && !dnnUserInfo.Profile.Country.Equals("N/A"))
-            {
-                var regionInfo = ProfileSyncronizer.GetRegionInfoFromCountryName(dnnUserInfo.Profile.Country);
+                  if (regionInfo != null)
+                  {
+                      userProfile.Country = regionInfo.TwoLetterISORegionName;
+                  }
+              }
 
-                if (regionInfo != null)
-                {
-                    userProfile.Country = regionInfo.TwoLetterISORegionName;
-                }
-            }
+              if (dnnUserInfo.Profile.City.IsSet())
+              {
+                  userProfile.City = dnnUserInfo.Profile.City;
+              }
 
-            if (dnnUserInfo.Profile.City.IsSet())
-            {
-                userProfile.City = dnnUserInfo.Profile.City;
-            }
+              if (dnnUserInfo.Profile.Website.IsSet())
+              {
+                  userProfile.Homepage = dnnUserInfo.Profile.Website;
+              } 
 
-            if (dnnUserInfo.Profile.Website.IsSet())
-            {
-                userProfile.Homepage = dnnUserInfo.Profile.Website;
-            } 
-
-            userProfile.Save();
+              userProfile.Save();*/
 
             var autoWatchTopicsEnabled =
                 boardSettings.DefaultNotificationSetting.Equals(UserNotificationSetting.TopicsIPostToOrSubscribeTo);
 
             // Save User
             BoardContext.Current.GetRepository<User>().Save(
-                yafUserId,
+                yafUserId.Value,
                 boardId,
                 dnnUserInfo.Username,
                 dnnUserInfo.DisplayName,
@@ -220,12 +207,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 null,
                 null,
                 null,
-                null,
-                boardSettings.DefaultNotificationSetting,
-                autoWatchTopicsEnabled,
-                dnnUserInfo.Profile.PreferredTimeZone.SupportsDaylightSavingTime,
-                null,
-                null);
+                false);
 
             // save notification Settings
             BoardContext.Current.GetRepository<User>().SaveNotification(
@@ -248,32 +230,30 @@ namespace YAF.DotNetNuke.Components.Utils
         public static void SetYafHostUser(int yafUserId, int boardId)
         {
             // get this user information...
-            var userInfoTable = BoardContext.Current.GetRepository<User>().ListAsDataTable(boardId, yafUserId, null);
+            var userInfo = BoardContext.Current.GetRepository<User>().GetById(yafUserId);
 
-            if (userInfoTable.Rows.Count <= 0)
+            if (userInfo == null)
             {
                 return;
             }
 
-            var row = userInfoTable.Rows[0];
-
-            if (row["IsHostAdmin"].ToType<bool>())
+            if (userInfo.UserFlags.IsHostAdmin)
             {
                 return;
             }
 
             // fix the IsHostAdmin flag...
-            var userFlags = new UserFlags(row["Flags"]) { IsHostAdmin = true };
+            var userFlags = new UserFlags(userInfo.Flags) { IsHostAdmin = true };
 
             // update...
             BoardContext.Current.GetRepository<User>().AdminSave(
                 boardId,
                 yafUserId,
-                row["Name"].ToString(),
-                row["DisplayName"].ToString(),
-                row["Email"].ToString(),
+                userInfo.Name,
+                userInfo.DisplayName,
+                userInfo.Email,
                 userFlags.BitValue,
-                row["RankID"].ToType<int>());
+                userInfo.RankID);
         }
     }
 }

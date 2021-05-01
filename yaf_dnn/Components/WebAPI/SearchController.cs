@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2020 Ingo Herbote
+ * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -56,9 +56,14 @@ namespace YAF.DotNetNuke.Components.WebAPI
         /// Returns the search Results.
         /// </returns>
         [HttpPost]
+        [AllowAnonymous]
         public IHttpActionResult GetSimilarTitles([FromBody] SearchTopic searchTopic)
         {
-            var results = this.Get<ISearch>().SearchSimilar(searchTopic.UserId, searchTopic.SearchTerm, "Topic");
+            var results = this.Get<ISearch>().SearchSimilar(
+                searchTopic.UserId,
+                string.Empty,
+                searchTopic.SearchTerm,
+                "Topic");
 
             if (results == null)
             {
@@ -88,6 +93,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
         /// Returns the search Results.
         /// </returns>
         [HttpPost]
+        [AllowAnonymous]
         public IHttpActionResult GetSearchResults([FromBody] SearchTopic searchTopic)
         {
             var results = this.Get<ISearch>().SearchPaged(

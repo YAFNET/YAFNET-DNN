@@ -27,7 +27,6 @@ namespace YAF.DotNetNuke.Components.Controllers
     #region Using
 
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
 
     using global::DotNetNuke.Security.Roles;
@@ -36,13 +35,9 @@ namespace YAF.DotNetNuke.Components.Controllers
     using YAF.Core.Extensions;
     using YAF.Core.Model;
     using YAF.Types;
-    using YAF.Types.Extensions;
-    using YAF.Types.Flags;
     using YAF.Types.Interfaces;
     using YAF.Types.Interfaces.Data;
     using YAF.Types.Models;
-
-    using ForumAccess = YAF.DotNetNuke.Components.Objects.ForumAccess;
 
     #endregion
 
@@ -67,30 +62,43 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// <summary>
         /// Get The Latest Post from SQL
         /// </summary>
-        /// <param name="boardId">The Board Id of the Board</param>
-        /// <param name="numOfPostsToRetrieve">How many post should been retrieved</param>
-        /// <param name="pageUserId">Current Users Id</param>
-        /// <param name="useStyledNicks">if set to <c>true</c> [use styled nicks].</param>
-        /// <param name="showNoCountPosts">if set to <c>true</c> [show no count posts].</param>
-        /// <param name="findLastRead">if set to <c>true</c> [find last read].</param>
+        /// <param name="boardId">
+        /// The Board Id of the Board
+        /// </param>
+        /// <param name="numOfPostsToRetrieve">
+        /// How many post should been retrieved
+        /// </param>
+        /// <param name="pageUserId">
+        /// Current Users Id
+        /// </param>
+        /// <param name="showNoCountPosts">
+        /// if set to <c>true</c> [show no count posts].
+        /// </param>
+        /// <param name="sortOrder">
+        /// The sort Order 0 == LastPosted, 1 == Views, 2 == Number of Posts.
+        /// </param>
+        /// <param name="findLastRead">
+        /// if set to <c>true</c> [find last read].
+        /// </param>
         /// <returns>
         /// Returns the Table of Latest Posts
         /// </returns>
-        public static DataTable TopicLatest(
-            object boardId,
-            object numOfPostsToRetrieve,
-            object pageUserId,
-            bool useStyledNicks,
+        public static List<dynamic> TopicLatest(
+            int boardId,
+            int numOfPostsToRetrieve,
+            int pageUserId,
             bool showNoCountPosts,
+            int sortOrder,
             bool findLastRead = false)
         {
-            return BoardContext.Current.GetRepository<Topic>().LatestAsDataTable(
-                boardId.ToType<int>(),
-                numOfPostsToRetrieve.ToType<int>(),
-                pageUserId.ToType<int>(),
-                useStyledNicks,
+            return BoardContext.Current.GetRepository<Topic>().Latest(
+                boardId,
+                0,
+                numOfPostsToRetrieve,
+                pageUserId,
                 showNoCountPosts,
-                findLastRead);
+                findLastRead,
+                sortOrder);
         }
 
         /// <summary>
@@ -99,9 +107,9 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// <param name="boardId">The board id.</param>
         /// <param name="userId">The user id.</param>
         /// <param name="isGuest">if set to <c>true</c> [is guest].</param>
-        public static void ActiveAccessUser(object boardId, object userId, bool isGuest)
+        public static void ActiveAccessUser(int boardId, int userId, bool isGuest)
         {
-            BoardContext.Current.GetRepository<ActiveAccess>().PageAccessAsDataTable(boardId, userId, isGuest);
+            BoardContext.Current.GetRepository<ActiveAccess>().InsertPageAccess(boardId, userId, isGuest);
         }
 
         /// <summary>
@@ -158,31 +166,6 @@ namespace YAF.DotNetNuke.Components.Controllers
             roles.AddRange(from Group row in userGroups select new RoleInfo { RoleName = row.Name, RoleID = row.ID });
 
             return roles;
-        }
-
-        /// <summary>
-        /// Gets the read access list for forum.
-        /// </summary>
-        /// <param name="forumId">The forum unique identifier.</param>
-        /// <returns>Returns the read access list for forum</returns>
-        public static List<ForumAccess> GetReadAccessListForForum(int forumId)
-        {
-            var forumAccessList = new List<ForumAccess>();
-
-            var accessListTable = (DataTable)BoardContext.Current.Get<IDbFunction>().GetData.GetReadAccessListForForum(ForumID: forumId);
-
-            forumAccessList.AddRange(
-                from DataRow row in accessListTable.Rows
-                select
-                    new ForumAccess
-                        {
-                            GroupID = row.Field<int>("GroupID"),
-                            GroupName = row["GroupName"].ToString(),
-                            AccessMaskName = row["AccessMaskName"].ToString(),
-                            Flags = new AccessFlags(row["Flags"])
-                        });
-
-            return forumAccessList;
         }
 
         /// <summary>

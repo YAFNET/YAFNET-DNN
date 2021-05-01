@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2020 Ingo Herbote
+ * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,12 +30,14 @@ namespace YAF.DotNetNuke
     using System.Text;
     using System.Web;
 
+    using global::DotNetNuke.Abstractions.Portals;
     using global::DotNetNuke.Common;
     using global::DotNetNuke.Common.Internal;
     using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Portals;
 
     using global::DotNetNuke.Entities.Tabs;
+    using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Services.Localization;
     using global::DotNetNuke.Services.Url.FriendlyUrl;
 
@@ -43,10 +45,10 @@ namespace YAF.DotNetNuke
     using YAF.Core.Context;
     using YAF.Core.Helpers;
     using YAF.Core.URLBuilder;
+    using YAF.Core.Utilities;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
-    using YAF.Utils;
 
     #endregion
 
@@ -68,7 +70,7 @@ namespace YAF.DotNetNuke
         /// </returns>
         public override string BuildUrlFull(string url)
         {
-            return this.BuildUrlComplete(BoardContext.Current.Get<BoardSettings>(), url, true);
+            return BuildUrlComplete(BoardContext.Current.Get<BoardSettings>(), url, true);
         }
 
         /// <summary>
@@ -81,7 +83,7 @@ namespace YAF.DotNetNuke
         /// </returns>
         public override string BuildUrlFull(object boardSettings, string url)
         {
-            return this.BuildUrlComplete(boardSettings, url, true);
+            return BuildUrlComplete(boardSettings, url, true);
         }
 
         /// <summary>
@@ -93,7 +95,7 @@ namespace YAF.DotNetNuke
         /// </returns>
         public override string BuildUrl(string url)
         {
-            return this.BuildUrlComplete(BoardContext.Current.Get<BoardSettings>(), url, false);
+            return BuildUrlComplete(BoardContext.Current.Get<BoardSettings>(), url, false);
         }
 
         /// <summary>
@@ -106,7 +108,7 @@ namespace YAF.DotNetNuke
         /// </returns>
         public override string BuildUrl(object boardSettings, string url)
         {
-            return this.BuildUrlComplete(boardSettings, url, false);
+            return BuildUrlComplete(boardSettings, url, false);
         }
 
         /// <summary>
@@ -118,7 +120,7 @@ namespace YAF.DotNetNuke
         /// <returns>
         /// The new URL.
         /// </returns>
-        private string BuildUrlComplete(object boardSettings, string url, bool fullUrl)
+        private static string BuildUrlComplete(object boardSettings, string url, bool fullUrl)
         {
             var yafBoardSettings = boardSettings.ToType<BoardSettings>();
 
@@ -128,7 +130,7 @@ namespace YAF.DotNetNuke
             var aliasUrl = PortalAliasController.GetPortalAliasByTab(yafBoardSettings.DNNPageTab, domainName);
             var alias = PortalAliasController.Instance.GetPortalAlias(aliasUrl);
 
-            var portalSettings = new PortalSettings(yafTab.PortalID, alias);
+            IPortalSettings portalSettings = new PortalSettings(yafTab.PortalID, alias);
 
             if (portalSettings.ContentLocalizationEnabled)
             {
@@ -140,7 +142,7 @@ namespace YAF.DotNetNuke
 
             if (url.IsNotSet())
             {
-                return this.GetBaseUrl(yafBoardSettings, yafTab);
+                return GetBaseUrl(yafBoardSettings, yafTab);
             }
 
             if (!Configuration.Config.EnableURLRewriting)
@@ -186,18 +188,11 @@ namespace YAF.DotNetNuke
 
             if (getDescription)
             {
-                string useKey;
                 switch (forumPage)
                 {
                     case ForumPages.Topics:
                         {
-                            useKey = "f";
-
-                            boardNameOrPageName =
-                                UrlRewriteHelper.CleanStringForURL(
-                                    parser["name"].IsSet()
-                                        ? parser["name"]
-                                        : UrlRewriteHelper.GetForumName(parser[useKey].ToType<int>()));
+                            boardNameOrPageName = UrlRewriteHelper.CleanStringForURL(parser["name"]);
                         }
 
                         break;
@@ -205,9 +200,7 @@ namespace YAF.DotNetNuke
                         {
                             if (parser["t"].IsSet())
                             {
-                                useKey = "t";
-
-                                var topicName = UrlRewriteHelper.GetTopicName(parser[useKey].ToType<int>());
+                                var topicName = UrlRewriteHelper.CleanStringForURL(parser["name"]);
 
                                 if (topicName.EndsWith("-"))
                                 {
@@ -218,13 +211,11 @@ namespace YAF.DotNetNuke
                             }
                             else if (parser["m"].IsSet())
                             {
-                                useKey = "m";
-
                                 string topicName;
 
                                 try
                                 {
-                                    topicName = UrlRewriteHelper.GetTopicNameFromMessage(parser[useKey].ToType<int>());
+                                    topicName = UrlRewriteHelper.CleanStringForURL(parser["name"]);
 
                                     if (topicName.EndsWith("-"))
                                     {
@@ -241,29 +232,23 @@ namespace YAF.DotNetNuke
                         }
 
                         break;
-                    case ForumPages.Profile:
+                    case ForumPages.UserProfile:
                         {
-                            useKey = "u";
-
-                            boardNameOrPageName =
-                                UrlRewriteHelper.CleanStringForURL(
-                                    parser["name"].IsSet()
-                                        ? parser["name"]
-                                        : UrlRewriteHelper.GetProfileName(parser[useKey].ToType<int>()));
+                            /* boardNameOrPageName =
+                                 UrlRewriteHelper.CleanStringForURL(
+                                     parser["name"].IsSet()
+                                         ? parser["name"]
+                                         : UrlRewriteHelper.GetProfileName(parser[useKey].ToType<int>()));*/
 
                             // Redirect the user to the Dnn profile page.
-                            /*return
-                                Globals.UserProfileURL(
-                                    UserController.GetUserByName(yafPortalId, boardNameOrPageName).UserID);*/
+                            return Globals.UserProfileURL(UserController.GetUserByName(parser["name"]).UserID);
                         }
 
-                        break;
                     case ForumPages.Board:
                         {
                             if (parser["c"].IsSet())
                             {
-                                useKey = "c";
-                                boardNameOrPageName = UrlRewriteHelper.GetCategoryName(parser[useKey].ToType<int>());
+                                boardNameOrPageName = UrlRewriteHelper.CleanStringForURL(parser["name"]);
                             }
                             else if (parser["g"].IsSet())
                             {
@@ -304,7 +289,7 @@ namespace YAF.DotNetNuke
             finalUrl = finalUrl.Replace("/%20/", "-");
 
             return finalUrl.Length >= 260
-                       ? this.GetStandardUrl(yafTab, url, boardNameOrPageName, portalSettings)
+                       ? GetStandardUrl(yafTab, url, boardNameOrPageName, portalSettings)
                        : finalUrl;
         }
 
@@ -318,7 +303,7 @@ namespace YAF.DotNetNuke
         /// <returns>
         /// Returns the BaseUrl
         /// </returns>
-        private string GetBaseUrl(BoardSettings yafBoardSettings, TabInfo yafTab)
+        private static string GetBaseUrl(BoardSettings yafBoardSettings, TabInfo yafTab)
         {
             var baseUrl = Globals.NavigateURL(yafBoardSettings.DNNPageTab, Null.NullString);
 
@@ -348,11 +333,11 @@ namespace YAF.DotNetNuke
         /// <param name="boardNameOrPageName">Name of the board name original page.</param>
         /// <param name="portalSettings">The portal settings.</param>
         /// <returns>Returns the Normal URL</returns>
-        private string GetStandardUrl(
+        private static string GetStandardUrl(
             TabInfo activeTab,
             string url,
             string boardNameOrPageName,
-            PortalSettings portalSettings)
+            IPortalSettings portalSettings)
         {
             return FriendlyUrlProvider.Instance()
                 .FriendlyUrl(

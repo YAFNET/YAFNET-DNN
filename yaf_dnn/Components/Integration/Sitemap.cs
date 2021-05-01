@@ -24,7 +24,6 @@
 
  namespace YAF.DotNetNuke.Components.Integration
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -33,11 +32,11 @@
 
     using YAF.Core.Context;
     using YAF.Core.Model;
-    using YAF.Core.UsersRoles;
-    using YAF.Types.Constants;
+    using YAF.Core.Services;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
-    using YAF.Utils;
+
+    using DateTime = System.DateTime;
 
     /// <summary>
     /// YAF.NET Forum SiteMap Provider
@@ -66,23 +65,17 @@
             }
 
             var forumList = BoardContext.Current.GetRepository<Forum>().ListAll(
-                BoardContext.Current.BoardSettings.BoardID,
-                UserMembershipHelper.GuestUserId);
+                BoardContext.Current.BoardSettings.BoardID);
 
             urls.AddRange(
                 forumList.Select(
                     forum => new SitemapUrl
-                                 {
-                                     Url =
-                                         BuildLink.GetLinkNotEscaped(
-                                             ForumPages.Topics,
-                                             true,
-                                             "f={0}",
-                                             forum.Item1.ID),
-                                     Priority = (float)0.8,
-                                     LastModified = DateTime.Now,
-                                     ChangeFrequency = SitemapChangeFrequency.Always
-                                 }));
+                    {
+                        Url = BoardContext.Current.Get<LinkBuilder>().GetForumLink(forum.Item1.ID, forum.Item1.Name),
+                        Priority = (float)0.8,
+                        LastModified = DateTime.Now,
+                        ChangeFrequency = SitemapChangeFrequency.Always
+                    }));
 
             return urls;
         }

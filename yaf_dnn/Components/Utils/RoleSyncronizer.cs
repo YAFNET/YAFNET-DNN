@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2020 Ingo Herbote
+ * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,11 +35,11 @@ namespace YAF.DotNetNuke.Components.Utils
     using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.Core.Model;
-    using YAF.Core.UsersRoles;
     using YAF.DotNetNuke.Components.Controllers;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
     using YAF.Types.Interfaces;
+    using YAF.Types.Interfaces.Identity;
     using YAF.Types.Models;
 
     /// <summary>
@@ -183,9 +183,9 @@ namespace YAF.DotNetNuke.Components.Utils
         public static long CreateYafRole(string roleName, int boardId, List<RoleInfo> yafBoardAccessMasks)
         {
             // If not Create Role in YAF
-            if (!RoleMembershipHelper.RoleExists(roleName))
+            if (!BoardContext.Current.Get<IAspNetRolesHelper>().RoleExists(roleName))
             {
-                RoleMembershipHelper.CreateRole(roleName);
+                BoardContext.Current.Get<IAspNetRolesHelper>().CreateRole(roleName);
             }
 
             int accessMaskId;
@@ -202,15 +202,14 @@ namespace YAF.DotNetNuke.Components.Utils
                 accessMaskId = yafBoardAccessMasks.Find(mask => mask.RoleGroupID.Equals(0)).RoleID;
             }
 
+            var groupFlags = new GroupFlags();
+
             // Role exists in membership but not in yaf itself simply add it to yaf
             return BoardContext.Current.GetRepository<Group>().Save(
-                DBNull.Value,
+                null,
                 boardId,
                 roleName,
-                false,
-                false,
-                false,
-                false,
+                groupFlags,
                 accessMaskId,
                 0,
                 null,
@@ -233,15 +232,17 @@ namespace YAF.DotNetNuke.Components.Utils
         public static void UpdateUserRole(RoleInfo role, int yafUserId, string userName, bool addRole)
         {
             // save user in role
-            BoardContext.Current.GetRepository<UserGroup>().Save(yafUserId, role.RoleID, addRole);
+            BoardContext.Current.GetRepository<UserGroup>().AddOrRemove(yafUserId, role.RoleID, addRole);
 
-            if (addRole && !RoleMembershipHelper.IsUserInRole(userName, role.RoleName))
+            var user = BoardContext.Current.Get<IAspNetUsersHelper>().GetUserByName(userName);
+
+            if (addRole && !BoardContext.Current.Get<IAspNetRolesHelper>().IsUserInRole(user, role.RoleName))
             {
-                RoleMembershipHelper.AddUserToRole(userName, role.RoleName);
+                BoardContext.Current.Get<IAspNetRolesHelper>().AddUserToRole(user, role.RoleName);
             }
-            else if (!addRole && RoleMembershipHelper.IsUserInRole(userName, role.RoleName))
+            else if (!addRole && BoardContext.Current.Get<IAspNetRolesHelper>().IsUserInRole(user, role.RoleName))
             {
-                RoleMembershipHelper.RemoveUserFromRole(userName, role.RoleName);
+                BoardContext.Current.Get<IAspNetRolesHelper>().RemoveUserFromRole(user.Id, role.RoleName);
             }
         }
     }

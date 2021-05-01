@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2020 Ingo Herbote
+ * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -96,7 +96,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
                     yafSession.MultiQuoteIds.Remove(multiQuote);
                 }
 
-                buttonCssClass = "MultiQuoteButton custom-control custom-checkbox btn btn-link";
+                buttonCssClass = "btn-multiquote custom-control custom-checkbox btn btn-link";
             }
 
             return this.Ok(new ReturnClass { Id = buttonId, NewTitle = buttonCssClass });
