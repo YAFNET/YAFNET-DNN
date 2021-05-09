@@ -96,7 +96,7 @@ namespace YAF.DotNetNuke
         /// Gets the Service Locator.
         /// </summary>
         [Inject]
-        public IServiceLocator ServiceLocator { get; }
+        public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
 
         /// <summary>
         ///  Gets Add Menu Entries to Module Container

@@ -42,7 +42,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\yafsrc\YetAnotherForum.NET\Bin\</OutputPath>
+    <OutputPath>Bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -170,10 +170,6 @@
       <Project>{5509f241-c7b0-41ca-8c05-28c411fdf99f}</Project>
       <Name>YAF.Web</Name>
     </ProjectReference>
-    <ProjectReference Include="..\yafsrc\YetAnotherForum.NET\YAF.csproj">
-      <Project>{555357e5-a150-4c4d-bc81-97f4ae19086a}</Project>
-      <Name>YAF</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Installation\02.30.005901.txt" />
@@ -276,7 +272,7 @@
     <Extension>zip</Extension>
     <DNNFileName>YAF.DotNetNuke.Module</DNNFileName>
     <PackageName>YAF-DNN</PackageName>
-    <CreatePackages>false</CreatePackages>
+    <CreateDnnPackages>false</CreateDnnPackages>
   </PropertyGroup>
   <Import Project="BuildScripts\ModulePackage.Targets" />
   <Target Name="AfterBuild" DependsOnTargets="PackageModule">
@@ -294,7 +290,9 @@ del "$(TargetDir)\DotNetNuke.Web.dll"
 del "$(TargetDir)\DotNetNuke.Web.pdb"
 del "$(TargetDir)\DotNetNuke.WebUtility.dll"
 del "$(TargetDir)\DotNetNuke.WebUtility.pdb"
-del "$(TargetDir)\Microsoft.ApplicationBlocks.Data.dll"</PostBuildEvent>
+del "$(TargetDir)\Microsoft.ApplicationBlocks.Data.dll"
+del "$(TargetDir)\DotNetNuke.Instrumentation.dll"
+del "$(TargetDir)\DotNetNuke.log4net.dll"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

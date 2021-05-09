@@ -32,9 +32,9 @@ namespace YAF.DotNetNuke.Components.WebAPI
 
     using Newtonsoft.Json.Linq;
 
+    using YAF.Configuration;
     using YAF.Core.Context;
     using YAF.Core.Model;
-    using YAF.Core.Utilities;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
