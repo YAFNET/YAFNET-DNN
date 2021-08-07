@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -31,7 +31,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
     using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.Core.Model;
-    using YAF.Core.Utilities.Helpers.StringUtils;
+    using YAF.Core.Utilities.StringUtils;
     using YAF.Types;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
@@ -78,7 +78,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
 
             // if the user is empty, return a null object...
             return userName.IsNotSet()
-                ? (IHttpActionResult)this.NotFound()
+                ? this.NotFound()
                 : this.Ok(
                     this.Get<IThankYou>().GetThankYou(
                         new UnicodeEncoder().XSSEncode(userName),
@@ -107,21 +107,21 @@ namespace YAF.DotNetNuke.Components.WebAPI
                 return this.NotFound();
             }
 
-            var fromUserId = BoardContext.Current.Get<IAspNetUsersHelper>()
-                .GetUserIDFromProviderUserKey(membershipUser.Id);
+            var fromUser = BoardContext.Current.Get<IAspNetUsersHelper>()
+                .GetUserFromProviderUserKey(membershipUser.Id);
 
             var message = this.GetRepository<Message>().GetById(id);
 
             var userName = this.Get<IUserDisplayName>().GetNameById(message.UserID);
 
-            this.GetRepository<Thanks>().AddMessageThanks(fromUserId, message.UserID, id);
+            this.GetRepository<Thanks>().AddMessageThanks(fromUser.ID, message.UserID, id);
 
-            this.Get<IActivityStream>().AddThanksReceivedToStream(message.UserID, message.TopicID, id, fromUserId);
-            this.Get<IActivityStream>().AddThanksGivenToStream(fromUserId, message.TopicID, id, message.UserID);
+            this.Get<IActivityStream>().AddThanksReceivedToStream(message.UserID, message.TopicID, id, fromUser.ID);
+            this.Get<IActivityStream>().AddThanksGivenToStream(fromUser.ID, message.TopicID, id, message.UserID);
 
             // if the user is empty, return a null object...
             return userName.IsNotSet()
-                ? (IHttpActionResult)this.NotFound()
+                ? this.NotFound()
                 : this.Ok(
                     this.Get<IThankYou>().CreateThankYou(
                         new UnicodeEncoder().XSSEncode(userName),

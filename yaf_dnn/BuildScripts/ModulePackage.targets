@@ -38,12 +38,8 @@
       <DefaultExclude Include="**\*ReSharper.*\**" />
       <DefaultExclude Include="**\_source\**" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.FileUpload\**\*.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\emojipicker\**\*.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\esm\**\*.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\forum\**\*.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\i18n\**\*.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\tablesorter\**\*.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\umd\**\*.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\yafEditor\yafEditor.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\blueimp-gallery\blueimp-gallery.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\blueimp-gallery\blueimp-gallery-indicator.js" />
@@ -55,7 +51,6 @@
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-datetimepicker.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-image-gallery.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-notify.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-suggest.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-tagsinput.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-typeahead.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-select.js" />
@@ -80,20 +75,15 @@
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.6.0.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.6.0.min.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.6.0.intellisense.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.6.0.slim.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.6.0.slim.min.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.6.0-vsdoc.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jsdifflib.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jsdifflib.min.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\moment-with-locales.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\moment-with-locales.min.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\ladda.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\ladda.min.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\prism.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\select2.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\select2.min.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\spin.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\spin.min.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Gruntfile.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap.bundle.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\jquery.FileUpload\**\*.css" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\bootstrap\**\*.css" />
@@ -152,7 +142,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <YafDnnWhatsNewResourcesInclude Include="$(MSBuildProjectDirectory)\module.css" />
       <YafDnnWhatsNewResourcesInclude Include="**\App_LocalResources\YafDnnWhatsNew.ascx.de-DE.resx" />
       <YafDnnWhatsNewResourcesInclude Include="**\App_LocalResources\YafDnnWhatsNew.ascx.resx" />
       <YafDnnWhatsNewResourcesInclude Include="**\App_LocalResources\YafDnnWhatsNewSettings.ascx.de-DE.resx" />
@@ -164,7 +153,6 @@
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\YafDnnModule.ascx" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\YafDnnModuleEdit.ascx" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\YafDnnModuleImport.ascx" />
-      <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\module.css" />
       <yafdnn-resInclude Include="**\App_LocalResources\YafDnnModule.ascx.de-DE.resx" />
       <yafdnn-resInclude Include="**\App_LocalResources\YafDnnModule.ascx.resx" />
       <yafdnn-resInclude Include="**\App_LocalResources\YafDnnModuleEdit.ascx.de-DE.resx" />
@@ -197,9 +185,7 @@
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.txt"
                          Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_source\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\obj\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\bin\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Browsers\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Data\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.zip;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\Thumbs.db;" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.aspx"
-                         Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_source\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Default.aspx;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\obj\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\bin\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Browsers\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Data\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.zip;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\Thumbs.db;" />
-      <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.sql"
-                         Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_source\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\obj\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\bin\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Browsers\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Data\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.zip;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\Thumbs.db;" />
+                         Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_source\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Install\Default.aspx;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Default.aspx;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\obj\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\bin\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Browsers\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Data\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.zip;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\Thumbs.db;" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.xsl"
                          Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_source\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\obj\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\_ReSharper*\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\bin\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Browsers\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\App_Data\**;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.zip;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\Thumbs.db;" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.ashx"
@@ -234,9 +220,10 @@
       <Output TaskParameter="Include" ItemName="PackageManifestFiles" />
     </CreateItem>
 
-    <CreateItem Include="**\*.sqldataprovider">
-      <Output TaskParameter="Include" ItemName="SqlDataProviderFiles" />
-    </CreateItem>
+    <ItemGroup>
+      <SqlDataProviderFiles Include="$(MSBuildProjectDirectory)\Installation\*.sql" />
+      <SqlDataProviderFiles Include="**\*.sqldataprovider" />
+    </ItemGroup>
 
     <ItemGroup>
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\AutoFac.dll" />
@@ -269,7 +256,7 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.Configuration.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.Web.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.Core.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\YAF.Data.MsSql.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\YAF.Data.SqlServer.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.DotNetNuke.Module.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\YAF.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.Lucene.Net.Analysis.Common.dll" />

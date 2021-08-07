@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -36,13 +36,14 @@ namespace YAF.DotNetNuke.Components.Utils
     using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.Core.Model;
+    using YAF.DotNetNuke.Extensions;
+    using YAF.Types;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
     using YAF.Types.Interfaces;
     using YAF.Types.Interfaces.Identity;
     using YAF.Types.Models;
-    using YAF.Types.Models.Identity;
 
     /// <summary>
     /// YAF User Importer
@@ -58,7 +59,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <returns>
         /// Returns the Number of Users that where imported
         /// </returns>
-        public static int ImportUsers(int boardId, int portalId, out string info)
+        public static int ImportUsers([NotNull] int boardId, [NotNull] int portalId, out string info)
         {
             var newUserCount = 0;
 
@@ -78,47 +79,53 @@ namespace YAF.DotNetNuke.Components.Utils
 
             try
             {
-                foreach (var dnnUserInfo in users.Cast<UserInfo>())
-                {
-                    var dnnUser = BoardContext.Current.Get<IAspNetUsersHelper>().GetUserByName(dnnUserInfo.Username);
-
-                    if (dnnUser == null)
+                users.Cast<UserInfo>().ForEach(
+                    dnnUserInfo =>
                     {
-                        continue;
-                    }
+                        var yafUser = BoardContext.Current.GetRepository<User>()
+                            .GetUserByProviderKey(boardId, dnnUserInfo.UserID.ToString());
 
-                    // un-approve soft deleted user in yaf
-                    if (dnnUserInfo.IsDeleted && dnnUser.IsApproved)
-                    {
-                        dnnUser.IsApproved = false;
-                        BoardContext.Current.Get<IAspNetUsersHelper>().Update(dnnUser);
+                        if (yafUser != null)
+                        {
+                            rolesChanged = RoleSyncronizer.SynchronizeUserRoles(
+                                boardId,
+                                portalId,
+                                yafUser.ID,
+                                dnnUserInfo);
 
-                        continue;
-                    }
+                            // super admin check...
+                            if (dnnUserInfo.IsSuperUser)
+                            {
+                                SetYafHostUser(yafUser.ID, boardId);
+                            }
+                        }
+                        else
+                        {
+                            // Update UserID fom YAF < 3
+                            yafUser = BoardContext.Current.GetRepository<User>().GetSingle(
+                                u => u.Name == dnnUserInfo.Username && u.Email == dnnUserInfo.Email);
 
-                    if (!dnnUserInfo.IsDeleted && !dnnUser.IsApproved)
-                    {
-                        dnnUser.IsApproved = true;
-                        BoardContext.Current.Get<IAspNetUsersHelper>().Update(dnnUser);
-                    }
+                            if (yafUser != null)
+                            {
+                                // update provider Key
+                                BoardContext.Current.GetRepository<User>().UpdateOnly(
+                                    () => new User { ProviderUserKey = dnnUserInfo.UserID.ToString() },
+                                    u => u.ID == yafUser.ID);
 
-                    var yafUserId = BoardContext.Current.GetRepository<User>().GetUserId(boardId, dnnUser.Id);
-
-                    if (yafUserId.Equals(0))
-                    {
-                        // Create user if Not Exist
-                        yafUserId = CreateYafUser(dnnUserInfo, dnnUser, boardId, portalId, boardSettings);
-                        newUserCount++;
-                    }
-
-                    rolesChanged = RoleSyncronizer.SynchronizeUserRoles(boardId, portalId, yafUserId, dnnUserInfo);
-
-                    // super admin check...
-                    if (dnnUserInfo.IsSuperUser)
-                    {
-                        SetYafHostUser(yafUserId, boardId);
-                    }
-                }
+                                rolesChanged = RoleSyncronizer.SynchronizeUserRoles(
+                                    boardId,
+                                    portalId,
+                                    yafUser.ID,
+                                    dnnUserInfo);
+                            }
+                            else
+                            {
+                                // Create user if Not Exist
+                                CreateYafUser(dnnUserInfo, boardId, portalId, boardSettings);
+                                newUserCount++;
+                            }
+                        }
+                    });
 
                 BoardContext.Current.Get<IDataCache>().Clear();
 
@@ -139,7 +146,6 @@ namespace YAF.DotNetNuke.Components.Utils
         /// Creates the YAF user.
         /// </summary>
         /// <param name="dnnUserInfo">The DNN user info.</param>
-        /// <param name="dnnUser">The DNN user.</param>
         /// <param name="boardId">The board ID.</param>
         /// <param name="portalId">The portal identifier.</param>
         /// <param name="boardSettings">The board settings.</param>
@@ -147,67 +153,26 @@ namespace YAF.DotNetNuke.Components.Utils
         /// Returns the User ID of the new User
         /// </returns>
         public static int CreateYafUser(
-            UserInfo dnnUserInfo,
-            AspNetUsers dnnUser,
-            int boardId,
-            int portalId,
-            BoardSettings boardSettings)
+            [NotNull] UserInfo dnnUserInfo,
+            [NotNull] int boardId,
+            [NotNull] int portalId,
+            [NotNull] BoardSettings boardSettings)
         {
-            // setup roles
-            BoardContext.Current.Get<IAspNetRolesHelper>().SetupUserRoles(boardId, dnnUser);
+            CodeContracts.VerifyNotNull(dnnUserInfo);
 
             // create the user in the YAF DB so profile can gets created...
-            var yafUserId = BoardContext.Current.Get<IAspNetRolesHelper>().CreateForumUser(dnnUser, dnnUserInfo.DisplayName, boardId);
+            var yafUserId = BoardContext.Current.Get<IAspNetRolesHelper>().CreateForumUser(
+                dnnUserInfo.ToAspNetUsers(),
+                dnnUserInfo.DisplayName,
+                boardId);
 
             if (yafUserId == null)
             {
                 return 0;
             }
 
-            // setup their initial profile information
-            /*
-              if (dnnUserInfo.Profile.FullName.IsSet())
-              {
-                  userProfile.RealName = dnnUserInfo.Profile.FullName;
-              }
-
-              if (dnnUserInfo.Profile.Country.IsSet() && !dnnUserInfo.Profile.Country.Equals("N/A"))
-              {
-                  var regionInfo = ProfileSyncronizer.GetRegionInfoFromCountryName(dnnUserInfo.Profile.Country);
-
-                  if (regionInfo != null)
-                  {
-                      userProfile.Country = regionInfo.TwoLetterISORegionName;
-                  }
-              }
-
-              if (dnnUserInfo.Profile.City.IsSet())
-              {
-                  userProfile.City = dnnUserInfo.Profile.City;
-              }
-
-              if (dnnUserInfo.Profile.Website.IsSet())
-              {
-                  userProfile.Homepage = dnnUserInfo.Profile.Website;
-              } 
-
-              userProfile.Save();*/
-
             var autoWatchTopicsEnabled =
                 boardSettings.DefaultNotificationSetting.Equals(UserNotificationSetting.TopicsIPostToOrSubscribeTo);
-
-            // Save User
-            BoardContext.Current.GetRepository<User>().Save(
-                yafUserId.Value,
-                boardId,
-                dnnUserInfo.Username,
-                dnnUserInfo.DisplayName,
-                dnnUserInfo.Email,
-                dnnUserInfo.Profile.PreferredTimeZone.Id,
-                null,
-                null,
-                null,
-                false);
 
             // save notification Settings
             BoardContext.Current.GetRepository<User>().SaveNotification(
@@ -227,7 +192,7 @@ namespace YAF.DotNetNuke.Components.Utils
         /// </summary>
         /// <param name="yafUserId">The YAF user id.</param>
         /// <param name="boardId">The board id.</param>
-        public static void SetYafHostUser(int yafUserId, int boardId)
+        public static void SetYafHostUser([NotNull] int yafUserId, [NotNull] int boardId)
         {
             // get this user information...
             var userInfo = BoardContext.Current.GetRepository<User>().GetById(yafUserId);

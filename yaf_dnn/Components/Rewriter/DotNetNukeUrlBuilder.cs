@@ -46,9 +46,11 @@ namespace YAF.DotNetNuke
     using YAF.Core.Helpers;
     using YAF.Core.URLBuilder;
     using YAF.Core.Utilities;
+    using YAF.Types;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
+    using YAF.Types.Interfaces.Identity;
 
     #endregion
 
@@ -68,7 +70,7 @@ namespace YAF.DotNetNuke
         /// <returns>
         /// Returns the URL.
         /// </returns>
-        public override string BuildUrlFull(string url)
+        public override string BuildUrlFull([CanBeNull] string url)
         {
             return BuildUrlComplete(BoardContext.Current.Get<BoardSettings>(), url, true);
         }
@@ -81,7 +83,7 @@ namespace YAF.DotNetNuke
         /// <returns>
         /// Returns the URL.
         /// </returns>
-        public override string BuildUrlFull(object boardSettings, string url)
+        public override string BuildUrlFull([NotNull] object boardSettings, [CanBeNull] string url)
         {
             return BuildUrlComplete(boardSettings, url, true);
         }
@@ -93,7 +95,7 @@ namespace YAF.DotNetNuke
         /// <returns>
         /// The new Complete.
         /// </returns>
-        public override string BuildUrl(string url)
+        public override string BuildUrl([CanBeNull] string url)
         {
             return BuildUrlComplete(BoardContext.Current.Get<BoardSettings>(), url, false);
         }
@@ -106,7 +108,7 @@ namespace YAF.DotNetNuke
         /// <returns>
         /// URL to calling page with URL argument as page's parameter with escaped characters to make it valid parameter.
         /// </returns>
-        public override string BuildUrl(object boardSettings, string url)
+        public override string BuildUrl([NotNull] object boardSettings, [CanBeNull] string url)
         {
             return BuildUrlComplete(boardSettings, url, false);
         }
@@ -120,8 +122,10 @@ namespace YAF.DotNetNuke
         /// <returns>
         /// The new URL.
         /// </returns>
-        private static string BuildUrlComplete(object boardSettings, string url, bool fullUrl)
+        private static string BuildUrlComplete([NotNull] object boardSettings, [CanBeNull]string url, bool fullUrl)
         {
+            CodeContracts.VerifyNotNull(boardSettings);
+
             var yafBoardSettings = boardSettings.ToType<BoardSettings>();
 
             var yafTab = new TabController().GetTab(yafBoardSettings.DNNPageTab, yafBoardSettings.DNNPortalId, true);
@@ -234,14 +238,17 @@ namespace YAF.DotNetNuke
                         break;
                     case ForumPages.UserProfile:
                         {
-                            /* boardNameOrPageName =
-                                 UrlRewriteHelper.CleanStringForURL(
-                                     parser["name"].IsSet()
-                                         ? parser["name"]
-                                         : UrlRewriteHelper.GetProfileName(parser[useKey].ToType<int>()));*/
+                            var userInfo = UserController.GetUserByName(parser["name"]);
 
-                            // Redirect the user to the Dnn profile page.
-                            return Globals.UserProfileURL(UserController.GetUserByName(parser["name"]).UserID);
+                            if (userInfo != null)
+                            {
+                                return Globals.UserProfileURL(userInfo.UserID);
+                            }
+
+                            var userId = BoardContext.Current.Get<IAspNetUsersHelper>()
+                                .GetUserProviderKeyFromUserID(parser["u"].ToType<int>()).ToType<int>();
+
+                            return Globals.UserProfileURL(userId);
                         }
 
                     case ForumPages.Board:
@@ -303,7 +310,7 @@ namespace YAF.DotNetNuke
         /// <returns>
         /// Returns the BaseUrl
         /// </returns>
-        private static string GetBaseUrl(BoardSettings yafBoardSettings, TabInfo yafTab)
+        private static string GetBaseUrl([NotNull] BoardSettings yafBoardSettings, [NotNull] TabInfo yafTab)
         {
             var baseUrl = Globals.NavigateURL(yafBoardSettings.DNNPageTab, Null.NullString);
 
@@ -334,7 +341,7 @@ namespace YAF.DotNetNuke
         /// <param name="portalSettings">The portal settings.</param>
         /// <returns>Returns the Normal URL</returns>
         private static string GetStandardUrl(
-            TabInfo activeTab,
+            [NotNull] TabInfo activeTab,
             string url,
             string boardNameOrPageName,
             IPortalSettings portalSettings)

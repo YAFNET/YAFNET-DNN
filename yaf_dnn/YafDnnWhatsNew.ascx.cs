@@ -36,7 +36,6 @@ namespace YAF.DotNetNuke
     using global::DotNetNuke.Common;
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Tabs;
-    using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Framework.JavaScriptLibraries;
     using global::DotNetNuke.Services.Exceptions;
     using global::DotNetNuke.Services.Localization;
@@ -44,16 +43,16 @@ namespace YAF.DotNetNuke
 
     using YAF.Configuration;
     using YAF.Core.Context;
+    using YAF.Core.Extensions;
     using YAF.Core.Helpers;
     using YAF.Core.Model;
-    using YAF.Core.Utilities.Helpers;
-    using YAF.Core.Utilities.Helpers.StringUtils;
-    using YAF.DotNetNuke.Components.Controllers;
+    using YAF.Core.Utilities.StringUtils;
     using YAF.DotNetNuke.Components.Utils;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Types.Interfaces.Identity;
     using YAF.Types.Models;
+    using YAF.Types.Objects.Model;
     using YAF.Web.Controls;
 
     #endregion
@@ -192,12 +191,12 @@ namespace YAF.DotNetNuke
 
                 var momentLoadJs = $@"Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(loadTimeAgo);
             function loadTimeAgo() {{
-            
-		    moment.locale('{(BoardContext.Current.User.Culture.IsSet()
+           
+            moment.locale('{(BoardContext.Current.User.Culture.IsSet()
                                  ? BoardContext.Current.User.Culture.Substring(0, 2)
                                  : BoardContext.Current.Get<BoardSettings>().Culture.Substring(0, 2))}');
             jQuery('abbr.timeago').html(function(index, value) {{
-                 
+                
             return moment(value).fromNow();
             }});}}";
 
@@ -248,7 +247,7 @@ namespace YAF.DotNetNuke
             {
                 var yafUserId = this.GetYafUserId();
 
-                Data.ActiveAccessUser(this.boardId, yafUserId, HttpContext.Current.User.Identity.IsAuthenticated);
+                BoardContext.Current.GetRepository<ActiveAccess>().InsertPageAccess(this.boardId, yafUserId, HttpContext.Current.User.Identity.IsAuthenticated);
 
                 var sortOrderTopics = this.sortOrder switch
                 {
@@ -257,13 +256,14 @@ namespace YAF.DotNetNuke
                     _ => 0
                 };
 
-                var activeTopics = Data.TopicLatest(
+                var activeTopics = BoardContext.Current.GetRepository<Topic>().Latest(
                     this.boardId,
+                    0,
                     this.maxPosts,
                     yafUserId,
-                    false,
-                    sortOrderTopics,
-                    true);
+                    true,
+                    true,
+                    sortOrderTopics);
 
                 this.LatestPosts.DataSource = activeTopics;
                 this.LatestPosts.DataBind();
@@ -300,26 +300,32 @@ namespace YAF.DotNetNuke
                 return BoardContext.Current.Get<IAspNetUsersHelper>().GuestUserId;
             }
 
-            // get the user from the membership provider
-            var dnnUser = BoardContext.Current.Get<IAspNetUsersHelper>().GetUserByName(this.UserInfo.Username);
-
             // Check if the user exists in yaf
-            var yafUserId = BoardContext.Current.GetRepository<User>().GetUserId(this.boardId, dnnUser.Id);
+            var yafUser = BoardContext.Current.GetRepository<User>().GetUserByProviderKey(this.boardId, this.UserInfo.UserID.ToString());
 
-            if (!yafUserId.Equals(0))
+            if (yafUser != null)
             {
-                return yafUserId;
+                return yafUser.ID;
             }
 
-            // Get current DNN user
-            var dnnUserInfo = UserController.Instance.GetCurrentUserInfo();
+            yafUser = BoardContext.Current.GetRepository<User>()
+                .GetSingle(u => u.Name == this.UserInfo.Username && u.Email == this.UserInfo.Email);
 
-            return UserImporter.CreateYafUser(
-                dnnUserInfo,
-                dnnUser,
-                this.boardId,
-                this.PortalSettings.PortalId,
-                BoardContext.Current.Get<BoardSettings>());
+            if (yafUser == null)
+                return UserImporter.CreateYafUser(
+                    this.UserInfo,
+                    this.boardId,
+                    this.PortalSettings.PortalId,
+                    BoardContext.Current.Get<BoardSettings>());
+            {
+                // update provider Key
+                BoardContext.Current.GetRepository<User>().UpdateOnly(
+                    () => new User { ProviderUserKey = this.UserInfo.UserID.ToString() },
+                    u => u.ID == yafUser.ID);
+
+                return yafUser.ID;
+            }
+
         }
 
         /// <summary>
@@ -443,7 +449,7 @@ namespace YAF.DotNetNuke
         /// </returns>
         private string ProcessItem(RepeaterItemEventArgs e)
         {
-            var dataItem = (dynamic)e.Item.DataItem;
+            var dataItem = (LatestTopic)e.Item.DataItem;
 
             var currentItem = this.itemTemplate;
 
@@ -475,7 +481,7 @@ namespace YAF.DotNetNuke
                                         $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=topics&f={dataItem.ForumID}",
                                         UrlRewriteHelper.CleanStringForURL(
                                             BoardContext.Current.Get<IBadWordReplace>()
-                                                .Replace(dataItem.Forum.ToString())))
+                                                .Replace(dataItem.Forum)))
                                 };
 
             currentItem = currentItem.Replace("[FORUMLINK]", forumLink.RenderToString());
@@ -487,7 +493,7 @@ namespace YAF.DotNetNuke
 
             // Render LASTUSERLINK
             // Just in case...
-            if (((int?)dataItem.LastUserID).HasValue)
+            if (dataItem.LastUserID.HasValue)
             {
                 var userName = BoardContext.Current.Get<BoardSettings>().EnableDisplayName
                                    ? dataItem.LastUserDisplayName

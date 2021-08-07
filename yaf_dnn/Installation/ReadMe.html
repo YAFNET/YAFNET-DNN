@@ -32,7 +32,7 @@
                 </p>
              </div>
         </div>
-        
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3>Index</h3>
@@ -46,7 +46,7 @@
                 </ol>
             </div>
         </div>
-        
+
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h4>
@@ -57,13 +57,13 @@
                     Make sure your server / Host has the following requirements:
                 </p>
                 <ol>
-                    <li>Microsoft .NET Framework 4.7.2</li>
+                    <li>Microsoft .NET Framework 4.8</li>
                     <li>Microsoft SQL Server 2012 or above.</li>
-                    <li>DNN Platform (DotNetNuke) 09.03.02 or above.</li>
+                    <li>DNN Platform (DotNetNuke) 09.10.00 or above.</li>
                 </ol>
             </div>
         </div>
-        
+
         <div class="page-header">
             <h1><a id="NewInstall"></a>New Installation</h1>
         </div>
@@ -76,11 +76,11 @@
             <div class="panel-body">
                 <ol>
                     <li>Backup your existing DNN installation</li>
-					<li><span class="style1"> <strong>BACKUP YOUR DATABASE</strong></span></li>
+                    <li><span class="style1"> <strong>BACKUP YOUR DATABASE</strong></span></li>
                 </ol>
             </div>
         </div>
-        
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3>
@@ -92,28 +92,11 @@
                 </ol>
             </div>
         </div>
-        
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3>
-                    <span class="label label-primary">STEP 3</span> Modify the root web.config of your DNN. <span class="label label-danger">Important</span></h3>
-            </div>
-            <div class="panel-body">
-                <h4>Replace the Lines Specified Below and Replace with "Add" Line.</h4>
-                <hr />
-                Replace the Default Config Password with a one you like...
-				<pre><span class="label label-warning">Replace Line</span> &lt;add key=&quot;YAF.ConfigPassword&quot; value=&quot;<strong>XXXX</strong>&quot; /&gt;</pre> 
-                Enter your Website Url for the BaseUrlMask Value...
-                <pre><span class="label label-info">Add Line</span> &lt;add key=&quot;YAF.BaseUrlMask&quot; value=&quot;http://yourdomain.com&quot; /&gt;</pre> 
-				If you are using a custom Database Object Qualifier (for example &quot;dnn_ &quot;) then...
-                <pre><span class="label label-warning">Replace Line</span>&lt;add key=&quot;YAF.DatabaseObjectQualifier&quot; value=&quot;dnn_yaf_&quot; /&gt;</pre>
-            </div>
-        </div>
-        
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3>
-                    <span class="label label-primary">STEP 4</span> Add Module to a Page</h3>
+                    <span class="label label-primary">STEP 3</span> Add Module to a Page</h3>
             </div>
             <div class="panel-body">
                 <ol>
@@ -121,7 +104,7 @@
                 </ol>
             </div>
         </div>
-        
+
         <div class="page-header">
             <h1><a id="Upgrade"></a>Upgrade Installation</h1>
         </div>
@@ -131,15 +114,13 @@
                 <h3><span class="label label-primary">STEP 1</span> Upgrade Wizard</h3>
             </div>
             <div class="panel-body">
-                <p>
-                    Open the page http://yourWebsite.com/DesktopModules/YetAnotherForumDotNet/install/ on your web site.
-                </p>
-
-                <p>The wizard will guide you through the upgrade process.</p>
+                <ol>
+                    <li> Install the Upgrade Module <strong>YAF_x-xxxx.</strong><strong>zip</strong> in your DNN (Host-&gt;Extensions-&gt;Install Extension Wizard)</li>
+                </ol>
             </div>
         </div>
-        
-		<div class="panel panel-default">
+
+        <div class="panel panel-default">
             <div class="panel-heading">
                 <h3><a id="Support"></a>Yet Another Forum Community Support</h3>
             </div>

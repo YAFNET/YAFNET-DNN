@@ -61,7 +61,7 @@ namespace YAF.DotNetNuke.Components.Integration
         /// </param>
         public void Send([NotNull] MailMessage mailMessage)
         {
-            CodeContracts.VerifyNotNull(mailMessage, "mailMessage");
+            CodeContracts.VerifyNotNull(mailMessage);
 
             var body = string.Empty;
 
@@ -121,7 +121,7 @@ namespace YAF.DotNetNuke.Components.Integration
         {
             var mailMessages = messages as IList<MailMessage> ?? messages.ToList();
 
-            CodeContracts.VerifyNotNull(mailMessages, "messages");
+            CodeContracts.VerifyNotNull(mailMessages);
 
             mailMessages.ForEach(
                 mailMessage =>

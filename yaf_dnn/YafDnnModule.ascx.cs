@@ -28,6 +28,7 @@ namespace YAF.DotNetNuke
 
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading;
     using System.Web;
@@ -35,12 +36,14 @@ namespace YAF.DotNetNuke
     using System.Web.UI.WebControls;
 
     using global::DotNetNuke.Common.Utilities;
+    using global::DotNetNuke.Data;
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Modules.Actions;
     using global::DotNetNuke.Entities.Portals;
     using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Framework;
     using global::DotNetNuke.Framework.JavaScriptLibraries;
+    using global::DotNetNuke.Instrumentation;
     using global::DotNetNuke.Security;
     using global::DotNetNuke.Services.Exceptions;
     using global::DotNetNuke.Services.Localization;
@@ -48,15 +51,17 @@ namespace YAF.DotNetNuke
     using YAF.Configuration;
     using YAF.Core.BoardSettings;
     using YAF.Core.Context;
+    using YAF.Core.Data;
     using YAF.Core.Extensions;
     using YAF.Core.Helpers;
     using YAF.Core.Model;
+    using YAF.Core.Services;
     using YAF.DotNetNuke.Components.Utils;
     using YAF.Types;
     using YAF.Types.Attributes;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
-    using YAF.Types.Interfaces.Identity;
+    using YAF.Types.Interfaces.Services;
     using YAF.Types.Models;
     using YAF.Types.Objects;
     using YAF.Web.EventsArgs;
@@ -134,7 +139,7 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// Gets the YAF Cultures
         /// </summary>
-        private static IReadOnlyCollection<Culture> YafCultures
+        private static IEnumerable<Culture> Cultures
         {
             get
             {
@@ -169,14 +174,12 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// Gets the Base Page
         /// </summary>
-        private CDefault BasePage => this.basePage ?? (this.basePage = GetDefault(this));
+        private CDefault BasePage => this.basePage ??= GetDefault(this);
 
         /// <summary>
         /// Gets CurrentPortalSettings.
         /// </summary>
-        private PortalSettings CurrentPortalSettings =>
-            this.portalSettings
-            ?? (this.portalSettings = this.ModuleContext.PortalSettings);
+        private PortalSettings CurrentPortalSettings => this.portalSettings ??= this.ModuleContext.PortalSettings;
 
         #endregion
 
@@ -190,7 +193,7 @@ namespace YAF.DotNetNuke
         {
             var x = this.Server.GetLastError();
 
-            this.Get<ILogger>().Error(x, "Error on the DNN Module");
+            this.Get<ILoggerService>().Error(x, "Error on the DNN Module");
 
             base.OnError(e);
         }
@@ -230,7 +233,7 @@ namespace YAF.DotNetNuke
         /// <returns>
         /// The Control
         /// </returns>
-        private static CDefault GetDefault(Control control)
+        private static CDefault GetDefault([NotNull] Control control)
         {
             while (true)
             {
@@ -253,7 +256,7 @@ namespace YAF.DotNetNuke
         /// Change YAF Language based on DNN Language,
         ///   will <c>override</c> the YAF Language Setting
         /// </summary>
-        private void SetDnnLangToYaf()
+        private void OverrideLanguage()
         {
             try
             {
@@ -262,8 +265,8 @@ namespace YAF.DotNetNuke
                 var langCode = currentCulture.Name;
 
                 this.PageContext().BoardSettings.Language =
-                    YafCultures.FirstOrDefault(yafCult => yafCult.CultureTag.Equals(langCode)) != null
-                        ? YafCultures.FirstOrDefault(yafCult => yafCult.CultureTag.Equals(langCode))?.CultureFile
+                    Cultures.FirstOrDefault(culture => culture.CultureTag.Equals(langCode)) != null
+                        ? Cultures.FirstOrDefault(culture => culture.CultureTag.Equals(langCode))?.CultureFile
                         : "english.xml";
             }
             catch (Exception)
@@ -277,7 +280,7 @@ namespace YAF.DotNetNuke
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void DotNetNukeModuleLoad(object sender, EventArgs e)
+        private void DotNetNukeModuleLoad([NotNull] object sender, [NotNull] EventArgs e)
         {
             if (this.Page.IsPostBack)
             {
@@ -305,8 +308,10 @@ namespace YAF.DotNetNuke
         /// </summary>
         /// <param name="dnnUser">The Current DNN User</param>
         /// <param name="yafUserId">The YAF user id.</param>
-        private void CheckForRoles(UserInfo dnnUser, int yafUserId)
+        private void CheckForRoles([NotNull] UserInfo dnnUser, int yafUserId)
         {
+            CodeContracts.VerifyNotNull(dnnUser);
+
             // see if the roles have been synchronized...
             if (this.Session[$"{this.SessionUserKeyName}_rolesloaded"] != null)
             {
@@ -330,26 +335,32 @@ namespace YAF.DotNetNuke
             // Get current DNN user
             var dnnUserInfo = UserController.Instance.GetCurrentUserInfo();
 
-            // get the user from the membership provider
-            var dnnMembershipUser = this.Get<IAspNetUsersHelper>().GetUserByName(dnnUserInfo.Username);
+            // Check if the user exists in yaf
+            var yafUser = this.GetRepository<User>().GetUserByProviderKey(this.forum1.BoardID, dnnUserInfo.UserID.ToString());
 
-            if (dnnMembershipUser == null)
+            if (yafUser == null)
             {
-                return;
+                // Migrate from Yaf < 3
+                yafUser = this.GetRepository<User>()
+                    .GetSingle(u => u.Name == dnnUserInfo.Username && u.Email == dnnUserInfo.Email);
+
+                if (yafUser != null)
+                {
+                    // update provider Key
+                    this.GetRepository<User>().UpdateOnly(
+                        () => new User { ProviderUserKey = dnnUserInfo.UserID.ToString() },
+                        u => u.ID == yafUser.ID);
+                }
             }
 
-            // Check if the user exists in yaf
-            var yafUserId = this.GetRepository<User>().GetUserId(this.forum1.BoardID, dnnMembershipUser.Id);
-
             var boardSettings = BoardContext.Current == null
-                                    ? new LoadBoardSettings(this.forum1.BoardID)
-                                    : this.Get<BoardSettings>();
+                ? new LoadBoardSettings(this.forum1.BoardID)
+                : this.Get<BoardSettings>();
 
-            if (yafUserId.Equals(0))
+            if (yafUser == null)
             {
-                yafUserId = UserImporter.CreateYafUser(
+                var yafUserId = UserImporter.CreateYafUser(
                     dnnUserInfo,
-                    dnnMembershipUser,
                     this.forum1.BoardID,
                     this.CurrentPortalSettings.PortalId,
                     boardSettings);
@@ -362,7 +373,7 @@ namespace YAF.DotNetNuke
             }
             else
             {
-                this.CheckForRoles(dnnUserInfo, yafUserId);
+                this.CheckForRoles(dnnUserInfo, yafUser.ID);
             }
         }
 
@@ -375,6 +386,8 @@ namespace YAF.DotNetNuke
             {
                 AJAX.RegisterScriptManager();
             }
+
+            this.InitializeForumIfNotExist();
 
             this.forum1 = new Forum();
 
@@ -393,8 +406,7 @@ namespace YAF.DotNetNuke
                                              ? this.PageContext().BoardSettings.DNNPageTab
                                              : new LoadBoardSettings(this.forum1.BoardID).DNNPageTab;
 
-                if (boardSettingsTabId.Equals(-1)
-                    || !boardSettingsTabId.Equals(this.TabId) && !this.CurrentPortalSettings.ContentLocalizationEnabled)
+                if (!boardSettingsTabId.Equals(this.TabId) && boardSettingsTabId > -1)
                 {
                     if (HttpContext.Current.User.Identity.IsAuthenticated
                         && UserController.Instance.GetCurrentUserInfo().IsSuperUser)
@@ -403,17 +415,6 @@ namespace YAF.DotNetNuke
                             this.ResolveUrl(
                                 $"~/tabid/{this.PortalSettings.ActiveTab.TabID}/ctl/Edit/mid/{this.ModuleId}/Default.aspx"));
                     }
-
-                    /*else
-                                        {
-                                            boardSettings.DNNPageTab = this.TabId;
-
-                                            // save the settings to the database
-                                            boardSettings.SaveRegistry();
-
-                                            // Reload forum settings
-                                            BoardContext.Current.BoardSettings = null;
-                                        }*/
                 }
 
                 if (this.PageContext().BoardSettings.DNNPortalId.Equals(-1))
@@ -438,7 +439,7 @@ namespace YAF.DotNetNuke
 
                 if (inheritDnnLanguage)
                 {
-                    this.SetDnnLangToYaf();
+                    this.OverrideLanguage();
                 }
             }
             else
@@ -464,12 +465,59 @@ namespace YAF.DotNetNuke
             }
         }
 
+        private void InitializeForumIfNotExist()
+        {
+            var logger = LoggerSource.Instance.GetLogger(typeof(YafDnnModule));
+
+            try
+            {
+                var isForumInstalled = this.Get<InstallUpgradeService>().IsForumInstalled;
+
+                if (!isForumInstalled)
+                {
+                    var userInfo = UserController.Instance.GetUserById(
+                        this.PortalSettings.PortalId,
+                        this.PortalSettings.AdministratorId);
+
+                    this.Get<InstallUpgradeService>().InitializeForum(
+                        Guid.NewGuid(),
+                        $"{this.PortalSettings.PortalName} Forum",
+                        "en-US",
+                        null,
+                        "YAFLogo.svg",
+                        BaseUrlBuilder.GetBaseUrlFromVariables(),
+                        userInfo.Username,
+                        userInfo.Email,
+                        userInfo.UserID.ToString());
+                }
+
+            }
+            catch (Exception exception)
+            {
+                logger.Error(exception);
+            }
+
+            var scriptFile = HttpContext.Current.Request.MapPath(
+                Path.Combine(
+                    "DesktopModules",
+                    "YetAnotherForumDotNet",
+                    "03.00.006100.sql"));
+
+            // read script file for installation
+            var script = FileSystemUtils.ReadFile(scriptFile);
+
+            // execute SQL installation script
+            var exceptions = DataProvider.Instance().ExecuteScript(CommandTextHelpers.GetCommandTextReplaced(script));
+
+            logger.Error(exceptions);
+        }
+
         /// <summary>
         /// Change Page Title
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="ForumPageTitleArgs" /> instance containing the event data.</param>
-        private void Forum1_PageTitleSet(object sender, ForumPageTitleArgs e)
+        private void Forum1_PageTitleSet([NotNull] object sender, [NotNull] ForumPageTitleArgs e)
         {
             this.BasePage.Title = this.PageContext().CurrentForumPage.GeneratePageTitle();
         }

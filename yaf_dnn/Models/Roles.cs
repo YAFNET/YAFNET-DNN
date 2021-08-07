@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -21,49 +21,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-namespace YAF.DotNetNuke.Components.Objects
+
+namespace YAF.DotNetNuke.Models
 {
-    using YAF.Types.Flags;
+    using ServiceStack.DataAnnotations;
+    using ServiceStack.Model;
+
+    using YAF.Types.Interfaces.Data;
 
     /// <summary>
-    /// Forum Access List
+    /// The asp net roles.
     /// </summary>
-    public class ForumAccess
+    public class Roles : IEntity, IHasId<int>
     {
-        #region Constants and Fields
+        /// <summary>
+        /// Gets or sets the Role ID
+        /// </summary>
+        [Alias("RoleID")]
+        public int Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the group unique identifier.
+        /// Gets or sets the Role name
         /// </summary>
-        /// <value>
-        /// The group unique identifier.
-        /// </value>
-        public int GroupID { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name of the group.
-        /// </summary>
-        /// <value>
-        /// The name of the group.
-        /// </value>
-        public string GroupName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name of the access mask.
-        /// </summary>
-        /// <value>
-        /// The name of the access mask.
-        /// </value>
-        public string AccessMaskName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the flags.
-        /// </summary>
-        /// <value>
-        /// The flags.
-        /// </value>
-        public AccessFlags Flags { get; set; }
-
-        #endregion
+        [Alias("RoleName")]
+        public string Name { get; set; }
     }
 }

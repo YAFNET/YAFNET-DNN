@@ -16,12 +16,16 @@
       <license src="License.html" />
       <releaseNotes src="ReadMe.html" />
       <dependencies>
-        <dependency type="CoreVersion">09.09.01</dependency>
+        <dependency type="CoreVersion">09.10.00</dependency>
       </dependencies>
       <components>
         <component type="Module">
           <desktopModule>
             <moduleName>YetAnotherForumDotNet</moduleName>
+            <businessControllerClass>YAF.DotNetNuke.Components.Controllers.UpgradeController, YAF.DotNetNuke.Module</businessControllerClass>
+            <supportedFeatures>
+              <supportedFeature type="Upgradeable" />
+            </supportedFeatures>
             <foldername>YetAnotherForumDotNet</foldername>
             <moduleDefinitions>
               <moduleDefinition>
@@ -60,6 +64,15 @@
               </moduleDefinition>
             </moduleDefinitions>
           </desktopModule>
+          <eventMessage>
+            <processorType>DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke</processorType>
+            <processorCommand>UpgradeModule</processorCommand>
+            <attributes>
+              <businessControllerClass>YAF.DotNetNuke.Components.Controllers.UpgradeController, YAF.DotNetNuke.Module</businessControllerClass>
+              <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
+              <upgradeVersionsList>03.00.006100</upgradeVersionsList>
+            </attributes>
+          </eventMessage>
         </component>
         <component type="File">
           <files>
@@ -67,6 +80,10 @@
             <file>
               <name>yaf.svg</name>
               <sourceFileName>yaf.svg</sourceFileName>
+            </file>
+            <file>
+              <name>03.00.006100.sql</name>
+              <sourceFileName>03.00.006100.sql</sourceFileName>
             </file>
           </files>
         </component>
@@ -122,21 +139,6 @@
               <name>Microsoft.AspNet.Identity.Owin.dll</name>
             </assembly>
             <assembly>
-              <name>Microsoft.Bcl.AsyncInterfaces.dll</name>
-            </assembly>
-            <assembly>
-              <name>Microsoft.Extensions.Primitives.dll</name>
-            </assembly>
-            <assembly>
-              <name>Microsoft.Extensions.Configuration.Abstractions.dll</name>
-            </assembly>
-            <assembly>
-              <name>Microsoft.Owin.dll</name>
-            </assembly>
-            <assembly>
-              <name>Microsoft.Owin.dll</name>
-            </assembly>
-            <assembly>
               <name>Microsoft.Owin.Host.SystemWeb.dll</name>
             </assembly>
             <assembly>
@@ -146,7 +148,16 @@
               <name>Microsoft.Owin.Security.dll</name>
             </assembly>
             <assembly>
-              <name>Microsoft.Owin.Security.OAuth.dll</name>
+              <name>Microsoft.Owin.dll</name>
+            </assembly>
+            <assembly>
+              <name>Microsoft.Bcl.AsyncInterfaces.dll</name>
+            </assembly>
+            <assembly>
+              <name>Microsoft.Extensions.Primitives.dll</name>
+            </assembly>
+            <assembly>
+              <name>Microsoft.Extensions.Configuration.Abstractions.dll</name>
             </assembly>
             <assembly>
               <name>Owin.dll</name>
@@ -176,7 +187,7 @@
               <name>YAF.Lucene.Net.QueryParser.dll</name>
             </assembly>
             <assembly>
-              <name>YAF.Data.MsSql.dll</name>
+              <name>YAF.Data.SqlServer.dll</name>
             </assembly>
             <assembly>
               <name>YAF.dll</name>
@@ -305,6 +316,10 @@
               <path>bin</path>
               <name>YAF.Providers.dll</name>
             </file>
+            <file>
+            <path>bin</path>
+            <name>YAF.Data.MsSql.dll</name>
+            </file>
           </files>
         </component>
         <component type="Config">
@@ -314,14 +329,14 @@
               <configuration>
                 <nodes>
                   <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http']" action="update" targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http']/ab:bindingRedirect" collision="save"  nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.3.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
+                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.7.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
                   </node>
                   <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http.WebHost']"
                         action="update"
                         targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http.WebHost']/ab:bindingRedirect"
                         collision="save"
                         nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.3.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
+                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.7.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
                   </node>
                   <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='Microsoft.Extensions.Primitives']"
                         action="update"
@@ -343,21 +358,16 @@
                   <node path="/configuration/system.net" action="remove" />
                   <node path="/configuration/appSettings" action="update" key="key" collision="ignore">
                     <add key="YAF.BoardID" value="1" />
-                    <add key="YAF.EnableURLRewriting" value="true" />
                     <add key="YAF.UseSMTPSSL" value="false" />
                     <add key="YAF.DatabaseObjectQualifier" value="yaf_" />
                     <add key="YAF.DatabaseOwner" value="dbo" />
                     <add key="YAF.ConnectionStringName" value="SiteSqlServer" />
-                    <add key="YAF.ProviderExceptionXML" value="ProviderExceptions.xml" />
-                    <add key="YAF.ProviderKeyType" value="System.Guid" />
                     <add key="YAF.FileRoot" value="~/DesktopModules/YetAnotherForumDotNet" />
                     <add key="YAF.AppRoot" value="~/DesktopModules/YetAnotherForumDotNet" />
                     <add key="YAF.BaseUrlMask" value="" />
                     <add key="YAF.ForceScriptName" value="default.aspx" />
                     <add key="YAF.ShowToolBar" value="true" />
                     <add key="YAF.AllowLoginAndLogoff" value="false" />
-                    <add key="YAF.ConfigPassword" value="pass" />
-                    <add key="YAF.URLRewritingMode" value="Unicode" />
                   </node>
                   <node path="/configuration/system.webServer" targetpath="/configuration/system.webServer/staticContent" action="update" collision="ignore">
                     <staticContent>
@@ -505,10 +515,6 @@
         <component type="Script">
           <scripts>
             <basePath>DesktopModules\YetAnotherForumDotNet\</basePath>
-            <script type="Install">
-              <name>01.96.10.SqlDataProvider</name>
-              <version>01.96.10</version>
-            </script>
             <script type="UnInstall">
               <name>Uninstall.SqlDataProvider</name>
             </script>
@@ -533,7 +539,7 @@
       <license src="License.html" />
       <releaseNotes />
       <dependencies>
-        <dependency type="CoreVersion">09.09.01</dependency>
+        <dependency type="CoreVersion">09.10.00</dependency>
       </dependencies>
       <components>
         <component type="Module">
@@ -603,7 +609,7 @@
         </component>
       </components>
     </package>
-    <package name="bootstrap-bundle" type="JavaScript_Library" version="5.0.0">
+    <package name="bootstrap-bundle" type="JavaScript_Library" version="5.0.2">
       <friendlyName>Bootstrap JavaScript Bundle (width Popper.js)</friendlyName>
       <description>
         <![CDATA[<p>Bootstrap is a sleek, intuitive, and powerful front-end framework for faster and easier web development, created and maintained by <a href="http://twitter.com/mdo">Mark Otto</a> and <a href="http://twitter.com/fat">Jacob Thornton</a>.</p>
@@ -624,7 +630,7 @@
           <javaScriptLibrary>
             <libraryName>bootstrap-bundle</libraryName>
             <fileName>bootstrap.bundle.min.js</fileName>
-            <CDNPath>https://maxcdn.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.bundle.min.js</CDNPath>
+            <CDNPath>https://maxcdn.bootstrapcdn.com/bootstrap/5.0.2/js/bootstrap.bundle.min.js</CDNPath>
             <objectName>jQuery.fn.scrollspy</objectName>
           </javaScriptLibrary>
         </component>

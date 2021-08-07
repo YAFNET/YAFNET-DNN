@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2017 Ingo Herbote
  * https://www.yetanotherforum.net/
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -29,14 +29,16 @@ namespace YAF.DotNetNuke.Components.Controllers
     using System.Collections.Generic;
     using System.Linq;
 
+    using global::DotNetNuke.Data;
+    using global::DotNetNuke.Entities.Portals;
     using global::DotNetNuke.Security.Roles;
 
+    using YAF.Configuration;
     using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.Core.Model;
     using YAF.Types;
     using YAF.Types.Interfaces;
-    using YAF.Types.Interfaces.Data;
     using YAF.Types.Models;
 
     #endregion
@@ -44,73 +46,9 @@ namespace YAF.DotNetNuke.Components.Controllers
     /// <summary>
     /// Module Data Controller to Handle SQL Stuff
     /// </summary>
-    public class Data
+    public class DataController
     {
         #region Public Methods
-
-        /// <summary>
-        /// Get The list of all boards
-        /// </summary>
-        /// <returns>
-        /// Returns the List of all boards
-        /// </returns>
-        public static List<Board> ListBoards()
-        {
-            return BoardContext.Current.GetRepository<Board>().GetAll().Select(b => new Board { ID = b.ID }).ToList();
-        }
-
-        /// <summary>
-        /// Get The Latest Post from SQL
-        /// </summary>
-        /// <param name="boardId">
-        /// The Board Id of the Board
-        /// </param>
-        /// <param name="numOfPostsToRetrieve">
-        /// How many post should been retrieved
-        /// </param>
-        /// <param name="pageUserId">
-        /// Current Users Id
-        /// </param>
-        /// <param name="showNoCountPosts">
-        /// if set to <c>true</c> [show no count posts].
-        /// </param>
-        /// <param name="sortOrder">
-        /// The sort Order 0 == LastPosted, 1 == Views, 2 == Number of Posts.
-        /// </param>
-        /// <param name="findLastRead">
-        /// if set to <c>true</c> [find last read].
-        /// </param>
-        /// <returns>
-        /// Returns the Table of Latest Posts
-        /// </returns>
-        public static List<dynamic> TopicLatest(
-            int boardId,
-            int numOfPostsToRetrieve,
-            int pageUserId,
-            bool showNoCountPosts,
-            int sortOrder,
-            bool findLastRead = false)
-        {
-            return BoardContext.Current.GetRepository<Topic>().Latest(
-                boardId,
-                0,
-                numOfPostsToRetrieve,
-                pageUserId,
-                showNoCountPosts,
-                findLastRead,
-                sortOrder);
-        }
-
-        /// <summary>
-        /// Add active access row for the current user outside of YAF
-        /// </summary>
-        /// <param name="boardId">The board id.</param>
-        /// <param name="userId">The user id.</param>
-        /// <param name="isGuest">if set to <c>true</c> [is guest].</param>
-        public static void ActiveAccessUser(int boardId, int userId, bool isGuest)
-        {
-            BoardContext.Current.GetRepository<ActiveAccess>().InsertPageAccess(boardId, userId, isGuest);
-        }
 
         /// <summary>
         /// Gets the YAF board roles.
@@ -141,13 +79,7 @@ namespace YAF.DotNetNuke.Components.Controllers
 
             roles.AddRange(
                 from AccessMask row in masks
-                select
-                    new RoleInfo
-                        {
-                            RoleName = row.Name,
-                            RoleID = row.ID,
-                            RoleGroupID = row.Flags
-                        });
+                select new RoleInfo { RoleName = row.Name, RoleID = row.ID, RoleGroupID = row.Flags });
 
             return roles;
         }
@@ -171,12 +103,18 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// <summary>
         /// Imports the active forums.
         /// </summary>
-        /// <param name="moduleId">The module identifier.</param>
-        /// <param name="boardId">The board identifier.</param>
-        public static void ImportActiveForums([NotNull] int moduleId, [NotNull] int boardId)
+        /// <param name="moduleId">
+        /// The module identifier.
+        /// </param>
+        /// <param name="boardId">
+        /// The board identifier.
+        /// </param>
+        /// <param name="portalSettings">
+        /// The portal Settings.
+        /// </param>
+        public static void ImportActiveForums([NotNull] int moduleId, [NotNull] int boardId, [NotNull] PortalSettings portalSettings)
         {
-            BoardContext.Current.Get<IDbFunction>().Scalar
-                .ImportActiveForums(oModuleID: moduleId, tplBoardID: boardId);
+            DataProvider.Instance().ExecuteNonQuery($"{Config.DatabaseObjectQualifier}ImportActiveForums", moduleId, boardId, portalSettings.PortalId);
         }
 
         #endregion

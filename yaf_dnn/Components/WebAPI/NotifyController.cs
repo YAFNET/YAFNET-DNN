@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -33,8 +33,8 @@ namespace YAF.DotNetNuke.Components.WebAPI
 
     using YAF.Core.Context;
     using YAF.Core.Extensions;
+    using YAF.Core.Helpers;
     using YAF.Core.Services;
-    using YAF.Core.Utilities.Helpers;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;

@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -38,7 +38,6 @@ namespace YAF.DotNetNuke
 
     using YAF.Core.Context;
     using YAF.Core.Extensions;
-    using YAF.DotNetNuke.Components.Controllers;
     using YAF.DotNetNuke.Components.Utils;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
@@ -135,8 +134,8 @@ namespace YAF.DotNetNuke
             }
 
             var boards = BoardContext.Current != null
-                             ? BoardContext.Current.GetRepository<Board>().GetAll()
-                             : Data.ListBoards();
+                ? BoardContext.Current.GetRepository<Board>().GetAll()
+                : BoardContext.Current.GetRepository<Board>().GetAll().Select(b => new Board { ID = b.ID }).ToList();
 
             settings.Tables[0].Rows.Cast<DataRow>().ForEach(dataRow =>
             {
