@@ -243,7 +243,7 @@
       <Version>9.10.1</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.Core">
-      <Version>9.10.0</Version>
+      <Version>9.10.1</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.WebApi">
       <Version>9.10.1</Version>
