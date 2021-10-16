@@ -180,14 +180,14 @@ namespace YAF.DotNetNuke.Components.Integration
         /// </returns>
         public bool ApproveUser(int userID)
         {
-            var providerUserKey = this.Get<IAspNetUsersHelper>().GetUserProviderKeyFromUserID(userID);
+            var yafUser = this.GetRepository<User>().GetById(userID);
 
-            if (providerUserKey == null)
+            if (yafUser?.ProviderUserKey == null)
             {
                 return false;
             }
 
-            var user = this.Get<IAspNetUsersHelper>().GetUser(providerUserKey);
+            var user = this.Get<IAspNetUsersHelper>().GetUser(yafUser.ProviderUserKey);
 
             if (!user.IsApproved)
             {
@@ -196,7 +196,7 @@ namespace YAF.DotNetNuke.Components.Integration
 
             this.Get<AspNetUsersManager>().Update(user);
 
-            this.GetRepository<User>().Approve(userID);
+            this.GetRepository<User>().Approve(yafUser);
 
             var checkEmail = this.GetRepository<CheckEmail>().GetSingle(m => m.UserID == userID);
 
@@ -1293,7 +1293,7 @@ namespace YAF.DotNetNuke.Components.Integration
                         });
 
                     // Set Sorting
-                    if (sortName.HasValue)
+                    if (sortName is > 0)
                     {
                         if (sortName.Value == 1)
                         {
@@ -1305,7 +1305,7 @@ namespace YAF.DotNetNuke.Components.Integration
                         }
                     }
 
-                    if (sortRank.HasValue)
+                    if (sortRank is > 0)
                     {
                         if (sortRank.Value == 1)
                         {
@@ -1317,7 +1317,7 @@ namespace YAF.DotNetNuke.Components.Integration
                         }
                     }
 
-                    if (sortJoined.HasValue)
+                    if (sortJoined is > 0)
                     {
                         if (sortJoined.Value == 1)
                         {
@@ -1329,7 +1329,7 @@ namespace YAF.DotNetNuke.Components.Integration
                         }
                     }
 
-                    if (sortLastVisit.HasValue)
+                    if (sortLastVisit is > 0)
                     {
                         if (sortLastVisit.Value == 1)
                         {
@@ -1341,7 +1341,7 @@ namespace YAF.DotNetNuke.Components.Integration
                         }
                     }
 
-                    if (sortPosts.HasValue)
+                    if (sortPosts is > 0)
                     {
                         if (sortPosts.Value == 1)
                         {

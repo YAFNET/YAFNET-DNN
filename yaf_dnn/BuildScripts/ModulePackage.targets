@@ -241,11 +241,9 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Owin.Security.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Owin.Security.OAuth.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Owin.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.Common.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.Interfaces.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.SqlServer.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\ServiceStack.Text.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\System.Buffers.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\System.Diagnostics.DiagnosticSource.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\System.Memory.dll" />

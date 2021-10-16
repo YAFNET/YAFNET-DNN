@@ -1,11 +1,8 @@
 ﻿[![YAF logo](https://yetanotherforum.net/forum/Content/images/YAFLogo.svg)](http://www.yetanotherforum.net)
 
-*YetAnotherForum.NET* _(YAF.NET)_ is an Open Source Discussion Forum for sites running ASP.NET. 100% written in C#. YAF.NET runs on any web server that supports ASP.NET v4.72 (or above) and SQL Server 2012 or above.
+*YetAnotherForum.NET* _(YAF.NET)_ is an Open Source Discussion Forum for sites running ASP.NET. 100% written in C#. YAF.NET runs on any web server that supports ASP.NET v4.8 (or above) and SQL Server 2012 or above.
 
 *YAF.NET* is a feature rich communication platform combining an International Open Source community and the Microsoft's technologies.
-
-![projectbadge](http://www.ohloh.net/p/yaf/widgets/project_partner_badge.gif)
-
 
 ### Features
 
@@ -13,7 +10,7 @@
 
 ## DNN® (DotNetNuke) Module
 
-This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 09.03.01 or higher).
+This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 09.10.01 or higher).
 
 ## Demo Forum
 

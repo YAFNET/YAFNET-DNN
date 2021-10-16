@@ -16,7 +16,7 @@
       <license src="License.html" />
       <releaseNotes src="ReadMe.html" />
       <dependencies>
-        <dependency type="CoreVersion">09.10.00</dependency>
+        <dependency type="CoreVersion">09.10.01</dependency>
       </dependencies>
       <components>
         <component type="Module">
@@ -97,19 +97,13 @@
               <name>J2N.dll</name>
             </assembly>
             <assembly>
-              <name>ServiceStack.Common.dll</name>
-            </assembly>
-            <assembly>
-              <name>ServiceStack.Interfaces.dll</name>
+              <name>ServiceStack.dll</name>
             </assembly>
             <assembly>
               <name>ServiceStack.OrmLite.dll</name>
             </assembly>
             <assembly>
               <name>ServiceStack.OrmLite.SqlServer.dll</name>
-            </assembly>
-            <assembly>
-              <name>ServiceStack.Text.dll</name>
             </assembly>
             <assembly>
               <name>System.Buffers.dll</name>
@@ -308,7 +302,19 @@
         <component type="Cleanup" version="02.30.005901" fileName="02.30.005901.txt" />
         <component type="Cleanup" version="03.00.006100">
           <files>
-            <file>
+			  <file>
+				  <path>bin</path>
+				  <name>ServiceStack.Text.dll</name>
+			  </file>
+	          <file>
+		          <path>bin</path>
+		          <name>ServiceStack.Common.dll</name>
+	          </file>
+	          <file>
+		          <path>bin</path>
+		          <name>ServiceStack.Interfaces.dll</name>
+	          </file>
+			  <file>
               <path>bin</path>
               <name>YAF.Utils.dll</name>
             </file>
@@ -358,13 +364,11 @@
                   <node path="/configuration/system.net" action="remove" />
                   <node path="/configuration/appSettings" action="update" key="key" collision="ignore">
                     <add key="YAF.BoardID" value="1" />
-                    <add key="YAF.UseSMTPSSL" value="false" />
                     <add key="YAF.DatabaseObjectQualifier" value="yaf_" />
                     <add key="YAF.DatabaseOwner" value="dbo" />
                     <add key="YAF.ConnectionStringName" value="SiteSqlServer" />
                     <add key="YAF.FileRoot" value="~/DesktopModules/YetAnotherForumDotNet" />
                     <add key="YAF.AppRoot" value="~/DesktopModules/YetAnotherForumDotNet" />
-                    <add key="YAF.BaseUrlMask" value="" />
                     <add key="YAF.ForceScriptName" value="default.aspx" />
                     <add key="YAF.ShowToolBar" value="true" />
                     <add key="YAF.AllowLoginAndLogoff" value="false" />
@@ -539,7 +543,7 @@
       <license src="License.html" />
       <releaseNotes />
       <dependencies>
-        <dependency type="CoreVersion">09.10.00</dependency>
+        <dependency type="CoreVersion">09.10.01</dependency>
       </dependencies>
       <components>
         <component type="Module">
@@ -609,7 +613,7 @@
         </component>
       </components>
     </package>
-    <package name="bootstrap-bundle" type="JavaScript_Library" version="5.0.2">
+    <package name="bootstrap-bundle" type="JavaScript_Library" version="5.1.3">
       <friendlyName>Bootstrap JavaScript Bundle (width Popper.js)</friendlyName>
       <description>
         <![CDATA[<p>Bootstrap is a sleek, intuitive, and powerful front-end framework for faster and easier web development, created and maintained by <a href="http://twitter.com/mdo">Mark Otto</a> and <a href="http://twitter.com/fat">Jacob Thornton</a>.</p>
@@ -618,7 +622,7 @@
       <owner>
         <name>Ingo Herbote</name>
         <organization>Herbote Services</organization>
-        <url>https://yetanotherforum.net/forum/Posts/t21774findunread-Possible-to-show-post-date-and-last-comment-date-in-post-list</url>
+        <url>https://yetanotherforum.net/</url>
         <email>support@yetanotherforum.com</email>
       </owner>
       <azureCompatible>true</azureCompatible>
@@ -630,7 +634,7 @@
           <javaScriptLibrary>
             <libraryName>bootstrap-bundle</libraryName>
             <fileName>bootstrap.bundle.min.js</fileName>
-            <CDNPath>https://maxcdn.bootstrapcdn.com/bootstrap/5.0.2/js/bootstrap.bundle.min.js</CDNPath>
+            <CDNPath>https://maxcdn.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js</CDNPath>
             <objectName>jQuery.fn.scrollspy</objectName>
           </javaScriptLibrary>
         </component>
