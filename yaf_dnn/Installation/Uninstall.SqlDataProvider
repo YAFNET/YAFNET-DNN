@@ -1,3 +1,7 @@
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'{databaseOwner}{objectQualifier}YafDnn_LastUpdatedProfile') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+DROP PROCEDURE {databaseOwner}{objectQualifier}YafDnn_LastUpdatedProfile
+GO
+
 IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_ImportActiveForums') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}{objectQualifier}yaf_ImportActiveForums
 GO
@@ -14,10 +18,6 @@ IF  exists (select top 1 1 from {databaseOwner}sysobjects where id = OBJECT_ID(N
 DROP PROCEDURE {databaseOwner}{objectQualifier}yaf_YafDnn_Topics
 GO
 
-IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'{databaseOwner}{objectQualifier}YafDnn_LastUpdatedProfile') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
-DROP PROCEDURE {databaseOwner}{objectQualifier}YafDnn_LastUpdatedProfile
-GO
-
 IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'{databaseOwner}{objectQualifier}YafDnn_GetPortalRoles') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}{objectQualifier}YafDnn_GetPortalRoles
 GO
@@ -29,7 +29,7 @@ GO
 /****YAF DNN SQL UNINSTALL SCRIPT BY INGO HERBOTE*/
 /**CONTRAINTS**/
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'FK_{objectQualifier}yaf_UserProfile_{objectQualifier}yaf_User') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
-	ALTER TABLE {databaseOwner}{objectQualifier}yaf_UserProfile DROP CONSTRAINT FK_{objectQualifier}yaf_UserProfile_{objectQualifier}yaf_User
+    ALTER TABLE {databaseOwner}{objectQualifier}yaf_UserProfile DROP CONSTRAINT FK_{objectQualifier}yaf_UserProfile_{objectQualifier}yaf_User
 go
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'FK_{objectQualifier}yaf_UserAlbumImage_{objectQualifier}yaf_UserAlbum') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
@@ -107,7 +107,6 @@ GO
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'FK_{objectQualifier}yaf_Active_{objectQualifier}yaf_User') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
 ALTER TABLE {databaseOwner}{objectQualifier}yaf_Active DROP CONSTRAINT FK_{objectQualifier}yaf_Active_{objectQualifier}yaf_User
 GO
-
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'FK_{objectQualifier}yaf_User_{objectQualifier}yaf_Board') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
 ALTER TABLE {databaseOwner}{objectQualifier}yaf_User DROP CONSTRAINT FK_{objectQualifier}yaf_User_{objectQualifier}yaf_Board
@@ -362,10 +361,6 @@ if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'
 DROP TABLE {databaseOwner}{objectQualifier}yaf_Tag
 GO
 
-if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Topic]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE {databaseOwner}{objectQualifier}yaf_Topic
-GO
-
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Smiley]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 DROP TABLE {databaseOwner}{objectQualifier}yaf_Smiley
 GO
@@ -390,25 +385,18 @@ if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'
 DROP TABLE {databaseOwner}{objectQualifier}yaf_prov_Application
 GO
 
-if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Poll]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE {databaseOwner}{objectQualifier}yaf_Poll
-GO
-
-if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_PMessage]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE {databaseOwner}{objectQualifier}yaf_PMessage
-GO
-
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_NntpTopic]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 DROP TABLE {databaseOwner}{objectQualifier}yaf_NntpTopic
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_NntpForum]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_NntpForum
 GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_NntpServer]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 DROP TABLE {databaseOwner}{objectQualifier}yaf_NntpServer
 GO
 
-if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_NntpForum]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE {databaseOwner}{objectQualifier}yaf_NntpForum
-GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_MessageReportedAudit]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 DROP TABLE {databaseOwner}{objectQualifier}yaf_MessageReportedAudit
@@ -442,20 +430,12 @@ if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'
 DROP TABLE {databaseOwner}{objectQualifier}yaf_ForumAccess
 GO
 
-if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Forum]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE {databaseOwner}{objectQualifier}yaf_Forum
-GO
-
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Choice]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 DROP TABLE {databaseOwner}{objectQualifier}yaf_Choice
 GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_CheckEmail]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
 DROP TABLE {databaseOwner}{objectQualifier}yaf_CheckEmail
-GO
-
-if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Category]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE {databaseOwner}{objectQualifier}yaf_Category
 GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_BBCode]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
@@ -562,10 +542,21 @@ if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'
 DROP TABLE {databaseOwner}{objectQualifier}yaf_Spam_Words
 GO
 
-if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Board]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE {databaseOwner}{objectQualifier}yaf_Board
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_PMessage]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_PMessage
 GO
 
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_ProfileCustom]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_ProfileCustom
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_ProfileDefinition]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_ProfileDefinition
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_User]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_User
+GO
 
 /****PROCEDURES**/
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_accessmask_delete') AND Objectproperty(id,N'IsProcedure') = 1)
@@ -1411,43 +1402,43 @@ drop procedure {databaseOwner}{objectQualifier}yaf_user_simplelist
 GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_bbcode_delete') AND Objectproperty(id,N'IsProcedure') = 1)
-	drop procedure {databaseOwner}{objectQualifier}yaf_bbcode_delete
+    drop procedure {databaseOwner}{objectQualifier}yaf_bbcode_delete
 GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_bbcode_list') AND Objectproperty(id,N'IsProcedure') = 1)
-	drop procedure {databaseOwner}{objectQualifier}yaf_bbcode_list
+    drop procedure {databaseOwner}{objectQualifier}yaf_bbcode_list
 GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_bbcode_save') AND Objectproperty(id,N'IsProcedure') = 1)
-	drop procedure {databaseOwner}{objectQualifier}yaf_bbcode_save
+    drop procedure {databaseOwner}{objectQualifier}yaf_bbcode_save
 GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_user_addignoreduser') AND Objectproperty(id,N'IsProcedure') = 1)
-	drop procedure {databaseOwner}{objectQualifier}yaf_user_addignoreduser
+    drop procedure {databaseOwner}{objectQualifier}yaf_user_addignoreduser
 GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_user_removeignoreduser') AND Objectproperty(id,N'IsProcedure') = 1)
-	drop procedure {databaseOwner}{objectQualifier}yaf_user_removeignoreduser
+    drop procedure {databaseOwner}{objectQualifier}yaf_user_removeignoreduser
 GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_user_isuserignored') AND Objectproperty(id,N'IsProcedure') = 1)
-	drop procedure {databaseOwner}{objectQualifier}yaf_user_isuserignored
+    drop procedure {databaseOwner}{objectQualifier}yaf_user_isuserignored
 GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_user_ignoredlist') AND Objectproperty(id,N'IsProcedure') = 1)
-	drop procedure {databaseOwner}{objectQualifier}yaf_user_ignoredlist
+    drop procedure {databaseOwner}{objectQualifier}yaf_user_ignoredlist
 GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_shoutbox_getmessages') AND Objectproperty(id,N'IsProcedure') = 1)
-	drop procedure {databaseOwner}{objectQualifier}yaf_shoutbox_getmessages
+    drop procedure {databaseOwner}{objectQualifier}yaf_shoutbox_getmessages
 GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_shoutbox_savemessage') AND Objectproperty(id,N'IsProcedure') = 1)
-	drop procedure {databaseOwner}{objectQualifier}yaf_shoutbox_savemessage
+    drop procedure {databaseOwner}{objectQualifier}yaf_shoutbox_savemessage
 GO
 
 if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}{objectQualifier}yaf_shoutbox_clearmessages') AND Objectproperty(id,N'IsProcedure') = 1)
-	drop procedure {databaseOwner}{objectQualifier}yaf_shoutbox_clearmessages
+    drop procedure {databaseOwner}{objectQualifier}yaf_shoutbox_clearmessages
 GO
 
 /* These stored procedures are for the Thanks Table. For safety, first check to see if they exist. If so, drop them. */
@@ -2038,4 +2029,36 @@ GO
 
 IF  exists(select top 1 1 from sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}{objectQualifier}yaf_message_getthanksinfo') AND type in (N'FN', N'IF', N'TF'))
 DROP FUNCTION {databaseOwner}{objectQualifier}yaf_message_getthanksinfo
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Poll]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_Poll
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Topic]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_Topic
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Forum]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_Forum
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Category]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_Category
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_User]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_User
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Rank]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_Rank
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_AccessMask]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_AccessMask
+GO
+
+if exists (select top 1 1 from {databaseOwner}sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}yaf_Board]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+DROP TABLE {databaseOwner}{objectQualifier}yaf_Board
 GO

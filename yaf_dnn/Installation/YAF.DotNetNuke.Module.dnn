@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="YetAnotherForumDotNet" type="Module" version="02.31.156018">
+    <package name="YetAnotherForumDotNet" type="Module" version="03.00.006100">
       <friendlyName>YAF.NET Forums</friendlyName>
       <description>
         &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; as DNN Module. Yet Another Forum.NET (YAF) is an open source ASP.NET forum system.&lt;br /&gt;
@@ -16,12 +16,16 @@
       <license src="License.html" />
       <releaseNotes src="ReadMe.html" />
       <dependencies>
-        <dependency type="CoreVersion">09.09.01</dependency>
+        <dependency type="CoreVersion">09.10.01</dependency>
       </dependencies>
       <components>
         <component type="Module">
           <desktopModule>
             <moduleName>YetAnotherForumDotNet</moduleName>
+            <businessControllerClass>YAF.DotNetNuke.Components.Controllers.UpgradeController, YAF.DotNetNuke.Module</businessControllerClass>
+            <supportedFeatures>
+              <supportedFeature type="Upgradeable" />
+            </supportedFeatures>
             <foldername>YetAnotherForumDotNet</foldername>
             <moduleDefinitions>
               <moduleDefinition>
@@ -60,6 +64,15 @@
               </moduleDefinition>
             </moduleDefinitions>
           </desktopModule>
+          <eventMessage>
+            <processorType>DotNetNuke.Entities.Modules.EventMessageProcessor, DotNetNuke</processorType>
+            <processorCommand>UpgradeModule</processorCommand>
+            <attributes>
+              <businessControllerClass>YAF.DotNetNuke.Components.Controllers.UpgradeController, YAF.DotNetNuke.Module</businessControllerClass>
+              <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
+              <upgradeVersionsList>03.00.006100</upgradeVersionsList>
+            </attributes>
+          </eventMessage>
         </component>
         <component type="File">
           <files>
@@ -67,6 +80,10 @@
             <file>
               <name>yaf.svg</name>
               <sourceFileName>yaf.svg</sourceFileName>
+            </file>
+            <file>
+              <name>03.00.006100.sql</name>
+              <sourceFileName>03.00.006100.sql</sourceFileName>
             </file>
           </files>
         </component>
@@ -80,19 +97,13 @@
               <name>J2N.dll</name>
             </assembly>
             <assembly>
-              <name>ServiceStack.Common.dll</name>
-            </assembly>
-            <assembly>
-              <name>ServiceStack.Interfaces.dll</name>
+              <name>ServiceStack.dll</name>
             </assembly>
             <assembly>
               <name>ServiceStack.OrmLite.dll</name>
             </assembly>
             <assembly>
               <name>ServiceStack.OrmLite.SqlServer.dll</name>
-            </assembly>
-            <assembly>
-              <name>ServiceStack.Text.dll</name>
             </assembly>
             <assembly>
               <name>System.Buffers.dll</name>
@@ -113,6 +124,27 @@
               <name>System.Threading.Tasks.Extensions.dll</name>
             </assembly>
             <assembly>
+              <name>System.ValueTuple.dll</name>
+            </assembly>
+            <assembly>
+              <name>Microsoft.AspNet.Identity.Core.dll</name>
+            </assembly>
+            <assembly>
+              <name>Microsoft.AspNet.Identity.Owin.dll</name>
+            </assembly>
+            <assembly>
+              <name>Microsoft.Owin.Host.SystemWeb.dll</name>
+            </assembly>
+            <assembly>
+              <name>Microsoft.Owin.Security.Cookies.dll</name>
+            </assembly>
+            <assembly>
+              <name>Microsoft.Owin.Security.dll</name>
+            </assembly>
+            <assembly>
+              <name>Microsoft.Owin.dll</name>
+            </assembly>
+            <assembly>
               <name>Microsoft.Bcl.AsyncInterfaces.dll</name>
             </assembly>
             <assembly>
@@ -120,6 +152,9 @@
             </assembly>
             <assembly>
               <name>Microsoft.Extensions.Configuration.Abstractions.dll</name>
+            </assembly>
+            <assembly>
+              <name>Owin.dll</name>
             </assembly>
             <assembly>
               <name>YAF.Configuration.dll</name>
@@ -146,7 +181,7 @@
               <name>YAF.Lucene.Net.QueryParser.dll</name>
             </assembly>
             <assembly>
-              <name>YAF.Data.MsSql.dll</name>
+              <name>YAF.Data.SqlServer.dll</name>
             </assembly>
             <assembly>
               <name>YAF.dll</name>
@@ -155,13 +190,7 @@
               <name>YAF.DotNetNuke.Module.dll</name>
             </assembly>
             <assembly>
-              <name>YAF.Providers.dll</name>
-            </assembly>
-            <assembly>
               <name>YAF.Types.dll</name>
-            </assembly>
-            <assembly>
-              <name>YAF.Utils.dll</name>
             </assembly>
             <assembly>
               <name>FarsiLibrary.Localization.dll</name>
@@ -271,6 +300,34 @@
           </files>
         </component>
         <component type="Cleanup" version="02.30.005901" fileName="02.30.005901.txt" />
+        <component type="Cleanup" version="03.00.006100">
+          <files>
+			  <file>
+				  <path>bin</path>
+				  <name>ServiceStack.Text.dll</name>
+			  </file>
+	          <file>
+		          <path>bin</path>
+		          <name>ServiceStack.Common.dll</name>
+	          </file>
+	          <file>
+		          <path>bin</path>
+		          <name>ServiceStack.Interfaces.dll</name>
+	          </file>
+			  <file>
+              <path>bin</path>
+              <name>YAF.Utils.dll</name>
+            </file>
+            <file>
+              <path>bin</path>
+              <name>YAF.Providers.dll</name>
+            </file>
+            <file>
+            <path>bin</path>
+            <name>YAF.Data.MsSql.dll</name>
+            </file>
+          </files>
+        </component>
         <component type="Config">
           <config>
             <configFile>web.config</configFile>
@@ -278,14 +335,14 @@
               <configuration>
                 <nodes>
                   <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http']" action="update" targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http']/ab:bindingRedirect" collision="save"  nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.3.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
+                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.7.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
                   </node>
                   <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http.WebHost']"
                         action="update"
                         targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http.WebHost']/ab:bindingRedirect"
                         collision="save"
                         nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.3.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
+                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.7.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
                   </node>
                   <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='Microsoft.Extensions.Primitives']"
                         action="update"
@@ -307,21 +364,14 @@
                   <node path="/configuration/system.net" action="remove" />
                   <node path="/configuration/appSettings" action="update" key="key" collision="ignore">
                     <add key="YAF.BoardID" value="1" />
-                    <add key="YAF.EnableURLRewriting" value="true" />
-                    <add key="YAF.UseSMTPSSL" value="false" />
                     <add key="YAF.DatabaseObjectQualifier" value="yaf_" />
                     <add key="YAF.DatabaseOwner" value="dbo" />
                     <add key="YAF.ConnectionStringName" value="SiteSqlServer" />
-                    <add key="YAF.ProviderExceptionXML" value="ProviderExceptions.xml" />
-                    <add key="YAF.ProviderKeyType" value="System.Guid" />
                     <add key="YAF.FileRoot" value="~/DesktopModules/YetAnotherForumDotNet" />
                     <add key="YAF.AppRoot" value="~/DesktopModules/YetAnotherForumDotNet" />
-                    <add key="YAF.BaseUrlMask" value="" />
                     <add key="YAF.ForceScriptName" value="default.aspx" />
                     <add key="YAF.ShowToolBar" value="true" />
                     <add key="YAF.AllowLoginAndLogoff" value="false" />
-                    <add key="YAF.ConfigPassword" value="pass" />
-                    <add key="YAF.URLRewritingMode" value="Unicode" />
                   </node>
                   <node path="/configuration/system.webServer" targetpath="/configuration/system.webServer/staticContent" action="update" collision="ignore">
                     <staticContent>
@@ -333,12 +383,6 @@
                     <remove fileExtension=".woff2" />
                     <mimeMap fileExtension=".woff2" mimeType="font/woff2" />
                   </node>
-                  <node path="/configuration/system.webServer/modules" action="update" key="name" collision="overwrite">
-                     <remove name="YafTaskModule" />
-                  </node>
-                  <node path="/configuration/system.webServer/modules" action="update" key="name" collision="overwrite">
-                     <add name="YafTaskModule" type="YAF.Core.TaskModule, YAF.Core" preCondition="managedHandler" />
-                  </node>
                   <node path="/configuration/system.webServer/handlers" action="update" key="name" collision="overwrite">
                     <add name="YafHandler" preCondition="integratedMode" verb="GET" path="Resource.ashx" type="YAF.Core.Handlers.ResourceHandler, YAF.Core" />
           <add name="FileUploader"
@@ -346,9 +390,6 @@
            verb="*"
            type="YAF.Core.Handlers.FileUploader, YAF.Core"
            preCondition="integratedMode" />
-                  </node>
-                  <node path="/configuration/system.web/httpModules" action="update" key="name" collision="overwrite">
-                     <add name="YafTaskModule" type="YAF.Core.TaskModule, YAF.Core" />
                   </node>
                   <node path="/configuration/system.web/compilation/assemblies" action="update" key="assembly" collision="overwrite">
                      <add assembly="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
@@ -373,9 +414,6 @@
                     <add namespace="YAF.Web.Controls"/>
                   </node>
                   <node path="/configuration/system.web/pages/namespaces" action="update" key="namespace" collision="overwrite">
-                    <add namespace="YAF.Utils"/>
-                  </node>
-                  <node path="/configuration/system.web/pages/namespaces" action="update" key="namespace" collision="overwrite">
                     <add namespace="YAF.Types.Interfaces"/>
                   </node>
                   <node path="/configuration/system.web/pages/namespaces" action="update" key="namespace" collision="overwrite">
@@ -386,23 +424,7 @@
                     <add verb="GET" path="Resource.ashx" type="YAF.Core.Handlers.ResourceHandler, YAF" />
                   </node>
                   <node path="/configuration/system.web" action="update" key="enabled" collision="overwrite">
-                    <roleManager enabled="true" defaultProvider="AspNetSqlRoleProvider">
-                      <providers>
-                        <clear />
-                        <add connectionStringName="SiteSqlServer" applicationName="DotNetNuke" name="AspNetSqlRoleProvider" type="System.Web.Security.SqlRoleProvider" />
-                      </providers>
-                    </roleManager>
-                  </node>
-                  <node path="/configuration/system.web" action="update" key="enabled" collision="overwrite">
                     <trace enabled="false" />
-                  </node>
-                  <node path="/configuration/system.web" action="update" key="enabled" collision="overwrite">
-                    <profile enabled="true" defaultProvider="AspNetSqlProfileProvider" inherits="YAF.Utils.YafUserProfile">
-                      <providers>
-                        <clear />
-                        <add connectionStringName="SiteSqlServer" applicationName="DotNetNuke" name="AspNetSqlProfileProvider" type="YAF.Providers.Profile.YafProfileProvider" />
-                      </providers>
-                    </profile>
                   </node>
                   <node path="/configuration/system.web/pages/controls/add[starts-with(@namespace,'YAF.Classes.UI')]" action="remove" />
                   <node path="/configuration/system.web/pages/namespaces/add[starts-with(@namespace,'YAF.Classes.UI')]" action="remove" />
@@ -422,6 +444,12 @@
                   <node path="/configuration/system.webServer/modules/remove[@name='UrlRewriter']" action="remove" />
                   <node path="/configuration/system.webServer/modules/add[@name='UrlRewriter']" action="remove" />
                   <node path="/configuration/system.web/httpModules/add[@name='UrlRewriter']" action="remove" />
+                  <node path="/configuration/system.web/profile" action="remove" />
+                  <node path="/configuration/system.web/roleManager" action="remove" />
+                  <node path="/configuration/system.web/pages/namespaces/add[starts-with(@namespace,'YAF.Utils')]" action="remove" />
+                  <node path="/configuration/system.webServer/modules/remove[@name='YafTaskModule']" action="remove" />
+                  <node path="/configuration/system.webServer/modules/add[@name='YafTaskModule']" action="remove" />
+                  <node path="/configuration/system.web/httpModules/add[@name='YafTaskModule']" action="remove" />
                 </nodes>
               </configuration>
             </install>
@@ -491,10 +519,6 @@
         <component type="Script">
           <scripts>
             <basePath>DesktopModules\YetAnotherForumDotNet\</basePath>
-            <script type="Install">
-              <name>01.96.10.SqlDataProvider</name>
-              <version>01.96.10</version>
-            </script>
             <script type="UnInstall">
               <name>Uninstall.SqlDataProvider</name>
             </script>
@@ -502,7 +526,7 @@
         </component>
       </components>
     </package>
-    <package name="YAF.WhatsNew" type="Module" version="02.31.156018">
+    <package name="YAF.WhatsNew" type="Module" version="03.00.006100">
       <friendlyName>YAF.NET Forums What's New</friendlyName>
       <description>
         &lt;p&gt;This Module displays the Latest Posts from a  &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; Module. Based on the Current Users Authorization Level. You can define Which Forum should been used, and how many Posts should displayed.
@@ -519,7 +543,7 @@
       <license src="License.html" />
       <releaseNotes />
       <dependencies>
-        <dependency type="CoreVersion">09.09.01</dependency>
+        <dependency type="CoreVersion">09.10.01</dependency>
       </dependencies>
       <components>
         <component type="Module">
@@ -589,7 +613,7 @@
         </component>
       </components>
     </package>
-    <package name="bootstrap-bundle" type="JavaScript_Library" version="4.6.0">
+    <package name="bootstrap-bundle" type="JavaScript_Library" version="5.1.3">
       <friendlyName>Bootstrap JavaScript Bundle (width Popper.js)</friendlyName>
       <description>
         <![CDATA[<p>Bootstrap is a sleek, intuitive, and powerful front-end framework for faster and easier web development, created and maintained by <a href="http://twitter.com/mdo">Mark Otto</a> and <a href="http://twitter.com/fat">Jacob Thornton</a>.</p>
@@ -598,7 +622,7 @@
       <owner>
         <name>Ingo Herbote</name>
         <organization>Herbote Services</organization>
-        <url>https://yetanotherforum.net/forum/Posts/t21774findunread-Possible-to-show-post-date-and-last-comment-date-in-post-list</url>
+        <url>https://yetanotherforum.net/</url>
         <email>support@yetanotherforum.com</email>
       </owner>
       <azureCompatible>true</azureCompatible>
@@ -610,7 +634,7 @@
           <javaScriptLibrary>
             <libraryName>bootstrap-bundle</libraryName>
             <fileName>bootstrap.bundle.min.js</fileName>
-            <CDNPath>https://maxcdn.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.bundle.min.js</CDNPath>
+            <CDNPath>https://maxcdn.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js</CDNPath>
             <objectName>jQuery.fn.scrollspy</objectName>
           </javaScriptLibrary>
         </component>

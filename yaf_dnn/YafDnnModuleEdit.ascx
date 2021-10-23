@@ -41,9 +41,9 @@
         <asp:PlaceHolder runat="server" ID="ActiveForumsPlaceHolder">
         <div class="dnnFormItem">
             <dnn:label id="ActiveForumsImport" runat="server" controlname="ActiveForums" Suffix="?"></dnn:label>
-            <asp:DropDownList id="ActiveForums" runat="server" 
+            <asp:DropDownList id="ActiveForums" runat="server"
                 datavaluefield="ModuleID" datatextfield="ModuleTitle">
-            </asp:DropDownList>
+            </asp:DropDownList>&nbsp;
             <asp:LinkButton runat="server" id="ImportForums" CssClass="dnnPrimaryAction" OnClick="ImportForums_OnClick" />
         <div class="dnnFormMessage dnnFormInfo"><%= this.LocalizeString("NoteAF")%></div>
         </div>

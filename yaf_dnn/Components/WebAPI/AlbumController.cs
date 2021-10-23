@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -32,13 +32,13 @@ namespace YAF.DotNetNuke.Components.WebAPI
 
     using Newtonsoft.Json.Linq;
 
-    using YAF.Core;
+    using YAF.Configuration;
+    using YAF.Core.Context;
     using YAF.Core.Model;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
     using YAF.Types.Objects;
-    using YAF.Utils;
 
     /// <summary>
     /// The YAF Album controller.
@@ -53,24 +53,6 @@ namespace YAF.DotNetNuke.Components.WebAPI
         public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
 
         #endregion
-
-        /// <summary>
-        /// The change album title.
-        /// </summary>
-        /// <param name="jsonData">
-        /// The JSON Data.
-        /// </param>
-        /// <returns>
-        /// the return object.
-        /// </returns>
-        [DnnAuthorize]
-        [HttpPost]
-        public IHttpActionResult ChangeAlbumTitle(JObject jsonData)
-        {
-            dynamic json = jsonData;
-
-            return this.Ok(this.Get<IAlbum>().ChangeAlbumTitle((int)json.AlbumId, (string)json.NewTitle));
-        }
 
         /// <summary>
         /// The change image caption.
@@ -103,14 +85,14 @@ namespace YAF.DotNetNuke.Components.WebAPI
         [HttpPost]
         public IHttpActionResult GetAlbumImages(PagedResults pagedResults)
         {
-            var userId = pagedResults.UserId;
+            var userId = BoardContext.Current.PageUserID;
             var pageSize = pagedResults.PageSize;
             var pageNumber = pagedResults.PageNumber;
 
             var albumImages = this.GetRepository<UserAlbumImage>().GetUserAlbumImagesPaged(
-                userId: userId,
-                pageIndex: pageNumber,
-                pageSize: pageSize);
+                userId,
+                pageNumber,
+                pageSize);
 
             var images = new List<AttachmentItem>();
 
@@ -122,9 +104,9 @@ namespace YAF.DotNetNuke.Components.WebAPI
                         var attachment = new AttachmentItem
                                              {
                                                  FileName = image.FileName,
-                                                 OnClick = $"setStyle('AlbumImgId', '{image.ID}')",
+                                                 OnClick = $"CKEDITOR.tools.insertAlbumImage('{image.ID}')",
                                                  IconImage =
-                                                     $@"<img class=""popupitemIcon"" src=""{url}"" alt=""{(image.Caption.IsSet() ? image.Caption : image.FileName)}"" title=""{(image.Caption.IsSet() ? image.Caption : image.FileName)}"" width=""40"" height=""40"" />",
+                                                     $@"<img class=""popupitemIcon"" src=""{url}"" alt=""{(image.Caption.IsSet() ? image.Caption : image.FileName)}"" title=""{(image.Caption.IsSet() ? image.Caption : image.FileName)}"" class=""img-fluid img-thumbnail me-1"" />",
                                                  DataURL = url
                                              };
 

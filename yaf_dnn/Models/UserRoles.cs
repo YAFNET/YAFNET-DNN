@@ -2,8 +2,8 @@
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2021 Ingo Herbote
- * http://www.yetanotherforum.net/
- * 
+ * https://www.yetanotherforum.net/
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -12,7 +12,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -22,21 +22,19 @@
  * under the License.
  */
 
-using System.Reflection;
-using System.Runtime.InteropServices;
+namespace YAF.DotNetNuke.Models
+{
+    using YAF.Types.Interfaces.Data;
 
-[assembly: AssemblyTitle("YAF for the DNN Platform")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("YetAnotherForum.NET")]
-[assembly: AssemblyProduct("YAF for DNN")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+    /// <summary>
+    /// The asp net user roles.
+    /// </summary>
+    public class UserRoles : IEntity
+    {
+        public int UserRoleID { get; set; }
 
-// Setting ComVisible to false makes the types in this assembly not visible 
-// to COM components.  If you need to access a type in this assembly from 
-// COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
+        public int UserID { get; set; }
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("3d5900ae-111a-45be-96b3-d9e4606ca793")]
+        public int RoleID { get; set; }
+    }
+}

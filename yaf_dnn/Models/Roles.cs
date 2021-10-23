@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -22,25 +22,28 @@
  * under the License.
  */
 
-namespace YAF.DotNetNuke.Components.Objects
+namespace YAF.DotNetNuke.Models
 {
+    using ServiceStack.DataAnnotations;
+    using ServiceStack.Model;
+
+    using YAF.Types.Interfaces.Data;
+
     /// <summary>
-    /// The YAF culture info.
+    /// The asp net roles.
     /// </summary>
-    public class YafCultureInfo
+    public class Roles : IEntity, IHasId<int>
     {
-        #region Constants and Fields
+        /// <summary>
+        /// Gets or sets the Role ID
+        /// </summary>
+        [Alias("RoleID")]
+        public int Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the culture.
+        /// Gets or sets the Role name
         /// </summary>
-        public string Culture { get; set; }
-
-        /// <summary>
-        /// Gets or sets the language file.
-        /// </summary>
-        public string LanguageFile { get; set; }
-
-        #endregion
+        [Alias("RoleName")]
+        public string Name { get; set; }
     }
 }

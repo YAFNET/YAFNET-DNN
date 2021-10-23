@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2021 Ingo Herbote
  * https://www.yetanotherforum.net/
- * 
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -32,18 +32,18 @@ namespace YAF.DotNetNuke.Components.Utils
     using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Security.Roles;
 
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.Core.Model;
-    using YAF.Core.UsersRoles;
     using YAF.DotNetNuke.Components.Controllers;
+    using YAF.Types;
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
 
     /// <summary>
-    /// YAF DNN Profile Synchronization 
+    /// YAF DNN Profile Synchronization
     /// </summary>
     public class RoleSyncronizer : PortalModuleBase
     {
@@ -57,18 +57,16 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <returns>
         /// Returns if the Roles where synched or not
         /// </returns>
-        public static bool SynchronizeUserRoles(int boardId, int portalId, int yafUserId, UserInfo dnnUserInfo)
+        public static bool SynchronizeUserRoles([NotNull] int boardId, [NotNull] int portalId, [NotNull] int yafUserId, [NotNull] UserInfo dnnUserInfo)
         {
             // Make sure are roles exist
             ImportDnnRoles(boardId, dnnUserInfo.Roles);
 
-            var yafUserRoles = Data.GetYafUserRoles(yafUserId);
+            var yafUserRoles = DataController.GetYafUserRoles(yafUserId);
 
             var yafBoardRoles = BoardContext.Current.GetRepository<Group>().List(boardId: boardId);
 
             var rolesChanged = false;
-
-            // TODO : Move code to sql SP
 
             // add yaf only roles to yaf
             foreach (var boardRole in yafBoardRoles)
@@ -93,7 +91,7 @@ namespace YAF.DotNetNuke.Components.Utils
                         continue;
                     }
 
-                    UpdateUserRole(role, yafUserId, dnnUserInfo.Username, true);
+                    UpdateUserRole(role, yafUserId, true);
 
                     rolesChanged = true;
                 }
@@ -104,7 +102,7 @@ namespace YAF.DotNetNuke.Components.Utils
                     {
                         if (!yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
                         {
-                            UpdateUserRole(role, yafUserId, dnnUserInfo.Username, true);
+                            UpdateUserRole(role, yafUserId, true);
                         }
                     }
 
@@ -118,7 +116,7 @@ namespace YAF.DotNetNuke.Components.Utils
                         continue;
                     }
 
-                    UpdateUserRole(role, yafUserId, dnnUserInfo.Username, true);
+                    UpdateUserRole(role, yafUserId, true);
 
                     rolesChanged = true;
                 }
@@ -135,19 +133,21 @@ namespace YAF.DotNetNuke.Components.Utils
                                       !dnnUserInfo.Roles.Any(existRole => existRole.Equals(role.RoleName))
                                       && yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName))))
             {
-                UpdateUserRole(role, yafUserId, dnnUserInfo.Username, false);
+                UpdateUserRole(role, yafUserId, false);
 
                 rolesChanged = true;
             }
 
             // empty out access table
-            if (rolesChanged && BoardContext.Current != null)
+            if (!rolesChanged || BoardContext.Current == null)
             {
-                BoardContext.Current.GetRepository<ActiveAccess>().DeleteAll();
-                BoardContext.Current.GetRepository<Active>().DeleteAll();
+                return rolesChanged;
             }
 
-            return rolesChanged;
+            BoardContext.Current.GetRepository<ActiveAccess>().DeleteAll();
+            BoardContext.Current.GetRepository<Active>().DeleteAll();
+
+            return true;
         }
 
         /// <summary>
@@ -157,19 +157,16 @@ namespace YAF.DotNetNuke.Components.Utils
         /// <param name="roles">The <paramref name="roles" />.</param>
         public static void ImportDnnRoles(int boardId, string[] roles)
         {
-            var yafBoardRoles = Data.GetYafBoardRoles(boardId);
+            var yafBoardRoles = DataController.GetYafBoardRoles(boardId);
 
-            var yafBoardAccessMasks = Data.GetYafBoardAccessMasks(boardId);
+            var yafBoardAccessMasks = DataController.GetYafBoardAccessMasks(boardId);
 
             // Check If Dnn Roles Exists in Yaf
-            foreach (var role in from role in roles
-                                    where role.IsSet()
-                                    let any = yafBoardRoles.Any(yafRole => yafRole.RoleName.Equals(role))
-                                    where !any
-                                    select role)
-            {
-                CreateYafRole(role, boardId, yafBoardAccessMasks);
-            }
+            (from role in roles
+             where role.IsSet()
+             let any = yafBoardRoles.Any(yafRole => yafRole.RoleName.Equals(role))
+             where !any
+             select role).ForEach(role => CreateYafRole(role, boardId, yafBoardAccessMasks));
         }
 
         /// <summary>
@@ -183,12 +180,6 @@ namespace YAF.DotNetNuke.Components.Utils
         /// </returns>
         public static long CreateYafRole(string roleName, int boardId, List<RoleInfo> yafBoardAccessMasks)
         {
-            // If not Create Role in YAF
-            if (!RoleMembershipHelper.RoleExists(roleName))
-            {
-                RoleMembershipHelper.CreateRole(roleName);
-            }
-
             int accessMaskId;
 
             try
@@ -203,15 +194,14 @@ namespace YAF.DotNetNuke.Components.Utils
                 accessMaskId = yafBoardAccessMasks.Find(mask => mask.RoleGroupID.Equals(0)).RoleID;
             }
 
+            var groupFlags = new GroupFlags();
+
             // Role exists in membership but not in yaf itself simply add it to yaf
             return BoardContext.Current.GetRepository<Group>().Save(
-                DBNull.Value,
+                null,
                 boardId,
                 roleName,
-                false,
-                false,
-                false,
-                false,
+                groupFlags,
                 accessMaskId,
                 0,
                 null,
@@ -219,31 +209,28 @@ namespace YAF.DotNetNuke.Components.Utils
                 null,
                 0,
                 null,
-                null,
                 0,
                 0);
         }
 
         /// <summary>
-        /// Updates the user <paramref name="role" />.
+        /// Updates the user <paramref name="role"/>.
         /// </summary>
-        /// <param name="role">The <paramref name="role" />.</param>
-        /// <param name="yafUserId">The YAF user id.</param>
-        /// <param name="userName">Name of the user.</param>
-        /// <param name="addRole">if set to true [add role].</param>
-        public static void UpdateUserRole(RoleInfo role, int yafUserId, string userName, bool addRole)
+        /// <param name="role">
+        /// The <paramref name="role"/>.
+        /// </param>
+        /// <param name="yafUserId">
+        /// The YAF user id.
+        /// </param>
+        /// <param name="addRole">
+        /// if set to true [add role].
+        /// </param>
+        public static void UpdateUserRole([NotNull] RoleInfo role, [NotNull] int yafUserId, [NotNull] bool addRole)
         {
-            // save user in role
-            BoardContext.Current.GetRepository<UserGroup>().Save(yafUserId, role.RoleID, addRole);
+            CodeContracts.VerifyNotNull(role);
 
-            if (addRole && !RoleMembershipHelper.IsUserInRole(userName, role.RoleName))
-            {
-                RoleMembershipHelper.AddUserToRole(userName, role.RoleName);
-            }
-            else if (!addRole && RoleMembershipHelper.IsUserInRole(userName, role.RoleName))
-            {
-                RoleMembershipHelper.RemoveUserFromRole(userName, role.RoleName);
-            }
+            // save user in role
+            BoardContext.Current.GetRepository<UserGroup>().AddOrRemove(yafUserId, role.RoleID, addRole);
         }
     }
 }

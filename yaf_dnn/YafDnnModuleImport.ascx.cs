@@ -59,18 +59,18 @@ namespace YAF.DotNetNuke
         private const string TypeFullName = "YAF.DotNetNuke.YafDnnImportScheduler, YAF.DotNetNuke.Module";
 
         /// <summary>
-        /// The board id.
-        /// </summary>
-        private int boardId;
-
-        /// <summary>
         /// The navigation manager.
         /// </summary>
         private readonly INavigationManager navigationManager;
 
+        /// <summary>
+        /// The board id.
+        /// </summary>
+        private int boardId;
+
         #endregion
 
-        #region Methods 
+        #region Methods
 
         /// <summary>
         /// Initializes a new instance of the <see cref="YafDnnModuleImport"/> class.

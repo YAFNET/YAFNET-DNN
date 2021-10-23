@@ -30,7 +30,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
 
     using global::DotNetNuke.Web.Api;
 
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Types;
     using YAF.Types.Interfaces;
     using YAF.Types.Objects;
@@ -96,7 +96,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
                     yafSession.MultiQuoteIds.Remove(multiQuote);
                 }
 
-                buttonCssClass = "MultiQuoteButton custom-control custom-checkbox btn btn-link";
+                buttonCssClass = "btn-multiquote custom-control custom-checkbox btn btn-link";
             }
 
             return this.Ok(new ReturnClass { Id = buttonId, NewTitle = buttonCssClass });

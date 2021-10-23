@@ -1,11 +1,8 @@
-﻿[![YAF logo](https://yetanotherforum.net/forum/Content/images/YAFLogo.svg)](http://www.yetanotherforum.net)
+﻿[![YAF logo](https://yetanotherforum.net/forum/Images/Logos/YAFLogo.svg)](http://www.yetanotherforum.net)
 
-*YetAnotherForum.NET* _(YAF.NET)_ is an Open Source Discussion Forum for sites running ASP.NET. 100% written in C#. YAF.NET runs on any web server that supports ASP.NET v4.72 (or above) and SQL Server 2012 or above.
+*YetAnotherForum.NET* _(YAF.NET)_ is an Open Source Discussion Forum for sites running ASP.NET. 100% written in C#. YAF.NET runs on any web server that supports ASP.NET v4.8 (or above) and SQL Server 2012 or above.
 
 *YAF.NET* is a feature rich communication platform combining an International Open Source community and the Microsoft's technologies.
-
-![projectbadge](http://www.ohloh.net/p/yaf/widgets/project_partner_badge.gif)
-
 
 ### Features
 
@@ -13,11 +10,11 @@
 
 ## DNN® (DotNetNuke) Module
 
-This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 09.03.01 or higher).
+This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 09.10.01 or higher).
 
 ## Demo Forum
 
-A "sandbox" test forum is available here: http://testforum.yetanotherforum.net/.
+A "sandbox" test forum is available here: https://testforum.yetanotherforum.net/.
 
 ### Screen Shots
 
@@ -49,12 +46,12 @@ Congratulations! You're now ready to begin development.
 
 ### Support
  
-* Free Community based Support Forum here: http://forum.yetanotherforum.net/.
+* Free Community based Support Forum here: https://forum.yetanotherforum.net/.
 
 
 ### Community Support Forum
 
-See a real live YAF Forum by visiting the Yet Another Forum.NET community support forum: http://forum.yetanotherforum.net. Also, get your questions answered by the YAF community.
+See a real live YAF Forum by visiting the Yet Another Forum.NET community support forum: https://forum.yetanotherforum.net. Also, get your questions answered by the YAF community.
 
 ## License
 

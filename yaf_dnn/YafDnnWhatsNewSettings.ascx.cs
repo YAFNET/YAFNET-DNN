@@ -38,8 +38,8 @@ namespace YAF.DotNetNuke
 
     using global::DotNetNuke.Services.Exceptions;
 
+    using YAF.Core.Helpers;
     using YAF.Types.Extensions;
-    using YAF.Utils.Helpers;
 
     #endregion
 
@@ -74,8 +74,8 @@ namespace YAF.DotNetNuke
 
                 if (this.YafInstances.Items.Count > 0)
                 {
-                    if (this.TabModuleSettings["YafPage"].ToType<string>().IsSet()
-                        && this.TabModuleSettings["YafModuleId"].ToType<string>().IsSet())
+                    if (this.TabModuleSettings["YafPage"].ToType<string>().IsSet() &&
+                        this.TabModuleSettings["YafModuleId"].ToType<string>().IsSet())
                     {
                         this.YafInstances.SelectedValue =
                             $"{this.TabModuleSettings["YafPage"]}-{this.TabModuleSettings["YafModuleId"]}";
@@ -83,12 +83,12 @@ namespace YAF.DotNetNuke
                 }
 
                 this.SortOrder.SelectedValue = this.TabModuleSettings["YafSortOrder"].ToType<string>().IsSet()
-                                             ? this.TabModuleSettings["YafSortOrder"].ToType<string>()
-                                             : "lastpost";
+                    ? this.TabModuleSettings["YafSortOrder"].ToType<string>()
+                    : "lastpost";
 
                 this.txtMaxResult.Text = this.TabModuleSettings["YafMaxPosts"].ToType<string>().IsSet()
-                                             ? this.TabModuleSettings["YafMaxPosts"].ToType<string>()
-                                             : "10";
+                    ? this.TabModuleSettings["YafMaxPosts"].ToType<string>()
+                    : "10";
 
                 if (this.TabModuleSettings["YafUseRelativeTime"] is bool)
                 {
@@ -96,16 +96,16 @@ namespace YAF.DotNetNuke
                 }
 
                 this.HtmlHeader.Text = this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
-                                           ? this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>()
-                                           : @"<div class=""card"" style=""width: 20rem;""><ul class=""list-group list-group-flush"">";
+                    ? this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>()
+                    : @"<div class=""card"" style=""width: 20rem;""><ul class=""list-group list-group-flush"">";
 
                 this.HtmlItem.Text = this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>().IsSet()
-                                         ? this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>()
-                                         : "<li class=\"list-group-item\">[LASTPOSTICON]&nbsp;<strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />\"[LASTMESSAGE:150]\"<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
+                    ? this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>()
+                    : "<li class=\"list-group-item\">[LASTPOSTICON]&nbsp;<strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />\"[LASTMESSAGE:150]\"<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
 
                 this.HtmlFooter.Text = this.TabModuleSettings["YafWhatsNewFooter"].ToType<string>().IsSet()
-                                           ? this.TabModuleSettings["YafWhatsNewFooter"].ToType<string>()
-                                           : "</ul></div>";
+                    ? this.TabModuleSettings["YafWhatsNewFooter"].ToType<string>()
+                    : "</ul></div>";
             }
             catch (Exception exc)
             {
@@ -138,10 +138,7 @@ namespace YAF.DotNetNuke
                     }
                 }
 
-                objModules.UpdateTabModuleSetting(
-                    this.TabModuleId,
-                    "YafSortOrder",
-                    this.SortOrder.SelectedValue);
+                objModules.UpdateTabModuleSetting(this.TabModuleId, "YafSortOrder", this.SortOrder.SelectedValue);
 
                 if (ValidationHelper.IsNumeric(this.txtMaxResult.Text) || this.txtMaxResult.Text.IsSet())
                 {
@@ -200,21 +197,17 @@ namespace YAF.DotNetNuke
                 return;
             }
 
-            objTabs.Where(tab => tab != null && !tab.IsDeleted).ForEach(
+            objTabs.Where(tab => tab is { IsDeleted: false }).ForEach(
                 objTab =>
-                    {
-                        var objModules = new ModuleController();
+                {
+                    var objModules = new ModuleController();
 
-                        foreach (var pair in objModules.GetTabModules(objTab.TabID))
+                    var tabModules = objModules.GetTabModules(objTab.TabID).Select(pair => pair.Value).Where(
+                        m => !m.IsDeleted && m.DesktopModuleID == objDesktopModuleInfo.DesktopModuleID);
+
+                    tabModules.ForEach(
+                        objModule =>
                         {
-                            var objModule = pair.Value;
-
-                            if (objModule.IsDeleted
-                                || objModule.DesktopModuleID != objDesktopModuleInfo.DesktopModuleID)
-                            {
-                                continue;
-                            }
-
                             var strPath = objTab.TabName;
                             var objTabSelected = objTab;
 
@@ -224,6 +217,7 @@ namespace YAF.DotNetNuke
                                     objTabSelected.ParentId,
                                     objTab.PortalID,
                                     false);
+
                                 if (objTabSelected == null)
                                 {
                                     break;
@@ -233,14 +227,15 @@ namespace YAF.DotNetNuke
                             }
 
                             var objListItem = new ListItem
-                                                  {
-                                                      Value = $"{objModule.TabID}-{objModule.ModuleID}",
-                                                      Text = $"{strPath} -> {objModule.ModuleTitle}"
-                                                  };
+                            {
+                                Value = $"{objModule.TabID}-{objModule.ModuleID}",
+                                Text = $"{strPath} -> {objModule.ModuleTitle}"
+                            };
 
                             this.YafInstances.Items.Add(objListItem);
-                        }
-                    });
+                        });
+
+                });
         }
 
         #endregion

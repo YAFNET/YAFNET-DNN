@@ -30,42 +30,48 @@ namespace YAF.DotNetNuke
     using System.IO;
     using System.Linq;
     using System.Web;
-    using System.Web.Security;
     using System.Web.UI.WebControls;
 
     using global::DotNetNuke.Abstractions;
     using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Tabs;
+    using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Services.Localization;
 
     using Microsoft.Extensions.DependencyInjection;
 
-    using YAF.Configuration;
-    using YAF.Core;
+    using YAF.Core.BoardSettings;
+    using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.Core.Model;
+    using YAF.Core.Services;
     using YAF.Core.Services.Import;
-    using YAF.Core.UsersRoles;
     using YAF.DotNetNuke.Components.Controllers;
     using YAF.DotNetNuke.Components.Utils;
-    using YAF.Types.Constants;
+    using YAF.DotNetNuke.Extensions;
+    using YAF.Types;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Types.Models;
-    using YAF.Utils;
+    using YAF.Types.Models.Identity;
 
     #endregion
 
     /// <summary>
     /// The YAF Module Settings Page
     /// </summary>
-    public partial class YafDnnModuleEdit : PortalModuleBase
+    public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     {
         /// <summary>
         /// The navigation manager.
         /// </summary>
         private readonly INavigationManager navigationManager;
+
+        /// <summary>
+        ///     Gets or sets the service locator.
+        /// </summary>
+        public IServiceLocator ServiceLocator { get; set; }
 
         #region Methods
 
@@ -74,6 +80,7 @@ namespace YAF.DotNetNuke
         /// </summary>
         public YafDnnModuleEdit()
         {
+            this.ServiceLocator = BoardContext.Current.ServiceLocator;
             this.navigationManager = this.DependencyProvider.GetRequiredService<INavigationManager>();
         }
 
@@ -81,7 +88,7 @@ namespace YAF.DotNetNuke
         /// Raises the <see cref="E:System.Web.UI.Control.Init" /> event.
         /// </summary>
         /// <param name="e">An <see cref="T:System.EventArgs" /> object that contains the event data.</param>
-        protected override void OnInit(EventArgs e)
+        protected override void OnInit([NotNull] EventArgs e)
         {
             this.Load += this.DotNetNukeModuleEdit_Load;
             this.update.Click += this.UpdateClick;
@@ -95,18 +102,25 @@ namespace YAF.DotNetNuke
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        protected void ImportForums_OnClick(object sender, EventArgs e)
+        protected void ImportForums_OnClick([NotNull] object sender, [NotNull] EventArgs e)
         {
-            // First Create new empty forum
-            var newBoardId = this.CreateBoard(false, "Import Board");
+            var moduleController = new ModuleController();
 
-            Data.ImportActiveForums(this.ActiveForums.SelectedValue.ToType<int>(), newBoardId);
+            var tabModule = moduleController.GetModule(this.ActiveForums.SelectedValue.ToType<int>());
+
+            // First Create new empty forum
+            var newBoardId = this.CreateBoard(false, tabModule.ModuleTitle);
+
+            DataController.ImportActiveForums(
+                this.ActiveForums.SelectedValue.ToType<int>(),
+                newBoardId,
+                this.PortalSettings);
 
             this.MigrateAttachments();
 
-            var moduleController = new ModuleController();
+            this.FixLastForumTopic(newBoardId);
 
-            moduleController.UpdateModuleSetting(this.ModuleId, "forumboardid", (newBoardId + 1).ToString());
+            moduleController.UpdateModuleSetting(this.ModuleId, "forumboardid", newBoardId.ToString());
 
             moduleController.UpdateModuleSetting(this.ModuleId, "RemoveTabName", this.RemoveTabName.SelectedValue);
             moduleController.UpdateModuleSetting(
@@ -114,13 +128,12 @@ namespace YAF.DotNetNuke
                 "InheritDnnLanguage",
                 this.InheritDnnLanguage.Checked.ToString());
 
-            var boardSettings =
-                new LoadBoardSettings(newBoardId + 1)
-                    {
-                        DNNPageTab = this.TabId,
-                        DNNPortalId = this.PortalId,
-                        BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/"
-                    };
+            var boardSettings = new LoadBoardSettings(newBoardId)
+            {
+                DNNPageTab = this.TabId,
+                DNNPortalId = this.PortalId,
+                BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/"
+            };
 
             // save the settings to the database
             boardSettings.SaveRegistry();
@@ -136,7 +149,7 @@ namespace YAF.DotNetNuke
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        protected void Create_OnClick(object sender, EventArgs e)
+        protected void Create_OnClick([NotNull] object sender, [NotNull] EventArgs e)
         {
             var newBoardId = this.CreateBoard(true, this.NewBoardName.Text.Trim());
 
@@ -161,10 +174,9 @@ namespace YAF.DotNetNuke
             // save the settings to the database
             boardSettings.SaveRegistry();
 
-            // Reload forum settings
-            BoardContext.Current.BoardSettings = null;
+            Config.Touch();
 
-            this.Response.Redirect(this.navigationManager.NavigateURL(), true);
+            this.Response.Redirect(this.navigationManager.NavigateURL(this.TabId), true);
         }
 
         /// <summary>
@@ -172,7 +184,7 @@ namespace YAF.DotNetNuke
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        private void CancelClick(object sender, EventArgs e)
+        private void CancelClick([NotNull] object sender, [NotNull] EventArgs e)
         {
             this.Response.Redirect(this.navigationManager.NavigateURL(), true);
         }
@@ -182,7 +194,7 @@ namespace YAF.DotNetNuke
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void DotNetNukeModuleEdit_Load(object sender, EventArgs e)
+        private void DotNetNukeModuleEdit_Load([NotNull] object sender, [NotNull] EventArgs e)
         {
             this.update.Text = Localization.GetString("Update.Text", this.LocalResourceFile);
             this.cancel.Text = Localization.GetString("Cancel.Text", this.LocalResourceFile);
@@ -194,8 +206,8 @@ namespace YAF.DotNetNuke
                 return;
             }
 
-            var dt = BoardContext.Current.GetRepository<Board>().GetAll();
-            
+            var dt = this.GetRepository<Board>().GetAll();
+
                 this.BoardID.DataSource = dt;
                 this.BoardID.DataTextField = "Name";
                 this.BoardID.DataValueField = "ID";
@@ -254,47 +266,39 @@ namespace YAF.DotNetNuke
 
             var tabs = TabController.GetPortalTabs(this.PortalSettings.PortalId, -1, true, true);
 
-            foreach (var tabInfo in tabs.Where(tab => !tab.IsDeleted))
-            {
-                var moduleController = new ModuleController();
-
-                foreach (var pair in moduleController.GetTabModules(tabInfo.TabID))
+            tabs.Where(tab => !tab.IsDeleted).ForEach(
+                tabInfo =>
                 {
-                    var moduleInfo = pair.Value;
+                    var moduleController = new ModuleController();
 
-                    if (moduleInfo.IsDeleted)
-                    {
-                        continue;
-                    }
+                    var tabModules = moduleController.GetTabModules(tabInfo.TabID).Select(pair => pair.Value).Where(
+                        m => !m.IsDeleted && m.DesktopModuleID == objDesktopModuleInfo.DesktopModuleID);
 
-                    if (moduleInfo.DesktopModuleID != objDesktopModuleInfo.DesktopModuleID)
-                    {
-                        continue;
-                    }
-
-                    var path = tabInfo.TabName;
-                    var tabSelected = tabInfo;
-
-                    while (tabSelected.ParentId != Null.NullInteger)
-                    {
-                        tabSelected = objTabController.GetTab(tabSelected.ParentId, tabInfo.PortalID, false);
-                        if (tabSelected == null)
+                    tabModules.ForEach(
+                        moduleInfo =>
                         {
-                            break;
-                        }
+                            var path = tabInfo.TabName;
+                            var tabSelected = tabInfo;
 
-                        path = $"{tabSelected.TabName} -> {path}";
-                    }
+                            while (tabSelected.ParentId != Null.NullInteger)
+                            {
+                                tabSelected = objTabController.GetTab(tabSelected.ParentId, tabInfo.PortalID, false);
+                                if (tabSelected == null)
+                                {
+                                    break;
+                                }
 
-                    var objListItem = new ListItem
-                                          {
-                                              Value = moduleInfo.ModuleID.ToString(),
-                                              Text = $"{path} -> {moduleInfo.ModuleTitle}"
-                                          };
+                                path = $"{tabSelected.TabName} -> {path}";
+                            }
 
-                    this.ActiveForums.Items.Add(objListItem);
-                }
-            }
+                            var objListItem = new ListItem
+                            {
+                                Value = moduleInfo.ModuleID.ToString(), Text = $"{path} -> {moduleInfo.ModuleTitle}"
+                            };
+
+                            this.ActiveForums.Items.Add(objListItem);
+                        });
+                });
 
             if (this.ActiveForums.Items.Count == 0)
             {
@@ -307,7 +311,7 @@ namespace YAF.DotNetNuke
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void UpdateClick(object sender, EventArgs e)
+        private void UpdateClick([NotNull] object sender, [NotNull] EventArgs e)
         {
             var moduleController = new ModuleController();
 
@@ -336,10 +340,9 @@ namespace YAF.DotNetNuke
                 this.PortalSettings.PortalId,
                 out _);
 
-            // Reload forum settings
-            BoardContext.Current.BoardSettings = null;
+            Config.Touch();
 
-            BuildLink.Redirect(ForumPages.forum);
+            this.Response.Redirect(this.navigationManager.NavigateURL(this.TabId), true);
         }
 
         /// <summary>
@@ -350,16 +353,16 @@ namespace YAF.DotNetNuke
         /// <returns>
         /// Returns the Board ID of the new Board.
         /// </returns>
-        private int CreateBoard(bool importUsers, string boardName)
+        private int CreateBoard([NotNull] bool importUsers, [NotNull] string boardName)
         {
+            CodeContracts.VerifyNotNull(boardName);
+
             // new admin
-            var newAdmin = UserMembershipHelper.GetUser();
+            var newAdmin = UserController.Instance.GetCurrentUserInfo().ToAspNetUsers();
 
             // Create Board
             var newBoardId = this.CreateBoardDatabase(
                 boardName,
-                BoardContext.Current.Get<MembershipProvider>().ApplicationName,
-                BoardContext.Current.Get<RoleProvider>().ApplicationName,
                 "english.xml",
                 newAdmin);
 
@@ -376,19 +379,10 @@ namespace YAF.DotNetNuke
                     Directory.CreateDirectory(Path.Combine(boardFolder, "Images"));
 
                     // Create Sub Folders
-                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images\\Avatars"));
-                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images\\Categories"));
-                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images\\Forums"));
-                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images\\Emoticons"));
-                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images\\Medals"));
-                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images\\Ranks"));
-                }
-
-                if (!Directory.Exists(Path.Combine(boardFolder, "Themes")))
-                {
-                    Directory.CreateDirectory(Path.Combine(boardFolder, "Themes"));
-
-                    // Need to copy default theme to the Themes Folder
+                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images", "Avatars"));
+                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images", "Categories"));
+                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images", "Forums"));
+                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images", "Medals"));
                 }
 
                 if (!Directory.Exists(Path.Combine(boardFolder, "Uploads")))
@@ -412,38 +406,42 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// Creates the board in the database.
         /// </summary>
-        /// <param name="boardName">Name of the board.</param>
-        /// <param name="boardMembershipAppName">Name of the board membership application.</param>
-        /// <param name="boardRolesAppName">Name of the board roles application.</param>
-        /// <param name="langFile">The language file.</param>
-        /// <param name="newAdmin">The new admin.</param>
-        /// <returns>Returns the Board ID of the new Board.</returns>
+        /// <param name="boardName">
+        /// Name of the board.
+        /// </param>
+        /// <param name="langFile">
+        /// The language file.
+        /// </param>
+        /// <param name="newAdmin">
+        /// The new admin.
+        /// </param>
+        /// <returns>
+        /// Returns the Board ID of the new Board.
+        /// </returns>
         private int CreateBoardDatabase(
-            string boardName,
-            string boardMembershipAppName,
-            string boardRolesAppName,
-            string langFile,
-            MembershipUser newAdmin)
+            [NotNull] string boardName,
+            [NotNull] string langFile,
+            [NotNull] AspNetUsers newAdmin)
         {
-            var newBoardId = BoardContext.Current.GetRepository<Board>()
-                .Create(
-                    boardName,
-                    "en-US",
-                    langFile,
-                    boardMembershipAppName,
-                    boardRolesAppName,
-                    newAdmin.UserName,
-                    newAdmin.Email,
-                    newAdmin.ProviderUserKey.ToString(),
-                    this.PortalSettings.UserInfo.IsSuperUser,
-                    Configuration.Config.CreateDistinctRoles && Configuration.Config.IsAnyPortal
-                        ? "YAF "
-                        : string.Empty);
+            CodeContracts.VerifyNotNull(boardName);
+            CodeContracts.VerifyNotNull(langFile);
+            CodeContracts.VerifyNotNull(newAdmin);
+
+            var newBoardId = this.GetRepository<Board>().Create(
+                boardName,
+                this.PortalSettings.Email,
+                "en-US",
+                langFile,
+                newAdmin.UserName,
+                newAdmin.Email,
+                newAdmin.Id,
+                this.PortalSettings.UserInfo.IsSuperUser,
+                Configuration.Config.CreateDistinctRoles && Configuration.Config.IsAnyPortal ? "YAF " : string.Empty);
 
             var loadWrapper = new Action<string, Action<Stream>>(
                 (file, streamAction) =>
                     {
-                        var fullFile = BoardContext.Current.Get<HttpRequestBase>().MapPath(file);
+                        var fullFile = this.Get<HttpRequestBase>().MapPath(file);
 
                         if (!File.Exists(fullFile))
                         {
@@ -451,18 +449,14 @@ namespace YAF.DotNetNuke
                         }
 
                         // import into board...
-                        using (var stream = new StreamReader(fullFile))
-                        {
-                            streamAction(stream.BaseStream);
-                            stream.Close();
-                        }
+                        using var stream = new StreamReader(fullFile);
+
+                        streamAction(stream.BaseStream);
+                        stream.Close();
                     });
 
             // load default bbcode if available...
             loadWrapper("install/bbCodeExtensions.xml", s => DataImport.BBCodeExtensionImport(newBoardId, s));
-
-            // load default extensions if available...
-            loadWrapper("install/fileExtensions.xml", s => DataImport.FileExtensionImport(newBoardId, s));
 
             // load default spam word if available...
             loadWrapper("install/SpamWords.xml", s => DataImport.SpamWordsImport(newBoardId, s));
@@ -477,7 +471,10 @@ namespace YAF.DotNetNuke
         {
             var attachActiveFolderPath = Path.Combine(this.PortalSettings.HomeDirectoryMapPath, "activeforums_Upload");
             var attachYafFolderPath = HttpContext.Current.Request.MapPath(
-                Path.Combine("DesktopModules\\YetAnotherForumDotNet", BoardFolders.Current.Uploads));
+                Path.Combine(
+                    "DesktopModules",
+                    "YetAnotherForumDotNet",
+                    this.Get<BoardFolders>().Uploads));
 
             if (Directory.Exists(attachActiveFolderPath))
             {
@@ -488,6 +485,18 @@ namespace YAF.DotNetNuke
                         File.Copy(attachment, $"{attachYafFolderPath}\\{fileName}.yafupload");
                     });
             }
+        }
+
+        /// <summary>
+        /// Fixes the last forum topic & Post.
+        /// </summary>
+        /// <param name="boardId">The board identifier.</param>
+        private void FixLastForumTopic(int boardId)
+        {
+            var forums = this.GetRepository<Forum>().List(boardId, null);
+
+            forums.ForEach(
+                forum => this.GetRepository<Forum>().UpdateLastPost(forum.ID));
         }
 
         #endregion

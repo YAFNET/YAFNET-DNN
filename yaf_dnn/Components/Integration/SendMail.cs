@@ -36,10 +36,10 @@ namespace YAF.DotNetNuke.Components.Integration
     using global::DotNetNuke.Entities.Host;
     using global::DotNetNuke.Services.Mail;
 
-    using YAF.Core;
+    using YAF.Core.Context;
     using YAF.Types;
     using YAF.Types.Attributes;
-    using YAF.Types.Interfaces;
+    using YAF.Types.Interfaces.Services;
 
     using MailPriority = global::DotNetNuke.Services.Mail.MailPriority;
 
@@ -49,7 +49,7 @@ namespace YAF.DotNetNuke.Components.Integration
     /// Functions to send email via SMTP
     /// </summary>
     [ExportService(ServiceLifetimeScope.Singleton)]
-    public class SendMail : ISendMail
+    public class SendMail : IMailService
     {
         #region Public Methods
 
@@ -61,7 +61,7 @@ namespace YAF.DotNetNuke.Components.Integration
         /// </param>
         public void Send([NotNull] MailMessage mailMessage)
         {
-            CodeContracts.VerifyNotNull(mailMessage, "mailMessage");
+            CodeContracts.VerifyNotNull(mailMessage);
 
             var body = string.Empty;
 
@@ -73,10 +73,9 @@ namespace YAF.DotNetNuke.Components.Integration
 
                 mailIsHtml = altView.ContentType.MediaType.Equals("text/html");
 
-                using (var reader = new StreamReader(altView.ContentStream))
-                {
-                    body = reader.ReadToEnd();
-                }
+                using var reader = new StreamReader(altView.ContentStream);
+
+                body = reader.ReadToEnd();
             }
 
             string fromAddress;
@@ -122,7 +121,7 @@ namespace YAF.DotNetNuke.Components.Integration
         {
             var mailMessages = messages as IList<MailMessage> ?? messages.ToList();
 
-            CodeContracts.VerifyNotNull(mailMessages, "messages");
+            CodeContracts.VerifyNotNull(mailMessages);
 
             mailMessages.ForEach(
                 mailMessage =>
