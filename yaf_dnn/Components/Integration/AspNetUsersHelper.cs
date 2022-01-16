@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2021 Ingo Herbote
+ * Copyright (C) 2014-2022 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -971,13 +971,24 @@ namespace YAF.DotNetNuke.Components.Integration
         /// </returns>
         public Tuple<User, AspNetUsers, Rank, vaccess> GetBoardUser(
             [NotNull] int userId,
-            [CanBeNull] int? boardId = null)
+            [CanBeNull] int? boardId = null,
+            bool includeNonApproved = false)
         {
             var expression = OrmLiteConfig.DialectProvider.SqlExpression<User>();
 
             expression.Join<vaccess>((u, v) => v.UserID == u.ID)
-                .Join<Rank>((u, r) => r.ID == u.RankID).Where<vaccess, User>(
+                .Join<Rank>((u, r) => r.ID == u.RankID);
+
+            if (includeNonApproved)
+            {
+                expression.Where<vaccess, User>(
+                    (v, u) => u.ID == userId && u.BoardID == (boardId ?? this.GetRepository<User>().BoardID));
+            }
+            else
+            {
+                expression.Where<vaccess, User>(
                     (v, u) => u.ID == userId && u.BoardID == (boardId ?? this.GetRepository<User>().BoardID) && (u.Flags & 2) == 2);
+            }
 
             var user = this.GetRepository<User>().DbAccess
                 .Execute(db => db.Connection.SelectMulti<User, Rank, vaccess>(expression)).FirstOrDefault();
