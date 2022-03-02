@@ -123,7 +123,7 @@ namespace YAF.DotNetNuke.Components.Integration
             var userLogin = this.GetRepository<AspNetUserLogins>().GetSingle(
                 i => i.LoginProvider == login.LoginProvider && i.ProviderKey == login.ProviderKey);
 
-            return userLogin == null ? null : Task.FromResult(this.GetRepository<AspNetUsers>().GetSingle(u => u.Id == userLogin.UserId));
+            return userLogin is null ? null : Task.FromResult(this.GetRepository<AspNetUsers>().GetSingle(u => u.Id == userLogin.UserId));
         }
 
         /// <summary>
@@ -352,7 +352,7 @@ namespace YAF.DotNetNuke.Components.Integration
 
             var role = this.GetRepository<Roles>().GetSingle(r => r.Name == roleName);
 
-            if (role == null)
+            if (role is null)
             {
                 return Task.FromResult(0);
             }
@@ -436,7 +436,7 @@ namespace YAF.DotNetNuke.Components.Integration
 
             var role = this.GetRepository<Roles>().GetSingle(r => r.Name == roleName);
 
-            if (role == null)
+            if (role is null)
             {
                 return Task.FromResult(0);
             }

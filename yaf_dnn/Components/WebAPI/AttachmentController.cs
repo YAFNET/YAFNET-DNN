@@ -80,7 +80,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
                 attach =>
                     {
                         var url =
-                            $"{BoardInfo.ForumClientFileRoot}resource.ashx?i={attach.ID}&b={BoardContext.Current.PageBoardID}&editor=true";
+                            $"{BoardInfo.ForumClientFileRoot}resource.ashx?i={attach.ID}&editor=true";
 
                         var description = $"{attach.FileName} ({attach.Bytes / 1024} kb)";
 

@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="YetAnotherForumDotNet" type="Module" version="03.02.006102">
+    <package name="YetAnotherForumDotNet" type="Module" version="03.10.006103">
       <friendlyName>YAF.NET Forums</friendlyName>
       <description>
         &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; as DNN Module. Yet Another Forum.NET (YAF) is an open source ASP.NET forum system.&lt;br /&gt;
@@ -156,7 +156,10 @@
             <assembly>
               <name>Owin.dll</name>
             </assembly>
-            <assembly>
+	          <assembly>
+		          <name>Prism.dll</name>
+	          </assembly>
+	          <assembly>
               <name>YAF.Configuration.dll</name>
             </assembly>
             <assembly>
@@ -291,10 +294,6 @@
             </file>
             <file>
               <path>bin</path>
-              <name>ServiceStack.dll</name>
-            </file>
-            <file>
-              <path>bin</path>
               <name>FarsiLibrary.dll</name>
             </file>
           </files>
@@ -343,20 +342,6 @@
                         collision="save"
                         nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
                     <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.7.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
-                  </node>
-                  <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='Microsoft.Extensions.Primitives']"
-                        action="update"
-                        targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='Microsoft.Extensions.Primitives']/ab:bindingRedirect"
-                        collision="save"
-                        nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="0.0.0.0-5.0.0.1" newVersion="5.0.0.1" xmlns="urn:schemas-microsoft-com:asm.v1" />
-                  </node>
-                  <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Runtime.CompilerServices.Unsafe']"
-                        action="update"
-                        targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Runtime.CompilerServices.Unsafe']/ab:bindingRedirect"
-                        collision="save"
-                        nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="0.0.0.0-5.0.0.0" newVersion="5.0.0.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
                   </node>
                   <node path="/configuration/dotnetnuke/sitemap/providers" action="update" key="name" collision="overwrite">
                     <add name="yafSitemapProvider" type="YAF.DotNetNuke.Components.Integration.Sitemap, YAF.DotNetNuke.Module" providerPath="~\DesktopModules\YetAnotherForumDotNet\" />
@@ -526,7 +511,7 @@
         </component>
       </components>
     </package>
-    <package name="YAF.WhatsNew" type="Module" version="03.02.006102">
+    <package name="YAF.WhatsNew" type="Module" version="03.10.006103">
       <friendlyName>YAF.NET Forums What's New</friendlyName>
       <description>
         &lt;p&gt;This Module displays the Latest Posts from a  &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; Module. Based on the Current Users Authorization Level. You can define Which Forum should been used, and how many Posts should displayed.
@@ -613,8 +598,8 @@
         </component>
       </components>
     </package>
-    <package name="bootstrap-bundle" type="JavaScript_Library" version="5.1.3">
-      <friendlyName>Bootstrap JavaScript Bundle (width Popper.js)</friendlyName>
+    <package name="bootstrap-bundle" type="JavaScript_Library" version="05.13.006103">
+      <friendlyName>Bootstrap v5.1.3 JavaScript Bundle (width Popper.js)</friendlyName>
       <description>
         <![CDATA[<p>Bootstrap is a sleek, intuitive, and powerful front-end framework for faster and easier web development, created and maintained by <a href="http://twitter.com/mdo">Mark Otto</a> and <a href="http://twitter.com/fat">Jacob Thornton</a>.</p>
 <p>To get started, check out <a href="http://getbootstrap.com">http://getbootstrap.com</a>!</p>]]>

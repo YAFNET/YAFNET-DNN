@@ -89,13 +89,16 @@
     <Compile Include="Components\Integration\AspNetUsersHelper.cs" />
     <Compile Include="Components\Integration\RoleStore.cs" />
     <Compile Include="Components\Integration\UserStore.cs" />
+    <Compile Include="Components\Modules\DnnServicesModule.cs" />
     <Compile Include="Components\WebAPI\AlbumController.cs" />
     <Compile Include="Components\WebAPI\AttachmentController.cs" />
     <Compile Include="Components\WebAPI\MultiQuoteController.cs" />
     <Compile Include="Components\WebAPI\NotifyController.cs" />
     <Compile Include="Components\WebAPI\RouteMapper.cs" />
     <Compile Include="Components\Integration\Sitemap.cs" />
-    <Compile Include="Components\Integration\Journal.cs" />
+    <Compile Include="Components\Integration\Journal.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Components\Integration\SendMail.cs" />
     <Compile Include="Components\Rewriter\DotNetNukeUrlBuilder.cs" />
     <Compile Include="Components\Tasks\YafDnnImportScheduler.cs" />
@@ -104,7 +107,6 @@
     </Compile>
     <Compile Include="Components\Utils\UserComparer.cs" />
     <Compile Include="Components\Utils\UserImporter.cs" />
-    <Compile Include="Components\WebAPI\FavoriteTopicController.cs" />
     <Compile Include="Components\WebAPI\SearchController.cs" />
     <Compile Include="Components\WebAPI\ThankYouController.cs" />
     <Compile Include="Components\WebAPI\TopicController.cs" />

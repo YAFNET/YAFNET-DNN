@@ -59,7 +59,7 @@ namespace YAF.DotNetNuke.Components.Integration
         /// <summary>
         /// The roles.
         /// </summary>
-        public virtual IQueryable<AspNetRoles> Roles => base.Roles;
+        public virtual IQueryable<AspNetRoles> AspNetRoles => base.Roles;
 
         /// <summary>
         /// The get roles.

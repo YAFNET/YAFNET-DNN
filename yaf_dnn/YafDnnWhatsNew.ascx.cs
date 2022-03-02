@@ -192,8 +192,8 @@ namespace YAF.DotNetNuke
                 var momentLoadJs = $@"Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(loadTimeAgo);
             function loadTimeAgo() {{
            
-            moment.locale('{(BoardContext.Current.User.Culture.IsSet()
-                                 ? BoardContext.Current.User.Culture.Substring(0, 2)
+            moment.locale('{(BoardContext.Current.PageUser.Culture.IsSet()
+                                 ? BoardContext.Current.PageUser.Culture.Substring(0, 2)
                                  : BoardContext.Current.Get<BoardSettings>().Culture.Substring(0, 2))}');
             jQuery('abbr.timeago').html(function(index, value) {{
                 
@@ -311,7 +311,7 @@ namespace YAF.DotNetNuke
             yafUser = BoardContext.Current.GetRepository<User>()
                 .GetSingle(u => u.Name == this.UserInfo.Username && u.Email == this.UserInfo.Email);
 
-            if (yafUser == null)
+            if (yafUser is null)
                 return UserImporter.CreateYafUser(
                     this.UserInfo,
                     this.boardId,

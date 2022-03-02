@@ -28,9 +28,13 @@ namespace YAF.DotNetNuke.Components.Controllers
 
     using global::DotNetNuke.Entities.Modules;
 
+    using YAF.Configuration;
     using YAF.Core.Context;
+    using YAF.Core.Model;
     using YAF.Core.Services;
+    using YAF.Types.Constants;
     using YAF.Types.Interfaces;
+    using YAF.Types.Models;
 
     #endregion
 
@@ -40,19 +44,9 @@ namespace YAF.DotNetNuke.Components.Controllers
     public class UpgradeController : ModuleSettingsBase, IUpgradeable, IHaveServiceLocator
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UpgradeController"/> class.
-        /// </summary>
-        public UpgradeController()
-        {
-            this.ServiceLocator = BoardContext.Current.ServiceLocator;
-
-            // this.navigationManager = this.DependencyProvider.GetRequiredService<INavigationManager>();
-        }
-
-        /// <summary>
         ///     Gets or sets the service locator.
         /// </summary>
-        public IServiceLocator ServiceLocator { get; set; }
+        public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
 
         /// <summary>
         /// Upgrades the module.
@@ -61,9 +55,22 @@ namespace YAF.DotNetNuke.Components.Controllers
         /// <returns>Returns nothing</returns>
         public string UpgradeModule(string version)
         {
-            this.Get<InstallUpgradeService>().InitializeOrUpgradeDatabase(true);
+            var versionType = this.GetRepository<Registry>().ValidateVersion(BoardInfo.AppVersion);
 
-            return string.Empty;
+            switch (versionType)
+            {
+                case DbVersionType.Upgrade:
+                    // Run Auto Upgrade
+                    this.Get<UpgradeService>().Upgrade();
+                    return string.Empty;
+                case DbVersionType.NewInstall:
+                    this.Get<InstallService>().InitializeDatabase();
+                    return string.Empty;
+                case DbVersionType.Current:
+                    return string.Empty;
+                default:
+                    return string.Empty;
+            }
         }
     }
 }

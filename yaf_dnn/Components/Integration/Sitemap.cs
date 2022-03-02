@@ -59,7 +59,7 @@
         {
             var urls = new List<SitemapUrl>();
 
-            if (BoardContext.Current == null)
+            if (BoardContext.Current is null)
             {
                 return urls;
             }

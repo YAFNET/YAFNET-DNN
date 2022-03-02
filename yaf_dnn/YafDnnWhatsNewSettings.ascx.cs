@@ -192,7 +192,7 @@ namespace YAF.DotNetNuke
             var objDesktopModuleInfo =
                 DesktopModuleController.GetDesktopModuleByModuleName("YetAnotherForumDotNet", this.PortalId);
 
-            if (objDesktopModuleInfo == null)
+            if (objDesktopModuleInfo is null)
             {
                 return;
             }
@@ -218,7 +218,7 @@ namespace YAF.DotNetNuke
                                     objTab.PortalID,
                                     false);
 
-                                if (objTabSelected == null)
+                                if (objTabSelected is null)
                                 {
                                     break;
                                 }

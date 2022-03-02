@@ -27,11 +27,13 @@ namespace YAF.DotNetNuke.Components.Integration
     using System.Linq;
     using System.Text;
 
+    using global::DotNetNuke.Entities.Modules;
     using global::DotNetNuke.Entities.Portals;
     using global::DotNetNuke.Entities.Users;
     using global::DotNetNuke.Security.Roles;
     using global::DotNetNuke.Services.Journal;
 
+    using YAF.Configuration;
     using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.Core.Helpers;
@@ -50,17 +52,110 @@ namespace YAF.DotNetNuke.Components.Integration
     /// Activity Stream DNN Integration Class
     /// </summary>
     [ExportService(ServiceLifetimeScope.Singleton)]
-    public class Journal : IActivityStream
+    public class Journal : PortalModuleBase, IActivityStream, IHaveServiceLocator
     {
+        /// <summary>
+        /// Gets or sets ServiceLocator.
+        /// </summary>
+        public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
+
+        /// <summary>
+        /// Adds the New Watch Topic to the User's ActivityStream
+        /// </summary>
+        /// <param name="userId">
+        /// The user Id.
+        /// </param>
+        /// <param name="topicId">
+        /// The topic unique identifier.
+        /// </param>
+        /// <param name="messageId">
+        /// The message unique identifier.
+        /// </param>
+        /// <param name="topicTitle">
+        /// The topic title.
+        /// </param>
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        /// <param name="fromUserId">
+        /// The from User Id.
+        /// </param>
+        public void AddWatchTopicToStream(int userId, int topicId, int messageId, string topicTitle, string message, int fromUserId)
+        {
+            var flags = new ActivityFlags { WatchForumReply = true };
+
+            var activity = new Activity
+            {
+                Flags = flags.BitValue,
+                FromUserID = fromUserId,
+                TopicID = topicId,
+                MessageID = messageId,
+                UserID = userId,
+                Notification = true,
+                Created = DateTime.UtcNow
+            };
+
+            this.GetRepository<Activity>().Insert(activity);
+        }
+
+        /// <summary>
+        /// Adds the Watch Reply to the User's ActivityStream
+        /// </summary>
+        /// <param name="userId">
+        /// The user Id.
+        /// </param>
+        /// <param name="topicId">
+        /// The topic unique identifier.
+        /// </param>
+        /// <param name="messageId">
+        /// The message unique identifier.
+        /// </param>
+        /// <param name="topicTitle">
+        /// The topic title.
+        /// </param>
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        /// <param name="fromUserId">
+        /// The from User Id.
+        /// </param>
+        public void AddWatchReplyToStream(int userId, int topicId, int messageId, string topicTitle, string message, int fromUserId)
+        {
+            var flags = new ActivityFlags { WatchTopicReply = true };
+
+            var activity = new Activity
+            {
+                Flags = flags.BitValue,
+                FromUserID = fromUserId,
+                TopicID = topicId,
+                MessageID = messageId,
+                UserID = userId,
+                Notification = true,
+                Created = DateTime.UtcNow
+            };
+
+            this.GetRepository<Activity>().Insert(activity);
+        }
+
         /// <summary>
         /// Adds the New Topic to the User's ActivityStream
         /// </summary>
-        /// <param name="forumID">The forum unique identifier.</param>
-        /// <param name="topicID">The topic unique identifier.</param>
-        /// <param name="messageID">The message unique identifier.</param>
-        /// <param name="topicTitle">The topic title.</param>
-        /// <param name="message">The message.</param>
-        public void AddTopicToStream(int forumID, int topicID, int messageID, string topicTitle, string message)
+        /// <param name="forumId">
+        /// The forum Id.
+        /// </param>
+        /// <param name="topicId">
+        /// The topic Id.
+        /// </param>
+        /// <param name="messageId">
+        /// The message Id.
+        /// </param>
+        /// <param name="topicTitle">
+        /// The topic title.
+        /// </param>
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        public void AddTopicToStream(int forumId, int topicId, int messageId, string topicTitle, string message)
         {
             message = BBCodeHelper.StripBBCode(
                     HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
@@ -75,12 +170,12 @@ namespace YAF.DotNetNuke.Components.Integration
                 ProfileId = user.UserID,
                 UserId = user.UserID,
                 Title = topicTitle,
-                ItemData = new ItemData { Url = BoardContext.Current.Get<LinkBuilder>().GetTopicLink(topicID, topicTitle) },
+                ItemData = new ItemData { Url = BoardContext.Current.Get<LinkBuilder>().GetTopicLink(topicId, topicTitle) },
                 Summary = message.Truncate(150),
                 Body = message,
                 JournalTypeId = 5,
-                SecuritySet = GetSecuritySet(forumID, portalSettings.PortalId),
-                ObjectKey = $"{forumID}:{topicID}:{messageID}"
+                SecuritySet = GetSecuritySet(forumId, portalSettings.PortalId),
+                ObjectKey = $"{forumId}:{topicId}:{messageId}"
             };
 
             if (JournalController.Instance.GetJournalItemByKey(portalSettings.PortalId, ji.ObjectKey) != null)
@@ -88,24 +183,18 @@ namespace YAF.DotNetNuke.Components.Integration
                 JournalController.Instance.DeleteJournalItemByKey(portalSettings.PortalId, ji.ObjectKey);
             }
 
-            // TODO:
-            /*if (SocialGroupId > 0)
-            {
-                ji.SocialGroupId = SocialGroupId;
-            }*/
-
-            JournalController.Instance.SaveJournalItem(ji, -1);
+            JournalController.Instance.SaveJournalItem(ji, this.ModuleConfiguration);
         }
 
         /// <summary>
         /// Adds the Reply to the User's ActivityStream
         /// </summary>
-        /// <param name="forumID">The forum unique identifier.</param>
-        /// <param name="topicID">The topic unique identifier.</param>
-        /// <param name="messageID">The message unique identifier.</param>
+        /// <param name="forumId">The forum unique identifier.</param>
+        /// <param name="topicId">The topic unique identifier.</param>
+        /// <param name="messageId">The message unique identifier.</param>
         /// <param name="topicTitle">The topic title.</param>
         /// <param name="message">The message.</param>
-        public void AddReplyToStream(int forumID, int topicID, int messageID, string topicTitle, string message)
+        public void AddReplyToStream(int forumId, int topicId, int messageId, string topicTitle, string message)
         {
             message = BBCodeHelper.StripBBCode(
                     HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
@@ -126,14 +215,14 @@ namespace YAF.DotNetNuke.Components.Integration
                         Url = BoardContext.Current.Get<LinkBuilder>().GetLink(
                             ForumPages.Posts,
                             "m={0}&name={1}#post{0}",
-                            messageID,
+                            messageId,
                             topicTitle)
                     },
                 Summary = message.Truncate(150),
                 Body = message,
                 JournalTypeId = 6,
-                SecuritySet = GetSecuritySet(forumID, portalSettings.PortalId),
-                ObjectKey = $"{forumID}:{topicID}:{messageID}"
+                SecuritySet = GetSecuritySet(forumId, portalSettings.PortalId),
+                ObjectKey = $"{forumId}:{topicId}:{messageId}"
             };
 
             if (JournalController.Instance.GetJournalItemByKey(portalSettings.PortalId, ji.ObjectKey) != null)
@@ -141,13 +230,7 @@ namespace YAF.DotNetNuke.Components.Integration
                 JournalController.Instance.DeleteJournalItemByKey(portalSettings.PortalId, ji.ObjectKey);
             }
 
-            // TODO:
-            /*if (SocialGroupId > 0)
-            {
-                ji.SocialGroupId = SocialGroupId;
-            }*/
-
-            JournalController.Instance.SaveJournalItem(ji, -1);
+            JournalController.Instance.SaveJournalItem(ji, this.ModuleConfiguration);
         }
 
         /// <summary>

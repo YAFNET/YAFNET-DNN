@@ -110,7 +110,7 @@ namespace YAF.DotNetNuke.Components.Integration
                         // get the guest user for this board...
                         var guestUser = this.GetRepository<User>().GetGuestUser(BoardContext.Current.PageBoardID);
 
-                        if (guestUser == null)
+                        if (guestUser is null)
                         {
                             // failure...
                             throw new NoValidGuestUserForBoardException(
@@ -182,7 +182,7 @@ namespace YAF.DotNetNuke.Components.Integration
         {
             var yafUser = this.GetRepository<User>().GetById(userID);
 
-            if (yafUser?.ProviderUserKey == null)
+            if (yafUser?.ProviderUserKey is null)
             {
                 return false;
             }
@@ -230,7 +230,7 @@ namespace YAF.DotNetNuke.Components.Integration
                     if (this.Get<BoardSettings>().LogUserDeleted)
                     {
                         this.Get<ILoggerService>().UserDeleted(
-                            BoardContext.Current.User.ID,
+                            BoardContext.Current.PageUser.ID,
                             $"User {user.UserName} was deleted by user id {BoardContext.Current.PageUserID} as unapproved.");
                     }
                 });
@@ -269,7 +269,7 @@ namespace YAF.DotNetNuke.Components.Integration
         {
             var user = this.Get<IAspNetUsersHelper>().GetMembershipUserById(userID);
 
-            if (user == null)
+            if (user is null)
             {
                 return false;
             }
@@ -304,8 +304,8 @@ namespace YAF.DotNetNuke.Components.Integration
             if (this.Get<BoardSettings>().LogUserDeleted)
             {
                 this.Get<ILoggerService>().UserDeleted(
-                    BoardContext.Current.User.ID,
-                    $"User {user.UserName} was deleted by {(isBotAutoDelete ? "the automatic spam check system" : BoardContext.Current.User.DisplayOrUserName())}.");
+                    BoardContext.Current.PageUser.ID,
+                    $"User {user.UserName} was deleted by {(isBotAutoDelete ? "the automatic spam check system" : BoardContext.Current.PageUser.DisplayOrUserName())}.");
             }
 
             return true;
@@ -370,9 +370,9 @@ namespace YAF.DotNetNuke.Components.Integration
 
             messages.ForEach(
                 x => this.GetRepository<Message>().Delete(
-                    x.Item2.ForumID,
-                    x.Item2.ID,
-                    x.Item1.ID,
+                    x.Topic.ForumID,
+                    x.TopicID,
+                    x.ID,
                     true,
                     string.Empty,
                     true,
@@ -384,7 +384,7 @@ namespace YAF.DotNetNuke.Components.Integration
             if (this.Get<BoardSettings>().LogUserDeleted)
             {
                 this.Get<ILoggerService>().UserDeleted(
-                    BoardContext.Current.User.ID,
+                    BoardContext.Current.PageUser.ID,
                     $"User {user.UserName} was deleted by the automatic spam check system.");
             }
 
@@ -503,12 +503,15 @@ namespace YAF.DotNetNuke.Components.Integration
         /// Get the User from the ProviderUserKey
         /// </summary>
         /// <param name="providerUserKey">The provider user key.</param>
+        /// <param name="currentBoard">
+        /// Get user from Current board, or all boards
+        /// </param>
         /// <returns>
         /// The get user from provider user key.
         /// </returns>
-        public User GetUserFromProviderUserKey(object providerUserKey)
+        public User GetUserFromProviderUserKey(string providerUserKey, bool currentBoard = true)
         {
-            return this.GetRepository<User>().GetUserByProviderKey(BoardContext.Current.PageBoardID, providerUserKey.ToString());
+            return this.GetRepository<User>().GetUserByProviderKey(currentBoard ? BoardContext.Current.PageBoardID : null, providerUserKey);
         }
 
         /// <summary>
@@ -943,7 +946,7 @@ namespace YAF.DotNetNuke.Components.Integration
             // Display name login
             var realUsername = this.GetRepository<User>().GetSingle(u => u.DisplayName == userName);
 
-            if (realUsername == null)
+            if (realUsername is null)
             {
                 return null;
             }

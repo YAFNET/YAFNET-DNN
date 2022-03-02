@@ -71,7 +71,7 @@ namespace YAF.DotNetNuke.Components.Utils
             users.Sort(new UserComparer());
 
             // Load Yaf Board Settings if needed
-            var boardSettings = BoardContext.Current == null
+            var boardSettings = BoardContext.Current is null
                 ? new LoadBoardSettings(boardId)
                 : BoardContext.Current.Get<BoardSettings>();
 
@@ -166,7 +166,7 @@ namespace YAF.DotNetNuke.Components.Utils
                 dnnUserInfo.DisplayName,
                 boardId);
 
-            if (yafUserId == null)
+            if (yafUserId is null)
             {
                 return 0;
             }
@@ -197,7 +197,7 @@ namespace YAF.DotNetNuke.Components.Utils
             // get this user information...
             var userInfo = BoardContext.Current.GetRepository<User>().GetById(yafUserId);
 
-            if (userInfo == null)
+            if (userInfo is null)
             {
                 return;
             }

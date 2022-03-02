@@ -82,6 +82,11 @@ namespace YAF.DotNetNuke.Components.WebAPI
             activities.ForEach(
                 activity =>
                     {
+                        if (!activity.TopicID.HasValue || !activity.FromUserID.HasValue || !activity.MessageID.HasValue)
+                        {
+                            return;
+                        }
+
                         var messageHolder = new PlaceHolder();
                         var iconLabel = new Label { CssClass = "fa-stack" };
 
@@ -91,16 +96,16 @@ namespace YAF.DotNetNuke.Components.WebAPI
                         var topic = this.GetRepository<Topic>().GetById(activity.TopicID.Value);
 
                         var topicLink = new HyperLink
-                        {
-                            NavigateUrl =
-                                BoardContext.Current.Get<LinkBuilder>().GetLink(
-                                    ForumPages.Posts,
-                                    "m={0}&name{1}#post{0}",
-                                    activity.MessageID.Value,
-                                    topic.TopicName),
-                            Text =
-                                $"<i class=\"fas fa-comment fa-fw me-1\"></i>{this.GetRepository<Topic>().GetById(activity.TopicID.Value).TopicName}"
-                        };
+                                            {
+                                                NavigateUrl =
+                                                    BoardContext.Current.Get<LinkBuilder>().GetLink(
+                                                        ForumPages.Posts,
+                                                        "m={0}&name{1}#post{0}",
+                                                        activity.MessageID.Value,
+                                                        topic.TopicName),
+                                                Text =
+                                                    $@"<i class=""fas fa-comment fa-fw me-1""></i>{this.GetRepository<Topic>().GetById(activity.TopicID.Value).TopicName}"
+                                            };
 
                         var name = this.Get<IUserDisplayName>().GetNameById(activity.FromUserID.Value);
 
@@ -127,6 +132,24 @@ namespace YAF.DotNetNuke.Components.WebAPI
                            icon = "quote-left";
                             message = this.Get<ILocalization>().GetTextFormatted(
                                 "WAS_QUOTED_MSG",
+                                name,
+                                topicLink.RenderToString());
+                        }
+
+                        if (activity.ActivityFlags.WatchForumReply)
+                        {
+                            icon = "comments";
+                            message = this.Get<ILocalization>().GetTextFormatted(
+                                "WATCH_FORUM_MSG",
+                                name,
+                                topicLink.RenderToString());
+                        }
+
+                        if (activity.ActivityFlags.WatchTopicReply)
+                        {
+                            icon = "comment";
+                            message = this.Get<ILocalization>().GetTextFormatted(
+                                "WATCH_TOPIC_MSG",
                                 name,
                                 topicLink.RenderToString());
                         }

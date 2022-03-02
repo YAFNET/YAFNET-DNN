@@ -10,7 +10,7 @@
     </XmlRead>
 
     <PropertyGroup>
-      <YAFVersion>$([System.Text.RegularExpressions.Regex]::Replace($(Version), '0([0-9]+.)([0-9]+.[0-9][0-9])([0-9]+)', '$1$2-$3'))</YAFVersion>
+      <YAFVersion>$([System.Text.RegularExpressions.Regex]::Replace($(Version), '([0-9]+.)([0-9]+.[0-9][0-9])([0-9]+)', '$1$2-$3'))</YAFVersion>
     </PropertyGroup>
 
 
@@ -68,6 +68,7 @@
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumAdminExtensions.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumAdminExtensions.min.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumAdminExtensionsDnn.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.netStack.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.selectedQuoting.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.tablesorter.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.tablesorter.min.js" />
@@ -241,6 +242,7 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Owin.Security.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Owin.Security.OAuth.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Owin.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Prism.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.SqlServer.dll" />

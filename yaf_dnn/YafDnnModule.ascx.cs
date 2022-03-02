@@ -338,7 +338,7 @@ namespace YAF.DotNetNuke
             // Check if the user exists in yaf
             var yafUser = this.GetRepository<User>().GetUserByProviderKey(this.forum1.BoardID, dnnUserInfo.UserID.ToString());
 
-            if (yafUser == null)
+            if (yafUser is null)
             {
                 // Migrate from Yaf < 3
                 yafUser = this.GetRepository<User>()
@@ -353,11 +353,11 @@ namespace YAF.DotNetNuke
                 }
             }
 
-            var boardSettings = BoardContext.Current == null
+            var boardSettings = BoardContext.Current is null
                 ? new LoadBoardSettings(this.forum1.BoardID)
                 : this.Get<BoardSettings>();
 
-            if (yafUser == null)
+            if (yafUser is null)
             {
                 var yafUserId = UserImporter.CreateYafUser(
                     dnnUserInfo,
@@ -471,7 +471,7 @@ namespace YAF.DotNetNuke
 
             try
             {
-                var isForumInstalled = this.Get<InstallUpgradeService>().IsForumInstalled;
+                var isForumInstalled = this.Get<InstallService>().IsForumInstalled;
 
                 if (!isForumInstalled)
                 {
@@ -479,7 +479,7 @@ namespace YAF.DotNetNuke
                         this.PortalSettings.PortalId,
                         this.PortalSettings.AdministratorId);
 
-                    this.Get<InstallUpgradeService>().InitializeForum(
+                    this.Get<InstallService>().InitializeForum(
                         Guid.NewGuid(),
                         $"{this.PortalSettings.PortalName} Forum",
                         "en-US",

@@ -28,12 +28,9 @@ namespace YAF.DotNetNuke
 
     using System;
     using System.Text;
-    using System.Web;
 
     using global::DotNetNuke.Abstractions.Portals;
     using global::DotNetNuke.Common;
-    using global::DotNetNuke.Common.Internal;
-    using global::DotNetNuke.Common.Utilities;
     using global::DotNetNuke.Entities.Portals;
 
     using global::DotNetNuke.Entities.Tabs;
@@ -122,7 +119,7 @@ namespace YAF.DotNetNuke
         /// <returns>
         /// The new URL.
         /// </returns>
-        private static string BuildUrlComplete([NotNull] object boardSettings, [CanBeNull]string url, bool fullUrl)
+        private static string BuildUrlComplete([NotNull] object boardSettings, [CanBeNull] string url, bool fullUrl)
         {
             CodeContracts.VerifyNotNull(boardSettings);
 
@@ -130,11 +127,9 @@ namespace YAF.DotNetNuke
 
             var yafTab = new TabController().GetTab(yafBoardSettings.DNNPageTab, yafBoardSettings.DNNPortalId, true);
 
-            var domainName = TestableGlobals.Instance.GetDomainName(HttpContext.Current.Request.Url);
-            var aliasUrl = PortalAliasController.GetPortalAliasByTab(yafBoardSettings.DNNPageTab, domainName);
-            var alias = PortalAliasController.Instance.GetPortalAlias(aliasUrl);
+            var portalSettings = BoardContext.Current.Get<IPortalController>().GetCurrentSettings();
 
-            IPortalSettings portalSettings = new PortalSettings(yafTab.PortalID, alias);
+            CodeContracts.VerifyNotNull(portalSettings);
 
             if (portalSettings.ContentLocalizationEnabled)
             {
@@ -146,7 +141,7 @@ namespace YAF.DotNetNuke
 
             if (url.IsNotSet())
             {
-                return GetBaseUrl(yafBoardSettings, yafTab);
+                return GetBaseUrl(yafTab);
             }
 
             if (!Configuration.Config.EnableURLRewriting)
@@ -305,14 +300,13 @@ namespace YAF.DotNetNuke
         /// <summary>
         /// Gets the base URL.
         /// </summary>
-        /// <param name="yafBoardSettings">The YAF board settings.</param>
         /// <param name="yafTab">The YAF tab.</param>
         /// <returns>
         /// Returns the BaseUrl
         /// </returns>
-        private static string GetBaseUrl([NotNull] BoardSettings yafBoardSettings, [NotNull] TabInfo yafTab)
+        private static string GetBaseUrl([NotNull] TabInfo yafTab)
         {
-            var baseUrl = Globals.NavigateURL(yafBoardSettings.DNNPageTab, Null.NullString);
+            var baseUrl = Globals.ApplicationURL(yafTab.TabID);
 
             if (baseUrl.EndsWith(yafTab.TabName, StringComparison.InvariantCultureIgnoreCase))
             {

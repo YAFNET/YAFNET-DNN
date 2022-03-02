@@ -61,12 +61,11 @@ namespace YAF.DotNetNuke.Components.WebAPI
         public IHttpActionResult GetSimilarTitles([FromBody] SearchTopic searchTopic)
         {
             var results = this.Get<ISearch>().SearchSimilar(
-                searchTopic.UserId,
                 string.Empty,
                 searchTopic.SearchTerm,
                 "Topic");
 
-            if (results == null)
+            if (results is null)
             {
                 return this.Ok(
                     new SearchGridDataSet
@@ -100,7 +99,6 @@ namespace YAF.DotNetNuke.Components.WebAPI
             var results = this.Get<ISearch>().SearchPaged(
                 out var totalHits,
                 searchTopic.ForumId,
-                searchTopic.UserId,
                 searchTopic.SearchTerm,
                 searchTopic.Page,
                 searchTopic.PageSize);

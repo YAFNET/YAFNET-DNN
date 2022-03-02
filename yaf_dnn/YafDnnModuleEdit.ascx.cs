@@ -258,7 +258,7 @@ namespace YAF.DotNetNuke
             var objDesktopModuleInfo =
                 DesktopModuleController.GetDesktopModuleByModuleName("Active Forums", this.PortalId);
 
-            if (objDesktopModuleInfo == null)
+            if (objDesktopModuleInfo is null)
             {
                 this.ActiveForumsPlaceHolder.Visible = false;
                 return;
@@ -283,7 +283,7 @@ namespace YAF.DotNetNuke
                             while (tabSelected.ParentId != Null.NullInteger)
                             {
                                 tabSelected = objTabController.GetTab(tabSelected.ParentId, tabInfo.PortalID, false);
-                                if (tabSelected == null)
+                                if (tabSelected is null)
                                 {
                                     break;
                                 }

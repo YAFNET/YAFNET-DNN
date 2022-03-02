@@ -139,7 +139,7 @@ namespace YAF.DotNetNuke.Components.Utils
             }
 
             // empty out access table
-            if (!rolesChanged || BoardContext.Current == null)
+            if (!rolesChanged || BoardContext.Current is null)
             {
                 return rolesChanged;
             }

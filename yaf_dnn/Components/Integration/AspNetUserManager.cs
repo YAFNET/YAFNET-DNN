@@ -97,7 +97,7 @@ namespace YAF.DotNetNuke.Components.Integration
         /// <summary>
         /// The users.
         /// </summary>
-        public virtual IQueryable<AspNetUsers> Users => base.Users;
+        public virtual IQueryable<AspNetUsers> AspNetUsers => base.Users;
 
         /// <summary>
         /// Remove a user from a role.
