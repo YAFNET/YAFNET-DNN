@@ -264,14 +264,14 @@ namespace YAF.DotNetNuke
 
                 var langCode = currentCulture.Name;
 
-                this.PageContext().BoardSettings.Language =
+                this.PageBoardContext().BoardSettings.Language =
                     Cultures.FirstOrDefault(culture => culture.CultureTag.Equals(langCode)) != null
                         ? Cultures.FirstOrDefault(culture => culture.CultureTag.Equals(langCode))?.CultureFile
                         : "english.xml";
             }
             catch (Exception)
             {
-                this.PageContext().BoardSettings.Language = "english.xml";
+                this.PageBoardContext().BoardSettings.Language = "english.xml";
             }
         }
 
@@ -402,8 +402,8 @@ namespace YAF.DotNetNuke
                 this.forum1.BoardID = this.Settings["forumboardid"].ToType<int>();
 
                 var boardSettingsTabId = BoardContext.Current.BoardSettings != null
-                                         && this.PageContext().BoardSettings.BoardID.Equals(this.forum1.BoardID)
-                                             ? this.PageContext().BoardSettings.DNNPageTab
+                                         && this.PageBoardContext().BoardSettings.BoardID.Equals(this.forum1.BoardID)
+                                             ? this.PageBoardContext().BoardSettings.DNNPageTab
                                              : new LoadBoardSettings(this.forum1.BoardID).DNNPageTab;
 
                 if (!boardSettingsTabId.Equals(this.TabId) && boardSettingsTabId > -1)
@@ -417,7 +417,7 @@ namespace YAF.DotNetNuke
                     }
                 }
 
-                if (this.PageContext().BoardSettings.DNNPortalId.Equals(-1))
+                if (this.PageBoardContext().BoardSettings.DNNPortalId.Equals(-1))
                 {
                     var boardSettings = new LoadBoardSettings(this.forum1.BoardID)
                                             {
@@ -519,7 +519,7 @@ namespace YAF.DotNetNuke
         /// <param name="e">The <see cref="ForumPageTitleArgs" /> instance containing the event data.</param>
         private void Forum1_PageTitleSet([NotNull] object sender, [NotNull] ForumPageTitleArgs e)
         {
-            this.BasePage.Title = this.PageContext().CurrentForumPage.GeneratePageTitle();
+            this.BasePage.Title = this.PageBoardContext().CurrentForumPage.GeneratePageTitle();
         }
 
         #endregion

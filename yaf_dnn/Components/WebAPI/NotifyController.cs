@@ -38,6 +38,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
+    using YAF.Types.Interfaces.Services;
     using YAF.Types.Models;
     using YAF.Types.Objects;
 
@@ -100,9 +101,7 @@ namespace YAF.DotNetNuke.Components.WebAPI
                                                 NavigateUrl =
                                                     BoardContext.Current.Get<LinkBuilder>().GetLink(
                                                         ForumPages.Posts,
-                                                        "m={0}&name{1}#post{0}",
-                                                        activity.MessageID.Value,
-                                                        topic.TopicName),
+                                                        new { m = activity.MessageID.Value, name = topic.TopicName }),
                                                 Text =
                                                     $@"<i class=""fas fa-comment fa-fw me-1""></i>{this.GetRepository<Topic>().GetById(activity.TopicID.Value).TopicName}"
                                             };

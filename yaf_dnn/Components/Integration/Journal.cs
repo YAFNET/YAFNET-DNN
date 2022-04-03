@@ -33,7 +33,6 @@ namespace YAF.DotNetNuke.Components.Integration
     using global::DotNetNuke.Security.Roles;
     using global::DotNetNuke.Services.Journal;
 
-    using YAF.Configuration;
     using YAF.Core.Context;
     using YAF.Core.Extensions;
     using YAF.Core.Helpers;
@@ -44,6 +43,7 @@ namespace YAF.DotNetNuke.Components.Integration
     using YAF.Types.Extensions;
     using YAF.Types.Flags;
     using YAF.Types.Interfaces;
+    using YAF.Types.Interfaces.Services;
     using YAF.Types.Models;
 
     using DateTime = System.DateTime;
@@ -214,9 +214,7 @@ namespace YAF.DotNetNuke.Components.Integration
                     {
                         Url = BoardContext.Current.Get<LinkBuilder>().GetLink(
                             ForumPages.Posts,
-                            "m={0}&name={1}#post{0}",
-                            messageId,
-                            topicTitle)
+                            new { m = messageId, name = topicTitle })
                     },
                 Summary = message.Truncate(150),
                 Body = message,

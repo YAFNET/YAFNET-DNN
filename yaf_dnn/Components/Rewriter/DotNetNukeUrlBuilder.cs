@@ -44,6 +44,7 @@ namespace YAF.DotNetNuke
     using YAF.Core.URLBuilder;
     using YAF.Core.Utilities;
     using YAF.Types;
+    using YAF.Types.Attributes;
     using YAF.Types.Constants;
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
@@ -54,7 +55,8 @@ namespace YAF.DotNetNuke
     /// <summary>
     /// The DotNetNuke URL builder.
     /// </summary>
-    public class DotNetNukeUrlBuilder : AdvancedUrlRewriter
+    [ExportService(ServiceLifetimeScope.Singleton)]
+    public class DotNetNukeUrlBuilder : BaseUrlBuilder
     {
         #region Public Methods
 
@@ -70,19 +72,6 @@ namespace YAF.DotNetNuke
         public override string BuildUrlFull([CanBeNull] string url)
         {
             return BuildUrlComplete(BoardContext.Current.Get<BoardSettings>(), url, true);
-        }
-
-        /// <summary>
-        /// Builds the Full URL.
-        /// </summary>
-        /// <param name="boardSettings">The board settings.</param>
-        /// <param name="url">The c.</param>
-        /// <returns>
-        /// Returns the URL.
-        /// </returns>
-        public override string BuildUrlFull([NotNull] object boardSettings, [CanBeNull] string url)
-        {
-            return BuildUrlComplete(boardSettings, url, true);
         }
 
         /// <summary>

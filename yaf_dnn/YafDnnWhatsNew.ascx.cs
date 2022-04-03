@@ -51,6 +51,7 @@ namespace YAF.DotNetNuke
     using YAF.Types.Extensions;
     using YAF.Types.Interfaces;
     using YAF.Types.Interfaces.Identity;
+    using YAF.Types.Interfaces.Services;
     using YAF.Types.Models;
     using YAF.Types.Objects.Model;
     using YAF.Web.Controls;
@@ -297,7 +298,7 @@ namespace YAF.DotNetNuke
             // Check for user
             if (!HttpContext.Current.User.Identity.IsAuthenticated)
             {
-                return BoardContext.Current.Get<IAspNetUsersHelper>().GuestUserId;
+                return BoardContext.Current.GuestUserID;
             }
 
             // Check if the user exists in yaf
