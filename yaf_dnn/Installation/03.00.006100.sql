@@ -51,8 +51,8 @@ BEGIN TRY
       )
         MERGE INTO  [{databaseOwner}].[{objectQualifier}user] T
         USING xUsers S ON T.BoardID = @BoardID and T.Name = S.UserName
-        WHEN NOT MATCHED THEN INSERT ( BoardID, ProviderUserKey,       Name,   DisplayName, Password,   Email,       Joined,    LastVisit,   IP,   NumPosts,   TimeZone,   Avatar,   Signature, AvatarImage, AvatarImageType,   RankID, Suspended, SuspendedReason, SuspendedBy, LanguageFile, ThemeFile, PMNotification, AutoWatchTopics, DailyDigest, NotificationType, Flags, Points, Culture, UserStyle)
-                              VALUES (@BoardID,       S.UserKey, S.UserName, S.DisplayName,    N'na', S.Email, GetUTCDate(), GetUTCDate(), Null, S.NumPosts,       NULL,     NULL, S.Signature,        Null,            Null, @newRank,         0,            Null,           0,         Null,       Null,             1,               0,           0,                0,     2,      0,    Null,      Null);
+        WHEN NOT MATCHED THEN INSERT ( BoardID, ProviderUserKey,       Name,   DisplayName,   Email,       Joined,    LastVisit,   IP,   NumPosts,   TimeZone,   Avatar,   Signature, AvatarImage, AvatarImageType,   RankID, Suspended, SuspendedReason, SuspendedBy, LanguageFile, ThemeFile, PMNotification, AutoWatchTopics, DailyDigest, NotificationType, Flags, Points, Culture, UserStyle)
+                              VALUES (@BoardID,       S.UserKey, S.UserName, S.DisplayName, S.Email, GetUTCDate(), GetUTCDate(), Null, S.NumPosts,       NULL,     NULL, S.Signature,        Null,            Null, @newRank,         0,            Null,           0,         Null,       Null,             1,               0,           0,                0,     2,      0,    Null,      Null);
 
 
     -- PRINT N'Add Guests Membership for Guest User;';
