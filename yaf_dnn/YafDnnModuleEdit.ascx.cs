@@ -22,252 +22,228 @@
  * under the License.
  */
 
-namespace YAF.DotNetNuke
+namespace YAF.DotNetNuke;
+
+#region Using
+
+using System.Web.UI.WebControls;
+
+using global::DotNetNuke.Common.Utilities;
+
+using YAF.Core.Services.Import;
+
+#endregion
+
+/// <summary>
+/// The YAF Module Settings Page
+/// </summary>
+public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
 {
-    #region Using
-
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Web;
-    using System.Web.UI.WebControls;
-
-    using global::DotNetNuke.Abstractions;
-    using global::DotNetNuke.Common.Utilities;
-    using global::DotNetNuke.Entities.Modules;
-    using global::DotNetNuke.Entities.Tabs;
-    using global::DotNetNuke.Entities.Users;
-    using global::DotNetNuke.Services.Localization;
-
-    using Microsoft.Extensions.DependencyInjection;
-
-    using YAF.Core.BoardSettings;
-    using YAF.Core.Context;
-    using YAF.Core.Extensions;
-    using YAF.Core.Model;
-    using YAF.Core.Services;
-    using YAF.Core.Services.Import;
-    using YAF.DotNetNuke.Components.Controllers;
-    using YAF.DotNetNuke.Components.Utils;
-    using YAF.DotNetNuke.Extensions;
-    using YAF.Types;
-    using YAF.Types.Extensions;
-    using YAF.Types.Interfaces;
-    using YAF.Types.Models;
-    using YAF.Types.Models.Identity;
-
-    #endregion
+    /// <summary>
+    /// The navigation manager.
+    /// </summary>
+    private readonly INavigationManager navigationManager;
 
     /// <summary>
-    /// The YAF Module Settings Page
+    ///     Gets or sets the service locator.
     /// </summary>
-    public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
+    public IServiceLocator ServiceLocator { get; set; }
+
+    #region Methods
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="YafDnnModuleEdit"/> class.
+    /// </summary>
+    public YafDnnModuleEdit()
     {
-        /// <summary>
-        /// The navigation manager.
-        /// </summary>
-        private readonly INavigationManager navigationManager;
+        this.ServiceLocator = BoardContext.Current.ServiceLocator;
+        this.navigationManager = this.DependencyProvider.GetRequiredService<INavigationManager>();
+    }
 
-        /// <summary>
-        ///     Gets or sets the service locator.
-        /// </summary>
-        public IServiceLocator ServiceLocator { get; set; }
+    /// <summary>
+    /// Raises the <see cref="E:System.Web.UI.Control.Init" /> event.
+    /// </summary>
+    /// <param name="e">An <see cref="T:System.EventArgs" /> object that contains the event data.</param>
+    protected override void OnInit([NotNull] EventArgs e)
+    {
+        this.Load += this.DotNetNukeModuleEdit_Load;
+        this.update.Click += this.UpdateClick;
+        this.cancel.Click += this.CancelClick;
 
-        #region Methods
+        base.OnInit(e);
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="YafDnnModuleEdit"/> class.
-        /// </summary>
-        public YafDnnModuleEdit()
-        {
-            this.ServiceLocator = BoardContext.Current.ServiceLocator;
-            this.navigationManager = this.DependencyProvider.GetRequiredService<INavigationManager>();
-        }
+    /// <summary>
+    /// Handles the OnClick event of the ImportForums control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+    protected void ImportForums_OnClick([NotNull] object sender, [NotNull] EventArgs e)
+    {
+        var moduleController = new ModuleController();
 
-        /// <summary>
-        /// Raises the <see cref="E:System.Web.UI.Control.Init" /> event.
-        /// </summary>
-        /// <param name="e">An <see cref="T:System.EventArgs" /> object that contains the event data.</param>
-        protected override void OnInit([NotNull] EventArgs e)
-        {
-            this.Load += this.DotNetNukeModuleEdit_Load;
-            this.update.Click += this.UpdateClick;
-            this.cancel.Click += this.CancelClick;
+        var tabModule = moduleController.GetModule(this.ActiveForums.SelectedValue.ToType<int>());
 
-            base.OnInit(e);
-        }
+        // First Create new empty forum
+        var newBoardId = this.CreateBoard(false, tabModule.ModuleTitle);
 
-        /// <summary>
-        /// Handles the OnClick event of the ImportForums control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        protected void ImportForums_OnClick([NotNull] object sender, [NotNull] EventArgs e)
-        {
-            var moduleController = new ModuleController();
+        DataController.ImportActiveForums(
+            this.ActiveForums.SelectedValue.ToType<int>(),
+            newBoardId,
+            this.PortalSettings);
 
-            var tabModule = moduleController.GetModule(this.ActiveForums.SelectedValue.ToType<int>());
+        this.MigrateAttachments();
 
-            // First Create new empty forum
-            var newBoardId = this.CreateBoard(false, tabModule.ModuleTitle);
+        this.FixLastForumTopic(newBoardId);
 
-            DataController.ImportActiveForums(
-                this.ActiveForums.SelectedValue.ToType<int>(),
-                newBoardId,
-                this.PortalSettings);
+        moduleController.UpdateModuleSetting(this.ModuleId, "forumboardid", newBoardId.ToString());
 
-            this.MigrateAttachments();
+        moduleController.UpdateModuleSetting(this.ModuleId, "RemoveTabName", this.RemoveTabName.SelectedValue);
+        moduleController.UpdateModuleSetting(
+            this.ModuleId,
+            "InheritDnnLanguage",
+            this.InheritDnnLanguage.Checked.ToString());
 
-            this.FixLastForumTopic(newBoardId);
+        var boardSettings = new LoadBoardSettings(newBoardId)
+                                {
+                                    DNNPageTab = this.TabId,
+                                    DNNPortalId = this.PortalId,
+                                    BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/"
+                                };
 
-            moduleController.UpdateModuleSetting(this.ModuleId, "forumboardid", newBoardId.ToString());
+        // save the settings to the database
+        boardSettings.SaveRegistry();
 
-            moduleController.UpdateModuleSetting(this.ModuleId, "RemoveTabName", this.RemoveTabName.SelectedValue);
-            moduleController.UpdateModuleSetting(
-                this.ModuleId,
-                "InheritDnnLanguage",
-                this.InheritDnnLanguage.Checked.ToString());
+        // Reload forum settings
+        BoardContext.Current.BoardSettings = null;
 
-            var boardSettings = new LoadBoardSettings(newBoardId)
-            {
-                DNNPageTab = this.TabId,
-                DNNPortalId = this.PortalId,
-                BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/"
-            };
+        this.Response.Redirect(this.navigationManager.NavigateURL(), true);
+    }
 
-            // save the settings to the database
-            boardSettings.SaveRegistry();
+    /// <summary>
+    /// Handles the OnClick event of the Create control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+    protected void Create_OnClick([NotNull] object sender, [NotNull] EventArgs e)
+    {
+        var newBoardId = this.CreateBoard(true, this.NewBoardName.Text.Trim());
 
-            // Reload forum settings
-            BoardContext.Current.BoardSettings = null;
+        var moduleController = new ModuleController();
 
-            this.Response.Redirect(this.navigationManager.NavigateURL(), true);
-        }
+        moduleController.UpdateModuleSetting(this.ModuleId, "forumboardid", newBoardId.ToString());
 
-        /// <summary>
-        /// Handles the OnClick event of the Create control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        protected void Create_OnClick([NotNull] object sender, [NotNull] EventArgs e)
-        {
-            var newBoardId = this.CreateBoard(true, this.NewBoardName.Text.Trim());
+        moduleController.UpdateModuleSetting(this.ModuleId, "RemoveTabName", this.RemoveTabName.SelectedValue);
+        moduleController.UpdateModuleSetting(
+            this.ModuleId,
+            "InheritDnnLanguage",
+            this.InheritDnnLanguage.Checked.ToString());
 
-            var moduleController = new ModuleController();
-
-            moduleController.UpdateModuleSetting(this.ModuleId, "forumboardid", newBoardId.ToString());
-
-            moduleController.UpdateModuleSetting(this.ModuleId, "RemoveTabName", this.RemoveTabName.SelectedValue);
-            moduleController.UpdateModuleSetting(
-                this.ModuleId,
-                "InheritDnnLanguage",
-                this.InheritDnnLanguage.Checked.ToString());
-
-            var boardSettings =
-                new LoadBoardSettings(newBoardId)
-                    {
-                        DNNPageTab = this.TabId,
-                        DNNPortalId = this.PortalId,
-                        BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/"
-                    };
-
-            // save the settings to the database
-            boardSettings.SaveRegistry();
-
-            Config.Touch();
-
-            this.Response.Redirect(this.navigationManager.NavigateURL(this.TabId), true);
-        }
-
-        /// <summary>
-        /// Cancel Editing.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        private void CancelClick([NotNull] object sender, [NotNull] EventArgs e)
-        {
-            this.Response.Redirect(this.navigationManager.NavigateURL(), true);
-        }
-
-        /// <summary>
-        /// The dot net nuke module edit_ load.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void DotNetNukeModuleEdit_Load([NotNull] object sender, [NotNull] EventArgs e)
-        {
-            this.update.Text = Localization.GetString("Update.Text", this.LocalResourceFile);
-            this.cancel.Text = Localization.GetString("Cancel.Text", this.LocalResourceFile);
-            this.create.Text = Localization.GetString("Create.Text", this.LocalResourceFile);
-            this.ImportForums.Text = Localization.GetString("Import.Text", this.LocalResourceFile);
-
-            if (this.IsPostBack)
-            {
-                return;
-            }
-
-            var dt = this.GetRepository<Board>().GetAll();
-
-                this.BoardID.DataSource = dt;
-                this.BoardID.DataTextField = "Name";
-                this.BoardID.DataValueField = "ID";
-
-                this.BoardID.DataBind();
-
-                if (this.Settings["forumboardid"] != null)
+        var boardSettings =
+            new LoadBoardSettings(newBoardId)
                 {
-                    var item = this.BoardID.Items.FindByValue(this.Settings["forumboardid"].ToString());
-                    if (item != null)
-                    {
-                        item.Selected = true;
-                    }
-                }
+                    DNNPageTab = this.TabId,
+                    DNNPortalId = this.PortalId,
+                    BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/"
+                };
 
-                this.FillActiveForumsList();
+        // save the settings to the database
+        boardSettings.SaveRegistry();
 
-            // Load Remove Tab Name Setting
-            this.RemoveTabName.Items.Add(
-                new ListItem(Localization.GetString("RemoveTabName0.Text", this.LocalResourceFile), "0"));
-            this.RemoveTabName.Items.Add(
-                new ListItem(Localization.GetString("RemoveTabName1.Text", this.LocalResourceFile), "1"));
-            this.RemoveTabName.Items.Add(
-                new ListItem(Localization.GetString("RemoveTabName2.Text", this.LocalResourceFile), "2"));
+        Config.Touch();
 
-            this.RemoveTabName.SelectedValue = this.Settings["RemoveTabName"] != null
-                                                   ? this.Settings["RemoveTabName"].ToType<string>()
-                                                   : "1";
+        this.Response.Redirect(this.navigationManager.NavigateURL(this.TabId), true);
+    }
 
-            // Load Inherit DNN Language Setting
-            var inheritDnnLang = true;
+    /// <summary>
+    /// Cancel Editing.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+    private void CancelClick([NotNull] object sender, [NotNull] EventArgs e)
+    {
+        this.Response.Redirect(this.navigationManager.NavigateURL(), true);
+    }
 
-            if ((string)this.Settings["InheritDnnLanguage"] != null)
-            {
-                bool.TryParse((string)this.Settings["InheritDnnLanguage"], out inheritDnnLang);
-            }
+    /// <summary>
+    /// The dot net nuke module edit_ load.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+    private void DotNetNukeModuleEdit_Load([NotNull] object sender, [NotNull] EventArgs e)
+    {
+        this.update.Text = Localization.GetString("Update.Text", this.LocalResourceFile);
+        this.cancel.Text = Localization.GetString("Cancel.Text", this.LocalResourceFile);
+        this.create.Text = Localization.GetString("Create.Text", this.LocalResourceFile);
+        this.ImportForums.Text = Localization.GetString("Import.Text", this.LocalResourceFile);
 
-            this.InheritDnnLanguage.Checked = inheritDnnLang;
+        if (this.IsPostBack)
+        {
+            return;
         }
 
-        /// <summary>
-        /// Fills the active forums list.
-        /// </summary>
-        private void FillActiveForumsList()
+        var dt = this.GetRepository<Board>().GetAll();
+
+        this.BoardID.DataSource = dt;
+        this.BoardID.DataTextField = "Name";
+        this.BoardID.DataValueField = "ID";
+
+        this.BoardID.DataBind();
+
+        if (this.Settings["forumboardid"] != null)
         {
-            var objTabController = new TabController();
-
-            var objDesktopModuleInfo =
-                DesktopModuleController.GetDesktopModuleByModuleName("Active Forums", this.PortalId);
-
-            if (objDesktopModuleInfo is null)
+            var item = this.BoardID.Items.FindByValue(this.Settings["forumboardid"].ToString());
+            if (item != null)
             {
-                this.ActiveForumsPlaceHolder.Visible = false;
-                return;
+                item.Selected = true;
             }
+        }
 
-            var tabs = TabController.GetPortalTabs(this.PortalSettings.PortalId, -1, true, true);
+        this.FillActiveForumsList();
 
-            tabs.Where(tab => !tab.IsDeleted).ForEach(
-                tabInfo =>
+        // Load Remove Tab Name Setting
+        this.RemoveTabName.Items.Add(
+            new ListItem(Localization.GetString("RemoveTabName0.Text", this.LocalResourceFile), "0"));
+        this.RemoveTabName.Items.Add(
+            new ListItem(Localization.GetString("RemoveTabName1.Text", this.LocalResourceFile), "1"));
+        this.RemoveTabName.Items.Add(
+            new ListItem(Localization.GetString("RemoveTabName2.Text", this.LocalResourceFile), "2"));
+
+        this.RemoveTabName.SelectedValue = this.Settings["RemoveTabName"] != null
+                                               ? this.Settings["RemoveTabName"].ToType<string>()
+                                               : "1";
+
+        // Load Inherit DNN Language Setting
+        var inheritDnnLang = true;
+
+        if ((string)this.Settings["InheritDnnLanguage"] != null)
+        {
+            bool.TryParse((string)this.Settings["InheritDnnLanguage"], out inheritDnnLang);
+        }
+
+        this.InheritDnnLanguage.Checked = inheritDnnLang;
+    }
+
+    /// <summary>
+    /// Fills the active forums list.
+    /// </summary>
+    private void FillActiveForumsList()
+    {
+        var objTabController = new TabController();
+
+        var objDesktopModuleInfo =
+            DesktopModuleController.GetDesktopModuleByModuleName("Active Forums", this.PortalId);
+
+        if (objDesktopModuleInfo is null)
+        {
+            this.ActiveForumsPlaceHolder.Visible = false;
+            return;
+        }
+
+        var tabs = TabController.GetPortalTabs(this.PortalSettings.PortalId, -1, true, true);
+
+        tabs.Where(tab => !tab.IsDeleted).ForEach(
+            tabInfo =>
                 {
                     var moduleController = new ModuleController();
 
@@ -276,229 +252,228 @@ namespace YAF.DotNetNuke
 
                     tabModules.ForEach(
                         moduleInfo =>
-                        {
-                            var path = tabInfo.TabName;
-                            var tabSelected = tabInfo;
-
-                            while (tabSelected.ParentId != Null.NullInteger)
                             {
-                                tabSelected = objTabController.GetTab(tabSelected.ParentId, tabInfo.PortalID, false);
-                                if (tabSelected is null)
+                                var path = tabInfo.TabName;
+                                var tabSelected = tabInfo;
+
+                                while (tabSelected.ParentId != Null.NullInteger)
                                 {
-                                    break;
+                                    tabSelected = objTabController.GetTab(tabSelected.ParentId, tabInfo.PortalID, false);
+                                    if (tabSelected is null)
+                                    {
+                                        break;
+                                    }
+
+                                    path = $"{tabSelected.TabName} -> {path}";
                                 }
 
-                                path = $"{tabSelected.TabName} -> {path}";
-                            }
+                                var objListItem = new ListItem
+                                                      {
+                                                          Value = moduleInfo.ModuleID.ToString(), Text = $@"{path} -> {moduleInfo.ModuleTitle}"
+                                                      };
 
-                            var objListItem = new ListItem
-                            {
-                                Value = moduleInfo.ModuleID.ToString(), Text = $"{path} -> {moduleInfo.ModuleTitle}"
-                            };
-
-                            this.ActiveForums.Items.Add(objListItem);
-                        });
+                                this.ActiveForums.Items.Add(objListItem);
+                            });
                 });
 
-            if (this.ActiveForums.Items.Count == 0)
+        if (this.ActiveForums.Items.Count == 0)
+        {
+            this.ActiveForumsPlaceHolder.Visible = false;
+        }
+    }
+
+    /// <summary>
+    /// Save the Settings
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+    private void UpdateClick([NotNull] object sender, [NotNull] EventArgs e)
+    {
+        var moduleController = new ModuleController();
+
+        moduleController.UpdateModuleSetting(this.ModuleId, "forumboardid", this.BoardID.SelectedValue);
+
+        moduleController.UpdateModuleSetting(this.ModuleId, "RemoveTabName", this.RemoveTabName.SelectedValue);
+        moduleController.UpdateModuleSetting(
+            this.ModuleId,
+            "InheritDnnLanguage",
+            this.InheritDnnLanguage.Checked.ToString());
+
+        var boardSettings =
+            new LoadBoardSettings(this.BoardID.SelectedValue.ToType<int>())
+                {
+                    DNNPageTab = this.TabId,
+                    DNNPortalId = this.PortalId,
+                    BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/"
+                };
+
+        // save the settings to the database
+        boardSettings.SaveRegistry();
+
+        // Import Users & Roles
+        UserImporter.ImportUsers(
+            this.BoardID.SelectedValue.ToType<int>(),
+            this.PortalSettings.PortalId,
+            out _);
+
+        Config.Touch();
+
+        this.Response.Redirect(this.navigationManager.NavigateURL(this.TabId), true);
+    }
+
+    /// <summary>
+    /// The create board.
+    /// </summary>
+    /// <param name="importUsers">if set to <c>true</c> [import users].</param>
+    /// <param name="boardName">Name of the board.</param>
+    /// <returns>
+    /// Returns the Board ID of the new Board.
+    /// </returns>
+    private int CreateBoard([NotNull] bool importUsers, [NotNull] string boardName)
+    {
+        CodeContracts.VerifyNotNull(boardName);
+
+        // new admin
+        var newAdmin = UserController.Instance.GetCurrentUserInfo().ToAspNetUsers();
+
+        // Create Board
+        var newBoardId = this.CreateBoardDatabase(
+            boardName,
+            "english.xml",
+            newAdmin);
+
+        if (newBoardId > 0 && Configuration.Config.MultiBoardFolders)
+        {
+            // Successfully created the new board
+            var boardFolder = this.Server.MapPath(
+                Path.Combine(Configuration.Config.BoardRoot, $"{newBoardId}/"));
+
+            // Create New Folders.
+            if (!Directory.Exists(Path.Combine(boardFolder, "Images")))
             {
-                this.ActiveForumsPlaceHolder.Visible = false;
+                // Create the Images Folders
+                Directory.CreateDirectory(Path.Combine(boardFolder, "Images"));
+
+                // Create Sub Folders
+                Directory.CreateDirectory(Path.Combine(boardFolder, "Images", "Avatars"));
+                Directory.CreateDirectory(Path.Combine(boardFolder, "Images", "Categories"));
+                Directory.CreateDirectory(Path.Combine(boardFolder, "Images", "Forums"));
+                Directory.CreateDirectory(Path.Combine(boardFolder, "Images", "Medals"));
+            }
+
+            if (!Directory.Exists(Path.Combine(boardFolder, "Uploads")))
+            {
+                Directory.CreateDirectory(Path.Combine(boardFolder, "Uploads"));
             }
         }
 
-        /// <summary>
-        /// Save the Settings
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void UpdateClick([NotNull] object sender, [NotNull] EventArgs e)
+        // Import Users & Roles
+        if (importUsers)
         {
-            var moduleController = new ModuleController();
-
-            moduleController.UpdateModuleSetting(this.ModuleId, "forumboardid", this.BoardID.SelectedValue);
-
-            moduleController.UpdateModuleSetting(this.ModuleId, "RemoveTabName", this.RemoveTabName.SelectedValue);
-            moduleController.UpdateModuleSetting(
-                this.ModuleId,
-                "InheritDnnLanguage",
-                this.InheritDnnLanguage.Checked.ToString());
-
-            var boardSettings =
-                new LoadBoardSettings(this.BoardID.SelectedValue.ToType<int>())
-                    {
-                        DNNPageTab = this.TabId,
-                        DNNPortalId = this.PortalId,
-                        BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/"
-                    };
-
-            // save the settings to the database
-            boardSettings.SaveRegistry();
-
-            // Import Users & Roles
             UserImporter.ImportUsers(
-                this.BoardID.SelectedValue.ToType<int>(),
+                newBoardId,
                 this.PortalSettings.PortalId,
                 out _);
-
-            Config.Touch();
-
-            this.Response.Redirect(this.navigationManager.NavigateURL(this.TabId), true);
         }
 
-        /// <summary>
-        /// The create board.
-        /// </summary>
-        /// <param name="importUsers">if set to <c>true</c> [import users].</param>
-        /// <param name="boardName">Name of the board.</param>
-        /// <returns>
-        /// Returns the Board ID of the new Board.
-        /// </returns>
-        private int CreateBoard([NotNull] bool importUsers, [NotNull] string boardName)
-        {
-            CodeContracts.VerifyNotNull(boardName);
+        return newBoardId;
+    }
 
-            // new admin
-            var newAdmin = UserController.Instance.GetCurrentUserInfo().ToAspNetUsers();
+    /// <summary>
+    /// Creates the board in the database.
+    /// </summary>
+    /// <param name="boardName">
+    /// Name of the board.
+    /// </param>
+    /// <param name="langFile">
+    /// The language file.
+    /// </param>
+    /// <param name="newAdmin">
+    /// The new admin.
+    /// </param>
+    /// <returns>
+    /// Returns the Board ID of the new Board.
+    /// </returns>
+    private int CreateBoardDatabase(
+        [NotNull] string boardName,
+        [NotNull] string langFile,
+        [NotNull] AspNetUsers newAdmin)
+    {
+        CodeContracts.VerifyNotNull(boardName);
+        CodeContracts.VerifyNotNull(langFile);
+        CodeContracts.VerifyNotNull(newAdmin);
 
-            // Create Board
-            var newBoardId = this.CreateBoardDatabase(
-                boardName,
-                "english.xml",
-                newAdmin);
+        var newBoardId = this.GetRepository<Board>().Create(
+            boardName,
+            this.PortalSettings.Email,
+            "en-US",
+            langFile,
+            newAdmin.UserName,
+            newAdmin.Email,
+            newAdmin.Id,
+            this.PortalSettings.UserInfo.IsSuperUser,
+            Configuration.Config.CreateDistinctRoles && Configuration.Config.IsAnyPortal ? "YAF " : string.Empty);
 
-            if (newBoardId > 0 && Configuration.Config.MultiBoardFolders)
-            {
-                // Successfully created the new board
-                var boardFolder = this.Server.MapPath(
-                    Path.Combine(Configuration.Config.BoardRoot, $"{newBoardId}/"));
-
-                // Create New Folders.
-                if (!Directory.Exists(Path.Combine(boardFolder, "Images")))
+        var loadWrapper = new Action<string, Action<Stream>>(
+            (file, streamAction) =>
                 {
-                    // Create the Images Folders
-                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images"));
+                    var fullFile = this.Get<HttpRequestBase>().MapPath(file);
 
-                    // Create Sub Folders
-                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images", "Avatars"));
-                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images", "Categories"));
-                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images", "Forums"));
-                    Directory.CreateDirectory(Path.Combine(boardFolder, "Images", "Medals"));
-                }
-
-                if (!Directory.Exists(Path.Combine(boardFolder, "Uploads")))
-                {
-                    Directory.CreateDirectory(Path.Combine(boardFolder, "Uploads"));
-                }
-            }
-
-            // Import Users & Roles
-            if (importUsers)
-            {
-                UserImporter.ImportUsers(
-                    newBoardId,
-                    this.PortalSettings.PortalId,
-                    out _);
-            }
-
-            return newBoardId;
-        }
-
-        /// <summary>
-        /// Creates the board in the database.
-        /// </summary>
-        /// <param name="boardName">
-        /// Name of the board.
-        /// </param>
-        /// <param name="langFile">
-        /// The language file.
-        /// </param>
-        /// <param name="newAdmin">
-        /// The new admin.
-        /// </param>
-        /// <returns>
-        /// Returns the Board ID of the new Board.
-        /// </returns>
-        private int CreateBoardDatabase(
-            [NotNull] string boardName,
-            [NotNull] string langFile,
-            [NotNull] AspNetUsers newAdmin)
-        {
-            CodeContracts.VerifyNotNull(boardName);
-            CodeContracts.VerifyNotNull(langFile);
-            CodeContracts.VerifyNotNull(newAdmin);
-
-            var newBoardId = this.GetRepository<Board>().Create(
-                boardName,
-                this.PortalSettings.Email,
-                "en-US",
-                langFile,
-                newAdmin.UserName,
-                newAdmin.Email,
-                newAdmin.Id,
-                this.PortalSettings.UserInfo.IsSuperUser,
-                Configuration.Config.CreateDistinctRoles && Configuration.Config.IsAnyPortal ? "YAF " : string.Empty);
-
-            var loadWrapper = new Action<string, Action<Stream>>(
-                (file, streamAction) =>
+                    if (!File.Exists(fullFile))
                     {
-                        var fullFile = this.Get<HttpRequestBase>().MapPath(file);
+                        return;
+                    }
 
-                        if (!File.Exists(fullFile))
-                        {
-                            return;
-                        }
+                    // import into board...
+                    using var stream = new StreamReader(fullFile);
 
-                        // import into board...
-                        using var stream = new StreamReader(fullFile);
+                    streamAction(stream.BaseStream);
+                    stream.Close();
+                });
 
-                        streamAction(stream.BaseStream);
-                        stream.Close();
-                    });
+        // load default bbcode if available...
+        loadWrapper("install/bbCodeExtensions.xml", s => DataImport.BBCodeExtensionImport(newBoardId, s));
 
-            // load default bbcode if available...
-            loadWrapper("install/bbCodeExtensions.xml", s => DataImport.BBCodeExtensionImport(newBoardId, s));
+        // load default spam word if available...
+        loadWrapper("install/SpamWords.xml", s => DataImport.SpamWordsImport(newBoardId, s));
 
-            // load default spam word if available...
-            loadWrapper("install/SpamWords.xml", s => DataImport.SpamWordsImport(newBoardId, s));
+        return newBoardId;
+    }
 
-            return newBoardId;
-        }
+    /// <summary>
+    /// Migrates the Active Forums Attachments.
+    /// </summary>
+    private void MigrateAttachments()
+    {
+        var attachActiveFolderPath = Path.Combine(this.PortalSettings.HomeDirectoryMapPath, "activeforums_Upload");
+        var attachYafFolderPath = HttpContext.Current.Request.MapPath(
+            Path.Combine(
+                "DesktopModules",
+                "YetAnotherForumDotNet",
+                this.Get<BoardFolders>().Uploads));
 
-        /// <summary>
-        /// Migrates the Active Forums Attachments.
-        /// </summary>
-        private void MigrateAttachments()
+        if (Directory.Exists(attachActiveFolderPath))
         {
-            var attachActiveFolderPath = Path.Combine(this.PortalSettings.HomeDirectoryMapPath, "activeforums_Upload");
-            var attachYafFolderPath = HttpContext.Current.Request.MapPath(
-                Path.Combine(
-                    "DesktopModules",
-                    "YetAnotherForumDotNet",
-                    this.Get<BoardFolders>().Uploads));
-
-            if (Directory.Exists(attachActiveFolderPath))
-            {
-                Directory.GetFiles(attachActiveFolderPath).ForEach(
-                    attachment =>
+            Directory.GetFiles(attachActiveFolderPath).ForEach(
+                attachment =>
                     {
                         var fileName = Path.GetFileName(attachment);
                         File.Copy(attachment, $"{attachYafFolderPath}\\{fileName}.yafupload");
                     });
-            }
         }
-
-        /// <summary>
-        /// Fixes the last forum topic & Post.
-        /// </summary>
-        /// <param name="boardId">The board identifier.</param>
-        private void FixLastForumTopic(int boardId)
-        {
-            var forums = this.GetRepository<Forum>().List(boardId, null);
-
-            forums.ForEach(
-                forum => this.GetRepository<Forum>().UpdateLastPost(forum.ID));
-        }
-
-        #endregion
     }
+
+    /// <summary>
+    /// Fixes the last forum topic & Post.
+    /// </summary>
+    /// <param name="boardId">The board identifier.</param>
+    private void FixLastForumTopic(int boardId)
+    {
+        var forums = this.GetRepository<Forum>().ListAll(boardId);
+
+        forums.ForEach(
+            forum => this.GetRepository<Forum>().UpdateLastPost(forum.Item1.ID));
+    }
+
+    #endregion
 }

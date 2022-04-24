@@ -22,109 +22,101 @@
  * under the License.
  */
 
-namespace YAF.DotNetNuke.Components.Integration
+namespace YAF.DotNetNuke.Components.Integration;
+
+#region Using
+
+using System.Collections.Generic;
+using System.Net.Mail;
+
+using global::DotNetNuke.Collections;
+using global::DotNetNuke.Entities.Host;
+using global::DotNetNuke.Services.Mail;
+
+using MailPriority = global::DotNetNuke.Services.Mail.MailPriority;
+
+#endregion
+
+/// <summary>
+/// Functions to send email via SMTP
+/// </summary>
+[ExportService(ServiceLifetimeScope.Singleton)]
+public class SendMail : IMailService
 {
-    #region Using
+    #region Public Methods
 
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net.Mail;
+    /// <summary>
+    /// Creates a SMTP Client and sends a MailMessage.
+    /// </summary>
+    /// <param name="mailMessage">
+    /// The message.
+    /// </param>
+    public void Send([NotNull] MailMessage mailMessage)
+    {
+        CodeContracts.VerifyNotNull(mailMessage);
 
-    using global::DotNetNuke.Collections;
-    using global::DotNetNuke.Entities.Host;
-    using global::DotNetNuke.Services.Mail;
+        var body = string.Empty;
 
-    using YAF.Core.Context;
-    using YAF.Types;
-    using YAF.Types.Attributes;
-    using YAF.Types.Interfaces.Services;
+        var mailIsHtml = false;
 
-    using MailPriority = global::DotNetNuke.Services.Mail.MailPriority;
+        if (mailMessage.AlternateViews.Count > 0)
+        {
+            var altView = mailMessage.AlternateViews[mailMessage.AlternateViews.Count > 1 ? 1 : 0];
+
+            mailIsHtml = altView.ContentType.MediaType.Equals("text/html");
+
+            using var reader = new StreamReader(altView.ContentStream);
+
+            body = reader.ReadToEnd();
+        }
+
+        string fromAddress;
+
+        try
+        {
+            fromAddress = BoardContext.Current.BoardSettings.ForumEmail;
+        }
+        catch (Exception)
+        {
+            fromAddress = mailMessage.From.Address;
+        }
+
+        Mail.SendMail(
+            fromAddress,
+            mailMessage.To.ToString(),
+            string.Empty,
+            string.Empty,
+            MailPriority.Normal,
+            mailMessage.Subject,
+            mailIsHtml ? MailFormat.Html : MailFormat.Text,
+            mailMessage.BodyEncoding,
+            body,
+            string.Empty,
+            Host.SMTPServer,
+            Host.SMTPAuthentication,
+            Host.SMTPUsername,
+            Host.SMTPPassword);
+    }
 
     #endregion
 
+    #region Implemented Interfaces
+
+    #region ISendMail
+
     /// <summary>
-    /// Functions to send email via SMTP
+    /// Sends all MailMessages via the SMTP Client. Doesn't handle any exceptions.
     /// </summary>
-    [ExportService(ServiceLifetimeScope.Singleton)]
-    public class SendMail : IMailService
+    /// <param name="messages">The messages.</param>
+    /// <param name="handleException"> The handle exception action.</param>
+    public void SendAll([NotNull] IEnumerable<MailMessage> messages, [CanBeNull] Action<MailMessage, Exception> handleException = null)
     {
-        #region Public Methods
+        var mailMessages = messages as IList<MailMessage> ?? messages.ToList();
 
-        /// <summary>
-        /// Creates a SMTP Client and sends a MailMessage.
-        /// </summary>
-        /// <param name="mailMessage">
-        /// The message.
-        /// </param>
-        public void Send([NotNull] MailMessage mailMessage)
-        {
-            CodeContracts.VerifyNotNull(mailMessage);
+        CodeContracts.VerifyNotNull(mailMessages);
 
-            var body = string.Empty;
-
-            var mailIsHtml = false;
-
-            if (mailMessage.AlternateViews.Count > 0)
-            {
-                var altView = mailMessage.AlternateViews[mailMessage.AlternateViews.Count > 1 ? 1 : 0];
-
-                mailIsHtml = altView.ContentType.MediaType.Equals("text/html");
-
-                using var reader = new StreamReader(altView.ContentStream);
-
-                body = reader.ReadToEnd();
-            }
-
-            string fromAddress;
-
-            try
-            {
-                fromAddress = BoardContext.Current.BoardSettings.ForumEmail;
-            }
-            catch (Exception)
-            {
-                fromAddress = mailMessage.From.Address;
-            }
-
-            Mail.SendMail(
-                fromAddress,
-                mailMessage.To.ToString(),
-                string.Empty,
-                string.Empty,
-                MailPriority.Normal,
-                mailMessage.Subject,
-                mailIsHtml ? MailFormat.Html : MailFormat.Text,
-                mailMessage.BodyEncoding,
-                body,
-                string.Empty,
-                Host.SMTPServer,
-                Host.SMTPAuthentication,
-                Host.SMTPUsername,
-                Host.SMTPPassword);
-        }
-
-        #endregion
-
-        #region Implemented Interfaces
-
-        #region ISendMail
-
-        /// <summary>
-        /// Sends all MailMessages via the SMTP Client. Doesn't handle any exceptions.
-        /// </summary>
-        /// <param name="messages">The messages.</param>
-        /// <param name="handleException"> The handle exception action.</param>
-        public void SendAll([NotNull] IEnumerable<MailMessage> messages, [CanBeNull] Action<MailMessage, Exception> handleException = null)
-        {
-            var mailMessages = messages as IList<MailMessage> ?? messages.ToList();
-
-            CodeContracts.VerifyNotNull(mailMessages);
-
-            mailMessages.ForEach(
-                mailMessage =>
+        mailMessages.ForEach(
+            mailMessage =>
                 {
                     try
                     {
@@ -144,10 +136,9 @@ namespace YAF.DotNetNuke.Components.Integration
                         }
                     }
                 });
-        }
-
-        #endregion
-
-        #endregion
     }
+
+    #endregion
+
+    #endregion
 }

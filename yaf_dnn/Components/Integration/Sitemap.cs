@@ -22,64 +22,55 @@
  * under the License.
  */
 
- namespace YAF.DotNetNuke.Components.Integration
+namespace YAF.DotNetNuke.Components.Integration;
+
+using System.Collections.Generic;
+
+using global::DotNetNuke.Services.Sitemap;
+
+using DateTime = System.DateTime;
+
+/// <summary>
+/// YAF.NET Forum SiteMap Provider
+/// </summary>
+/// <seealso cref="SitemapProvider" />
+public class Sitemap : SitemapProvider
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using global::DotNetNuke.Entities.Portals;
-    using global::DotNetNuke.Services.Sitemap;
-
-    using YAF.Core.Context;
-    using YAF.Core.Model;
-    using YAF.Core.Services;
-    using YAF.Types.Interfaces;
-    using YAF.Types.Models;
-
-    using DateTime = System.DateTime;
+    #region Public Methods
 
     /// <summary>
-    /// YAF.NET Forum SiteMap Provider
+    /// Get the Sitemap URLs.
     /// </summary>
-    /// <seealso cref="SitemapProvider" />
-    public class Sitemap : SitemapProvider
+    /// <param name="portalId">The portal id.</param>
+    /// <param name="portalSettings">The portal settings.</param>
+    /// <param name="version">The version.</param>
+    /// <returns>
+    /// The List with URLs.
+    /// </returns>
+    public override List<SitemapUrl> GetUrls(int portalId, PortalSettings portalSettings, string version)
     {
-        #region Public Methods
+        var urls = new List<SitemapUrl>();
 
-        /// <summary>
-        /// Get the Sitemap URLs.
-        /// </summary>
-        /// <param name="portalId">The portal id.</param>
-        /// <param name="portalSettings">The portal settings.</param>
-        /// <param name="version">The version.</param>
-        /// <returns>
-        /// The List with URLs.
-        /// </returns>
-        public override List<SitemapUrl> GetUrls(int portalId, PortalSettings portalSettings, string version)
+        if (BoardContext.Current is null)
         {
-            var urls = new List<SitemapUrl>();
-
-            if (BoardContext.Current is null)
-            {
-                return urls;
-            }
-
-            var forumList = BoardContext.Current.GetRepository<Forum>().ListAll(
-                BoardContext.Current.BoardSettings.BoardID);
-
-            urls.AddRange(
-                forumList.Select(
-                    forum => new SitemapUrl
-                    {
-                        Url = BoardContext.Current.Get<LinkBuilder>().GetForumLink(forum.Item1.ID, forum.Item1.Name),
-                        Priority = (float)0.8,
-                        LastModified = DateTime.Now,
-                        ChangeFrequency = SitemapChangeFrequency.Always
-                    }));
-
             return urls;
         }
 
-        #endregion
+        var forumList = BoardContext.Current.GetRepository<Forum>().ListAll(
+            BoardContext.Current.BoardSettings.BoardID);
+
+        urls.AddRange(
+            forumList.Select(
+                forum => new SitemapUrl
+                             {
+                                 Url = BoardContext.Current.Get<LinkBuilder>().GetForumLink(forum.Item1.ID, forum.Item1.Name),
+                                 Priority = (float)0.8,
+                                 LastModified = DateTime.Now,
+                                 ChangeFrequency = SitemapChangeFrequency.Always
+                             }));
+
+        return urls;
     }
+
+    #endregion
 }

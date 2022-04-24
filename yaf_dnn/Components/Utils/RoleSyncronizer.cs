@@ -22,215 +22,198 @@
  * under the License.
  */
 
-namespace YAF.DotNetNuke.Components.Utils
+namespace YAF.DotNetNuke.Components.Utils;
+
+using System.Collections.Generic;
+
+/// <summary>
+/// YAF DNN Profile Synchronization
+/// </summary>
+public class RoleSyncronizer : PortalModuleBase
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using global::DotNetNuke.Entities.Modules;
-    using global::DotNetNuke.Entities.Users;
-    using global::DotNetNuke.Security.Roles;
-
-    using YAF.Core.Context;
-    using YAF.Core.Extensions;
-    using YAF.Core.Model;
-    using YAF.DotNetNuke.Components.Controllers;
-    using YAF.Types;
-    using YAF.Types.Extensions;
-    using YAF.Types.Flags;
-    using YAF.Types.Interfaces;
-    using YAF.Types.Models;
-
     /// <summary>
-    /// YAF DNN Profile Synchronization
+    /// Synchronizes the user roles.
     /// </summary>
-    public class RoleSyncronizer : PortalModuleBase
+    /// <param name="boardId">The board id.</param>
+    /// <param name="portalId">The portal id.</param>
+    /// <param name="yafUserId">The YAF user id.</param>
+    /// <param name="dnnUserInfo">The DNN user info.</param>
+    /// <returns>
+    /// Returns if the Roles where synched or not
+    /// </returns>
+    public static bool SynchronizeUserRoles([NotNull] int boardId, [NotNull] int portalId, [NotNull] int yafUserId, [NotNull] UserInfo dnnUserInfo)
     {
-        /// <summary>
-        /// Synchronizes the user roles.
-        /// </summary>
-        /// <param name="boardId">The board id.</param>
-        /// <param name="portalId">The portal id.</param>
-        /// <param name="yafUserId">The YAF user id.</param>
-        /// <param name="dnnUserInfo">The DNN user info.</param>
-        /// <returns>
-        /// Returns if the Roles where synched or not
-        /// </returns>
-        public static bool SynchronizeUserRoles([NotNull] int boardId, [NotNull] int portalId, [NotNull] int yafUserId, [NotNull] UserInfo dnnUserInfo)
+        // Make sure are roles exist
+        ImportDnnRoles(boardId, dnnUserInfo.Roles);
+
+        var yafUserRoles = DataController.GetYafUserRoles(yafUserId);
+
+        var yafBoardRoles = BoardContext.Current.GetRepository<Group>().List(boardId: boardId);
+
+        var rolesChanged = false;
+
+        // add yaf only roles to yaf
+        foreach (var boardRole in yafBoardRoles)
         {
-            // Make sure are roles exist
-            ImportDnnRoles(boardId, dnnUserInfo.Roles);
+            var roleFlags = new GroupFlags(boardRole.Flags);
 
-            var yafUserRoles = DataController.GetYafUserRoles(yafUserId);
+            var role = new RoleInfo
+                           {
+                               RoleName = boardRole.Name,
+                               RoleID = boardRole.ID
+                           };
 
-            var yafBoardRoles = BoardContext.Current.GetRepository<Group>().List(boardId: boardId);
-
-            var rolesChanged = false;
-
-            // add yaf only roles to yaf
-            foreach (var boardRole in yafBoardRoles)
+            if (roleFlags.IsGuest)
             {
-                var roleFlags = new GroupFlags(boardRole.Flags);
+                continue;
+            }
 
-                var role = new RoleInfo
-                {
-                    RoleName = boardRole.Name,
-                    RoleID = boardRole.ID
-                };
-
-                if (roleFlags.IsGuest)
+            if (roleFlags.IsStart)
+            {
+                if (yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
                 {
                     continue;
                 }
 
-                if (roleFlags.IsStart)
-                {
-                    if (yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
-                    {
-                        continue;
-                    }
-
-                    UpdateUserRole(role, yafUserId, true);
-
-                    rolesChanged = true;
-                }
-                else
-                {
-                    // ADD dnn super user manually to the administrator role
-                    if (role.RoleName.Equals("Administrators") && dnnUserInfo.IsSuperUser)
-                    {
-                        if (!yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
-                        {
-                            UpdateUserRole(role, yafUserId, true);
-                        }
-                    }
-
-                    if (!dnnUserInfo.Roles.Any(dnnRole => dnnRole.Equals(boardRole.Name)))
-                    {
-                        continue;
-                    }
-
-                    if (yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
-                    {
-                        continue;
-                    }
-
-                    UpdateUserRole(role, yafUserId, true);
-
-                    rolesChanged = true;
-                }
-            }
-
-            var roleController = new RoleController();
-
-            // Remove user from dnn role if no longer included
-            foreach (
-                var role in
-                    roleController.GetRoles(portalId)
-                                  .Where(
-                                      role =>
-                                      !dnnUserInfo.Roles.Any(existRole => existRole.Equals(role.RoleName))
-                                      && yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName))))
-            {
-                UpdateUserRole(role, yafUserId, false);
+                UpdateUserRole(role, yafUserId, true);
 
                 rolesChanged = true;
             }
-
-            // empty out access table
-            if (!rolesChanged || BoardContext.Current is null)
+            else
             {
-                return rolesChanged;
+                // ADD dnn super user manually to the administrator role
+                if (role.RoleName.Equals("Administrators") && dnnUserInfo.IsSuperUser)
+                {
+                    if (!yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
+                    {
+                        UpdateUserRole(role, yafUserId, true);
+                    }
+                }
+
+                if (!dnnUserInfo.Roles.Any(dnnRole => dnnRole.Equals(boardRole.Name)))
+                {
+                    continue;
+                }
+
+                if (yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
+                {
+                    continue;
+                }
+
+                UpdateUserRole(role, yafUserId, true);
+
+                rolesChanged = true;
             }
-
-            BoardContext.Current.GetRepository<ActiveAccess>().DeleteAll();
-            BoardContext.Current.GetRepository<Active>().DeleteAll();
-
-            return true;
         }
 
-        /// <summary>
-        /// Checks if the <paramref name="roles" /> exists, in YAF, the user is in
-        /// </summary>
-        /// <param name="boardId">The board id.</param>
-        /// <param name="roles">The <paramref name="roles" />.</param>
-        public static void ImportDnnRoles(int boardId, string[] roles)
+        var roleController = new RoleController();
+
+        // Remove user from dnn role if no longer included
+        foreach (
+            var role in
+            roleController.GetRoles(portalId)
+                .Where(
+                    role =>
+                        !dnnUserInfo.Roles.Any(existRole => existRole.Equals(role.RoleName))
+                        && yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName))))
         {
-            var yafBoardRoles = DataController.GetYafBoardRoles(boardId);
+            UpdateUserRole(role, yafUserId, false);
 
-            var yafBoardAccessMasks = DataController.GetYafBoardAccessMasks(boardId);
-
-            // Check If Dnn Roles Exists in Yaf
-            (from role in roles
-             where role.IsSet()
-             let any = yafBoardRoles.Any(yafRole => yafRole.RoleName.Equals(role))
-             where !any
-             select role).ForEach(role => CreateYafRole(role, boardId, yafBoardAccessMasks));
+            rolesChanged = true;
         }
 
-        /// <summary>
-        /// Creates the YAF role.
-        /// </summary>
-        /// <param name="roleName">Name of the role.</param>
-        /// <param name="boardId">The board id.</param>
-        /// <param name="yafBoardAccessMasks">The YAF board access masks.</param>
-        /// <returns>
-        /// Returns the Role id of the created Role
-        /// </returns>
-        public static long CreateYafRole(string roleName, int boardId, List<RoleInfo> yafBoardAccessMasks)
+        // empty out access table
+        if (!rolesChanged || BoardContext.Current is null)
         {
-            int accessMaskId;
+            return rolesChanged;
+        }
 
-            try
-            {
-                // Give the default DNN Roles Member Access, unknown roles get "No Access Mask"
-                accessMaskId = roleName.Equals("Registered Users") || roleName.Equals("Subscribers")
+        BoardContext.Current.GetRepository<ActiveAccess>().DeleteAll();
+        BoardContext.Current.GetRepository<Active>().DeleteAll();
+
+        return true;
+    }
+
+    /// <summary>
+    /// Checks if the <paramref name="roles" /> exists, in YAF, the user is in
+    /// </summary>
+    /// <param name="boardId">The board id.</param>
+    /// <param name="roles">The <paramref name="roles" />.</param>
+    public static void ImportDnnRoles(int boardId, string[] roles)
+    {
+        var yafBoardRoles = DataController.GetYafBoardRoles(boardId);
+
+        var yafBoardAccessMasks = DataController.GetYafBoardAccessMasks(boardId);
+
+        // Check If Dnn Roles Exists in Yaf
+        (from role in roles
+         where role.IsSet()
+         let any = yafBoardRoles.Any(yafRole => yafRole.RoleName.Equals(role))
+         where !any
+         select role).ForEach(role => CreateYafRole(role, boardId, yafBoardAccessMasks));
+    }
+
+    /// <summary>
+    /// Creates the YAF role.
+    /// </summary>
+    /// <param name="roleName">Name of the role.</param>
+    /// <param name="boardId">The board id.</param>
+    /// <param name="yafBoardAccessMasks">The YAF board access masks.</param>
+    /// <returns>
+    /// Returns the Role id of the created Role
+    /// </returns>
+    public static long CreateYafRole(string roleName, int boardId, List<RoleInfo> yafBoardAccessMasks)
+    {
+        int accessMaskId;
+
+        try
+        {
+            // Give the default DNN Roles Member Access, unknown roles get "No Access Mask"
+            accessMaskId = roleName.Equals("Registered Users") || roleName.Equals("Subscribers")
                                ? yafBoardAccessMasks.Find(mask => mask.RoleName.Equals("Member Access")).RoleID
                                : yafBoardAccessMasks.Find(mask => mask.RoleName.Equals("No Access Mask")).RoleID;
-            }
-            catch (Exception)
-            {
-                accessMaskId = yafBoardAccessMasks.Find(mask => mask.RoleGroupID.Equals(0)).RoleID;
-            }
-
-            var groupFlags = new GroupFlags();
-
-            // Role exists in membership but not in yaf itself simply add it to yaf
-            return BoardContext.Current.GetRepository<Group>().Save(
-                null,
-                boardId,
-                roleName,
-                groupFlags,
-                accessMaskId,
-                0,
-                null,
-                100,
-                null,
-                0,
-                null,
-                0,
-                0);
         }
-
-        /// <summary>
-        /// Updates the user <paramref name="role"/>.
-        /// </summary>
-        /// <param name="role">
-        /// The <paramref name="role"/>.
-        /// </param>
-        /// <param name="yafUserId">
-        /// The YAF user id.
-        /// </param>
-        /// <param name="addRole">
-        /// if set to true [add role].
-        /// </param>
-        public static void UpdateUserRole([NotNull] RoleInfo role, [NotNull] int yafUserId, [NotNull] bool addRole)
+        catch (Exception)
         {
-            CodeContracts.VerifyNotNull(role);
-
-            // save user in role
-            BoardContext.Current.GetRepository<UserGroup>().AddOrRemove(yafUserId, role.RoleID, addRole);
+            accessMaskId = yafBoardAccessMasks.Find(mask => mask.RoleGroupID.Equals(0)).RoleID;
         }
+
+        var groupFlags = new GroupFlags();
+
+        // Role exists in membership but not in yaf itself simply add it to yaf
+        return BoardContext.Current.GetRepository<Group>().Save(
+            null,
+            boardId,
+            roleName,
+            groupFlags,
+            accessMaskId,
+            0,
+            null,
+            100,
+            null,
+            0,
+            null,
+            0,
+            0);
+    }
+
+    /// <summary>
+    /// Updates the user <paramref name="role"/>.
+    /// </summary>
+    /// <param name="role">
+    /// The <paramref name="role"/>.
+    /// </param>
+    /// <param name="yafUserId">
+    /// The YAF user id.
+    /// </param>
+    /// <param name="addRole">
+    /// if set to true [add role].
+    /// </param>
+    public static void UpdateUserRole([NotNull] RoleInfo role, [NotNull] int yafUserId, [NotNull] bool addRole)
+    {
+        CodeContracts.VerifyNotNull(role);
+
+        // save user in role
+        BoardContext.Current.GetRepository<UserGroup>().AddOrRemove(yafUserId, role.RoleID, addRole);
     }
 }

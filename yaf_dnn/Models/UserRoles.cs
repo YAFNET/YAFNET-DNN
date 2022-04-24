@@ -22,19 +22,16 @@
  * under the License.
  */
 
-namespace YAF.DotNetNuke.Models
+namespace YAF.DotNetNuke.Models;
+
+/// <summary>
+/// The asp net user roles.
+/// </summary>
+public class UserRoles : IEntity
 {
-    using YAF.Types.Interfaces.Data;
+    public int UserRoleID { get; set; }
 
-    /// <summary>
-    /// The asp net user roles.
-    /// </summary>
-    public class UserRoles : IEntity
-    {
-        public int UserRoleID { get; set; }
+    public int UserID { get; set; }
 
-        public int UserID { get; set; }
-
-        public int RoleID { get; set; }
-    }
+    public int RoleID { get; set; }
 }

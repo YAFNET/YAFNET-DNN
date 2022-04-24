@@ -22,95 +22,85 @@
  * under the License.
  */
 
-namespace YAF.DotNetNuke.Components.WebAPI
+namespace YAF.DotNetNuke.Components.WebAPI;
+
+/// <summary>
+/// The YAF Search controller.
+/// </summary>
+public class SearchController : DnnApiController, IHaveServiceLocator
 {
-    using System.Web.Http;
-
-    using global::DotNetNuke.Web.Api;
-
-    using YAF.Core.Context;
-    using YAF.Types.Interfaces;
-    using YAF.Types.Interfaces.Services;
-    using YAF.Types.Objects;
+    #region Properties
 
     /// <summary>
-    /// The YAF Search controller.
+    ///   Gets ServiceLocator.
     /// </summary>
-    public class SearchController : DnnApiController, IHaveServiceLocator
+    public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
+
+    #endregion
+
+    /// <summary>
+    /// Get similar topic titles
+    /// </summary>
+    /// <param name="searchTopic">
+    /// The search Topic.
+    /// </param>
+    /// <returns>
+    /// Returns the search Results.
+    /// </returns>
+    [HttpPost]
+    [AllowAnonymous]
+    public IHttpActionResult GetSimilarTitles([FromBody] SearchTopic searchTopic)
     {
-        #region Properties
+        var results = this.Get<ISearch>().SearchSimilar(
+            string.Empty,
+            searchTopic.SearchTerm,
+            "Topic");
 
-        /// <summary>
-        ///   Gets ServiceLocator.
-        /// </summary>
-        public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
-
-        #endregion
-
-        /// <summary>
-        /// Get similar topic titles
-        /// </summary>
-        /// <param name="searchTopic">
-        /// The search Topic.
-        /// </param>
-        /// <returns>
-        /// Returns the search Results.
-        /// </returns>
-        [HttpPost]
-        [AllowAnonymous]
-        public IHttpActionResult GetSimilarTitles([FromBody] SearchTopic searchTopic)
+        if (results is null)
         {
-            var results = this.Get<ISearch>().SearchSimilar(
-                string.Empty,
-                searchTopic.SearchTerm,
-                "Topic");
-
-            if (results is null)
-            {
-                return this.Ok(
-                    new SearchGridDataSet
-                        {
-                            PageNumber = 0,
-                            TotalRecords = 0,
-                            PageSize = 0
-                        });
-            }
-
             return this.Ok(
                 new SearchGridDataSet
                     {
-                        PageNumber = 1, TotalRecords = results.Count, PageSize = 20, SearchResults = results
+                        PageNumber = 0,
+                        TotalRecords = 0,
+                        PageSize = 0
                     });
         }
 
-        /// <summary>
-        /// Gets the search results.
-        /// </summary>
-        /// <param name="searchTopic">
-        /// The search Topic.
-        /// </param>
-        /// <returns>
-        /// Returns the search Results.
-        /// </returns>
-        [HttpPost]
-        [AllowAnonymous]
-        public IHttpActionResult GetSearchResults([FromBody] SearchTopic searchTopic)
-        {
-            var results = this.Get<ISearch>().SearchPaged(
-                out var totalHits,
-                searchTopic.ForumId,
-                searchTopic.SearchTerm,
-                searchTopic.Page,
-                searchTopic.PageSize);
+        return this.Ok(
+            new SearchGridDataSet
+                {
+                    PageNumber = 1, TotalRecords = results.Count, PageSize = 20, SearchResults = results
+                });
+    }
 
-            return this.Ok(
-                new SearchGridDataSet
-                    {
-                        PageNumber = searchTopic.Page,
-                        TotalRecords = totalHits,
-                        PageSize = searchTopic.PageSize,
-                        SearchResults = results
-                    });
-        }
+    /// <summary>
+    /// Gets the search results.
+    /// </summary>
+    /// <param name="searchTopic">
+    /// The search Topic.
+    /// </param>
+    /// <returns>
+    /// Returns the search Results.
+    /// </returns>
+    [HttpPost]
+    [AllowAnonymous]
+    public IHttpActionResult GetSearchResults([FromBody] SearchTopic searchTopic)
+    {
+        var results = this.Get<ISearch>().SearchPaged(
+            out var totalHits,
+            searchTopic.ForumId,
+            searchTopic.SearchTerm,
+            searchTopic.Page,
+            searchTopic.PageSize);
+
+        return this.Ok(
+            new SearchGridDataSet
+                {
+                    PageNumber = searchTopic.Page,
+                    TotalRecords = totalHits,
+                    PageSize = searchTopic.PageSize,
+                    SearchResults = results
+                });
     }
 }

@@ -22,56 +22,45 @@
  * under the License.
  */
 
-namespace YAF.DotNetNuke.Extensions
+namespace YAF.DotNetNuke.Extensions;
+
+/// <summary>
+/// The asp net users extensions.
+/// </summary>
+public static class AspNetUsersExtensions
 {
-    #region Using
-
-    using System;
-
-    using global::DotNetNuke.Entities.Users;
-
-    using YAF.Types.Models.Identity;
-
-    #endregion
+    #region Public Methods
 
     /// <summary>
-    /// The asp net users extensions.
+    /// Converts UserInfo to AspNetUsers
     /// </summary>
-    public static class AspNetUsersExtensions
+    /// <param name="userInfo">
+    /// The user info.
+    /// </param>
+    /// <returns>
+    /// The <see cref="AspNetUsers"/>.
+    /// </returns>
+    public static AspNetUsers ToAspNetUsers(this UserInfo userInfo)
     {
-        #region Public Methods
+        var user = new AspNetUsers
+                       {
+                           Id = userInfo.UserID.ToString(),
+                           UserName = userInfo.Username,
+                           Email = userInfo.Email,
+                           IsApproved = !userInfo.IsDeleted,
+                           CreateDate = userInfo.CreatedOnDate,
+                           LastPasswordChangedDate = DateTime.Now,
+                           LastLockoutDate = DateTime.MinValue.AddYears(1902),
+                           FailedPasswordAnswerAttemptWindowStart = DateTime.MinValue.AddYears(1902),
+                           FailedPasswordAttemptWindowStart = DateTime.MinValue.AddYears(1902),
+                           Profile_Birthday = DateTime.MinValue.AddYears(1902)
+                       };
 
-        /// <summary>
-        /// Converts UserInfo to AspNetUsers
-        /// </summary>
-        /// <param name="userInfo">
-        /// The user info.
-        /// </param>
-        /// <returns>
-        /// The <see cref="AspNetUsers"/>.
-        /// </returns>
-        public static AspNetUsers ToAspNetUsers(this UserInfo userInfo)
-        {
-            var user = new AspNetUsers
-            {
-                Id = userInfo.UserID.ToString(),
-                UserName = userInfo.Username,
-                Email = userInfo.Email,
-                IsApproved = !userInfo.IsDeleted,
-                CreateDate = userInfo.CreatedOnDate,
-                LastPasswordChangedDate = DateTime.Now,
-                LastLockoutDate = DateTime.MinValue.AddYears(1902),
-                FailedPasswordAnswerAttemptWindowStart = DateTime.MinValue.AddYears(1902),
-                FailedPasswordAttemptWindowStart = DateTime.MinValue.AddYears(1902),
-                Profile_Birthday = DateTime.MinValue.AddYears(1902)
-            };
+        /*user.LastLoginDate = DateTime.Now;
+        user.LastActivityDate = DateTime.Now;*/
 
-            /*user.LastLoginDate = DateTime.Now;
-            user.LastActivityDate = DateTime.Now;*/
-
-            return user;
-        }
-
-        #endregion
+        return user;
     }
+
+    #endregion
 }

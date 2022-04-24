@@ -22,65 +22,46 @@
  * under the License.
  */
 
-namespace YAF.DotNetNuke.Components.Utils
+namespace YAF.DotNetNuke.Components.Utils;
+
+using global::DotNetNuke.Common.Utilities;
+
+/// <summary>
+/// YAF User Importer
+/// </summary>
+public class UserImporter
 {
-    using System;
-    using System.Linq;
-
-    using global::DotNetNuke.Common.Utilities;
-    using global::DotNetNuke.Entities.Users;
-    using global::DotNetNuke.Services.Exceptions;
-
-    using YAF.Configuration;
-    using YAF.Core.BoardSettings;
-    using YAF.Core.Context;
-    using YAF.Core.Extensions;
-    using YAF.Core.Model;
-    using YAF.DotNetNuke.Extensions;
-    using YAF.Types;
-    using YAF.Types.Constants;
-    using YAF.Types.Extensions;
-    using YAF.Types.Flags;
-    using YAF.Types.Interfaces;
-    using YAF.Types.Interfaces.Identity;
-    using YAF.Types.Models;
-
     /// <summary>
-    /// YAF User Importer
+    /// Imports the users.
     /// </summary>
-    public class UserImporter
+    /// <param name="boardId">The board id.</param>
+    /// <param name="portalId">The portal id.</param>
+    /// <param name="info">The information text.</param>
+    /// <returns>
+    /// Returns the Number of Users that where imported
+    /// </returns>
+    public static int ImportUsers([NotNull] int boardId, [NotNull] int portalId, out string info)
     {
-        /// <summary>
-        /// Imports the users.
-        /// </summary>
-        /// <param name="boardId">The board id.</param>
-        /// <param name="portalId">The portal id.</param>
-        /// <param name="info">The information text.</param>
-        /// <returns>
-        /// Returns the Number of Users that where imported
-        /// </returns>
-        public static int ImportUsers([NotNull] int boardId, [NotNull] int portalId, out string info)
+        var newUserCount = 0;
+
+        var users = UserController.GetUsers(portalId);
+
+        // Inject SU here
+        users.AddRange(UserController.GetUsers(false, true, Null.NullInteger));
+
+        users.Sort(new UserComparer());
+
+        // Load Yaf Board Settings if needed
+        var boardSettings = BoardContext.Current is null
+                                ? new LoadBoardSettings(boardId)
+                                : BoardContext.Current.Get<BoardSettings>();
+
+        var rolesChanged = false;
+
+        try
         {
-            var newUserCount = 0;
-
-            var users = UserController.GetUsers(portalId);
-
-            // Inject SU here
-            users.AddRange(UserController.GetUsers(false, true, Null.NullInteger));
-
-            users.Sort(new UserComparer());
-
-            // Load Yaf Board Settings if needed
-            var boardSettings = BoardContext.Current is null
-                ? new LoadBoardSettings(boardId)
-                : BoardContext.Current.Get<BoardSettings>();
-
-            var rolesChanged = false;
-
-            try
-            {
-                users.Cast<UserInfo>().ForEach(
-                    dnnUserInfo =>
+            users.Cast<UserInfo>().ForEach(
+                dnnUserInfo =>
                     {
                         var yafUser = BoardContext.Current.GetRepository<User>()
                             .GetUserByProviderKey(boardId, dnnUserInfo.UserID.ToString());
@@ -127,98 +108,97 @@ namespace YAF.DotNetNuke.Components.Utils
                         }
                     });
 
-                BoardContext.Current.Get<IDataCache>().Clear();
+            BoardContext.Current.Get<IDataCache>().Clear();
 
-                DataCache.ClearCache();
-            }
-            catch (Exception ex)
-            {
-                Exceptions.LogException(ex);
-            }
-
-            info =
-                $"{newUserCount} User(s) Imported, all user profiles are synchronized{(rolesChanged ? ", but all User Roles are synchronized!" : ", User Roles already synchronized!")}";
-
-            return newUserCount;
+            DataCache.ClearCache();
         }
-
-        /// <summary>
-        /// Creates the YAF user.
-        /// </summary>
-        /// <param name="dnnUserInfo">The DNN user info.</param>
-        /// <param name="boardId">The board ID.</param>
-        /// <param name="portalId">The portal identifier.</param>
-        /// <param name="boardSettings">The board settings.</param>
-        /// <returns>
-        /// Returns the User ID of the new User
-        /// </returns>
-        public static int CreateYafUser(
-            [NotNull] UserInfo dnnUserInfo,
-            [NotNull] int boardId,
-            [NotNull] int portalId,
-            [NotNull] BoardSettings boardSettings)
+        catch (Exception ex)
         {
-            CodeContracts.VerifyNotNull(dnnUserInfo);
-
-            // create the user in the YAF DB so profile can gets created...
-            var yafUserId = BoardContext.Current.Get<IAspNetRolesHelper>().CreateForumUser(
-                dnnUserInfo.ToAspNetUsers(),
-                dnnUserInfo.DisplayName,
-                boardId);
-
-            if (yafUserId is null)
-            {
-                return 0;
-            }
-
-            var autoWatchTopicsEnabled =
-                boardSettings.DefaultNotificationSetting.Equals(UserNotificationSetting.TopicsIPostToOrSubscribeTo);
-
-            // save notification Settings
-            BoardContext.Current.GetRepository<User>().SaveNotification(
-                yafUserId.Value,
-                true,
-                autoWatchTopicsEnabled,
-                boardSettings.DefaultNotificationSetting.ToInt(),
-                boardSettings.DefaultSendDigestEmail);
-
-            RoleSyncronizer.SynchronizeUserRoles(boardId, portalId, yafUserId.ToType<int>(), dnnUserInfo);
-
-            return yafUserId.ToType<int>();
+            Exceptions.LogException(ex);
         }
 
-        /// <summary>
-        /// Set the User as Host user if not already
-        /// </summary>
-        /// <param name="yafUserId">The YAF user id.</param>
-        /// <param name="boardId">The board id.</param>
-        public static void SetYafHostUser([NotNull] int yafUserId, [NotNull] int boardId)
+        info =
+            $"{newUserCount} User(s) Imported, all user profiles are synchronized{(rolesChanged ? ", but all User Roles are synchronized!" : ", User Roles already synchronized!")}";
+
+        return newUserCount;
+    }
+
+    /// <summary>
+    /// Creates the YAF user.
+    /// </summary>
+    /// <param name="dnnUserInfo">The DNN user info.</param>
+    /// <param name="boardId">The board ID.</param>
+    /// <param name="portalId">The portal identifier.</param>
+    /// <param name="boardSettings">The board settings.</param>
+    /// <returns>
+    /// Returns the User ID of the new User
+    /// </returns>
+    public static int CreateYafUser(
+        [NotNull] UserInfo dnnUserInfo,
+        [NotNull] int boardId,
+        [NotNull] int portalId,
+        [NotNull] BoardSettings boardSettings)
+    {
+        CodeContracts.VerifyNotNull(dnnUserInfo);
+
+        // create the user in the YAF DB so profile can gets created...
+        var yafUserId = BoardContext.Current.Get<IAspNetRolesHelper>().CreateForumUser(
+            dnnUserInfo.ToAspNetUsers(),
+            dnnUserInfo.DisplayName,
+            boardId);
+
+        if (yafUserId is null)
         {
-            // get this user information...
-            var userInfo = BoardContext.Current.GetRepository<User>().GetById(yafUserId);
-
-            if (userInfo is null)
-            {
-                return;
-            }
-
-            if (userInfo.UserFlags.IsHostAdmin)
-            {
-                return;
-            }
-
-            // fix the IsHostAdmin flag...
-            var userFlags = new UserFlags(userInfo.Flags) { IsHostAdmin = true };
-
-            // update...
-            BoardContext.Current.GetRepository<User>().AdminSave(
-                boardId,
-                yafUserId,
-                userInfo.Name,
-                userInfo.DisplayName,
-                userInfo.Email,
-                userFlags.BitValue,
-                userInfo.RankID);
+            return 0;
         }
+
+        var autoWatchTopicsEnabled =
+            boardSettings.DefaultNotificationSetting.Equals(UserNotificationSetting.TopicsIPostToOrSubscribeTo);
+
+        // save notification Settings
+        BoardContext.Current.GetRepository<User>().SaveNotification(
+            yafUserId.Value,
+            true,
+            autoWatchTopicsEnabled,
+            boardSettings.DefaultNotificationSetting.ToInt(),
+            boardSettings.DefaultSendDigestEmail);
+
+        RoleSyncronizer.SynchronizeUserRoles(boardId, portalId, yafUserId.ToType<int>(), dnnUserInfo);
+
+        return yafUserId.ToType<int>();
+    }
+
+    /// <summary>
+    /// Set the User as Host user if not already
+    /// </summary>
+    /// <param name="yafUserId">The YAF user id.</param>
+    /// <param name="boardId">The board id.</param>
+    public static void SetYafHostUser([NotNull] int yafUserId, [NotNull] int boardId)
+    {
+        // get this user information...
+        var userInfo = BoardContext.Current.GetRepository<User>().GetById(yafUserId);
+
+        if (userInfo is null)
+        {
+            return;
+        }
+
+        if (userInfo.UserFlags.IsHostAdmin)
+        {
+            return;
+        }
+
+        // fix the IsHostAdmin flag...
+        var userFlags = new UserFlags(userInfo.Flags) { IsHostAdmin = true };
+
+        // update...
+        BoardContext.Current.GetRepository<User>().AdminSave(
+            boardId,
+            yafUserId,
+            userInfo.Name,
+            userInfo.DisplayName,
+            userInfo.Email,
+            userFlags.BitValue,
+            userInfo.RankID);
     }
 }

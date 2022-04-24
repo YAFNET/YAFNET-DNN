@@ -22,28 +22,22 @@
  * under the License.
  */
 
-namespace YAF.DotNetNuke.Models
-{
-    using ServiceStack.DataAnnotations;
-    using ServiceStack.Model;
+namespace YAF.DotNetNuke.Models;
 
-    using YAF.Types.Interfaces.Data;
+/// <summary>
+/// The asp net roles.
+/// </summary>
+public class Roles : IEntity, IHasId<int>
+{
+    /// <summary>
+    /// Gets or sets the Role ID
+    /// </summary>
+    [Alias("RoleID")]
+    public int Id { get; set; }
 
     /// <summary>
-    /// The asp net roles.
+    /// Gets or sets the Role name
     /// </summary>
-    public class Roles : IEntity, IHasId<int>
-    {
-        /// <summary>
-        /// Gets or sets the Role ID
-        /// </summary>
-        [Alias("RoleID")]
-        public int Id { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Role name
-        /// </summary>
-        [Alias("RoleName")]
-        public string Name { get; set; }
-    }
+    [Alias("RoleName")]
+    public string Name { get; set; }
 }

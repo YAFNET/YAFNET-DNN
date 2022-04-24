@@ -22,101 +22,83 @@
  * under the License.
  */
 
-namespace YAF.DotNetNuke.Components.Controllers
+namespace YAF.DotNetNuke.Components.Controllers;
+
+using System.Collections.Generic;
+
+/// <summary>
+/// Module Data Controller to Handle SQL Stuff
+/// </summary>
+public class DataController
 {
-    #region Using
-
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using global::DotNetNuke.Data;
-    using global::DotNetNuke.Entities.Portals;
-    using global::DotNetNuke.Security.Roles;
-
-    using YAF.Configuration;
-    using YAF.Core.Context;
-    using YAF.Core.Extensions;
-    using YAF.Core.Model;
-    using YAF.Types;
-    using YAF.Types.Interfaces;
-    using YAF.Types.Models;
-
-    #endregion
+    #region Public Methods
 
     /// <summary>
-    /// Module Data Controller to Handle SQL Stuff
+    /// Gets the YAF board roles.
     /// </summary>
-    public class DataController
+    /// <param name="boardId">The board id.</param>
+    /// <returns>Returns the YAF Board Roles</returns>
+    public static List<RoleInfo> GetYafBoardRoles(int boardId)
     {
-        #region Public Methods
+        var roles = new List<RoleInfo>();
 
-        /// <summary>
-        /// Gets the YAF board roles.
-        /// </summary>
-        /// <param name="boardId">The board id.</param>
-        /// <returns>Returns the YAF Board Roles</returns>
-        public static List<RoleInfo> GetYafBoardRoles(int boardId)
-        {
-            var roles = new List<RoleInfo>();
+        var groups = BoardContext.Current.GetRepository<Group>().Get(g => g.BoardID == boardId);
 
-            var groups = BoardContext.Current.GetRepository<Group>().Get(g => g.BoardID == boardId);
+        roles.AddRange(from Group row in groups select new RoleInfo { RoleName = row.Name, RoleID = row.ID, });
 
-            roles.AddRange(from Group row in groups select new RoleInfo { RoleName = row.Name, RoleID = row.ID, });
-
-            return roles;
-        }
-
-        /// <summary>
-        /// Gets the YAF board access masks.
-        /// </summary>
-        /// <param name="boardId">The board id.</param>
-        /// <returns>Returns the YAF Board access masks</returns>
-        public static List<RoleInfo> GetYafBoardAccessMasks(int boardId)
-        {
-            var roles = new List<RoleInfo>();
-
-            var masks = BoardContext.Current.GetRepository<AccessMask>().Get(a => a.BoardID == boardId);
-
-            roles.AddRange(
-                from AccessMask row in masks
-                select new RoleInfo { RoleName = row.Name, RoleID = row.ID, RoleGroupID = row.Flags });
-
-            return roles;
-        }
-
-        /// <summary>
-        /// Gets the YAF user roles.
-        /// </summary>
-        /// <param name="yafUserId">The YAF user id.</param>
-        /// <returns>Returns List of YAF user roles</returns>
-        public static List<RoleInfo> GetYafUserRoles(int yafUserId)
-        {
-            var roles = new List<RoleInfo>();
-
-            var userGroups = BoardContext.Current.GetRepository<UserGroup>().List(yafUserId);
-
-            roles.AddRange(from Group row in userGroups select new RoleInfo { RoleName = row.Name, RoleID = row.ID });
-
-            return roles;
-        }
-
-        /// <summary>
-        /// Imports the active forums.
-        /// </summary>
-        /// <param name="moduleId">
-        /// The module identifier.
-        /// </param>
-        /// <param name="boardId">
-        /// The board identifier.
-        /// </param>
-        /// <param name="portalSettings">
-        /// The portal Settings.
-        /// </param>
-        public static void ImportActiveForums([NotNull] int moduleId, [NotNull] int boardId, [NotNull] PortalSettings portalSettings)
-        {
-            DataProvider.Instance().ExecuteNonQuery($"{Config.DatabaseObjectQualifier}ImportActiveForums", moduleId, boardId, portalSettings.PortalId);
-        }
-
-        #endregion
+        return roles;
     }
+
+    /// <summary>
+    /// Gets the YAF board access masks.
+    /// </summary>
+    /// <param name="boardId">The board id.</param>
+    /// <returns>Returns the YAF Board access masks</returns>
+    public static List<RoleInfo> GetYafBoardAccessMasks(int boardId)
+    {
+        var roles = new List<RoleInfo>();
+
+        var masks = BoardContext.Current.GetRepository<AccessMask>().Get(a => a.BoardID == boardId);
+
+        roles.AddRange(
+            from AccessMask row in masks
+            select new RoleInfo { RoleName = row.Name, RoleID = row.ID, RoleGroupID = row.Flags });
+
+        return roles;
+    }
+
+    /// <summary>
+    /// Gets the YAF user roles.
+    /// </summary>
+    /// <param name="yafUserId">The YAF user id.</param>
+    /// <returns>Returns List of YAF user roles</returns>
+    public static List<RoleInfo> GetYafUserRoles(int yafUserId)
+    {
+        var roles = new List<RoleInfo>();
+
+        var userGroups = BoardContext.Current.GetRepository<UserGroup>().List(yafUserId);
+
+        roles.AddRange(from Group row in userGroups select new RoleInfo { RoleName = row.Name, RoleID = row.ID });
+
+        return roles;
+    }
+
+    /// <summary>
+    /// Imports the active forums.
+    /// </summary>
+    /// <param name="moduleId">
+    /// The module identifier.
+    /// </param>
+    /// <param name="boardId">
+    /// The board identifier.
+    /// </param>
+    /// <param name="portalSettings">
+    /// The portal Settings.
+    /// </param>
+    public static void ImportActiveForums([NotNull] int moduleId, [NotNull] int boardId, [NotNull] PortalSettings portalSettings)
+    {
+        DataProvider.Instance().ExecuteNonQuery($"{Config.DatabaseObjectQualifier}ImportActiveForums", moduleId, boardId, portalSettings.PortalId);
+    }
+
+    #endregion
 }

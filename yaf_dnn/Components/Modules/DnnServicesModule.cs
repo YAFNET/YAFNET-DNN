@@ -22,29 +22,26 @@
  * under the License.
  */
 
-namespace YAF.Core.Modules
-{
-    using Autofac;
+namespace YAF.Core.Modules;
 
-    using global::DotNetNuke.Entities.Portals;
+using Autofac;
+
+/// <summary>
+/// Registers all Service Modules
+/// </summary>
+public class DnnServicesModule : BaseModule
+{
+    #region Methods
 
     /// <summary>
-    /// Registers all Service Modules
+    /// Injects Specific DNN Services
     /// </summary>
-    public class DnnServicesModule : BaseModule
+    /// <param name="builder">The container builder.</param>
+    protected override void Load(ContainerBuilder builder)
     {
-        #region Methods
-
-        /// <summary>
-        /// Injects Specific DNN Services
-        /// </summary>
-        /// <param name="builder">The container builder.</param>
-        protected override void Load(ContainerBuilder builder)
-        {
-            builder.RegisterType<PortalController>().As<IPortalController>().SingleInstance()
-                .PreserveExistingDefaults();
-        }
-
-        #endregion
+        builder.RegisterType<PortalController>().As<IPortalController>().SingleInstance()
+            .PreserveExistingDefaults();
     }
+
+    #endregion
 }

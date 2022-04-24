@@ -22,55 +22,40 @@
  * under the License.
  */
 
-namespace YAF.DotNetNuke.Components.Controllers
+namespace YAF.DotNetNuke.Components.Controllers;
+
+/// <summary>
+/// The upgrade controller.
+/// </summary>
+public class UpgradeController : ModuleSettingsBase, IUpgradeable, IHaveServiceLocator
 {
-    #region Using
-
-    using global::DotNetNuke.Entities.Modules;
-
-    using YAF.Configuration;
-    using YAF.Core.Context;
-    using YAF.Core.Model;
-    using YAF.Core.Services;
-    using YAF.Types.Constants;
-    using YAF.Types.Interfaces;
-    using YAF.Types.Models;
-
-    #endregion
+    /// <summary>
+    ///     Gets or sets the service locator.
+    /// </summary>
+    public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
 
     /// <summary>
-    /// The upgrade controller.
+    /// Upgrades the module.
     /// </summary>
-    public class UpgradeController : ModuleSettingsBase, IUpgradeable, IHaveServiceLocator
+    /// <param name="version">The version.</param>
+    /// <returns>Returns nothing</returns>
+    public string UpgradeModule(string version)
     {
-        /// <summary>
-        ///     Gets or sets the service locator.
-        /// </summary>
-        public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
+        var versionType = this.GetRepository<Registry>().ValidateVersion(BoardInfo.AppVersion);
 
-        /// <summary>
-        /// Upgrades the module.
-        /// </summary>
-        /// <param name="version">The version.</param>
-        /// <returns>Returns nothing</returns>
-        public string UpgradeModule(string version)
+        switch (versionType)
         {
-            var versionType = this.GetRepository<Registry>().ValidateVersion(BoardInfo.AppVersion);
-
-            switch (versionType)
-            {
-                case DbVersionType.Upgrade:
-                    // Run Auto Upgrade
-                    this.Get<UpgradeService>().Upgrade();
-                    return string.Empty;
-                case DbVersionType.NewInstall:
-                    this.Get<InstallService>().InitializeDatabase();
-                    return string.Empty;
-                case DbVersionType.Current:
-                    return string.Empty;
-                default:
-                    return string.Empty;
-            }
+            case DbVersionType.Upgrade:
+                // Run Auto Upgrade
+                this.Get<UpgradeService>().Upgrade();
+                return string.Empty;
+            case DbVersionType.NewInstall:
+                this.Get<InstallService>().InitializeDatabase();
+                return string.Empty;
+            case DbVersionType.Current:
+                return string.Empty;
+            default:
+                return string.Empty;
         }
     }
 }

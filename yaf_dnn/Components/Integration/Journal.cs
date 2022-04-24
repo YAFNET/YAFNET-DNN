@@ -22,393 +22,372 @@
  * under the License.
  */
 
-namespace YAF.DotNetNuke.Components.Integration
+namespace YAF.DotNetNuke.Components.Integration;
+
+using global::DotNetNuke.Services.Journal;
+
+using Constants = YAF.Types.Constants.Constants;
+
+/// <summary>
+/// Activity Stream DNN Integration Class
+/// </summary>
+[ExportService(ServiceLifetimeScope.Singleton)]
+public class Journal : PortalModuleBase, IActivityStream, IHaveServiceLocator
 {
-    using System.Linq;
-    using System.Text;
-
-    using global::DotNetNuke.Entities.Modules;
-    using global::DotNetNuke.Entities.Portals;
-    using global::DotNetNuke.Entities.Users;
-    using global::DotNetNuke.Security.Roles;
-    using global::DotNetNuke.Services.Journal;
-
-    using YAF.Core.Context;
-    using YAF.Core.Extensions;
-    using YAF.Core.Helpers;
-    using YAF.Core.Model;
-    using YAF.Core.Services;
-    using YAF.Types.Attributes;
-    using YAF.Types.Constants;
-    using YAF.Types.Extensions;
-    using YAF.Types.Flags;
-    using YAF.Types.Interfaces;
-    using YAF.Types.Interfaces.Services;
-    using YAF.Types.Models;
-
-    using DateTime = System.DateTime;
+    /// <summary>
+    /// Gets or sets ServiceLocator.
+    /// </summary>
+    public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
 
     /// <summary>
-    /// Activity Stream DNN Integration Class
+    /// Adds the New Watch Topic to the User's ActivityStream
     /// </summary>
-    [ExportService(ServiceLifetimeScope.Singleton)]
-    public class Journal : PortalModuleBase, IActivityStream, IHaveServiceLocator
+    /// <param name="userId">
+    /// The user Id.
+    /// </param>
+    /// <param name="topicId">
+    /// The topic unique identifier.
+    /// </param>
+    /// <param name="messageId">
+    /// The message unique identifier.
+    /// </param>
+    /// <param name="topicTitle">
+    /// The topic title.
+    /// </param>
+    /// <param name="message">
+    /// The message.
+    /// </param>
+    /// <param name="fromUserId">
+    /// The from User Id.
+    /// </param>
+    public void AddWatchTopicToStream(int userId, int topicId, int messageId, string topicTitle, string message, int fromUserId)
     {
-        /// <summary>
-        /// Gets or sets ServiceLocator.
-        /// </summary>
-        public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
+        var flags = new ActivityFlags { WatchForumReply = true };
 
-        /// <summary>
-        /// Adds the New Watch Topic to the User's ActivityStream
-        /// </summary>
-        /// <param name="userId">
-        /// The user Id.
-        /// </param>
-        /// <param name="topicId">
-        /// The topic unique identifier.
-        /// </param>
-        /// <param name="messageId">
-        /// The message unique identifier.
-        /// </param>
-        /// <param name="topicTitle">
-        /// The topic title.
-        /// </param>
-        /// <param name="message">
-        /// The message.
-        /// </param>
-        /// <param name="fromUserId">
-        /// The from User Id.
-        /// </param>
-        public void AddWatchTopicToStream(int userId, int topicId, int messageId, string topicTitle, string message, int fromUserId)
+        var activity = new Activity
+                           {
+                               Flags = flags.BitValue,
+                               FromUserID = fromUserId,
+                               TopicID = topicId,
+                               MessageID = messageId,
+                               UserID = userId,
+                               Notification = true,
+                               Created = DateTime.UtcNow
+                           };
+
+        this.GetRepository<Activity>().Insert(activity);
+    }
+
+    /// <summary>
+    /// Adds the Watch Reply to the User's ActivityStream
+    /// </summary>
+    /// <param name="userId">
+    /// The user Id.
+    /// </param>
+    /// <param name="topicId">
+    /// The topic unique identifier.
+    /// </param>
+    /// <param name="messageId">
+    /// The message unique identifier.
+    /// </param>
+    /// <param name="topicTitle">
+    /// The topic title.
+    /// </param>
+    /// <param name="message">
+    /// The message.
+    /// </param>
+    /// <param name="fromUserId">
+    /// The from User Id.
+    /// </param>
+    public void AddWatchReplyToStream(int userId, int topicId, int messageId, string topicTitle, string message, int fromUserId)
+    {
+        var flags = new ActivityFlags { WatchTopicReply = true };
+
+        var activity = new Activity
+                           {
+                               Flags = flags.BitValue,
+                               FromUserID = fromUserId,
+                               TopicID = topicId,
+                               MessageID = messageId,
+                               UserID = userId,
+                               Notification = true,
+                               Created = DateTime.UtcNow
+                           };
+
+        this.GetRepository<Activity>().Insert(activity);
+    }
+
+    /// <summary>
+    /// Adds the New Topic to the User's ActivityStream
+    /// </summary>
+    /// <param name="forumId">
+    /// The forum Id.
+    /// </param>
+    /// <param name="topicId">
+    /// The topic Id.
+    /// </param>
+    /// <param name="messageId">
+    /// The message Id.
+    /// </param>
+    /// <param name="topicTitle">
+    /// The topic title.
+    /// </param>
+    /// <param name="message">
+    /// The message.
+    /// </param>
+    public void AddTopicToStream(int forumId, int topicId, int messageId, string topicTitle, string message)
+    {
+        message = BBCodeHelper.StripBBCode(
+                HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
+            .RemoveMultipleWhitespace();
+
+        var user = UserController.Instance.GetCurrentUserInfo();
+        var portalSettings = PortalSettings.Current;
+
+        var ji = new JournalItem
+                     {
+                         PortalId = portalSettings.PortalId,
+                         ProfileId = user.UserID,
+                         UserId = user.UserID,
+                         Title = topicTitle,
+                         ItemData = new ItemData { Url = BoardContext.Current.Get<LinkBuilder>().GetTopicLink(topicId, topicTitle) },
+                         Summary = message.Truncate(150),
+                         Body = message,
+                         JournalTypeId = 5,
+                         SecuritySet = GetSecuritySet(forumId, portalSettings.PortalId),
+                         ObjectKey = $"{forumId}:{topicId}:{messageId}"
+                     };
+
+        if (JournalController.Instance.GetJournalItemByKey(portalSettings.PortalId, ji.ObjectKey) != null)
         {
-            var flags = new ActivityFlags { WatchForumReply = true };
-
-            var activity = new Activity
-            {
-                Flags = flags.BitValue,
-                FromUserID = fromUserId,
-                TopicID = topicId,
-                MessageID = messageId,
-                UserID = userId,
-                Notification = true,
-                Created = DateTime.UtcNow
-            };
-
-            this.GetRepository<Activity>().Insert(activity);
+            JournalController.Instance.DeleteJournalItemByKey(portalSettings.PortalId, ji.ObjectKey);
         }
 
-        /// <summary>
-        /// Adds the Watch Reply to the User's ActivityStream
-        /// </summary>
-        /// <param name="userId">
-        /// The user Id.
-        /// </param>
-        /// <param name="topicId">
-        /// The topic unique identifier.
-        /// </param>
-        /// <param name="messageId">
-        /// The message unique identifier.
-        /// </param>
-        /// <param name="topicTitle">
-        /// The topic title.
-        /// </param>
-        /// <param name="message">
-        /// The message.
-        /// </param>
-        /// <param name="fromUserId">
-        /// The from User Id.
-        /// </param>
-        public void AddWatchReplyToStream(int userId, int topicId, int messageId, string topicTitle, string message, int fromUserId)
+        JournalController.Instance.SaveJournalItem(ji, this.ModuleConfiguration);
+    }
+
+    /// <summary>
+    /// Adds the Reply to the User's ActivityStream
+    /// </summary>
+    /// <param name="forumId">The forum unique identifier.</param>
+    /// <param name="topicId">The topic unique identifier.</param>
+    /// <param name="messageId">The message unique identifier.</param>
+    /// <param name="topicTitle">The topic title.</param>
+    /// <param name="message">The message.</param>
+    public void AddReplyToStream(int forumId, int topicId, int messageId, string topicTitle, string message)
+    {
+        message = BBCodeHelper.StripBBCode(
+                HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
+            .RemoveMultipleWhitespace();
+
+        var user = UserController.Instance.GetCurrentUserInfo();
+        var portalSettings = PortalSettings.Current;
+
+        var ji = new JournalItem
+                     {
+                         PortalId = portalSettings.PortalId,
+                         ProfileId = user.UserID,
+                         UserId = user.UserID,
+                         Title = topicTitle,
+                         ItemData =
+                             new ItemData
+                                 {
+                                     Url = BoardContext.Current.Get<LinkBuilder>().GetLink(
+                                         ForumPages.Posts,
+                                         new { m = messageId, name = topicTitle })
+                                 },
+                         Summary = message.Truncate(150),
+                         Body = message,
+                         JournalTypeId = 6,
+                         SecuritySet = GetSecuritySet(forumId, portalSettings.PortalId),
+                         ObjectKey = $"{forumId}:{topicId}:{messageId}"
+                     };
+
+        if (JournalController.Instance.GetJournalItemByKey(portalSettings.PortalId, ji.ObjectKey) != null)
         {
-            var flags = new ActivityFlags { WatchTopicReply = true };
-
-            var activity = new Activity
-            {
-                Flags = flags.BitValue,
-                FromUserID = fromUserId,
-                TopicID = topicId,
-                MessageID = messageId,
-                UserID = userId,
-                Notification = true,
-                Created = DateTime.UtcNow
-            };
-
-            this.GetRepository<Activity>().Insert(activity);
+            JournalController.Instance.DeleteJournalItemByKey(portalSettings.PortalId, ji.ObjectKey);
         }
 
-        /// <summary>
-        /// Adds the New Topic to the User's ActivityStream
-        /// </summary>
-        /// <param name="forumId">
-        /// The forum Id.
-        /// </param>
-        /// <param name="topicId">
-        /// The topic Id.
-        /// </param>
-        /// <param name="messageId">
-        /// The message Id.
-        /// </param>
-        /// <param name="topicTitle">
-        /// The topic title.
-        /// </param>
-        /// <param name="message">
-        /// The message.
-        /// </param>
-        public void AddTopicToStream(int forumId, int topicId, int messageId, string topicTitle, string message)
-        {
-            message = BBCodeHelper.StripBBCode(
-                    HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
-                    .RemoveMultipleWhitespace();
+        JournalController.Instance.SaveJournalItem(ji, this.ModuleConfiguration);
+    }
 
-            var user = UserController.Instance.GetCurrentUserInfo();
-            var portalSettings = PortalSettings.Current;
+    /// <summary>
+    /// Add Mention to Users Stream
+    /// </summary>
+    /// <param name="userId">
+    /// The user id.
+    /// </param>
+    /// <param name="topicId">
+    /// The topic id.
+    /// </param>
+    /// <param name="messageId">
+    /// The message id.
+    /// </param>
+    /// <param name="fromUserId">
+    /// The from user id.
+    /// </param>
+    public void AddMentionToStream(int userId, int topicId, int messageId, int fromUserId)
+    {
+        var flags = new ActivityFlags { WasMentioned = true };
 
-            var ji = new JournalItem
-            {
-                PortalId = portalSettings.PortalId,
-                ProfileId = user.UserID,
-                UserId = user.UserID,
-                Title = topicTitle,
-                ItemData = new ItemData { Url = BoardContext.Current.Get<LinkBuilder>().GetTopicLink(topicId, topicTitle) },
-                Summary = message.Truncate(150),
-                Body = message,
-                JournalTypeId = 5,
-                SecuritySet = GetSecuritySet(forumId, portalSettings.PortalId),
-                ObjectKey = $"{forumId}:{topicId}:{messageId}"
-            };
+        var activity = new Activity
+                           {
+                               Flags = flags.BitValue,
+                               FromUserID = fromUserId,
+                               TopicID = topicId,
+                               MessageID = messageId,
+                               UserID = userId,
+                               Notification = true,
+                               Created = DateTime.UtcNow
+                           };
 
-            if (JournalController.Instance.GetJournalItemByKey(portalSettings.PortalId, ji.ObjectKey) != null)
-            {
-                JournalController.Instance.DeleteJournalItemByKey(portalSettings.PortalId, ji.ObjectKey);
-            }
+        BoardContext.Current.GetRepository<Activity>().Insert(activity);
 
-            JournalController.Instance.SaveJournalItem(ji, this.ModuleConfiguration);
-        }
+        BoardContext.Current.Get<IDataCache>().Remove(
+            string.Format(Constants.Cache.ActiveUserLazyData, userId));
+    }
 
-        /// <summary>
-        /// Adds the Reply to the User's ActivityStream
-        /// </summary>
-        /// <param name="forumId">The forum unique identifier.</param>
-        /// <param name="topicId">The topic unique identifier.</param>
-        /// <param name="messageId">The message unique identifier.</param>
-        /// <param name="topicTitle">The topic title.</param>
-        /// <param name="message">The message.</param>
-        public void AddReplyToStream(int forumId, int topicId, int messageId, string topicTitle, string message)
-        {
-            message = BBCodeHelper.StripBBCode(
-                    HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
-                    .RemoveMultipleWhitespace();
+    /// <summary>
+    /// Add Quoting to Users Stream
+    /// </summary>
+    /// <param name="userId">
+    /// The user id.
+    /// </param>
+    /// <param name="topicId">
+    /// The topic id.
+    /// </param>
+    /// <param name="messageId">
+    /// The message id.
+    /// </param>
+    /// <param name="fromUserId">
+    /// The from user id.
+    /// </param>
+    public void AddQuotingToStream(int userId, int topicId, int messageId, int fromUserId)
+    {
+        var flags = new ActivityFlags { WasQuoted = true };
 
-            var user = UserController.Instance.GetCurrentUserInfo();
-            var portalSettings = PortalSettings.Current;
+        var activity = new Activity
+                           {
+                               Flags = flags.BitValue,
+                               FromUserID = fromUserId,
+                               TopicID = topicId,
+                               MessageID = messageId,
+                               UserID = userId,
+                               Notification = true,
+                               Created = DateTime.UtcNow
+                           };
 
-            var ji = new JournalItem
-            {
-                PortalId = portalSettings.PortalId,
-                ProfileId = user.UserID,
-                UserId = user.UserID,
-                Title = topicTitle,
-                ItemData =
-                    new ItemData
+        BoardContext.Current.GetRepository<Activity>().Insert(activity);
+
+        BoardContext.Current.Get<IDataCache>().Remove(
+            string.Format(Constants.Cache.ActiveUserLazyData, userId));
+    }
+
+    /// <summary>
+    /// The add thanks received to stream.
+    /// </summary>
+    /// <param name="userId">
+    /// The user id.
+    /// </param>
+    /// <param name="topicId">
+    /// The topic id.
+    /// </param>
+    /// <param name="messageId">
+    /// The message id.
+    /// </param>
+    /// <param name="fromUserId">
+    /// The from user id.
+    /// </param>
+    public void AddThanksReceivedToStream(int userId, int topicId, int messageId, int fromUserId)
+    {
+        var flags = new ActivityFlags { ReceivedThanks = true };
+
+        var activity = new Activity
+                           {
+                               Flags = flags.BitValue,
+                               FromUserID = fromUserId,
+                               TopicID = topicId,
+                               MessageID = messageId,
+                               UserID = userId,
+                               Notification = true,
+                               Created = DateTime.UtcNow
+                           };
+
+        BoardContext.Current.GetRepository<Activity>().Insert(activity);
+
+        BoardContext.Current.Get<IDataCache>().Remove(
+            string.Format(Constants.Cache.ActiveUserLazyData, userId));
+    }
+
+    /// <summary>
+    /// The add thanks given to stream.
+    /// </summary>
+    /// <param name="userId">
+    /// The user id.
+    /// </param>
+    /// <param name="topicId">
+    /// The topic id.
+    /// </param>
+    /// <param name="messageId">
+    /// The message id.
+    /// </param>
+    /// <param name="fromUserId">
+    /// The from user id.
+    /// </param>
+    public void AddThanksGivenToStream(int userId, int topicId, int messageId, int fromUserId)
+    {
+        var flags = new ActivityFlags { GivenThanks = true };
+
+        var activity = new Activity
+                           {
+                               Flags = flags.BitValue,
+                               FromUserID = fromUserId,
+                               TopicID = topicId,
+                               MessageID = messageId,
+                               UserID = userId,
+                               Notification = false,
+                               Created = DateTime.UtcNow
+                           };
+
+        BoardContext.Current.GetRepository<Activity>().Insert(activity);
+    }
+
+    /// <summary>
+    /// Gets the security set for the forum.
+    /// </summary>
+    /// <param name="forumId">The forum unique identifier.</param>
+    /// <param name="portalId">The portal unique identifier.</param>
+    /// <returns>Returns The Security Set for the Forum including all Roles which have Read Access</returns>
+    private static string GetSecuritySet(int forumId, int portalId)
+    {
+        var forumAccessList = BoardContext.Current.GetRepository<ForumAccess>().GetReadAccessList(forumId);
+
+        var dnnRoles = new RoleController().GetRoles(portalId).ToList();
+
+        var securitySet = new StringBuilder();
+
+        forumAccessList.Where(x => x.Item2.AccessFlags.ReadAccess).ForEach(
+            forumAccess =>
+                {
+                    RoleInfo role = null;
+
+                    if (dnnRoles.Any(r => r.RoleName == forumAccess.Item3.Name))
                     {
-                        Url = BoardContext.Current.Get<LinkBuilder>().GetLink(
-                            ForumPages.Posts,
-                            new { m = messageId, name = topicTitle })
-                    },
-                Summary = message.Truncate(150),
-                Body = message,
-                JournalTypeId = 6,
-                SecuritySet = GetSecuritySet(forumId, portalSettings.PortalId),
-                ObjectKey = $"{forumId}:{topicId}:{messageId}"
-            };
+                        role = dnnRoles.First(r => r.RoleName == forumAccess.Item3.Name);
+                    }
 
-            if (JournalController.Instance.GetJournalItemByKey(portalSettings.PortalId, ji.ObjectKey) != null)
-            {
-                JournalController.Instance.DeleteJournalItemByKey(portalSettings.PortalId, ji.ObjectKey);
-            }
-
-            JournalController.Instance.SaveJournalItem(ji, this.ModuleConfiguration);
-        }
-
-        /// <summary>
-        /// Add Mention to Users Stream
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="topicId">
-        /// The topic id.
-        /// </param>
-        /// <param name="messageId">
-        /// The message id.
-        /// </param>
-        /// <param name="fromUserId">
-        /// The from user id.
-        /// </param>
-        public void AddMentionToStream(int userId, int topicId, int messageId, int fromUserId)
-        {
-            var flags = new ActivityFlags { WasMentioned = true };
-
-            var activity = new Activity
-            {
-                Flags = flags.BitValue,
-                FromUserID = fromUserId,
-                TopicID = topicId,
-                MessageID = messageId,
-                UserID = userId,
-                Notification = true,
-                Created = DateTime.UtcNow
-            };
-
-            BoardContext.Current.GetRepository<Activity>().Insert(activity);
-
-            BoardContext.Current.Get<IDataCache>().Remove(
-                string.Format(Constants.Cache.ActiveUserLazyData, userId));
-        }
-
-        /// <summary>
-        /// Add Quoting to Users Stream
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="topicId">
-        /// The topic id.
-        /// </param>
-        /// <param name="messageId">
-        /// The message id.
-        /// </param>
-        /// <param name="fromUserId">
-        /// The from user id.
-        /// </param>
-        public void AddQuotingToStream(int userId, int topicId, int messageId, int fromUserId)
-        {
-            var flags = new ActivityFlags { WasQuoted = true };
-
-            var activity = new Activity
-            {
-                Flags = flags.BitValue,
-                FromUserID = fromUserId,
-                TopicID = topicId,
-                MessageID = messageId,
-                UserID = userId,
-                Notification = true,
-                Created = DateTime.UtcNow
-            };
-
-            BoardContext.Current.GetRepository<Activity>().Insert(activity);
-
-            BoardContext.Current.Get<IDataCache>().Remove(
-                string.Format(Constants.Cache.ActiveUserLazyData, userId));
-        }
-
-        /// <summary>
-        /// The add thanks received to stream.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="topicId">
-        /// The topic id.
-        /// </param>
-        /// <param name="messageId">
-        /// The message id.
-        /// </param>
-        /// <param name="fromUserId">
-        /// The from user id.
-        /// </param>
-        public void AddThanksReceivedToStream(int userId, int topicId, int messageId, int fromUserId)
-        {
-            var flags = new ActivityFlags { ReceivedThanks = true };
-
-            var activity = new Activity
-            {
-                Flags = flags.BitValue,
-                FromUserID = fromUserId,
-                TopicID = topicId,
-                MessageID = messageId,
-                UserID = userId,
-                Notification = true,
-                Created = DateTime.UtcNow
-            };
-
-            BoardContext.Current.GetRepository<Activity>().Insert(activity);
-
-            BoardContext.Current.Get<IDataCache>().Remove(
-                string.Format(Constants.Cache.ActiveUserLazyData, userId));
-        }
-
-        /// <summary>
-        /// The add thanks given to stream.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="topicId">
-        /// The topic id.
-        /// </param>
-        /// <param name="messageId">
-        /// The message id.
-        /// </param>
-        /// <param name="fromUserId">
-        /// The from user id.
-        /// </param>
-        public void AddThanksGivenToStream(int userId, int topicId, int messageId, int fromUserId)
-        {
-            var flags = new ActivityFlags { GivenThanks = true };
-
-            var activity = new Activity
-            {
-                Flags = flags.BitValue,
-                FromUserID = fromUserId,
-                TopicID = topicId,
-                MessageID = messageId,
-                UserID = userId,
-                Notification = false,
-                Created = DateTime.UtcNow
-            };
-
-            BoardContext.Current.GetRepository<Activity>().Insert(activity);
-        }
-
-        /// <summary>
-        /// Gets the security set for the forum.
-        /// </summary>
-        /// <param name="forumId">The forum unique identifier.</param>
-        /// <param name="portalId">The portal unique identifier.</param>
-        /// <returns>Returns The Security Set for the Forum including all Roles which have Read Access</returns>
-        private static string GetSecuritySet(int forumId, int portalId)
-        {
-            var forumAccessList = BoardContext.Current.GetRepository<ForumAccess>().GetReadAccessList(forumId);
-
-            var dnnRoles = new RoleController().GetRoles(portalId).ToList();
-
-            var securitySet = new StringBuilder();
-
-            forumAccessList.Where(x => x.Item2.AccessFlags.ReadAccess).ForEach(
-                forumAccess =>
+                    if (role != null)
                     {
-                        RoleInfo role = null;
+                        securitySet.AppendFormat("R{0},", role.RoleID);
+                    }
 
-                        if (dnnRoles.Any(r => r.RoleName == forumAccess.Item3.Name))
-                        {
-                            role = dnnRoles.First(r => r.RoleName == forumAccess.Item3.Name);
-                        }
+                    // Guest Access
+                    if (forumAccess.Item3.Name == "Guests")
+                    {
+                        securitySet.Append("E,");
+                    }
+                });
 
-                        if (role != null)
-                        {
-                            securitySet.AppendFormat("R{0},", role.RoleID);
-                        }
-
-                        // Guest Access
-                        if (forumAccess.Item3.Name == "Guests")
-                        {
-                            securitySet.Append("E,");
-                        }
-                    });
-
-            return securitySet.ToString();
-        }
+        return securitySet.ToString();
     }
 }

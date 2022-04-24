@@ -22,122 +22,101 @@
  * under the License.
  */
 
-namespace YAF.DotNetNuke
+namespace YAF.DotNetNuke;
+
+/// <summary>
+/// The YAF DNN import scheduler.
+/// </summary>
+public class YafDnnImportScheduler : SchedulerClient
 {
-    #region Using
+    #region Constants and Fields
 
-    using System;
-    using System.Data;
-    using System.IO;
-    using System.Linq;
-    using System.Web;
-
-    using global::DotNetNuke.Services.Exceptions;
-
-    using global::DotNetNuke.Services.Scheduling;
-
-    using YAF.Core.Context;
-    using YAF.Core.Extensions;
-    using YAF.DotNetNuke.Components.Utils;
-    using YAF.Types.Extensions;
-    using YAF.Types.Interfaces;
-    using YAF.Types.Models;
+    /// <summary>
+    /// The info.
+    /// </summary>
+    private string info = string.Empty;
 
     #endregion
 
+    #region Constructors and Destructors
+
     /// <summary>
-    /// The YAF DNN import scheduler.
+    /// Initializes a new instance of the <see cref="YafDnnImportScheduler"/> class.
     /// </summary>
-    public class YafDnnImportScheduler : SchedulerClient
+    /// <param name="scheduleHistoryItem">
+    /// The schedule history item.
+    /// </param>
+    public YafDnnImportScheduler(ScheduleHistoryItem scheduleHistoryItem)
     {
-        #region Constants and Fields
+        this.ScheduleHistoryItem = scheduleHistoryItem;
+    }
 
-        /// <summary>
-        /// The info.
-        /// </summary>
-        private string info = string.Empty;
+    #endregion
 
-        #endregion
+    #region Public Methods
 
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="YafDnnImportScheduler"/> class.
-        /// </summary>
-        /// <param name="scheduleHistoryItem">
-        /// The schedule history item.
-        /// </param>
-        public YafDnnImportScheduler(ScheduleHistoryItem scheduleHistoryItem)
+    /// <summary>
+    /// The do work.
+    /// </summary>
+    public override void DoWork()
+    {
+        try
         {
-            this.ScheduleHistoryItem = scheduleHistoryItem;
+            this.GetSettings();
+
+            // report success to the scheduler framework
+            this.ScheduleHistoryItem.Succeeded = true;
+
+            this.ScheduleHistoryItem.AddLogNote(this.info);
+        }
+        catch (Exception exc)
+        {
+            this.ScheduleHistoryItem.Succeeded = false;
+            this.ScheduleHistoryItem.AddLogNote($"EXCEPTION: {exc}");
+            this.Errored(ref exc);
+
+            Exceptions.LogException(exc);
+        }
+    }
+
+    #endregion
+
+    #region Methods
+
+    /// <summary>
+    /// Gets the settings.
+    /// </summary>
+    private void GetSettings()
+    {
+        var settings = new DataSet();
+
+        var filePath = $"{HttpRuntime.AppDomainAppPath}App_Data/YafImports.xml";
+
+        try
+        {
+            settings.ReadXml(filePath);
+        }
+        catch (Exception)
+        {
+            var file = new FileStream(filePath, FileMode.Create);
+            var sw = new StreamWriter(file);
+
+            sw.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
+            sw.WriteLine("<YafImports>");
+            sw.WriteLine("<Import PortalId=\"0\" BoardId=\"1\"/>");
+            sw.WriteLine("</YafImports>");
+
+            sw.Close();
+            file.Close();
+
+            settings.ReadXml(filePath);
         }
 
-        #endregion
+        var boards = BoardContext.Current != null
+                         ? BoardContext.Current.GetRepository<Board>().GetAll()
+                         : BoardContext.Current.GetRepository<Board>().GetAll().Select(b => new Board { ID = b.ID }).ToList();
 
-        #region Public Methods
-
-        /// <summary>
-        /// The do work.
-        /// </summary>
-        public override void DoWork()
-        {
-            try
-            {
-                this.GetSettings();
-
-                // report success to the scheduler framework
-                this.ScheduleHistoryItem.Succeeded = true;
-
-                this.ScheduleHistoryItem.AddLogNote(this.info);
-            }
-            catch (Exception exc)
-            {
-                this.ScheduleHistoryItem.Succeeded = false;
-                this.ScheduleHistoryItem.AddLogNote($"EXCEPTION: {exc}");
-                this.Errored(ref exc);
-
-                Exceptions.LogException(exc);
-            }
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Gets the settings.
-        /// </summary>
-        private void GetSettings()
-        {
-            var settings = new DataSet();
-
-            var filePath = $"{HttpRuntime.AppDomainAppPath}App_Data/YafImports.xml";
-
-            try
-            {
-                settings.ReadXml(filePath);
-            }
-            catch (Exception)
-            {
-                var file = new FileStream(filePath, FileMode.Create);
-                var sw = new StreamWriter(file);
-
-                sw.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-                sw.WriteLine("<YafImports>");
-                sw.WriteLine("<Import PortalId=\"0\" BoardId=\"1\"/>");
-                sw.WriteLine("</YafImports>");
-
-                sw.Close();
-                file.Close();
-
-                settings.ReadXml(filePath);
-            }
-
-            var boards = BoardContext.Current != null
-                ? BoardContext.Current.GetRepository<Board>().GetAll()
-                : BoardContext.Current.GetRepository<Board>().GetAll().Select(b => new Board { ID = b.ID }).ToList();
-
-            settings.Tables[0].Rows.Cast<DataRow>().ForEach(dataRow =>
+        settings.Tables[0].Rows.Cast<DataRow>().ForEach(dataRow =>
             {
                 var boardId = dataRow["BoardId"].ToType<int>();
                 var portalId = dataRow["PortalId"].ToType<int>();
@@ -148,8 +127,7 @@ namespace YAF.DotNetNuke
                     UserImporter.ImportUsers(boardId, portalId, out this.info);
                 }
             });
-        }
-
-        #endregion
     }
+
+    #endregion
 }

@@ -109,8 +109,12 @@
     <Compile Include="Components\Utils\UserImporter.cs" />
     <Compile Include="Components\WebAPI\SearchController.cs" />
     <Compile Include="Components\WebAPI\ThankYouController.cs" />
+    <Compile Include="Components\WebAPI\ForumController.cs" />
+    <Compile Include="Components\WebAPI\TagsController.cs" />
     <Compile Include="Components\WebAPI\TopicController.cs" />
+    <Compile Include="Components\WebAPI\UserController.cs" />
     <Compile Include="Extensions\AspNetUsersExtensions.cs" />
+    <Compile Include="GlobalUsings.cs" />
     <Compile Include="Models\Roles.cs" />
     <Compile Include="Models\UserRoles.cs" />
     <Compile Include="YafDnnWhatsNew.ascx.cs">
@@ -154,6 +158,7 @@
     <None Include="BuildScripts\ModulePackage.targets">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="Installation\03.14.006108.txt" />
     <Content Include="Installation\03.00.006100.sql" />
     <None Include="Installation\Uninstall.SqlDataProvider" />
     <None Include="Installation\YAF.DotNetNuke.Module.dnn">
