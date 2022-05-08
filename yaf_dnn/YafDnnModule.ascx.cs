@@ -324,7 +324,8 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
         }
 
         var boardSettings = BoardContext.Current is null
-                                ? new LoadBoardSettings(this.forum1.BoardID)
+                                ? this.Get<BoardSettingsService>()
+                                    .LoadBoardSettings(this.forum1.BoardID, null)
                                 : this.Get<BoardSettings>();
 
         if (yafUser is null)
@@ -372,9 +373,9 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
             this.forum1.BoardID = this.Settings["forumboardid"].ToType<int>();
 
             var boardSettingsTabId = BoardContext.Current.BoardSettings != null
-                                     && this.PageBoardContext().BoardSettings.BoardID.Equals(this.forum1.BoardID)
+                                     && this.PageBoardContext().BoardSettings.BoardId.Equals(this.forum1.BoardID)
                                          ? this.PageBoardContext().BoardSettings.DNNPageTab
-                                         : new LoadBoardSettings(this.forum1.BoardID).DNNPageTab;
+                                         : this.Get<BoardSettingsService>().LoadBoardSettings(this.forum1.BoardID, null).DNNPageTab;
 
             if (!boardSettingsTabId.Equals(this.TabId) && boardSettingsTabId > -1)
             {
@@ -389,14 +390,14 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
 
             if (this.PageBoardContext().BoardSettings.DNNPortalId.Equals(-1))
             {
-                var boardSettings = new LoadBoardSettings(this.forum1.BoardID)
-                                        {
-                                            DNNPageTab = this.TabId,
-                                            DNNPortalId = this.PortalId
-                                        };
+                var boardSettings = this.Get<BoardSettingsService>()
+                    .LoadBoardSettings(this.forum1.BoardID, null);
+
+                boardSettings.DNNPageTab = this.TabId;
+                boardSettings.DNNPortalId = this.PortalId;
 
                 // save the settings to the database
-                boardSettings.SaveRegistry();
+                this.Get<BoardSettingsService>().SaveRegistry(boardSettings);
             }
 
             // Inherit Language from Dnn?

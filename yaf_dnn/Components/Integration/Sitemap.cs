@@ -56,8 +56,7 @@ public class Sitemap : SitemapProvider
             return urls;
         }
 
-        var forumList = BoardContext.Current.GetRepository<Forum>().ListAll(
-            BoardContext.Current.BoardSettings.BoardID);
+        var forumList = BoardContext.Current.GetRepository<Forum>().ListAll(BoardContext.Current.BoardSettings.BoardId);
 
         urls.AddRange(
             forumList.Select(

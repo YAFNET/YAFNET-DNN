@@ -53,7 +53,7 @@ public class UserImporter
 
         // Load Yaf Board Settings if needed
         var boardSettings = BoardContext.Current is null
-                                ? new LoadBoardSettings(boardId)
+                                ? BoardContext.Current.Get<BoardSettingsService>().LoadBoardSettings(boardId, null)
                                 : BoardContext.Current.Get<BoardSettings>();
 
         var rolesChanged = false;

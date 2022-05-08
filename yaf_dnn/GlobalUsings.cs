@@ -32,7 +32,6 @@ global using ServiceStack.DataAnnotations;
 global using ServiceStack.Model;
 
 global using YAF.Configuration;
-global using YAF.Core.BoardSettings;
 global using YAF.Core.Context;
 global using YAF.Core.Data;
 global using YAF.Core.Extensions;

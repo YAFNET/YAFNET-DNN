@@ -104,18 +104,17 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
             "InheritDnnLanguage",
             this.InheritDnnLanguage.Checked.ToString());
 
-        var boardSettings = new LoadBoardSettings(newBoardId)
-                                {
-                                    DNNPageTab = this.TabId,
-                                    DNNPortalId = this.PortalId,
-                                    BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/"
-                                };
+        var boardSettings = this.Get<BoardSettingsService>().LoadBoardSettings(newBoardId, null);
+
+        boardSettings.DNNPageTab = this.TabId;
+        boardSettings.DNNPortalId = this.PortalId;
+        boardSettings.BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/";
 
         // save the settings to the database
-        boardSettings.SaveRegistry();
+        this.Get<BoardSettingsService>().SaveRegistry(boardSettings);
 
         // Reload forum settings
-        BoardContext.Current.BoardSettings = null;
+        BoardContext.Current.BoardSettings = boardSettings;
 
         this.Response.Redirect(this.navigationManager.NavigateURL(), true);
     }
@@ -139,16 +138,14 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
             "InheritDnnLanguage",
             this.InheritDnnLanguage.Checked.ToString());
 
-        var boardSettings =
-            new LoadBoardSettings(newBoardId)
-                {
-                    DNNPageTab = this.TabId,
-                    DNNPortalId = this.PortalId,
-                    BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/"
-                };
+        var boardSettings = this.Get<BoardSettingsService>().LoadBoardSettings(newBoardId, null);
+
+        boardSettings.DNNPageTab = this.TabId;
+        boardSettings.DNNPortalId = this.PortalId;
+        boardSettings.BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/";
 
         // save the settings to the database
-        boardSettings.SaveRegistry();
+        this.Get<BoardSettingsService>().SaveRegistry(boardSettings);
 
         Config.Touch();
 
@@ -299,16 +296,14 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
             "InheritDnnLanguage",
             this.InheritDnnLanguage.Checked.ToString());
 
-        var boardSettings =
-            new LoadBoardSettings(this.BoardID.SelectedValue.ToType<int>())
-                {
-                    DNNPageTab = this.TabId,
-                    DNNPortalId = this.PortalId,
-                    BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/"
-                };
+        var boardSettings = this.Get<BoardSettingsService>().LoadBoardSettings(this.BoardID.SelectedValue.ToType<int>(), null);
+        
+        boardSettings.DNNPageTab = this.TabId;
+        boardSettings.DNNPortalId = this.PortalId;
+        boardSettings.BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/";
 
         // save the settings to the database
-        boardSettings.SaveRegistry();
+        this.Get<BoardSettingsService>().SaveRegistry(boardSettings);
 
         // Import Users & Roles
         UserImporter.ImportUsers(
