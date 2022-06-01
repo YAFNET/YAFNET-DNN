@@ -125,7 +125,7 @@
             </assembly>
             <assembly>
               <name>System.ValueTuple.dll</name>
-            </assembly>
+            </assembly> 
             <assembly>
               <name>Microsoft.AspNet.Identity.Core.dll</name>
             </assembly>
@@ -334,15 +334,16 @@
             <install>
               <configuration>
                 <nodes>
-                  <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http']" action="update" targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http']/ab:bindingRedirect" collision="save"  nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.7.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
+                  <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http']" action="update" 
+                        targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http']/ab:bindingRedirect" collision="save"  nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
+                    <bindingRedirect oldVersion="0.0.0.0-5.2.8.0" newVersion="5.2.7.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
                   </node>
                   <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http.WebHost']"
                         action="update"
                         targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http.WebHost']/ab:bindingRedirect"
                         collision="save"
                         nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="0.0.0.0-5.2.7.0" newVersion="5.2.7.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
+                    <bindingRedirect oldVersion="0.0.0.0-5.2.8.0" newVersion="5.2.7.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
                   </node>
                   <node path="/configuration/dotnetnuke/sitemap/providers" action="update" key="name" collision="overwrite">
                     <add name="yafSitemapProvider" type="YAF.DotNetNuke.Components.Integration.Sitemap, YAF.DotNetNuke.Module" providerPath="~\DesktopModules\YetAnotherForumDotNet\" />
