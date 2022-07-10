@@ -41,8 +41,13 @@ using MailPriority = global::DotNetNuke.Services.Mail.MailPriority;
 /// Functions to send email via SMTP
 /// </summary>
 [ExportService(ServiceLifetimeScope.Singleton)]
-public class SendMail : IMailService
+public class SendMail : IMailService, IHaveServiceLocator
 {
+    /// <summary>
+    ///     Gets the service locator.
+    /// </summary>
+    public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
+
     #region Public Methods
 
     /// <summary>
@@ -108,8 +113,7 @@ public class SendMail : IMailService
     /// Sends all MailMessages via the SMTP Client. Doesn't handle any exceptions.
     /// </summary>
     /// <param name="messages">The messages.</param>
-    /// <param name="handleException"> The handle exception action.</param>
-    public void SendAll([NotNull] IEnumerable<MailMessage> messages, [CanBeNull] Action<MailMessage, Exception> handleException = null)
+    public void SendAll([NotNull] IEnumerable<MailMessage> messages)
     {
         var mailMessages = messages as IList<MailMessage> ?? messages.ToList();
 
@@ -125,15 +129,7 @@ public class SendMail : IMailService
                     }
                     catch (Exception ex)
                     {
-                        if (handleException != null)
-                        {
-                            handleException(mailMessage, ex);
-                        }
-                        else
-                        {
-                            // don't handle here...
-                            throw;
-                        }
+                        this.Get<ILoggerService>().Log("Mail Error", EventLogTypes.Error, null, null, ex);
                     }
                 });
     }
