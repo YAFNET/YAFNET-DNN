@@ -975,9 +975,13 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
         var user = this.GetRepository<User>().DbAccess
             .Execute(db => db.Connection.SelectMulti<User, Rank, vaccess>(expression)).FirstOrDefault();
 
-        var aspUser = UserController.GetUserById(
-            PortalController.Instance.GetCurrentSettings().PortalId,
-            user.Item1.ProviderUserKey.ToType<int>());
+        var aspUser = ValidationHelper.IsNumeric(user.Item1.ProviderUserKey)
+                          ? UserController.GetUserById(
+                              PortalController.Instance.GetCurrentSettings().PortalId,
+                              user.Item1.ProviderUserKey.ToType<int>())
+                          : UserController.GetUserByEmail(
+                              PortalController.Instance.GetCurrentSettings().PortalId,
+                              user.Item1.Email);
 
         return Tuple.Create(user.Item1, aspUser.ToAspNetUsers(), user.Item2, user.Item3);
     }

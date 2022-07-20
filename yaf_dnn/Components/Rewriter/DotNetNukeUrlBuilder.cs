@@ -229,6 +229,9 @@ public class DotNetNukeUrlBuilder : BaseUrlBuilder
                     }
 
                     break;
+                default:
+                    boardNameOrPageName = UrlRewriteHelper.CleanStringForURL(pageName); 
+                    break;
             }
         }
 

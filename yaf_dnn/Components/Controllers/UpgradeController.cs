@@ -24,6 +24,10 @@
 
 namespace YAF.DotNetNuke.Components.Controllers;
 
+using YAF.Core.Services.Import;
+using YAF.Types.EventProxies;
+using YAF.Types.Interfaces.Events;
+
 /// <summary>
 /// The upgrade controller.
 /// </summary>
@@ -33,6 +37,16 @@ public class UpgradeController : ModuleSettingsBase, IUpgradeable, IHaveServiceL
     ///     Gets or sets the service locator.
     /// </summary>
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
+
+    /// <summary>
+    ///     The BBCode extensions import xml file.
+    /// </summary>
+    private const string BbcodeImport = "~/DesktopModules/YetAnotherForumDotNet/Install/BBCodeExtensions.xml";
+
+    /// <summary>
+    ///     The Spam Words list import xml file.
+    /// </summary>
+    private const string SpamWordsImport = "~/DesktopModules/YetAnotherForumDotNet/Install/SpamWords.xml";
 
     /// <summary>
     /// Upgrades the module.
@@ -48,14 +62,54 @@ public class UpgradeController : ModuleSettingsBase, IUpgradeable, IHaveServiceL
             case DbVersionType.Upgrade:
                 // Run Auto Upgrade
                 this.Get<UpgradeService>().Upgrade();
+                this.AddOrUpdateExtensions();
                 return string.Empty;
             case DbVersionType.NewInstall:
                 this.Get<InstallService>().InitializeDatabase();
+                this.AddOrUpdateExtensions();
                 return string.Empty;
             case DbVersionType.Current:
                 return string.Empty;
             default:
                 return string.Empty;
         }
+    }
+
+    /// <summary>
+    ///    Add or Update BBCode Extensions and Spam Words
+    /// </summary>
+    private void AddOrUpdateExtensions()
+    {
+        var loadWrapper = new Action<string, Action<Stream>>(
+            (file, streamAction) =>
+                {
+                    var fullFile = this.Get<HttpRequestBase>().MapPath(file);
+
+                    if (!File.Exists(fullFile))
+                    {
+                        return;
+                    }
+
+                    // import into board...
+                    using var stream = new StreamReader(fullFile);
+                    streamAction(stream.BaseStream);
+                    stream.Close();
+                });
+
+        // get all boards...
+        var boardIds = this.GetRepository<Board>().GetAll().Select(x => x.ID);
+
+        // Upgrade all Boards
+        boardIds.ForEach(
+            boardId =>
+                {
+                    this.Get<IRaiseEvent>().Raise(new ImportStaticDataEvent(boardId));
+
+                    // load default bbcode if available...
+                    loadWrapper(BbcodeImport, s => DataImport.BBCodeExtensionImport(boardId, s));
+
+                    // load default spam word if available...
+                    loadWrapper(SpamWordsImport, s => DataImport.SpamWordsImport(boardId, s));
+                });
     }
 }
