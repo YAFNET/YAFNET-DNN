@@ -174,6 +174,8 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     /// <param name="e">An <see cref="T:System.EventArgs"/> object that contains the event data.</param>
     protected override void OnInit(EventArgs e)
     {
+        this.RunStartupServices();
+
         this.InitializeComponent();
 
         base.OnInit(e);
@@ -460,6 +462,20 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
                     userInfo.Username,
                     userInfo.Email,
                     userInfo.UserID.ToString());
+
+                var scriptFile = HttpContext.Current.Request.MapPath(
+                    Path.Combine(
+                        "DesktopModules",
+                        "YetAnotherForumDotNet",
+                        "03.00.006100.sql"));
+
+                // read script file for installation
+                var script = FileSystemUtils.ReadFile(scriptFile);
+
+                // execute SQL installation script
+                var exceptions = DataProvider.Instance().ExecuteScript(CommandTextHelpers.GetCommandTextReplaced(script));
+
+                logger.Error(exceptions);
             }
 
         }
@@ -467,20 +483,6 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
         {
             logger.Error(exception);
         }
-
-        var scriptFile = HttpContext.Current.Request.MapPath(
-            Path.Combine(
-                "DesktopModules",
-                "YetAnotherForumDotNet",
-                "03.00.006100.sql"));
-
-        // read script file for installation
-        var script = FileSystemUtils.ReadFile(scriptFile);
-
-        // execute SQL installation script
-        var exceptions = DataProvider.Instance().ExecuteScript(CommandTextHelpers.GetCommandTextReplaced(script));
-
-        logger.Error(exceptions);
     }
 
     /// <summary>

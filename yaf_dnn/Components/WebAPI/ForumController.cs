@@ -113,7 +113,7 @@ public class ForumController : DnnApiController, IHaveServiceLocator
     /// </returns>
     [HttpPost]
     [DnnAuthorize]
-    public IHttpActionResult GetForum(int forumId)
+    public IHttpActionResult GetForum([FromBody] int forumId)
     {
         var forums = new List<SelectGroup>();
 

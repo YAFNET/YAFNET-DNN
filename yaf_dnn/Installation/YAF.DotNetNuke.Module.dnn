@@ -370,6 +370,12 @@
                     <remove fileExtension=".woff2" />
                     <mimeMap fileExtension=".woff2" mimeType="font/woff2" />
                   </node>
+                  <node path="/configuration/system.webServer/modules" action="update" key="name" collision="overwrite">
+	                  <add name="YafTaskModule" type="YAF.DotNetNuke.Components.YafTaskModule, YAF.DotNetNuke.Module" preCondition="managedHandler" />
+                  </node>
+                  <node path="/configuration/system.web/httpModules" action="update" key="name" collision="overwrite">
+	                  <add name="YafTaskModule" type="YAF.DotNetNuke.Components.YafTaskModule, YAF.DotNetNuke.Module" />
+                  </node>
                   <node path="/configuration/system.webServer/staticContent/mimeMap[@fileExtension='.json']" action="remove" />
                   <node path="/configuration/system.webServer/staticContent" action="add" key="mimeMap" collision="overwrite">
 	                  <mimeMap fileExtension=".json" mimeType="application/json" />
@@ -438,9 +444,6 @@
                   <node path="/configuration/system.web/profile" action="remove" />
                   <node path="/configuration/system.web/roleManager" action="remove" />
                   <node path="/configuration/system.web/pages/namespaces/add[starts-with(@namespace,'YAF.Utils')]" action="remove" />
-                  <node path="/configuration/system.webServer/modules/remove[@name='YafTaskModule']" action="remove" />
-                  <node path="/configuration/system.webServer/modules/add[@name='YafTaskModule']" action="remove" />
-                  <node path="/configuration/system.web/httpModules/add[@name='YafTaskModule']" action="remove" />
                 </nodes>
               </configuration>
             </install>
