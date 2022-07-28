@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="YetAnotherForumDotNet" type="Module" version="03.16.006113">
+    <package name="YetAnotherForumDotNet" type="Module" version="03.16.006115">
       <friendlyName>YAF.NET Forums</friendlyName>
       <description>
         &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; as DNN Module. Yet Another Forum.NET (YAF) is an open source ASP.NET forum system.&lt;br /&gt;
@@ -70,7 +70,7 @@
             <attributes>
               <businessControllerClass>YAF.DotNetNuke.Components.Controllers.UpgradeController, YAF.DotNetNuke.Module</businessControllerClass>
               <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
-              <upgradeVersionsList>03.00.006100,03.13.006107,03.15.006109,03.15.006110,03.15.006111,03.16.006112,03.16.006113</upgradeVersionsList>
+              <upgradeVersionsList>03.00.006100,03.13.006107,03.15.006109,03.15.006110,03.15.006111,03.16.006112,03.16.006115</upgradeVersionsList>
             </attributes>
           </eventMessage>
         </component>
@@ -125,8 +125,14 @@
             </assembly>
             <assembly>
               <name>System.ValueTuple.dll</name>
-            </assembly> 
-            <assembly>
+            </assembly>
+			  <assembly>
+				  <name>System.Web.Http.dll</name>
+			  </assembly>
+			  <assembly>
+				  <name>System.Web.Http.WebHost.dll</name>
+			  </assembly>
+			  <assembly>
               <name>Microsoft.AspNet.Identity.Core.dll</name>
             </assembly>
             <assembly>
@@ -141,10 +147,13 @@
             <assembly>
               <name>Microsoft.Owin.Security.dll</name>
             </assembly>
+	          <assembly>
+		          <name>Microsoft.Owin.Security.OAuth.dll</name>
+	          </assembly>
             <assembly>
               <name>Microsoft.Owin.dll</name>
             </assembly>
-            <assembly>
+			  <assembly>
               <name>Microsoft.Bcl.AsyncInterfaces.dll</name>
             </assembly>
             <assembly>
@@ -334,18 +343,7 @@
             <install>
               <configuration>
                 <nodes>
-                  <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http']" action="update" 
-                        targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http']/ab:bindingRedirect" collision="save"  nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="0.0.0.0-5.2.9.0" newVersion="5.2.7.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
-                  </node>
-                  <node path="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http.WebHost']"
-                        action="update"
-                        targetpath="/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly[ab:assemblyIdentity/@name='System.Web.Http.WebHost']/ab:bindingRedirect"
-                        collision="save"
-                        nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-                    <bindingRedirect oldVersion="0.0.0.0-5.2.9.0" newVersion="5.2.7.0" xmlns="urn:schemas-microsoft-com:asm.v1" />
-                  </node>
-                  <node path="/configuration/dotnetnuke/sitemap/providers" action="update" key="name" collision="overwrite">
+	                <node path="/configuration/dotnetnuke/sitemap/providers" action="update" key="name" collision="overwrite">
                     <add name="yafSitemapProvider" type="YAF.DotNetNuke.Components.Integration.Sitemap, YAF.DotNetNuke.Module" providerPath="~\DesktopModules\YetAnotherForumDotNet\" />
                   </node>
                   <node path="/configuration/system.net" action="remove" />
@@ -520,7 +518,7 @@
         </component>
       </components>
     </package>
-    <package name="YAF.WhatsNew" type="Module" version="03.15.006113">
+    <package name="YAF.WhatsNew" type="Module" version="03.16.006115">
       <friendlyName>YAF.NET Forums What's New</friendlyName>
       <description>
         &lt;p&gt;This Module displays the Latest Posts from a  &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; Module. Based on the Current Users Authorization Level. You can define Which Forum should been used, and how many Posts should displayed.
@@ -607,7 +605,7 @@
         </component>
       </components>
     </package>
-    <package name="bootstrap-bundle" type="JavaScript_Library" version="05.13.006113">
+    <package name="bootstrap-bundle" type="JavaScript_Library" version="05.13.006115">
       <friendlyName>Bootstrap v5.1.3 JavaScript Bundle (width Popper.js)</friendlyName>
       <description>
         <![CDATA[<p>Bootstrap is a sleek, intuitive, and powerful front-end framework for faster and easier web development, created and maintained by <a href="http://twitter.com/mdo">Mark Otto</a> and <a href="http://twitter.com/fat">Jacob Thornton</a>.</p>

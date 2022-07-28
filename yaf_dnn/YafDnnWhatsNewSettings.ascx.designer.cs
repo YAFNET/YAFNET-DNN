@@ -7,142 +7,126 @@
 // </automatisch generiert>
 //------------------------------------------------------------------------------
 
-namespace YAF.DotNetNuke {
-    
-    
-    public partial class YafDnnWhatsNewSettings {
-        
+namespace YAF.DotNetNuke
+{
+
+
+    public partial class YafDnnWhatsNewSettings
+    {
+
         /// <summary>
-        /// lInfo-Steuerelement
+        /// lInfo-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lInfo;
-        
+
         /// <summary>
-        /// lblTab-Steuerelement
+        /// lblTab-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.UserControl lblTab;
-        
+
         /// <summary>
-        /// YafInstances-Steuerelement
+        /// YafInstances-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList YafInstances;
-        
+
         /// <summary>
-        /// SortOrderLabel-Steuerelement
+        /// SortOrderLabel-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.UserControl SortOrderLabel;
-        
+
         /// <summary>
-        /// SortOrder-Steuerelement
+        /// SortOrder-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList SortOrder;
-        
+
         /// <summary>
-        /// lblMaxResult-Steuerelement
+        /// lblMaxResult-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.UserControl lblMaxResult;
-        
+
         /// <summary>
-        /// txtMaxResult-Steuerelement
+        /// txtMaxResult-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtMaxResult;
-        
+
         /// <summary>
-        /// lblRelativeTime-Steuerelement
+        /// labelHtmlHeader-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::System.Web.UI.UserControl lblRelativeTime;
-        
-        /// <summary>
-        /// UseRelativeTime-Steuerelement
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld
-        /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox UseRelativeTime;
-        
-        /// <summary>
-        /// labelHtmlHeader-Steuerelement
-        /// </summary>
-        /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.UserControl labelHtmlHeader;
-        
+
         /// <summary>
-        /// HtmlHeader-Steuerelement
+        /// HtmlHeader-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox HtmlHeader;
-        
+
         /// <summary>
-        /// labelHtmlItem-Steuerelement
+        /// labelHtmlItem-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.UserControl labelHtmlItem;
-        
+
         /// <summary>
-        /// HtmlItem-Steuerelement
+        /// HtmlItem-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox HtmlItem;
-        
+
         /// <summary>
-        /// labelHtmlFooter-Steuerelement
+        /// labelHtmlFooter-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.UserControl labelHtmlFooter;
-        
+
         /// <summary>
-        /// HtmlFooter-Steuerelement
+        /// HtmlFooter-Steuerelement.
         /// </summary>
         /// <remarks>
-        /// Automatisch generiertes Feld
+        /// Automatisch generiertes Feld.
         /// Zum Ändern Felddeklaration aus der Designerdatei in eine Code-Behind-Datei verschieben.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox HtmlFooter;

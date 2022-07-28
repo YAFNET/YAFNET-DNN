@@ -153,12 +153,6 @@
   <data name="labelHtmlItem.Text" xml:space="preserve">
     <value>Html Element Vorlage</value>
   </data>
-  <data name="lblRelativeTime.Help" xml:space="preserve">
-    <value>If checked, client-side "Time Ago" library will be used to show "relative times" to users instead of UTC and or imperfect server-side times.</value>
-  </data>
-  <data name="lblRelativeTime.Text" xml:space="preserve">
-    <value>Show Relative Time</value>
-  </data>
   <data name="SortOrderLabel.Help" xml:space="preserve">
     <value>The default Sort order for the Posts</value>
   </data>

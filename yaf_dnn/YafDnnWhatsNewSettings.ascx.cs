@@ -24,13 +24,9 @@
 
 namespace YAF.DotNetNuke;
 
-#region Using
-
 using System.Web.UI.WebControls;
 
 using global::DotNetNuke.Common.Utilities;
-
-#endregion
 
 /// -----------------------------------------------------------------------------
 /// <summary>
@@ -41,8 +37,6 @@ using global::DotNetNuke.Common.Utilities;
 /// -----------------------------------------------------------------------------
 public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
 {
-    #region Public Methods
-
     /// -----------------------------------------------------------------------------
     /// <summary>
     /// LoadSettings loads the settings from the Database and displays them
@@ -78,11 +72,6 @@ public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
             this.txtMaxResult.Text = this.TabModuleSettings["YafMaxPosts"].ToType<string>().IsSet()
                                          ? this.TabModuleSettings["YafMaxPosts"].ToType<string>()
                                          : "10";
-
-            if (this.TabModuleSettings["YafUseRelativeTime"] is bool)
-            {
-                this.UseRelativeTime.Checked = this.TabModuleSettings["YafUseRelativeTime"].ToType<bool>();
-            }
 
             this.HtmlHeader.Text = this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
                                        ? this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>()
@@ -138,11 +127,6 @@ public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
                 objModules.UpdateTabModuleSetting(this.TabModuleId, "YafMaxPosts", "10");
             }
 
-            objModules.UpdateTabModuleSetting(
-                this.TabModuleId,
-                "YafUseRelativeTime",
-                this.UseRelativeTime.Checked.ToString());
-
             if (this.HtmlHeader.Text.IsSet())
             {
                 objModules.UpdateTabModuleSetting(this.TabModuleId, "YafWhatsNewHeader", this.HtmlHeader.Text);
@@ -164,10 +148,6 @@ public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
             Exceptions.ProcessModuleLoadException(this, exc);
         }
     }
-
-    #endregion
-
-    #region Methods
 
     /// <summary>
     /// Fill DropDownList with Portal Tabs
@@ -226,6 +206,4 @@ public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
 
                 });
     }
-
-    #endregion
 }

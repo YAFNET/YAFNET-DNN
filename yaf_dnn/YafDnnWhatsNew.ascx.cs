@@ -24,30 +24,18 @@
 
 namespace YAF.DotNetNuke;
 
-#region
-
 using System.Text.RegularExpressions;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using global::DotNetNuke.Services.Url.FriendlyUrl;
 
 using YAF.Web.Controls;
 
-#endregion
-
 /// <summary>
 /// The YAF What's new Module Page.
 /// </summary>
-public partial class YafDnnWhatsNew : PortalModuleBase
+public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
 {
-    #region Constants and Fields
-
-    /// <summary>
-    ///   Use Relative Time Setting
-    /// </summary>
-    private bool useRelativeTime;
-
     /// <summary>
     ///   The YAF board id.
     /// </summary>
@@ -93,9 +81,11 @@ public partial class YafDnnWhatsNew : PortalModuleBase
     /// </summary>
     private string footerTemplate;
 
-    #endregion
-
-    #region Methods
+    /// <summary>
+    /// Gets the Service Locator.
+    /// </summary>
+    [Inject]
+    public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
 
     /// <summary>
     /// The latest posts_ item data bound.
@@ -154,33 +144,9 @@ public partial class YafDnnWhatsNew : PortalModuleBase
     /// </param>
     protected void Page_Load(object sender, EventArgs e)
     {
+        this.RunStartupServices();
+
         this.LoadSettings();
-
-        var type = typeof(Page);
-
-        if (this.useRelativeTime)
-        {
-            JavaScript.RequestRegistration(CommonJs.jQuery);
-
-            ScriptManager.RegisterClientScriptInclude(
-                this,
-                type,
-                "timeagojs",
-                this.ResolveUrl("~/DesktopModules/YAF.WhatsNew/jquery.ForumExtensionsDnn.min.js"));
-
-            var momentLoadJs = $@"Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(loadTimeAgo);
-            function loadTimeAgo() {{
-           
-            moment.locale('{(BoardContext.Current.PageUser.Culture.IsSet()
-                                 ? BoardContext.Current.PageUser.Culture.Substring(0, 2)
-                                 : BoardContext.Current.Get<BoardSettings>().Culture.Substring(0, 2))}');
-            jQuery('abbr.timeago').html(function(index, value) {{
-                
-            return moment(value).fromNow();
-            }});}}";
-
-            ScriptManager.RegisterStartupScript(this, type, "timeagoloadjs", momentLoadJs, true);
-        }
 
         this.BindData();
     }
@@ -386,9 +352,6 @@ public partial class YafDnnWhatsNew : PortalModuleBase
                                     ? moduleSettings["YafMaxPosts"].ToType<int>()
                                     : 10;
 
-                this.useRelativeTime = !moduleSettings["YafUseRelativeTime"].ToType<string>().IsSet()
-                                       || moduleSettings["YafUseRelativeTime"].ToType<bool>();
-
                 this.headerTemplate = moduleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
                                           ? moduleSettings["YafWhatsNewHeader"].ToType<string>()
                                           : @"<div class=""card"" style=""width: 20rem;""><ul class=""list-group list-group-flush"">";
@@ -537,6 +500,4 @@ public partial class YafDnnWhatsNew : PortalModuleBase
     {
         return this.footerTemplate;
     }
-
-    #endregion
 }
