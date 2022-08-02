@@ -24,14 +24,10 @@
 
 namespace YAF.DotNetNuke;
 
-#region Using
-
 using global::DotNetNuke.Abstractions.Portals;
 using global::DotNetNuke.Services.Url.FriendlyUrl;
 
 using YAF.Core.Utilities;
-
-#endregion
 
 /// <summary>
 /// The DotNetNuke URL builder.
@@ -39,8 +35,6 @@ using YAF.Core.Utilities;
 [ExportService(ServiceLifetimeScope.Singleton)]
 public class DotNetNukeUrlBuilder : BaseUrlBuilder
 {
-    #region Public Methods
-
     /// <summary>
     /// Builds the Full URL.
     /// </summary>
@@ -267,8 +261,6 @@ public class DotNetNukeUrlBuilder : BaseUrlBuilder
                    ? GetStandardUrl(yafTab, url, boardNameOrPageName, portalSettings)
                    : finalUrl;
     }
-
-    #endregion
 
     /// <summary>
     /// Gets the base URL.

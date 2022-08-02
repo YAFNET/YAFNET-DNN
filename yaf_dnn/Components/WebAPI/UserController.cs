@@ -30,14 +30,10 @@ namespace YAF.DotNetNuke.Components.WebAPI;
 [RoutePrefix("api")]
 public class UserController : DnnApiController, IHaveServiceLocator
 {
-    #region Properties
-
     /// <summary>
     ///   Gets ServiceLocator.
     /// </summary>
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
-
-    #endregion
 
     /// <summary>
     /// Gets all found Users.

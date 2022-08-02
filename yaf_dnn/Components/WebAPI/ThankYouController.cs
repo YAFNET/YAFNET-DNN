@@ -29,14 +29,10 @@ namespace YAF.DotNetNuke.Components.WebAPI;
 /// </summary>
 public class ThankYouController : DnnApiController, IHaveServiceLocator
 {
-    #region Properties
-
     /// <summary>
     ///   Gets ServiceLocator.
     /// </summary>
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
-
-    #endregion
 
     /// <summary>
     /// Add Thanks to post

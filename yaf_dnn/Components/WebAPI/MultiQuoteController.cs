@@ -31,14 +31,10 @@ using System.Collections.Generic;
 /// </summary>
 public class MultiQuoteController : DnnApiController, IHaveServiceLocator
 {
-    #region Properties
-
     /// <summary>
     ///   Gets ServiceLocator.
     /// </summary>
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
-
-    #endregion
 
     /// <summary>
     /// Handles the multi quote Button.

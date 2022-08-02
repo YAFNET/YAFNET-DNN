@@ -24,19 +24,13 @@
 
 namespace YAF.DotNetNuke;
 
-#region Using
-
 using System.Web.UI.WebControls;
-
-#endregion
 
 /// <summary>
 /// User Importer.
 /// </summary>
 public partial class YafDnnModuleImport : PortalModuleBase
 {
-    #region Constants and Fields
-
     /// <summary>
     /// The type full name.
     /// </summary>
@@ -51,10 +45,6 @@ public partial class YafDnnModuleImport : PortalModuleBase
     /// The board id.
     /// </summary>
     private int boardId;
-
-    #endregion
-
-    #region Methods
 
     /// <summary>
     /// Initializes a new instance of the <see cref="YafDnnModuleImport"/> class.
@@ -288,6 +278,4 @@ public partial class YafDnnModuleImport : PortalModuleBase
             file.Close();
         }
     }
-
-    #endregion
 }

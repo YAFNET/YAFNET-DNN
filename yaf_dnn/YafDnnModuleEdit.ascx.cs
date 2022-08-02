@@ -24,15 +24,11 @@
 
 namespace YAF.DotNetNuke;
 
-#region Using
-
 using System.Web.UI.WebControls;
 
 using global::DotNetNuke.Common.Utilities;
 
 using YAF.Core.Services.Import;
-
-#endregion
 
 /// <summary>
 /// The YAF Module Settings Page
@@ -48,8 +44,6 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     ///     Gets or sets the service locator.
     /// </summary>
     public IServiceLocator ServiceLocator { get; set; }
-
-    #region Methods
 
     /// <summary>
     /// Initializes a new instance of the <see cref="YafDnnModuleEdit"/> class.
@@ -469,6 +463,4 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
         forums.ForEach(
             forum => this.GetRepository<Forum>().UpdateLastPost(forum.Item1.ID));
     }
-
-    #endregion
 }

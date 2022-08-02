@@ -33,8 +33,6 @@ using System.Web.SessionState;
 /// </summary>
 public class RouteMapper : IServiceRouteMapper
 {
-    #region IServiceRouteMapper
-
     /// <summary>
     /// The register routes.
     /// </summary>
@@ -96,6 +94,4 @@ public class RouteMapper : IServiceRouteMapper
             return new SessionBasedControllerHandler(requestContext.RouteData);
         }
     }
-
-    #endregion
 }

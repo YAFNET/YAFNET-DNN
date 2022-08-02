@@ -33,14 +33,10 @@ using Newtonsoft.Json.Linq;
 /// </summary>
 public class AlbumController : DnnApiController, IHaveServiceLocator
 {
-    #region Properties
-
     /// <summary>
     ///   Gets ServiceLocator.
     /// </summary>
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
-
-    #endregion
 
     /// <summary>
     /// The change image caption.

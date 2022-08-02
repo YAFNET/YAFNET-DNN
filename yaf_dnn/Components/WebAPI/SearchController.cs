@@ -29,14 +29,10 @@ namespace YAF.DotNetNuke.Components.WebAPI;
 /// </summary>
 public class SearchController : DnnApiController, IHaveServiceLocator
 {
-    #region Properties
-
     /// <summary>
     ///   Gets ServiceLocator.
     /// </summary>
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
-
-    #endregion
 
     /// <summary>
     /// Get similar topic titles

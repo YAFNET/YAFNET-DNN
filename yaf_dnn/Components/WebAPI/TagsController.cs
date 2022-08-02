@@ -30,14 +30,10 @@ namespace YAF.DotNetNuke.Components.WebAPI;
 [RoutePrefix("api")]
 public class TagsController : DnnApiController, IHaveServiceLocator
 {
-    #region Properties
-
     /// <summary>
     ///   Gets ServiceLocator.
     /// </summary>
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
-
-    #endregion
 
     /// <summary>
     /// Get all tags by Board Id

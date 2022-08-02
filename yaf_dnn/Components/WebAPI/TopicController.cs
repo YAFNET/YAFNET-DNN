@@ -29,14 +29,10 @@ namespace YAF.DotNetNuke.Components.WebAPI;
 /// </summary>
 public class TopicController : DnnApiController, IHaveServiceLocator
 {
-    #region Properties
-
     /// <summary>
     ///   Gets ServiceLocator.
     /// </summary>
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
-
-    #endregion
 
     /// <summary>
     /// Gets the topics by forum.

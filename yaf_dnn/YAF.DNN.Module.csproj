@@ -85,6 +85,7 @@
     </Compile>
     <Compile Include="Components\Controllers\DataController.cs" />
     <Compile Include="Components\Integration\AspNetRoleManager.cs" />
+    <Compile Include="Components\Integration\AspNetRolesHelper.cs" />
     <Compile Include="Components\Integration\AspNetUserManager.cs" />
     <Compile Include="Components\Integration\AspNetUsersHelper.cs" />
     <Compile Include="Components\Integration\RoleStore.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="Components\WebAPI\TagsController.cs" />
     <Compile Include="Components\WebAPI\TopicController.cs" />
     <Compile Include="Components\WebAPI\UserController.cs" />
+    <Compile Include="Components\YAFTaskModule.cs" />
     <Compile Include="Extensions\AspNetUsersExtensions.cs" />
     <Compile Include="GlobalUsings.cs" />
     <Compile Include="Models\Roles.cs" />

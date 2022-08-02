@@ -31,8 +31,6 @@ using System.Collections.Generic;
 /// </summary>
 public class DataController
 {
-    #region Public Methods
-
     /// <summary>
     /// Gets the YAF board roles.
     /// </summary>
@@ -99,6 +97,4 @@ public class DataController
     {
         DataProvider.Instance().ExecuteNonQuery($"{Config.DatabaseObjectQualifier}ImportActiveForums", moduleId, boardId, portalSettings.PortalId);
     }
-
-    #endregion
 }

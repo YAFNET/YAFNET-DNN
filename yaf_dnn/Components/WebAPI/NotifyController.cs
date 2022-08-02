@@ -32,14 +32,10 @@ using System.Web.UI.WebControls;
 /// </summary>
 public class NotifyController : DnnApiController, IHaveServiceLocator
 {
-    #region Properties
-
     /// <summary>
     ///   Gets ServiceLocator.
     /// </summary>
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
-
-    #endregion
 
     /// <summary>
     /// Gets the paged attachments.

@@ -56,8 +56,6 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
         this.ServiceLocator = serviceLocator;
     }
 
-    #region Properties
-
     /// <summary>
     /// Gets or sets ServiceLocator.
     /// </summary>
@@ -109,10 +107,6 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
 
         return guestUser;
     }
-
-    #endregion
-
-    #region Public Methods
 
     /// <summary>
     /// For the admin function: approve all users. Approves all
@@ -1356,6 +1350,4 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
                     return db.Connection.Select<PagedUser>(expression);
                 });
     }
-
-    #endregion
 }

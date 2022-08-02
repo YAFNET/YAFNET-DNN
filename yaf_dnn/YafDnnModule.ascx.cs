@@ -24,8 +24,6 @@
 
 namespace YAF.DotNetNuke;
 
-#region
-
 using System.Collections.Generic;
 using System.Threading;
 using System.Web.UI;
@@ -39,15 +37,11 @@ using global::DotNetNuke.Security;
 
 using Forum = YAF.Web.Controls.Forum;
 
-#endregion
-
 /// <summary>
 /// The DotNetNuke Module Class.
 /// </summary>
 public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceLocator
 {
-    #region Constants and Fields
-
     /// <summary>
     /// The _portal settings.
     /// </summary>
@@ -62,10 +56,6 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     /// The basePage
     /// </summary>
     private CDefault basePage;
-
-    #endregion
-
-    #region Properties
 
     /// <summary>
     /// Gets the Service Locator.
@@ -150,10 +140,6 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     /// Gets CurrentPortalSettings.
     /// </summary>
     private PortalSettings CurrentPortalSettings => this.portalSettings ??= this.ModuleContext.PortalSettings;
-
-    #endregion
-
-    #region Methods
 
     /// <summary>
     /// Raises the <see cref="E:System.Web.UI.TemplateControl.Error" /> event.
@@ -494,6 +480,4 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     {
         this.BasePage.Title = this.PageBoardContext().CurrentForumPage.GeneratePageTitle();
     }
-
-    #endregion
 }

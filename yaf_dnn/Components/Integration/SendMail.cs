@@ -24,8 +24,6 @@
 
 namespace YAF.DotNetNuke.Components.Integration;
 
-#region Using
-
 using System.Collections.Generic;
 using System.Net.Mail;
 
@@ -34,8 +32,6 @@ using global::DotNetNuke.Entities.Host;
 using global::DotNetNuke.Services.Mail;
 
 using MailPriority = global::DotNetNuke.Services.Mail.MailPriority;
-
-#endregion
 
 /// <summary>
 /// Functions to send email via SMTP
@@ -47,8 +43,6 @@ public class SendMail : IMailService, IHaveServiceLocator
     ///     Gets the service locator.
     /// </summary>
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
-
-    #region Public Methods
 
     /// <summary>
     /// Creates a SMTP Client and sends a MailMessage.
@@ -103,12 +97,6 @@ public class SendMail : IMailService, IHaveServiceLocator
             Host.SMTPPassword);
     }
 
-    #endregion
-
-    #region Implemented Interfaces
-
-    #region ISendMail
-
     /// <summary>
     /// Sends all MailMessages via the SMTP Client. Doesn't handle any exceptions.
     /// </summary>
@@ -133,8 +121,4 @@ public class SendMail : IMailService, IHaveServiceLocator
                     }
                 });
     }
-
-    #endregion
-
-    #endregion
 }

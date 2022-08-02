@@ -31,8 +31,6 @@ using Autofac;
 /// </summary>
 public class DnnServicesModule : BaseModule
 {
-    #region Methods
-
     /// <summary>
     /// Injects Specific DNN Services
     /// </summary>
@@ -42,6 +40,4 @@ public class DnnServicesModule : BaseModule
         builder.RegisterType<PortalController>().As<IPortalController>().SingleInstance()
             .PreserveExistingDefaults();
     }
-
-    #endregion
 }

@@ -36,8 +36,6 @@ using DateTime = System.DateTime;
 /// <seealso cref="SitemapProvider" />
 public class Sitemap : SitemapProvider
 {
-    #region Public Methods
-
     /// <summary>
     /// Get the Sitemap URLs.
     /// </summary>
@@ -70,6 +68,4 @@ public class Sitemap : SitemapProvider
 
         return urls;
     }
-
-    #endregion
 }

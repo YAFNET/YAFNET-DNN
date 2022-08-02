@@ -31,14 +31,10 @@ using System.Collections.Generic;
 /// </summary>
 public class AttachmentController : DnnApiController, IHaveServiceLocator
 {
-    #region Properties
-
     /// <summary>
     ///   Gets ServiceLocator.
     /// </summary>
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
-
-    #endregion
 
     /// <summary>
     /// Gets the paged attachments.

@@ -29,16 +29,10 @@ namespace YAF.DotNetNuke;
 /// </summary>
 public class YafDnnImportScheduler : SchedulerClient
 {
-    #region Constants and Fields
-
     /// <summary>
     /// The info.
     /// </summary>
     private string info = string.Empty;
-
-    #endregion
-
-    #region Constructors and Destructors
 
     /// <summary>
     /// Initializes a new instance of the <see cref="YafDnnImportScheduler"/> class.
@@ -50,10 +44,6 @@ public class YafDnnImportScheduler : SchedulerClient
     {
         this.ScheduleHistoryItem = scheduleHistoryItem;
     }
-
-    #endregion
-
-    #region Public Methods
 
     /// <summary>
     /// The do work.
@@ -78,10 +68,6 @@ public class YafDnnImportScheduler : SchedulerClient
             Exceptions.LogException(exc);
         }
     }
-
-    #endregion
-
-    #region Methods
 
     /// <summary>
     /// Gets the settings.
@@ -128,6 +114,4 @@ public class YafDnnImportScheduler : SchedulerClient
                 }
             });
     }
-
-    #endregion
 }
