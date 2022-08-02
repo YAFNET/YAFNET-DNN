@@ -63,6 +63,7 @@ public class UpgradeController : ModuleSettingsBase, IUpgradeable, IHaveServiceL
                 // Run Auto Upgrade
                 this.Get<UpgradeService>().Upgrade();
                 this.AddOrUpdateExtensions();
+                this.UpdateProviderKeys();
                 return string.Empty;
             case DbVersionType.NewInstall:
                 this.Get<InstallService>().InitializeDatabase();
@@ -72,6 +73,38 @@ public class UpgradeController : ModuleSettingsBase, IUpgradeable, IHaveServiceL
                 return string.Empty;
             default:
                 return string.Empty;
+        }
+    }
+
+    private void UpdateProviderKeys()
+    {
+        var prevVersion = this.GetRepository<Registry>().GetDbVersion();
+
+        if (prevVersion > 87)
+        {
+            return;
+        }
+
+        var dnnUsers = UserController.GetUsers(this.PortalId);
+
+        if (dnnUsers == null)
+        {
+            return;
+        }
+
+        foreach (UserInfo user in dnnUsers)
+        {
+            // Migrate from Yaf < 3
+            var yafUser = this.GetRepository<User>()
+                .GetSingle(u => u.Name == user.Username && u.Email == user.Email);
+
+            if (yafUser != null)
+            {
+                // update provider Key
+                this.GetRepository<User>().UpdateOnly(
+                    () => new User { ProviderUserKey = user.UserID.ToString() },
+                    u => u.ID == yafUser.ID);
+            }
         }
     }
 
