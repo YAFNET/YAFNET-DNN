@@ -337,8 +337,8 @@
             <install>
               <configuration>
                 <nodes>
-	                <node path="/configuration/runtime/ab:assemblyBinding/" action="update" collision="save"  nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
-						<dependentAssembly>
+	                <node path="/configuration/runtime/ab:assemblyBinding" action="update" collision="save" nameSpace="urn:schemas-microsoft-com:asm.v1" nameSpacePrefix="ab">
+		                <dependentAssembly xmlns="urn:schemas-microsoft-com:asm.v1">
 							<assemblyIdentity name="Microsoft.Owin.Security.OAuth" publicKeyToken="31bf3856ad364e35" culture="neutral"/>
 							<bindingRedirect oldVersion="0.0.0.0-4.2.2.0" newVersion="4.2.2.0"/>
 						</dependentAssembly>
