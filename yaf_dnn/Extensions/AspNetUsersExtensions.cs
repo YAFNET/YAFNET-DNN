@@ -29,8 +29,6 @@ namespace YAF.DotNetNuke.Extensions;
 /// </summary>
 public static class AspNetUsersExtensions
 {
-    #region Public Methods
-
     /// <summary>
     /// Converts UserInfo to AspNetUsers
     /// </summary>
@@ -61,6 +59,4 @@ public static class AspNetUsersExtensions
 
         return user;
     }
-
-    #endregion
 }
