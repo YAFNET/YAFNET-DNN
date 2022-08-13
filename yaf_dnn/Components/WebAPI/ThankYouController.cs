@@ -37,7 +37,7 @@ public class ThankYouController : DnnApiController, IHaveServiceLocator
     /// <summary>
     /// Add Thanks to post
     /// </summary>
-    /// <param name="messageId">
+    /// <param name="id">
     /// The message Id.
     /// </param>
     /// <returns>
@@ -45,7 +45,7 @@ public class ThankYouController : DnnApiController, IHaveServiceLocator
     /// </returns>
     [DnnAuthorize]
     [HttpPost]
-    public IHttpActionResult GetThanks([NotNull] int messageId)
+    public IHttpActionResult GetThanks([NotNull] int id)
     {
         var membershipUser = this.Get<IAspNetUsersHelper>().GetUser();
 
@@ -54,7 +54,7 @@ public class ThankYouController : DnnApiController, IHaveServiceLocator
             return this.NotFound();
         }
 
-        var message = this.GetRepository<Message>().GetById(messageId);
+        var message = this.GetRepository<Message>().GetById(id);
 
         var userName = this.Get<IUserDisplayName>().GetNameById(message.UserID);
 
@@ -66,7 +66,7 @@ public class ThankYouController : DnnApiController, IHaveServiceLocator
                            new UnicodeEncoder().XSSEncode(userName),
                            "BUTTON_THANKSDELETE",
                            "BUTTON_THANKSDELETE_TT",
-                           messageId));
+                           id));
     }
 
     /// <summary>
@@ -128,6 +128,11 @@ public class ThankYouController : DnnApiController, IHaveServiceLocator
         var message = this.GetRepository<Message>().GetById(id);
 
         var userName = this.Get<IUserDisplayName>().GetNameById(message.UserID);
+
+        this.GetRepository<Thanks>().RemoveMessageThanks(
+            BoardContext.Current.PageUserID,
+            id,
+            this.Get<BoardSettings>().EnableDisplayName);
 
         this.GetRepository<Activity>().Delete(a => a.MessageID == id && (a.Flags == 1024 || a.Flags == 2048));
 
