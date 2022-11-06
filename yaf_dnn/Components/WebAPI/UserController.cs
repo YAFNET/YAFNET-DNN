@@ -53,23 +53,33 @@ public class UserController : DnnApiController, IHaveServiceLocator
             return this.NotFound();
         }
 
-        var users = this.Get<IUserDisplayName>().FindUserContainsName(searchTopic.SearchTerm);
+        var users = this.Get<IAspNetUsersHelper>().GetUsersPaged(
+            BoardContext.Current.PageBoardID,
+            searchTopic.Page,
+            15,
+            searchTopic.SearchTerm,
+            null,
+            null,
+            false,
+            null,
+            null,
+            false);
 
-        if (!users.Any())
-        {
-            return this.NotFound();
-        }
+        var usersList = (from PagedUser user in users
+                         select new SelectOptions
+                                    {
+                                        text = BoardContext.Current.BoardSettings.EnableDisplayName
+                                                   ? user.DisplayName
+                                                   : user.Name,
+                                        id = user.UserID.ToString()
+                                    }).ToList();
 
-        var usersFound = users
-            .Select(
-                user => new SelectOptions
-                            {
-                                text = user.DisplayOrUserName(),
-                                id = user.ID.ToString()
-                            }).ToList();
+        var pagedUsers = new SelectPagedOptions
+                             {
+                                 Total = users.Any() ? users.FirstOrDefault().TotalRows : 0,
+                                 Results = usersList
+                             };
 
-        var pagedTopics = new SelectPagedOptions { Total = usersFound.Count, Results = usersFound };
-
-        return this.Ok(pagedTopics);
+        return this.Ok(pagedUsers);
     }
 }

@@ -1004,110 +1004,117 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
         [CanBeNull] DateTime? joinedDate,
         [NotNull] bool onlySuspended,
         [CanBeNull] int? groupId,
-        [CanBeNull] int? rankId)
+        [CanBeNull] int? rankId,
+        bool includeGuests = true)
     {
         return this.GetRepository<User>().DbAccess.Execute(
             db =>
+            {
+                var expression = OrmLiteConfig.DialectProvider.SqlExpression<User>();
+
+                Expression<Func<User, bool>> whereCriteria =
+                    includeGuests
+                        ? u => u.BoardID == (boardId ?? this.GetRepository<User>().BoardID)
+                               && (u.Flags & 2) == 2
+                        : u => u.BoardID == (boardId ?? this.GetRepository<User>().BoardID)
+                               && (u.Flags & 2) == 2 && (u.Flags & 4) != 4;
+
+                // -- count total
+                var countTotalExpression = db.Connection.From<User>();
+
+                expression.Join<AspNetUsers>((u, a) => a.Id == u.ProviderUserKey)
+                    .Join<Rank>((u, r) => r.ID == u.RankID);
+
+                countTotalExpression.Where(whereCriteria);
+
+                expression.Where(whereCriteria);
+
+                // filter by name
+                if (name.IsSet())
                 {
-                    var expression = OrmLiteConfig.DialectProvider.SqlExpression<User>();
+                    countTotalExpression.And<User>(u => u.Name.Contains(name) || u.DisplayName.Contains(name));
 
-                    Expression<Func<User, bool>> whereCriteria = u => u.BoardID == (boardId ?? this.GetRepository<User>().BoardID) && (u.Flags & 2) == 2;
+                    expression.And<User>(u => u.Name.Contains(name) || u.DisplayName.Contains(name));
+                }
 
-                    // -- count total
-                    var countTotalExpression = db.Connection.From<User>();
+                // filter by email
+                if (email.IsSet())
+                {
+                    countTotalExpression.And<User>(u => u.Email.Contains(email));
 
-                    expression.Join<Rank>((u, r) => r.ID == u.RankID);
+                    expression.And<User>(u => u.Email.Contains(email));
+                }
 
-                    countTotalExpression.Where(whereCriteria);
+                // filter by date of registration
+                if (joinedDate.HasValue)
+                {
+                    countTotalExpression.And<User>(u => u.Joined > joinedDate.Value);
 
-                    expression.Where(whereCriteria);
+                    expression.And<User>(u => u.Joined > joinedDate.Value);
+                }
 
-                    // filter by name
-                    if (name.IsSet())
-                    {
-                        countTotalExpression.And<User>(u => u.Name.Contains(name) || u.DisplayName.Contains(name));
+                // show only suspended ?
+                if (onlySuspended)
+                {
+                    countTotalExpression.And<User>(u => u.Suspended != null);
 
-                        expression.And<User>(u => u.Name.Contains(name) || u.DisplayName.Contains(name));
-                    }
+                    expression.And<User>(u => u.Suspended != null);
+                }
 
-                    // filter by email
-                    if (email.IsSet())
-                    {
-                        countTotalExpression.And<User>(u => u.Email.Contains(email));
+                // filter by rank
+                if (rankId.HasValue)
+                {
+                    countTotalExpression.And<User>(u => u.RankID == rankId.Value);
 
-                        expression.And<User>(u => u.Email.Contains(email));
-                    }
+                    expression.And<User>(u => u.RankID == rankId.Value);
+                }
 
-                    // filter by date of registration
-                    if (joinedDate.HasValue)
-                    {
-                        countTotalExpression.And<User>(u => u.Joined > joinedDate.Value);
-
-                        expression.And<User>(u => u.Joined > joinedDate.Value);
-                    }
-
-                    // show only suspended ?
-                    if (onlySuspended)
-                    {
-                        countTotalExpression.And<User>(u => u.Suspended != null);
-
-                        expression.And<User>(u => u.Suspended != null);
-                    }
-
-                    // filter by rank
-                    if (rankId.HasValue)
-                    {
-                        countTotalExpression.And<User>(u => u.RankID == rankId.Value);
-
-                        expression.And<User>(u => u.RankID == rankId.Value);
-                    }
-
-                    // filter by group
-                    if (groupId.HasValue)
-                    {
-                        countTotalExpression.UnsafeAnd(
-                            $@"exists(select 1 from {countTotalExpression.Table<UserGroup>()} x 
+                // filter by group
+                if (groupId.HasValue)
+                {
+                    countTotalExpression.UnsafeAnd(
+                        $@"exists(select 1 from {countTotalExpression.Table<UserGroup>()} x 
                                                where x.{countTotalExpression.Column<UserGroup>(x => x.UserID)} = {countTotalExpression.Column<User>(x => x.ID, true)} 
                                                and x.{countTotalExpression.Column<UserGroup>(x => x.GroupID)} = {groupId.Value})");
 
-                        expression.UnsafeAnd(
-                            $@"exists(select 1 from {expression.Table<UserGroup>()} x 
+                    expression.UnsafeAnd(
+                        $@"exists(select 1 from {expression.Table<UserGroup>()} x 
                                                where x.{expression.Column<UserGroup>(x => x.UserID)} = {expression.Column<User>(x => x.ID, true)} 
                                                and x.{expression.Column<UserGroup>(x => x.GroupID)} = {groupId.Value})");
-                    }
+                }
 
-                    var countTotalSql = countTotalExpression
-                        .Select(Sql.Count($"{countTotalExpression.Column<User>(x => x.ID)}")).ToSelectStatement();
+                var countTotalSql = countTotalExpression
+                    .Select(Sql.Count($"{countTotalExpression.Column<User>(x => x.ID)}")).ToSelectStatement();
 
-                    expression.Select<User, Rank>(
-                        (u, r) => new {
-                                              UserID = u.ID,
-                                              u.Name,
-                                              u.DisplayName,
-                                              u.Flags,
-                                              u.Suspended,
-                                              u.UserStyle,
-                                              u.Avatar,
-                                              u.AvatarImage,
-                                              u.Email,
-                                              u.Joined,
-                                              u.LastVisit,
-                                              u.NumPosts,
-                                              IsGuest = Sql.Custom<bool>($"({OrmLiteConfig.DialectProvider.ConvertFlag($"{expression.Column<User>(x => x.Flags, true)}&4")})"),
-                                              Profile_GoogleId = Sql.Custom("(NULL)"),
-                                              Profile_FacebookId = Sql.Custom("(NULL)"),
-                                              Profile_TwitterId = Sql.Custom("(NULL)"),
-                                              RankName = r.Name,
-                                              TotalRows = Sql.Custom($"({countTotalSql})")
-                                          });
+                expression.Select<User, AspNetUsers, Rank>(
+                    (u, a, r) => new {
+                        UserID = u.ID,
+                        u.Name,
+                        u.DisplayName,
+                        u.Flags,
+                        u.Suspended,
+                        u.UserStyle,
+                        u.Avatar,
+                        u.AvatarImage,
+                        u.Email,
+                        u.Joined,
+                        u.LastVisit,
+                        u.NumPosts,
+                        IsGuest = Sql.Custom<bool>($"({OrmLiteConfig.DialectProvider.ConvertFlag($"{expression.Column<User>(x => x.Flags, true)}&4")})"),
+                        a.Profile_GoogleId,
+                        a.Profile_FacebookId,
+                        a.Profile_TwitterId,
+                        RankName = r.Name,
+                        TotalRows = Sql.Custom($"({countTotalSql})")
+                    });
 
-                    expression.OrderBy(u => u.Name);
+                expression.OrderBy(u => u.Name);
 
-                    // Set Paging
-                    expression.Page(pageIndex + 1, pageSize);
+                // Set Paging
+                expression.Page(pageIndex + 1, pageSize);
 
-                    return db.Connection.Select<PagedUser>(expression);
-                });
+                return db.Connection.Select<PagedUser>(expression);
+            });
     }
 
     /// <summary>
