@@ -60,10 +60,8 @@
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumAdminExtensions.min.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.ForumAdminExtensionsDnn.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery.selectedQuoting.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.6.0.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.6.0.min.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.6.0.intellisense.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.6.0-vsdoc.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.6.2.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\jquery-3.6.2.min.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\prism.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\select2.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\select2.min.js" />
