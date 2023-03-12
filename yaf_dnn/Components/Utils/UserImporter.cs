@@ -197,7 +197,6 @@ public class UserImporter
             yafUserId,
             userInfo.Name,
             userInfo.DisplayName,
-            userInfo.Email,
             userFlags.BitValue,
             userInfo.RankID);
     }
