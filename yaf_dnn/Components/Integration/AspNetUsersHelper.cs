@@ -196,8 +196,15 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
         allUsers.Where(user => !user.IsApproved && user.CreateDate < createdCutoff).ForEach(
             user =>
                 {
-                    // delete this user...
-                    this.GetRepository<User>().Delete(this.Get<IAspNetUsersHelper>().GetUserFromProviderUserKey(user.Id).ID);
+
+                    var yafUser = this.Get<IAspNetUsersHelper>().GetUserFromProviderUserKey(user.Id);
+
+                    if (yafUser != null)
+                    {
+                        // delete this user...
+                        this.GetRepository<User>().Delete(yafUser);
+                    }
+
                     this.Get<AspNetUsersManager>().Delete(user);
 
                     if (this.Get<BoardSettings>().LogUserDeleted)
@@ -240,7 +247,7 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
     /// </returns>
     public bool DeleteUser(int userID, bool isBotAutoDelete = false)
     {
-        var user = this.Get<IAspNetUsersHelper>().GetMembershipUserById(userID);
+        var user = this.GetRepository<User>().GetById(userID);
 
         if (user is null)
         {
@@ -270,15 +277,18 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
                     });
         }
 
-        this.Get<AspNetUsersManager>().Delete(user);
+        var aspNetUser = this.Get<IAspNetUsersHelper>().GetUser(user.ProviderUserKey);
 
-        this.GetRepository<User>().Delete(userID);
+        if (aspNetUser != null)
+        {
+            this.Get<AspNetUsersManager>().Delete(aspNetUser);
+        }
 
         if (this.Get<BoardSettings>().LogUserDeleted)
         {
             this.Get<ILoggerService>().UserDeleted(
                 BoardContext.Current.PageUser.ID,
-                $"User {user.UserName} was deleted by {(isBotAutoDelete ? "the automatic spam check system" : BoardContext.Current.PageUser.DisplayOrUserName())}.");
+                $"User {user.DisplayOrUserName()} was deleted by {(isBotAutoDelete ? "the automatic spam check system" : BoardContext.Current.PageUser.DisplayOrUserName())}.");
         }
 
         return true;
@@ -287,13 +297,13 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
     /// <summary>
     /// Deletes and ban's the user.
     /// </summary>
-    /// <param name="userID">The user id.</param>
-    /// <param name="user">The MemberShip User.</param>
+    /// <param name="user">The board user.</param>
+    /// <param name="aspNetUser">The MemberShip User.</param>
     /// <param name="userIpAddress">The user's IP address.</param>
     /// <returns>
     /// Returns if Deleting was successfully
     /// </returns>
-    public bool DeleteAndBanUser(int userID, AspNetUsers user, string userIpAddress)
+    public bool DeleteAndBanUser([NotNull] User user, [NotNull] AspNetUsers aspNetUser, [NotNull] string userIpAddress)
     {
         // Update Anti SPAM Stats
         this.GetRepository<Registry>().IncrementBannedUsers();
@@ -305,12 +315,12 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
                 null,
                 userIpAddress,
                 $"A spam Bot who was trying to register was banned by IP {userIpAddress}",
-                userID);
+                user.ID);
 
             if (this.Get<BoardSettings>().LogBannedIP)
             {
                 this.Get<ILoggerService>().Log(
-                    userID,
+                    user.ID,
                     "IP BAN of Bot",
                     $"A spam Bot who was banned by IP {userIpAddress}",
                     EventLogTypes.IpBanSet);
@@ -320,7 +330,7 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
         // Ban Name ?
         this.GetRepository<BannedName>().Save(
             null,
-            user.UserName,
+            aspNetUser.UserName,
             "Name was reported by the automatic spam system.");
 
         // Ban User Email?
@@ -333,12 +343,12 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
         var uploadDir = HttpContext.Current.Server.MapPath(
             string.Concat(BaseUrlBuilder.ServerFileRoot, this.Get<BoardFolders>().Uploads));
 
-        var dt = this.GetRepository<UserAlbum>().ListByUser(userID);
+        var dt = this.GetRepository<UserAlbum>().ListByUser(user.ID);
 
-        dt.ForEach(dr => this.Get<IAlbum>().AlbumImageDelete(uploadDir, dr.ID, userID, null));
+        dt.ForEach(dr => this.Get<IAlbum>().AlbumImageDelete(uploadDir, dr.ID, user.ID, null));
 
         // delete posts...
-        var messages = this.GetRepository<Message>().GetAllUserMessages(userID).Distinct()
+        var messages = this.GetRepository<Message>().GetAllUserMessages(user.ID).Distinct()
             .ToList();
 
         messages.ForEach(
@@ -351,14 +361,14 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
                 true,
                 true));
 
-        this.Get<AspNetUsersManager>().Delete(user);
-        this.GetRepository<User>().Delete(userID);
+        this.Get<AspNetUsersManager>().Delete(aspNetUser);
+        this.GetRepository<User>().Delete(user);
 
         if (this.Get<BoardSettings>().LogUserDeleted)
         {
             this.Get<ILoggerService>().UserDeleted(
                 BoardContext.Current.PageUser.ID,
-                $"User {user.UserName} was deleted by the automatic spam check system.");
+                $"User {aspNetUser.UserName} was deleted by the automatic spam check system.");
         }
 
         return true;
