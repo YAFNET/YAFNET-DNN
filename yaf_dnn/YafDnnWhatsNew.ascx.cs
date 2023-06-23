@@ -270,7 +270,6 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
 
             return yafUser.ID;
         }
-
     }
 
     /// <summary>
@@ -459,7 +458,7 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
         // Render LASTMESSAGE
         var lastMessage =
             BBCodeHelper.StripBBCode(
-                    HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(dataItem.LastMessage)))
+                    HtmlTagHelper.StripHtml(HtmlTagHelper.CleanHtmlString(dataItem.LastMessage)))
                 .RemoveMultipleWhitespace();
 
         try

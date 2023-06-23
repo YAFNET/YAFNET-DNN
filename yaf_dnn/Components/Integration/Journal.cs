@@ -138,7 +138,7 @@ public class Journal : PortalModuleBase, IActivityStream, IHaveServiceLocator
     public void AddTopicToStream(int forumId, int topicId, int messageId, string topicTitle, string message)
     {
         message = BBCodeHelper.StripBBCode(
-                HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
+                HtmlTagHelper.StripHtml(HtmlTagHelper.CleanHtmlString(message)))
             .RemoveMultipleWhitespace();
 
         var user = UserController.Instance.GetCurrentUserInfo();
@@ -177,7 +177,7 @@ public class Journal : PortalModuleBase, IActivityStream, IHaveServiceLocator
     public void AddReplyToStream(int forumId, int topicId, int messageId, string topicTitle, string message)
     {
         message = BBCodeHelper.StripBBCode(
-                HtmlHelper.StripHtml(HtmlHelper.CleanHtmlString(message)))
+                HtmlTagHelper.StripHtml(HtmlTagHelper.CleanHtmlString(message)))
             .RemoveMultipleWhitespace();
 
         var user = UserController.Instance.GetCurrentUserInfo();

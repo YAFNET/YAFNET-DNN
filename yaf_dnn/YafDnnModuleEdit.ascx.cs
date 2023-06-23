@@ -26,6 +26,7 @@ namespace YAF.DotNetNuke;
 
 using System.Web.UI.WebControls;
 
+using global::DotNetNuke.Abstractions.Application;
 using global::DotNetNuke.Common.Utilities;
 
 using YAF.Core.Services.Import;
@@ -40,6 +41,8 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     /// </summary>
     private readonly INavigationManager navigationManager;
 
+    private readonly IApplicationStatusInfo applicationStatusInfo;
+
     /// <summary>
     ///     Gets or sets the service locator.
     /// </summary>
@@ -52,6 +55,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     {
         this.ServiceLocator = BoardContext.Current.ServiceLocator;
         this.navigationManager = this.DependencyProvider.GetRequiredService<INavigationManager>();
+        this.applicationStatusInfo = this.DependencyProvider.GetRequiredService<IApplicationStatusInfo>();
     }
 
     /// <summary>
@@ -141,7 +145,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
         // save the settings to the database
         this.Get<BoardSettingsService>().SaveRegistry(boardSettings);
 
-        Config.Touch();
+        Config.Touch(this.applicationStatusInfo);
 
         this.Response.Redirect(this.navigationManager.NavigateURL(this.TabId), true);
     }
@@ -305,7 +309,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
             this.PortalSettings.PortalId,
             out _);
 
-        Config.Touch();
+        Config.Touch(this.applicationStatusInfo);
 
         this.Response.Redirect(this.navigationManager.NavigateURL(this.TabId), true);
     }

@@ -203,7 +203,6 @@ public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
 
                                 this.YafInstances.Items.Add(objListItem);
                             });
-
                 });
     }
 }

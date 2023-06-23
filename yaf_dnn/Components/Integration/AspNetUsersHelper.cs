@@ -196,7 +196,6 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
         allUsers.Where(user => !user.IsApproved && user.CreateDate < createdCutoff).ForEach(
             user =>
                 {
-
                     var yafUser = this.Get<IAspNetUsersHelper>().GetUserFromProviderUserKey(user.Id);
 
                     if (yafUser != null)
@@ -509,21 +508,6 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
     public string GetUserProviderKeyFromUserID(int userId)
     {
         return this.GetRepository<User>().GetById(userId).ProviderUserKey;
-    }
-
-    /// <summary>
-    /// Simply tells you if the User ID passed is the Guest user
-    /// for the current board
-    /// </summary>
-    /// <param name="userID">
-    /// ID of user to lookup
-    /// </param>
-    /// <returns>
-    /// true if the user id is a guest user
-    /// </returns>
-    public bool IsGuestUser(object userID)
-    {
-        return userID is null or DBNull || this.Get<IAspNetUsersHelper>().IsGuestUser((int)userID);
     }
 
     /// <summary>
@@ -952,32 +936,35 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
     /// <param name="boardId">
     /// The board id.
     /// </param>
+    /// <param name="includeNonApproved">
+    /// Include Non Approved user.
+    /// </param>
     /// <returns>
     /// The <see cref="Tuple"/>.
     /// </returns>
-    public Tuple<User, AspNetUsers, Rank, vaccess> GetBoardUser(
+    public Tuple<User, AspNetUsers, Rank, VAccess> GetBoardUser(
         [NotNull] int userId,
         [CanBeNull] int? boardId = null,
         bool includeNonApproved = false)
     {
         var expression = OrmLiteConfig.DialectProvider.SqlExpression<User>();
 
-        expression.Join<vaccess>((u, v) => v.UserID == u.ID)
+        expression.Join<VAccess>((u, v) => v.UserID == u.ID)
             .Join<Rank>((u, r) => r.ID == u.RankID);
 
         if (includeNonApproved)
         {
-            expression.Where<vaccess, User>(
+            expression.Where<VAccess, User>(
                 (v, u) => u.ID == userId && u.BoardID == (boardId ?? this.GetRepository<User>().BoardID));
         }
         else
         {
-            expression.Where<vaccess, User>(
+            expression.Where<VAccess, User>(
                 (v, u) => u.ID == userId && u.BoardID == (boardId ?? this.GetRepository<User>().BoardID) && (u.Flags & 2) == 2);
         }
 
         var user = this.GetRepository<User>().DbAccess
-            .Execute(db => db.Connection.SelectMulti<User, Rank, vaccess>(expression)).FirstOrDefault();
+            .Execute(db => db.Connection.SelectMulti<User, Rank, VAccess>(expression)).FirstOrDefault();
 
         var aspUser = ValidationHelper.IsNumeric(user.Item1.ProviderUserKey)
                           ? UserController.GetUserById(
@@ -1002,6 +989,9 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
     /// <param name="onlySuspended">if set to <c>true</c> [only suspended].</param>
     /// <param name="groupId">The group identifier.</param>
     /// <param name="rankId">The rank identifier.</param>
+    /// <param name="includeGuests">
+    /// Include Guests ?
+    /// </param>
     /// <returns>
     /// Returns the board users.
     /// </returns>

@@ -29,9 +29,21 @@ namespace YAF.DotNetNuke.Models;
 /// </summary>
 public class UserRoles : IEntity
 {
+    /// <summary>
+    /// Gets or sets the user role identifier.
+    /// </summary>
+    /// <value>The user role identifier.</value>
     public int UserRoleID { get; set; }
 
+    /// <summary>
+    /// Gets or sets the user identifier.
+    /// </summary>
+    /// <value>The user identifier.</value>
     public int UserID { get; set; }
 
+    /// <summary>
+    /// Gets or sets the role identifier.
+    /// </summary>
+    /// <value>The role identifier.</value>
     public int RoleID { get; set; }
 }

@@ -463,7 +463,6 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
 
                 logger.Error(exceptions);
             }
-
         }
         catch (Exception exception)
         {
