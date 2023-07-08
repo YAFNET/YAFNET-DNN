@@ -1,5 +1,7 @@
 @SET CONFIGURATION=Release
 
+dotnet restore YAF.DNN.Module.sln
+
 "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -nologo -latest -property installationPath > temp.txt
 set /p $MSBUILDROOT=<temp.txt
 del temp.txt

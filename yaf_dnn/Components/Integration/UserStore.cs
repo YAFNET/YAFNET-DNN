@@ -417,15 +417,15 @@ public class UserStore : IUserLoginStore<AspNetUsers>,
         CodeContracts.VerifyNotNull(user);
         CodeContracts.VerifyNotNull(roleName);
 
-        var role = this.GetRepository<Roles>().GetSingle(r => r.Name == roleName);
+        var role = this.GetRepository<AspNetRoles>().GetSingle(r => r.Name == roleName);
 
-        if (role is null)
+        if (role == null)
         {
             return Task.FromResult(0);
         }
 
-        var result = this.GetRepository<UserRoles>().Delete(r => r.UserID == user.Id.ToType<int>() && r.RoleID == role.Id);
-        await this.UpdateUser(user).ConfigureAwait(false);
+        var result = this.GetRepository<AspNetUserRoles>().Delete(r => r.UserId == user.Id && r.RoleId == role.Id);
+        this.UpdateUser(user).Wait();
         return Task.FromResult(result);
     }
 
