@@ -370,6 +370,7 @@
                   </node>
                   <node path="/configuration/system.webServer/staticContent/mimeMap[@fileExtension='.json']" action="remove" />
                   <node path="/configuration/system.webServer/staticContent" action="add" key="mimeMap" collision="overwrite">
+	                  <remove fileExtension=".json" />
 	                  <mimeMap fileExtension=".json" mimeType="application/json" />
                   </node>
                   <node path="/configuration/system.webServer/handlers" action="update" key="name" collision="overwrite">
@@ -612,7 +613,7 @@
         </component>
       </components>
     </package>
-    <package name="bootstrap-bundle" type="JavaScript_Library" version="05.30.006127">
+    <package name="bootstrap-bundle" type="JavaScript_Library" version="05.31.006127">
       <friendlyName>Bootstrap v5.3.1 JavaScript Bundle (width Popper.js)</friendlyName>
       <description>
         <![CDATA[<p>Bootstrap is a sleek, intuitive, and powerful front-end framework for faster and easier web development, created and maintained by <a href="http://twitter.com/mdo">Mark Otto</a> and <a href="http://twitter.com/fat">Jacob Thornton</a>.</p>
