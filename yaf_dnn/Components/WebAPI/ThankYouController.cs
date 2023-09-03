@@ -131,8 +131,7 @@ public class ThankYouController : DnnApiController, IHaveServiceLocator
 
         this.GetRepository<Thanks>().RemoveMessageThanks(
             BoardContext.Current.PageUserID,
-            id,
-            this.Get<BoardSettings>().EnableDisplayName);
+            id);
 
         this.GetRepository<Activity>().Delete(a => a.MessageID == id && (a.Flags == 1024 || a.Flags == 2048));
 
