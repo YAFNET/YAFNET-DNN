@@ -175,9 +175,6 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     /// </param>
     protected override void OnPreRender([NotNull] EventArgs e)
     {
-        // setup jQuery
-        JavaScript.RequestRegistration(CommonJs.jQuery);
-
         JavaScript.RequestRegistration("bootstrap-bundle");
         JavaScript.Register(this.Page);
 

@@ -16,7 +16,7 @@
       <license src="License.html" />
       <releaseNotes src="ReadMe.html" />
       <dependencies>
-        <dependency type="CoreVersion">09.12.00</dependency>
+        <dependency type="CoreVersion">09.13.00</dependency>
       </dependencies>
       <components>
         <component type="Module">
@@ -530,7 +530,7 @@
       <license src="License.html" />
       <releaseNotes />
       <dependencies>
-        <dependency type="CoreVersion">09.12.00</dependency>
+        <dependency type="CoreVersion">09.13.00</dependency>
       </dependencies>
       <components>
         <component type="Module">
@@ -613,8 +613,8 @@
         </component>
       </components>
     </package>
-    <package name="bootstrap-bundle" type="JavaScript_Library" version="05.31.006127">
-      <friendlyName>Bootstrap v5.3.1 JavaScript Bundle (width Popper.js)</friendlyName>
+    <package name="bootstrap-bundle" type="JavaScript_Library" version="05.32.006127">
+      <friendlyName>Bootstrap v5.3.2 JavaScript Bundle (width Popper.js)</friendlyName>
       <description>
         <![CDATA[<p>Bootstrap is a sleek, intuitive, and powerful front-end framework for faster and easier web development, created and maintained by <a href="http://twitter.com/mdo">Mark Otto</a> and <a href="http://twitter.com/fat">Jacob Thornton</a>.</p>
 <p>To get started, check out <a href="http://getbootstrap.com">http://getbootstrap.com</a>!</p>]]>
@@ -626,16 +626,13 @@
         <email>support@yetanotherforum.com</email>
       </owner>
       <azureCompatible>true</azureCompatible>
-      <dependencies>
-        <dependency type="managedPackage" version="1.9.1">jQuery</dependency>
-      </dependencies>
       <components>
         <component type="JavaScript_Library">
           <javaScriptLibrary>
             <libraryName>bootstrap-bundle</libraryName>
             <fileName>bootstrap.bundle.min.js</fileName>
-            <CDNPath>https://maxcdn.bootstrapcdn.com/bootstrap/5.3.1/js/bootstrap.bundle.min.js</CDNPath>
-            <objectName>jQuery.fn.scrollspy</objectName>
+            <CDNPath>https://maxcdn.bootstrapcdn.com/bootstrap/5.3.2/js/bootstrap.bundle.min.js</CDNPath>
+            <objectName>bootstrap.Alert.VERSION</objectName>
           </javaScriptLibrary>
         </component>
         <component type="JavaScriptFile">
