@@ -50,10 +50,8 @@ public class SendMail : IMailService, IHaveServiceLocator
     /// <param name="mailMessage">
     /// The message.
     /// </param>
-    public void Send([NotNull] MailMessage mailMessage)
+    public void Send(MailMessage mailMessage)
     {
-        CodeContracts.VerifyNotNull(mailMessage);
-
         var body = string.Empty;
 
         var mailIsHtml = false;
@@ -101,11 +99,9 @@ public class SendMail : IMailService, IHaveServiceLocator
     /// Sends all MailMessages via the SMTP Client. Doesn't handle any exceptions.
     /// </summary>
     /// <param name="messages">The messages.</param>
-    public void SendAll([NotNull] IEnumerable<MailMessage> messages)
+    public void SendAll(IEnumerable<MailMessage> messages)
     {
         var mailMessages = messages as IList<MailMessage> ?? messages.ToList();
-
-        CodeContracts.VerifyNotNull(mailMessages);
 
         mailMessages.ForEach(
             mailMessage =>

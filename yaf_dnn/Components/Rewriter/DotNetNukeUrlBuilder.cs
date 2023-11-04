@@ -44,7 +44,7 @@ public class DotNetNukeUrlBuilder : BaseUrlBuilder
     /// <returns>
     /// Returns the URL.
     /// </returns>
-    public override string BuildUrlFull([CanBeNull] string url)
+    public override string BuildUrlFull(string url)
     {
         return BuildUrlComplete(BoardContext.Current.Get<BoardSettings>(), url, true);
     }
@@ -56,7 +56,7 @@ public class DotNetNukeUrlBuilder : BaseUrlBuilder
     /// <returns>
     /// The new Complete.
     /// </returns>
-    public override string BuildUrl([CanBeNull] string url)
+    public override string BuildUrl(string url)
     {
         return BuildUrlComplete(BoardContext.Current.Get<BoardSettings>(), url, false);
     }
@@ -69,7 +69,7 @@ public class DotNetNukeUrlBuilder : BaseUrlBuilder
     /// <returns>
     /// URL to calling page with URL argument as page's parameter with escaped characters to make it valid parameter.
     /// </returns>
-    public override string BuildUrl([NotNull] object boardSettings, [CanBeNull] string url)
+    public override string BuildUrl(object boardSettings, string url)
     {
         return BuildUrlComplete(boardSettings, url, false);
     }
@@ -83,17 +83,13 @@ public class DotNetNukeUrlBuilder : BaseUrlBuilder
     /// <returns>
     /// The new URL.
     /// </returns>
-    private static string BuildUrlComplete([NotNull] object boardSettings, [CanBeNull] string url, bool fullUrl)
+    private static string BuildUrlComplete(object boardSettings, string url, bool fullUrl)
     {
-        CodeContracts.VerifyNotNull(boardSettings);
-
         var yafBoardSettings = boardSettings.ToType<BoardSettings>();
 
         var yafTab = new TabController().GetTab(yafBoardSettings.DNNPageTab, yafBoardSettings.DNNPortalId, true);
 
         var portalSettings = BoardContext.Current.Get<IPortalController>().GetCurrentSettings();
-
-        CodeContracts.VerifyNotNull(portalSettings);
 
         if (portalSettings.ContentLocalizationEnabled)
         {
@@ -224,7 +220,7 @@ public class DotNetNukeUrlBuilder : BaseUrlBuilder
 
                     break;
                 default:
-                    boardNameOrPageName = UrlRewriteHelper.CleanStringForURL(pageName); 
+                    boardNameOrPageName = UrlRewriteHelper.CleanStringForURL(pageName);
                     break;
             }
         }
@@ -269,7 +265,7 @@ public class DotNetNukeUrlBuilder : BaseUrlBuilder
     /// <returns>
     /// Returns the BaseUrl
     /// </returns>
-    private static string GetBaseUrl([NotNull] TabInfo yafTab)
+    private static string GetBaseUrl(TabInfo yafTab)
     {
         var baseUrl = Globals.ApplicationURL(yafTab.TabID);
 
@@ -300,7 +296,7 @@ public class DotNetNukeUrlBuilder : BaseUrlBuilder
     /// <param name="portalSettings">The portal settings.</param>
     /// <returns>Returns the Normal URL</returns>
     private static string GetStandardUrl(
-        [NotNull] TabInfo activeTab,
+        TabInfo activeTab,
         string url,
         string boardNameOrPageName,
         IPortalSettings portalSettings)

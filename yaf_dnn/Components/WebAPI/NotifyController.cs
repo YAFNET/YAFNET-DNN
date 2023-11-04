@@ -84,7 +84,7 @@ public class NotifyController : DnnApiController, IHaveServiceLocator
                                                     ForumPages.Posts,
                                                     new { m = activity.MessageID.Value, name = topic.TopicName }),
                                             Text =
-                                                $@"<i class=""fas fa-comment fa-fw me-1""></i>{this.GetRepository<Topic>().GetById(activity.TopicID.Value).TopicName}"
+                                                $"""<i class="fas fa-comment fa-fw me-1"></i>{this.GetRepository<Topic>().GetById(activity.TopicID.Value).TopicName}"""
                                         };
 
                     var name = this.Get<IUserDisplayName>().GetNameById(activity.FromUserID.Value);
@@ -136,8 +136,9 @@ public class NotifyController : DnnApiController, IHaveServiceLocator
 
                     var notify = activity.Notification ? "text-success" : "text-secondary";
 
-                    iconLabel.Text = $@"<i class=""fas fa-circle fa-stack-2x {notify}""></i>
-                                            <i class=""fas fa-{icon} fa-stack-1x fa-inverse""></i>";
+                    iconLabel.Text = $"""
+                                      <i class="fas fa-circle fa-stack-2x {notify}"></i><i class="fas fa-{icon} fa-stack-1x fa-inverse"></i>
+                                      """;
 
                     messageHolder.Controls.Add(iconLabel);
 

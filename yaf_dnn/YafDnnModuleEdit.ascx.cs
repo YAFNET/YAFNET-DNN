@@ -62,7 +62,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     /// Raises the <see cref="E:System.Web.UI.Control.Init" /> event.
     /// </summary>
     /// <param name="e">An <see cref="T:System.EventArgs" /> object that contains the event data.</param>
-    protected override void OnInit([NotNull] EventArgs e)
+    protected override void OnInit(EventArgs e)
     {
         this.Load += this.DotNetNukeModuleEdit_Load;
         this.update.Click += this.UpdateClick;
@@ -76,7 +76,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-    protected void ImportForums_OnClick([NotNull] object sender, [NotNull] EventArgs e)
+    protected void ImportForums_OnClick(object sender, EventArgs e)
     {
         var moduleController = new ModuleController();
 
@@ -122,7 +122,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-    protected void Create_OnClick([NotNull] object sender, [NotNull] EventArgs e)
+    protected void Create_OnClick(object sender, EventArgs e)
     {
         var newBoardId = this.CreateBoard(true, this.NewBoardName.Text.Trim());
 
@@ -155,7 +155,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-    private void CancelClick([NotNull] object sender, [NotNull] EventArgs e)
+    private void CancelClick(object sender, EventArgs e)
     {
         this.Response.Redirect(this.navigationManager.NavigateURL(), true);
     }
@@ -165,7 +165,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-    private void DotNetNukeModuleEdit_Load([NotNull] object sender, [NotNull] EventArgs e)
+    private void DotNetNukeModuleEdit_Load(object sender, EventArgs e)
     {
         this.update.Text = Localization.GetString("Update.Text", this.LocalResourceFile);
         this.cancel.Text = Localization.GetString("Cancel.Text", this.LocalResourceFile);
@@ -282,7 +282,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-    private void UpdateClick([NotNull] object sender, [NotNull] EventArgs e)
+    private void UpdateClick(object sender, EventArgs e)
     {
         var moduleController = new ModuleController();
 
@@ -294,8 +294,9 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
             "InheritDnnLanguage",
             this.InheritDnnLanguage.Checked.ToString());
 
-        var boardSettings = this.Get<BoardSettingsService>().LoadBoardSettings(this.BoardID.SelectedValue.ToType<int>(), null);
-        
+        var boardSettings = this.Get<BoardSettingsService>()
+            .LoadBoardSettings(this.BoardID.SelectedValue.ToType<int>(), null);
+
         boardSettings.DNNPageTab = this.TabId;
         boardSettings.DNNPortalId = this.PortalId;
         boardSettings.BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/";
@@ -322,10 +323,8 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     /// <returns>
     /// Returns the Board ID of the new Board.
     /// </returns>
-    private int CreateBoard([NotNull] bool importUsers, [NotNull] string boardName)
+    private int CreateBoard(bool importUsers, string boardName)
     {
-        CodeContracts.VerifyNotNull(boardName);
-
         // new admin
         var newAdmin = UserController.Instance.GetCurrentUserInfo().ToAspNetUsers();
 
@@ -388,14 +387,10 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     /// Returns the Board ID of the new Board.
     /// </returns>
     private int CreateBoardDatabase(
-        [NotNull] string boardName,
-        [NotNull] string langFile,
-        [NotNull] AspNetUsers newAdmin)
+        string boardName,
+        string langFile,
+        AspNetUsers newAdmin)
     {
-        CodeContracts.VerifyNotNull(boardName);
-        CodeContracts.VerifyNotNull(langFile);
-        CodeContracts.VerifyNotNull(newAdmin);
-
         var newBoardId = this.GetRepository<Board>().Create(
             boardName,
             this.PortalSettings.Email,

@@ -173,7 +173,7 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     /// <param name="e">
     /// the Event Arguments
     /// </param>
-    protected override void OnPreRender([NotNull] EventArgs e)
+    protected override void OnPreRender(EventArgs e)
     {
         JavaScript.RequestRegistration("bootstrap-bundle");
         JavaScript.Register(this.Page);
@@ -188,7 +188,7 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     /// <returns>
     /// The Control
     /// </returns>
-    private static CDefault GetDefault([NotNull] Control control)
+    private static CDefault GetDefault(Control control)
     {
         while (true)
         {
@@ -235,7 +235,7 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-    private void DotNetNukeModuleLoad([NotNull] object sender, [NotNull] EventArgs e)
+    private void DotNetNukeModuleLoad(object sender, EventArgs e)
     {
         if (this.Page.IsPostBack)
         {
@@ -263,10 +263,8 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     /// </summary>
     /// <param name="dnnUser">The Current DNN User</param>
     /// <param name="yafUserId">The YAF user id.</param>
-    private void CheckForRoles([NotNull] UserInfo dnnUser, int yafUserId)
+    private void CheckForRoles(UserInfo dnnUser, int yafUserId)
     {
-        CodeContracts.VerifyNotNull(dnnUser);
-
         // see if the roles have been synchronized...
         if (this.Session[$"{this.SessionUserKeyName}_rolesloaded"] != null)
         {
@@ -472,7 +470,7 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="ForumPageTitleArgs" /> instance containing the event data.</param>
-    private void Forum1_PageTitleSet([NotNull] object sender, [NotNull] ForumPageTitleArgs e)
+    private void Forum1_PageTitleSet(object sender, ForumPageTitleArgs e)
     {
         this.BasePage.Title = this.PageBoardContext().CurrentForumPage.GeneratePageTitle();
     }

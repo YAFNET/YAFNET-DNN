@@ -75,7 +75,7 @@ public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
 
             this.HtmlHeader.Text = this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
                                        ? this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>()
-                                       : @"<div class=""card"" style=""width: 20rem;""><ul class=""list-group list-group-flush"">";
+                                       : """<div class="card" style="width: 20rem;"><ul class="list-group list-group-flush">""";
 
             this.HtmlItem.Text = this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>().IsSet()
                                      ? this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>()

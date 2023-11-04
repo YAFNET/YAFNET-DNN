@@ -45,7 +45,7 @@ public class ThankYouController : DnnApiController, IHaveServiceLocator
     /// </returns>
     [DnnAuthorize]
     [HttpPost]
-    public IHttpActionResult GetThanks([NotNull] int id)
+    public IHttpActionResult GetThanks(int id)
     {
         var membershipUser = this.Get<IAspNetUsersHelper>().GetUser();
 
@@ -80,7 +80,7 @@ public class ThankYouController : DnnApiController, IHaveServiceLocator
     /// </returns>
     [DnnAuthorize]
     [HttpPost]
-    public IHttpActionResult AddThanks([NotNull] int id)
+    public IHttpActionResult AddThanks(int id)
     {
         var membershipUser = BoardContext.Current.Get<IAspNetUsersHelper>().GetUser();
 
@@ -123,7 +123,7 @@ public class ThankYouController : DnnApiController, IHaveServiceLocator
     /// </returns>
     [DnnAuthorize]
     [HttpPost]
-    public IHttpActionResult RemoveThanks([NotNull] int id)
+    public IHttpActionResult RemoveThanks(int id)
     {
         var message = this.GetRepository<Message>().GetById(id);
 

@@ -353,7 +353,7 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
 
                 this.headerTemplate = moduleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
                                           ? moduleSettings["YafWhatsNewHeader"].ToType<string>()
-                                          : @"<div class=""card"" style=""width: 20rem;""><ul class=""list-group list-group-flush"">";
+                                          : """<div class="card" style="width: 20rem;"><ul class="list-group list-group-flush">""";
 
                 this.itemTemplate = moduleSettings["YafWhatsNewItemTemplate"].ToType<string>().IsSet()
                                         ? moduleSettings["YafWhatsNewItemTemplate"].ToType<string>()

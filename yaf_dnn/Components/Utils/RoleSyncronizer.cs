@@ -41,7 +41,7 @@ public class RoleSyncronizer : PortalModuleBase
     /// <returns>
     /// Returns if the Roles where synched or not
     /// </returns>
-    public static bool SynchronizeUserRoles([NotNull] int boardId, [NotNull] int portalId, [NotNull] int yafUserId, [NotNull] UserInfo dnnUserInfo)
+    public static bool SynchronizeUserRoles(int boardId, int portalId, int yafUserId, UserInfo dnnUserInfo)
     {
         // Make sure are roles exist
         ImportDnnRoles(boardId, dnnUserInfo.Roles);
@@ -209,10 +209,8 @@ public class RoleSyncronizer : PortalModuleBase
     /// <param name="addRole">
     /// if set to true [add role].
     /// </param>
-    public static void UpdateUserRole([NotNull] RoleInfo role, [NotNull] int yafUserId, [NotNull] bool addRole)
+    public static void UpdateUserRole(RoleInfo role, int yafUserId, bool addRole)
     {
-        CodeContracts.VerifyNotNull(role);
-
         // save user in role
         BoardContext.Current.GetRepository<UserGroup>().AddOrRemove(yafUserId, role.RoleID, addRole);
     }

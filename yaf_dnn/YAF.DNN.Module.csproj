@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -12,8 +12,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>YAF.DotNetNuke</RootNamespace>
     <AssemblyName>YAF.DotNetNuke.Module</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-	<RuntimeIdentifier>win</RuntimeIdentifier>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <RuntimeIdentifier>win</RuntimeIdentifier>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>4.0</OldToolsVersion>
@@ -70,7 +70,6 @@
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
@@ -166,6 +165,19 @@
     <None Include="Installation\Uninstall.SqlDataProvider" />
     <None Include="Installation\YAF.DotNetNuke.Module.dnn">
       <SubType>Designer</SubType>
+    </None>
+    <Content Include="web.config" />
+    <None Include="web.Debug.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
+    <None Include="web.Deploy.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
+    <None Include="web.Package.config">
+      <DependentUpon>web.config</DependentUpon>
+    </None>
+    <None Include="web.Release.config">
+      <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>

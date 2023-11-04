@@ -210,7 +210,7 @@ public partial class YafDnnModuleImport : PortalModuleBase
 
             dr["PortalId"] = this.PortalId.ToString();
             dr["BoardId"] = this.boardId.ToString();
-                
+
             settings.Tables[0].Rows.Add(dr);
 
             settings.WriteXml(importFile);

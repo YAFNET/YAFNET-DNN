@@ -40,7 +40,7 @@ public class UserImporter
     /// <returns>
     /// Returns the Number of Users that where imported
     /// </returns>
-    public static int ImportUsers([NotNull] int boardId, [NotNull] int portalId, out string info)
+    public static int ImportUsers(int boardId, int portalId, out string info)
     {
         var newUserCount = 0;
 
@@ -134,13 +134,11 @@ public class UserImporter
     /// Returns the User ID of the new User
     /// </returns>
     public static int CreateYafUser(
-        [NotNull] UserInfo dnnUserInfo,
-        [NotNull] int boardId,
-        [NotNull] int portalId,
-        [NotNull] BoardSettings boardSettings)
+        UserInfo dnnUserInfo,
+        int boardId,
+        int portalId,
+        BoardSettings boardSettings)
     {
-        CodeContracts.VerifyNotNull(dnnUserInfo);
-
         // create the user in the YAF DB so profile can gets created...
         var yafUserId = BoardContext.Current.Get<IAspNetRolesHelper>().CreateForumUser(
             dnnUserInfo.ToAspNetUsers(),
@@ -173,7 +171,7 @@ public class UserImporter
     /// </summary>
     /// <param name="yafUserId">The YAF user id.</param>
     /// <param name="boardId">The board id.</param>
-    public static void SetYafHostUser([NotNull] int yafUserId, [NotNull] int boardId)
+    public static void SetYafHostUser(int yafUserId, int boardId)
     {
         // get this user information...
         var userInfo = BoardContext.Current.GetRepository<User>().GetById(yafUserId);

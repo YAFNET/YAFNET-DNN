@@ -60,10 +60,8 @@ public class YafTaskModule : IHttpModule, IHaveServiceLocator
     /// <param name="httpApplication">
     /// The http application.
     /// </param>
-    public void Init([NotNull] HttpApplication httpApplication)
+    public void Init(HttpApplication httpApplication)
     {
-        CodeContracts.VerifyNotNull(httpApplication);
-
         if (this.ModuleInitialized)
         {
             return;

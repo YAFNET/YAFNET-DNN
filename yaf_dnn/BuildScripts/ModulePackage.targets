@@ -133,7 +133,7 @@
         Exclude="@(DefaultExclude)"
       />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.html"
-                         Exclude="@(DefaultExclude)" />
+                         Exclude="@(DefaultExclude);$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\bootstrap-email\templates\*.html" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.htm"
                          Exclude="@(DefaultExclude)" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.gif"
@@ -141,9 +141,9 @@
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.png"
                          Exclude="@(DefaultExclude)" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.xml"
-                         Exclude="@(DefaultExclude)" />
+                         Exclude="@(DefaultExclude);$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\**\*.*" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.txt"
-                         Exclude="@(DefaultExclude)" />
+                         Exclude="@(DefaultExclude);$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\obj\**\*.*" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.aspx"
                          Exclude="@(DefaultExclude)" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.ttf"
@@ -158,7 +158,7 @@
                          Exclude="@(DefaultExclude)" />
 
 		<yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.json" 
-		                   Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\node_modules\**\*.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\package.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\package-lock.json" />
+		                   Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\themes\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\node_modules\**\*.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\package.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\package-lock.json" />
      </ItemGroup>
 
     <ItemGroup>
@@ -196,9 +196,9 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Owin.Host.SystemWeb.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Owin.Security.Cookies.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Owin.Security.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Owin.Security.OAuth.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Newtonsoft.Json.Bson.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Owin.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Prism.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\OEmbed.Core.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.SqlServer.dll" />

@@ -71,7 +71,7 @@ public class TagsController : DnnApiController, IHaveServiceLocator
         else
         {
             var pager = new Paging { CurrentPageIndex = searchTopic.Page, PageSize = 20 };
-                
+
             var tagsPaged = tags.GetPaged(pager);
             var tagsList = (from Tag tag in tagsPaged
                             select new SelectOptions

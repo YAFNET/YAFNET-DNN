@@ -93,8 +93,12 @@ public class DataController
     /// <param name="portalSettings">
     /// The portal Settings.
     /// </param>
-    public static void ImportActiveForums([NotNull] int moduleId, [NotNull] int boardId, [NotNull] PortalSettings portalSettings)
+    public static void ImportActiveForums(int moduleId, int boardId, PortalSettings portalSettings)
     {
-        DataProvider.Instance().ExecuteNonQuery($"{Config.DatabaseObjectQualifier}ImportActiveForums", moduleId, boardId, portalSettings.PortalId);
+        DataProvider.Instance().ExecuteNonQuery(
+            $"{Config.DatabaseObjectQualifier}ImportActiveForums",
+            moduleId,
+            boardId,
+            portalSettings.PortalId);
     }
 }
