@@ -69,13 +69,13 @@ public class AttachmentController : DnnApiController, IHaveServiceLocator
                     var description = $"{attach.FileName} ({attach.Bytes / 1024} kb)";
 
                     var iconImage = attach.FileName.IsImageName()
-                                        ? $@"<img class=""popupitemIcon"" src=""{url}"" alt=""{description}"" title=""{description}"" class=""img-fluid img-thumbnail me-1"" />"
+                                        ? $@"<img src=""{url}"" alt=""{description}"" title=""{description}"" class=""img-fluid img-thumbnail me-1 attachments-preview"" />"
                                         : "<i class=\"far fa-file-alt attachment-icon\"></i>";
 
                     var attachment = new AttachmentItem
                                          {
                                              FileName = attach.FileName,
-                                             OnClick = $"CKEDITOR.tools.insertAttachment('{attach.ID}')",
+                                             OnClick = $"insertAttachment('{attach.ID}', '{url}')",
                                              IconImage = $@"{iconImage}<span>{description}</span>"
                                          };
 

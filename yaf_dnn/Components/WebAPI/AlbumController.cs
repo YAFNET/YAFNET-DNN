@@ -39,21 +39,44 @@ public class AlbumController : DnnApiController, IHaveServiceLocator
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
 
     /// <summary>
-    /// The change image caption.
+    /// Change the album title.
     /// </summary>
-    /// <param name="jsonData">
-    /// The JSON Data.
-    /// </param>
-    /// <returns>
-    /// the return object.
-    /// </returns>
     [DnnAuthorize]
     [HttpPost]
-    public IHttpActionResult ChangeImageCaption(JObject jsonData)
+    public IHttpActionResult ChangeAlbumTitle()
     {
-        dynamic json = jsonData;
+        var imageId = this.Get<HttpRequestBase>().Form["id"].ToType<int>();
+        var newCaption = HttpUtility.HtmlEncode(this.Get<HttpRequestBase>().Form["value"].Trim());
 
-        return this.Ok(this.Get<IAlbum>().ChangeImageCaption((int)json.ImageId, (string)json.NewCaption));
+        if (newCaption.Equals(this.Get<ILocalization>().GetText("ALBUM_CHANGE_TITLE")))
+        {
+            return this.Ok();
+        }
+
+        this.Get<IAlbum>().ChangeAlbumTitle(imageId, newCaption);
+
+        return this.Ok();
+    }
+
+    /// <summary>
+    /// Change the album image caption.
+    /// </summary>
+    [DnnAuthorize]
+    [HttpPost]
+    public IHttpActionResult ChangeImageCaption()
+    {
+        var imageId = this.Get<HttpRequestBase>().Form["id"].ToType<int>();
+        var newCaption = HttpUtility.HtmlEncode(this.Get<HttpRequestBase>().Form["value"].Trim());
+
+        if (newCaption.Equals(this.Get<ILocalization>().GetText("ALBUM_IMAGE_CHANGE_CAPTION"))
+            || newCaption.Equals(this.Get<ILocalization>().GetText("ALBUM_IMAGE_CHANGE_CAPTION2")))
+        {
+            return this.Ok();
+        }
+
+        this.Get<IAlbum>().ChangeImageCaption(imageId, newCaption);
+
+        return this.Ok();
     }
 
     /// <summary>
@@ -88,9 +111,9 @@ public class AlbumController : DnnApiController, IHaveServiceLocator
                     var attachment = new AttachmentItem
                                          {
                                              FileName = image.FileName,
-                                             OnClick = $"CKEDITOR.tools.insertAlbumImage('{image.ID}')",
+                                             OnClick = $"setStyle('AlbumImgId', '{image.ID}')",
                                              IconImage =
-                                                 $@"<img class=""popupitemIcon"" src=""{url}"" alt=""{(image.Caption.IsSet() ? image.Caption : image.FileName)}"" title=""{(image.Caption.IsSet() ? image.Caption : image.FileName)}"" class=""img-fluid img-thumbnail me-1"" />",
+                                                 $"""<img src="{url}" alt="{(image.Caption.IsSet() ? image.Caption : image.FileName)}" title="{(image.Caption.IsSet() ? image.Caption : image.FileName)}" class="img-fluid img-thumbnail me-1 attachments-preview" />""",
                                              DataURL = url
                                          };
 
