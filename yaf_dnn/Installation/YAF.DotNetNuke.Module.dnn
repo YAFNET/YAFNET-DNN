@@ -1,6 +1,6 @@
 <dotnetnuke type="Package" version="5.0">
   <packages>
-    <package name="YetAnotherForumDotNet" type="Module" version="03.20.006128">
+    <package name="YetAnotherForumDotNet" type="Module" version="03.21.006129">
       <friendlyName>YAF.NET Forums</friendlyName>
       <description>
         &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; as DNN Module. Yet Another Forum.NET (YAF) is an open source ASP.NET forum system.&lt;br /&gt;
@@ -70,7 +70,7 @@
             <attributes>
               <businessControllerClass>YAF.DotNetNuke.Components.Controllers.UpgradeController, YAF.DotNetNuke.Module</businessControllerClass>
               <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
-              <upgradeVersionsList>03.00.006100,03.13.006107,03.15.006109,03.15.006110,03.15.006111,03.16.006112,03.16.006118,03.17.006119,03.18.006120,03.19.006121,03.19.006122,03.19.006123,03.19.006124,03.19.006125,03.19.006126,03.19.006127,03.20.006128</upgradeVersionsList>
+              <upgradeVersionsList>03.00.006100,03.13.006107,03.15.006109,03.15.006110,03.15.006111,03.16.006112,03.16.006118,03.17.006119,03.18.006120,03.19.006121,03.19.006122,03.19.006123,03.19.006124,03.19.006125,03.19.006126,03.19.006127,03.20.006128,03.21.006129</upgradeVersionsList>
             </attributes>
           </eventMessage>
         </component>
@@ -513,7 +513,7 @@
         </component>
       </components>
     </package>
-    <package name="YAF.WhatsNew" type="Module" version="03.20.006128">
+    <package name="YAF.WhatsNew" type="Module" version="03.21.006129">
       <friendlyName>YAF.NET Forums What's New</friendlyName>
       <description>
         &lt;p&gt;This Module displays the Latest Posts from a  &lt;strong&gt;YetAnotherForum.NET&lt;/strong&gt; Module. Based on the Current Users Authorization Level. You can define Which Forum should been used, and how many Posts should displayed.
@@ -574,7 +574,7 @@
 		        <attributes>
 			        <businessControllerClass>YAF.DotNetNuke.Components.Controllers.UpgradeController, YAF.DotNetNuke.Module</businessControllerClass>
 			        <desktopModuleID>[DESKTOPMODULEID]</desktopModuleID>
-			        <upgradeVersionsList>03.00.006100,03.13.006107,03.15.006109,03.15.006110,03.15.006111,03.16.006112,03.16.006118,03.17.006119,03.18.006120,03.19.006121,03.19.006122,03.19.006123,03.19.006124,03.19.006125,03.19.006126,03.19.006127,03.20.006128</upgradeVersionsList>
+			        <upgradeVersionsList>03.00.006100,03.13.006107,03.15.006109,03.15.006110,03.15.006111,03.16.006112,03.16.006118,03.17.006119,03.18.006120,03.19.006121,03.19.006122,03.19.006123,03.19.006124,03.19.006125,03.19.006126,03.19.006127,03.20.006128,03.21.006129</upgradeVersionsList>
 		        </attributes>
 	        </eventMessage>
         </component>
@@ -613,7 +613,7 @@
         </component>
       </components>
     </package>
-    <package name="bootstrap-bundle" type="JavaScript_Library" version="05.32.006127">
+    <package name="bootstrap-bundle" type="JavaScript_Library" version="05.32.106128">
       <friendlyName>Bootstrap v5.3.2 JavaScript Bundle (width Popper.js)</friendlyName>
       <description>
         <![CDATA[<p>Bootstrap is a sleek, intuitive, and powerful front-end framework for faster and easier web development, created and maintained by <a href="http://twitter.com/mdo">Mark Otto</a> and <a href="http://twitter.com/fat">Jacob Thornton</a>.</p>
