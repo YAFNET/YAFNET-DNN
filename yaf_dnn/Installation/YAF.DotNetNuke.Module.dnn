@@ -16,7 +16,7 @@
       <license src="License.html" />
       <releaseNotes src="ReadMe.html" />
       <dependencies>
-        <dependency type="CoreVersion">09.13.00</dependency>
+        <dependency type="CoreVersion">09.13.01</dependency>
       </dependencies>
       <components>
         <component type="Module">
@@ -530,7 +530,7 @@
       <license src="License.html" />
       <releaseNotes />
       <dependencies>
-        <dependency type="CoreVersion">09.13.00</dependency>
+        <dependency type="CoreVersion">09.13.01</dependency>
       </dependencies>
       <components>
         <component type="Module">
