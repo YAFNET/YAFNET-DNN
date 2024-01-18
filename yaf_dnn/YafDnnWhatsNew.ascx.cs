@@ -1,7 +1,7 @@
 /* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2023 Ingo Herbote
+ * Copyright (C) 2014-2024 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -246,7 +246,8 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
         }
 
         // Check if the user exists in yaf
-        var yafUser = BoardContext.Current.GetRepository<User>().GetUserByProviderKey(this.boardId, this.UserInfo.UserID.ToString());
+        var yafUser = BoardContext.Current.GetRepository<User>()
+            .GetUserByProviderKey(this.boardId, this.UserInfo.UserID.ToString());
 
         if (yafUser != null)
         {
@@ -257,19 +258,20 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
             .GetSingle(u => u.Name == this.UserInfo.Username && u.Email == this.UserInfo.Email);
 
         if (yafUser is null)
+        {
             return UserImporter.CreateYafUser(
                 this.UserInfo,
                 this.boardId,
                 this.PortalSettings.PortalId,
                 BoardContext.Current.Get<BoardSettings>());
-        {
-            // update provider Key
-            BoardContext.Current.GetRepository<User>().UpdateOnly(
-                () => new User { ProviderUserKey = this.UserInfo.UserID.ToString() },
-                u => u.ID == yafUser.ID);
-
-            return yafUser.ID;
         }
+
+        // update provider Key
+        BoardContext.Current.GetRepository<User>().UpdateOnly(
+            () => new User { ProviderUserKey = this.UserInfo.UserID.ToString() },
+            u => u.ID == yafUser.ID);
+
+        return yafUser.ID;
     }
 
     /// <summary>

@@ -1,7 +1,7 @@
 /* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2023 Ingo Herbote
+ * Copyright (C) 2014-2024 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -55,14 +55,12 @@ public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
                 return;
             }
 
-            if (this.YafInstances.Items.Count > 0)
+            if (this.YafInstances.Items.Count > 0 &&
+                this.TabModuleSettings["YafPage"].ToType<string>().IsSet() &&
+                this.TabModuleSettings["YafModuleId"].ToType<string>().IsSet())
             {
-                if (this.TabModuleSettings["YafPage"].ToType<string>().IsSet() &&
-                    this.TabModuleSettings["YafModuleId"].ToType<string>().IsSet())
-                {
-                    this.YafInstances.SelectedValue =
-                        $"{this.TabModuleSettings["YafPage"]}-{this.TabModuleSettings["YafModuleId"]}";
-                }
+                this.YafInstances.SelectedValue =
+                    $"{this.TabModuleSettings["YafPage"]}-{this.TabModuleSettings["YafModuleId"]}";
             }
 
             this.SortOrder.SelectedValue = this.TabModuleSettings["YafSortOrder"].ToType<string>().IsSet()

@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2023 Ingo Herbote
+ * Copyright (C) 2014-2024 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -39,7 +39,7 @@ public class RoleSyncronizer : PortalModuleBase
     /// <param name="yafUserId">The YAF user id.</param>
     /// <param name="dnnUserInfo">The DNN user info.</param>
     /// <returns>
-    /// Returns if the Roles where synched or not
+    /// Returns if the Roles where synced or not
     /// </returns>
     public static bool SynchronizeUserRoles(int boardId, int portalId, int yafUserId, UserInfo dnnUserInfo)
     {
@@ -70,7 +70,7 @@ public class RoleSyncronizer : PortalModuleBase
 
             if (roleFlags.IsStart)
             {
-                if (yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
+                if (yafUserRoles.Exists(existRole => existRole.RoleName.Equals(role.RoleName)))
                 {
                     continue;
                 }
@@ -82,20 +82,17 @@ public class RoleSyncronizer : PortalModuleBase
             else
             {
                 // ADD dnn super user manually to the administrator role
-                if (role.RoleName.Equals("Administrators") && dnnUserInfo.IsSuperUser)
+                if (role.RoleName.Equals("Administrators") && dnnUserInfo.IsSuperUser && !yafUserRoles.Exists(existRole => existRole.RoleName.Equals(role.RoleName)))
                 {
-                    if (!yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
-                    {
-                        UpdateUserRole(role, yafUserId, true);
-                    }
+                    UpdateUserRole(role, yafUserId, true);
                 }
 
-                if (!dnnUserInfo.Roles.Any(dnnRole => dnnRole.Equals(boardRole.Name)))
+                if (!dnnUserInfo.Roles.Exists(dnnRole => dnnRole.Equals(boardRole.Name)))
                 {
                     continue;
                 }
 
-                if (yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName)))
+                if (yafUserRoles.Exists(existRole => existRole.RoleName.Equals(role.RoleName)))
                 {
                     continue;
                 }
@@ -114,8 +111,8 @@ public class RoleSyncronizer : PortalModuleBase
             roleController.GetRoles(portalId)
                 .Where(
                     role =>
-                        !dnnUserInfo.Roles.Any(existRole => existRole.Equals(role.RoleName))
-                        && yafUserRoles.Any(existRole => existRole.RoleName.Equals(role.RoleName))))
+                        !dnnUserInfo.Roles.Exists(existRole => existRole.Equals(role.RoleName))
+                        && yafUserRoles.Exists(existRole => existRole.RoleName.Equals(role.RoleName))))
         {
             UpdateUserRole(role, yafUserId, false);
 
@@ -148,7 +145,7 @@ public class RoleSyncronizer : PortalModuleBase
         // Check If Dnn Roles Exists in Yaf
         (from role in roles
          where role.IsSet()
-         let any = yafBoardRoles.Any(yafRole => yafRole.RoleName.Equals(role))
+         let any = yafBoardRoles.Exists(yafRole => yafRole.RoleName.Equals(role))
          where !any
          select role).ForEach(role => CreateYafRole(role, boardId, yafBoardAccessMasks));
     }

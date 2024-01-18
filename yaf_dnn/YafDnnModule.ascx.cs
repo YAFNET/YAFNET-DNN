@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2023 Ingo Herbote
+ * Copyright (C) 2014-2024 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -360,15 +360,13 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
                                          ? this.PageBoardContext().BoardSettings.DNNPageTab
                                          : this.Get<BoardSettingsService>().LoadBoardSettings(this.forum1.BoardID, null).DNNPageTab;
 
-            if (!boardSettingsTabId.Equals(this.TabId) && boardSettingsTabId > -1)
+            if (!boardSettingsTabId.Equals(this.TabId) && boardSettingsTabId > -1
+                                                       && HttpContext.Current.User.Identity.IsAuthenticated
+                                                       && UserController.Instance.GetCurrentUserInfo().IsSuperUser)
             {
-                if (HttpContext.Current.User.Identity.IsAuthenticated
-                    && UserController.Instance.GetCurrentUserInfo().IsSuperUser)
-                {
-                    this.Response.Redirect(
-                        this.ResolveUrl(
-                            $"~/tabid/{this.PortalSettings.ActiveTab.TabID}/ctl/Edit/mid/{this.ModuleId}/Default.aspx"));
-                }
+                this.Response.Redirect(
+                    this.ResolveUrl(
+                        $"~/tabid/{this.PortalSettings.ActiveTab.TabID}/ctl/Edit/mid/{this.ModuleId}/Default.aspx"));
             }
 
             if (this.PageBoardContext().BoardSettings.DNNPortalId.Equals(-1))

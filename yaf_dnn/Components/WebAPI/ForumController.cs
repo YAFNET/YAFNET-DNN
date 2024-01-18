@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2023 Ingo Herbote
+ * Copyright (C) 2014-2024 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -76,15 +76,15 @@ public class ForumController : DnnApiController, IHaveServiceLocator
                     new SelectGroup
                         {
                             text = BoardContext.Current.Get<ILocalization>().GetText("ALL_CATEGORIES"),
-                            children = new List<SelectOptions>
-                                           {
-                                               new ()
-                                                   {
-                                                       id = "0",
-                                                       text = BoardContext.Current.Get<ILocalization>()
-                                                           .GetText("ALL_FORUMS")
-                                                   }
-                                           }
+                            children =
+                            [
+                                new()
+                                {
+                                    id = "0",
+                                    text = BoardContext.Current.Get<ILocalization>()
+                                        .GetText("ALL_FORUMS")
+                                }
+                            ]
                         });
             }
 
@@ -120,15 +120,15 @@ public class ForumController : DnnApiController, IHaveServiceLocator
                 new SelectGroup
                     {
                         text = BoardContext.Current.Get<ILocalization>().GetText("ALL_CATEGORIES"),
-                        children = new List<SelectOptions>
-                                       {
-                                           new ()
-                                               {
-                                                   id = "0",
-                                                   text = BoardContext.Current.Get<ILocalization>()
-                                                       .GetText("ALL_FORUMS")
-                                               }
-                                       }
+                        children =
+                        [
+                            new()
+                            {
+                                id = "0",
+                                text = BoardContext.Current.Get<ILocalization>()
+                                    .GetText("ALL_FORUMS")
+                            }
+                        ]
                     });
         }
         else

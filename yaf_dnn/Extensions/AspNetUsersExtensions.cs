@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2023 Ingo Herbote
+ * Copyright (C) 2014-2024 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -53,9 +53,6 @@ public static class AspNetUsersExtensions
                            FailedPasswordAttemptWindowStart = DateTime.MinValue.AddYears(1902),
                            Profile_Birthday = DateTime.MinValue.AddYears(1902)
                        };
-
-        /*user.LastLoginDate = DateTime.Now;
-        user.LastActivityDate = DateTime.Now;*/
 
         return user;
     }

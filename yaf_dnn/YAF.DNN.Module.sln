@@ -40,7 +40,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YAF.Data.SqlServer", "..\ya
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YAF.Core", "..\yafsrc\YAF.Core\YAF.Core.csproj", "{B8D47386-06DC-42E8-9F95-3F75D895E393}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceStack", "..\yafsrc\ServiceStack\ServiceStack\ServiceStack.csproj", "{F82A2267-291B-4294-9888-09EF3EDADC48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceStack.Lite", "..\yafsrc\ServiceStack\ServiceStack.Lite\ServiceStack.Lite.csproj", "{F82A2267-291B-4294-9888-09EF3EDADC48}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAF-SqlServer", "..\yafsrc\YetAnotherForum.NET\YAF-SqlServer.csproj", "{555357E5-A150-4C4D-BC81-97F4AE19086A}"
 EndProject
