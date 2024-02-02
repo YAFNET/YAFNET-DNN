@@ -108,7 +108,7 @@ public class YafDnnImportScheduler : SchedulerClient
                 var portalId = dataRow["PortalId"].ToType<int>();
 
                 // check if board exist
-                if (boards.Any(b => b.ID.Equals(boardId)))
+                if (boards.Exists(b => b.ID.Equals(boardId)))
                 {
                     UserImporter.ImportUsers(boardId, portalId, out this.info);
                 }
