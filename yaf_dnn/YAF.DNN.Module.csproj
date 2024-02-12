@@ -185,10 +185,6 @@
       <Project>{116a0c30-1c80-4b90-aac0-23f15c839f4d}</Project>
       <Name>ServiceStack.OrmLite</Name>
     </ProjectReference>
-    <ProjectReference Include="..\yafsrc\ServiceStack\ServiceStack.Lite\ServiceStack.Lite.csproj">
-      <Project>{f82a2267-291b-4294-9888-09ef3edadc48}</Project>
-      <Name>ServiceStack</Name>
-    </ProjectReference>
     <ProjectReference Include="..\yafsrc\YAF.Configuration\YAF.Configuration.csproj">
       <Project>{e0360673-49cb-4e81-aed7-312f21ae8951}</Project>
       <Name>YAF.Configuration</Name>
