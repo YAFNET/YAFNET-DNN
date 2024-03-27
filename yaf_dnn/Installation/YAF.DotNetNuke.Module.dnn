@@ -328,6 +328,14 @@
           </files>
         </component>
         <component type="Cleanup" version="03.14.006108" fileName="03.14.006108.txt" />
+		<component type="Cleanup" version="03.23.006131">
+          <files>
+			  <file>
+				  <path>bin</path>
+				  <name>ServiceStack.dll</name>
+			  </file>
+          </files>
+        </component>
         <component type="Config">
           <config>
             <configFile>web.config</configFile>

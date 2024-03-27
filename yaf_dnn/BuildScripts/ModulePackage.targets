@@ -199,7 +199,6 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Newtonsoft.Json.Bson.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Owin.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\OEmbed.Core.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.SqlServer.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\System.Buffers.dll" />
