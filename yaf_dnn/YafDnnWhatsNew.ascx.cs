@@ -115,14 +115,6 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
                 }
 
                 break;
-
-            /*case ListItemType.Separator:
-                {
-                    Literal objLiteral = new Literal { Text = this.ProcessSeparator() };
-                    e.Item.Controls.Add(objLiteral);
-                }
-
-                break;*/
             case ListItemType.Footer:
                 {
                     var objLiteral = new Literal { Text = this.GetFooter() };

@@ -3,7 +3,7 @@
 <%@ Register TagPrefix="dnn" TagName="Label" Src="~/controls/LabelControl.ascx" %>
 
 <script type="text/javascript">
-    jQuery(function ($) {
+    $(function ($) {
         var setupModule = function () {
             $('#yaf-settings').dnnPanels();
             $('#yaf-settings .dnnFormExpandContent a').dnnExpandAll({
