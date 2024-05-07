@@ -278,7 +278,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="SonarAnalyzer.CSharp">
-      <Version>9.24.0.89429</Version>
+      <Version>9.25.0.90414</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
