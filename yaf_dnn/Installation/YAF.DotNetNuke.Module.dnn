@@ -147,9 +147,6 @@
             <assembly>
               <name>Microsoft.Owin.Security.dll</name>
             </assembly>
-	          <assembly>
-		          <name>Microsoft.Owin.Security.OAuth.dll</name>
-	          </assembly>
             <assembly>
               <name>Microsoft.Owin.dll</name>
             </assembly>
@@ -163,11 +160,11 @@
               <name>Microsoft.Extensions.Configuration.Abstractions.dll</name>
             </assembly>
             <assembly>
+              <name>OEmbed.Core.dll</name>
+            </assembly>
+            <assembly>
               <name>Owin.dll</name>
             </assembly>
-	          <assembly>
-		          <name>Prism.dll</name>
-	          </assembly>
 	          <assembly>
               <name>YAF.Configuration.dll</name>
             </assembly>
