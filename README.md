@@ -1,35 +1,32 @@
-﻿[![YAF logo](https://yetanotherforum.net/forum/Images/Logos/YAFLogo.svg)](http://www.yetanotherforum.net)
+![YAFLogo](https://raw.githubusercontent.com/YAFNET/YAFNET/master/yafsrc/YetAnotherForum.NET/wwwroot/images/Logos/YAFLogo.svg)
 
-*YetAnotherForum.NET* _(YAF.NET)_ is an Open Source Discussion Forum for sites running ASP.NET. 100% written in C#. YAF.NET runs on any web server that supports ASP.NET v4.8.1 and SQL Server 2012 or above.
+**YetAnotherForum.NET** (YAF.NET) ASP.NET Open Source Forum solution! The **YAF.NET** project is an international collaboration of like-minded, skilled, and creative individuals who are striving to make **YAF.NET** the most robust and malleable forum solutions available.
 
-*YAF.NET* is a feature rich communication platform combining an International Open Source community and the Microsoft's technologies.
+![license](https://img.shields.io/github/license/yafnet/yafnet)
 
 ### Features
-
 [Full Feature List](https://github.com/YAFNET/YAFNET/wiki/YAF.NET-Features).
 
 ## DNN® (DotNetNuke) Module
+This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 09.13.03 or higher).
 
-This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 09.13.00 or higher).
+An Example Forum running the current Version can be found here
 
-## Demo Forum
-
-A "sandbox" test forum is available here: https://testforum.yetanotherforum.net/.
+http://watchersnet.de/Service/Forum.aspx
 
 ### Screen Shots
 
-![mainscreen](https://yetanotherforum.net/assets/img/main.png)
+![mainscreen](https://yetanotherforum.net/images/main.png)
 
-![forumsscreen](https://yetanotherforum.net/assets/img/forum.png)
+![forumsscreen](https://yetanotherforum.net/images/forum.png)
 
-![topicsscreen](https://yetanotherforum.net/assets/img/topic.png)
+![topicsscreen](https://yetanotherforum.net/images/topic.png)
 
 Admin Control Panel
-![adminpanel](https://yetanotherforum.net/assets/img/admin.png)
+![adminpanel](https://yetanotherforum.net/images/admin.png)
 
 There is also a Second Child Module the *YAF.NET Forums What's New* Module which shows The Latest Posts in a List
 ![whatsnew](http://www.watchersnet.de/Portals/0/screenshots/dnn/ScreenshotYafLatestPosts.jpg)
-
 
 ### Getting Started with Development
 
@@ -45,14 +42,9 @@ This project is dependent upon the parent solution, YAFNET.  This requires that 
 Congratulations! You're now ready to begin development.
 
 ### Support
- 
-* Free Community based Support Forum here: https://forum.yetanotherforum.net/.
+If you have any questions, please visit the YAF Community Support forum: [https://forum.yetanotherforum.net](https://forum.yetanotherforum.net), or visit the Wiki for More Informations.
 
-
-### Community Support Forum
-
-See a real live YAF Forum by visiting the Yet Another Forum.NET community support forum: https://forum.yetanotherforum.net. Also, get your questions answered by the YAF community.
 
 ## License
 
-Yet Another Forum.NET is licensed under the Apache 2.0 license.
+Yet Another Forum.NET is licensed under the Apache 2.0 license. 
