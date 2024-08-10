@@ -24,7 +24,6 @@ using System.Web;
 using Autofac;
 
 using YAF.Core;
-using YAF.Types;
 using YAF.Types.Attributes;
 using YAF.Types.EventProxies;
 using YAF.Types.Interfaces;
@@ -57,10 +56,10 @@ public class YafTaskModule : IHttpModule, IHaveServiceLocator
     /// <summary>
     /// Bootstrapping fun
     /// </summary>
-    /// <param name="httpApplication">
+    /// <param name="context">
     /// The http application.
     /// </param>
-    public void Init(HttpApplication httpApplication)
+    public void Init(HttpApplication context)
     {
         if (this.ModuleInitialized)
         {
@@ -72,11 +71,11 @@ public class YafTaskModule : IHttpModule, IHaveServiceLocator
         {
             if (!this.ModuleInitialized)
             {
-                this.AppInstance = httpApplication;
+                this.AppInstance = context;
 
                 // set the httpApplication as early as possible...
                 GlobalContainer.Container.Resolve<CurrentHttpApplicationStateBaseProvider>().Instance =
-                    new HttpApplicationStateWrapper(httpApplication.Application);
+                    new HttpApplicationStateWrapper(context.Application);
 
                 GlobalContainer.Container.Resolve<IInjectServices>().Inject(this);
 
