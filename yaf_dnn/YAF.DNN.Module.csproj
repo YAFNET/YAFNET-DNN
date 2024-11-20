@@ -261,7 +261,7 @@
       <Version>8.1.1</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.Abstractions">
-      <Version>9.13.5</Version>
+      <Version>9.13.6</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.Core">
       <Version>9.13.5</Version>
