@@ -264,7 +264,7 @@
       <Version>9.13.7</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.Core">
-      <Version>9.13.6</Version>
+      <Version>9.13.7</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.WebApi">
       <Version>9.13.6</Version>
