@@ -225,7 +225,9 @@
     <Content Include="App_LocalResources\YafDnnWhatsNewSettings.ascx.de-DE.resx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_LocalResources\YafDnnModule.ascx.de-DE.resx" />
+    <Content Include="App_LocalResources\YafDnnModule.ascx.de-DE.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="App_LocalResources\YafDnnModule.ascx.resx" />
     <Content Include="App_LocalResources\YafDnnModuleEdit.ascx.de-DE.resx">
       <SubType>Designer</SubType>
@@ -261,13 +263,13 @@
       <Version>8.2.0</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.Abstractions">
-      <Version>9.13.7</Version>
+      <Version>9.13.8</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.Core">
-      <Version>9.13.7</Version>
+      <Version>9.13.8</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.WebApi">
-      <Version>9.13.7</Version>
+      <Version>9.13.8</Version>
     </PackageReference>
     <PackageReference Include="MSBuild.Extension.Pack">
       <Version>1.9.1</Version>
@@ -278,7 +280,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="SonarAnalyzer.CSharp">
-      <Version>10.6.0.109712</Version>
+      <Version>10.7.0.110445</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

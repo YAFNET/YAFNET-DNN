@@ -549,7 +549,7 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
             user.UserName,
             null,
             newEmail,
-            user.Id,
+            user.Id, this.Get<BoardSettings>().PageSizeDefault,
             user.IsApproved);
 
         return true;

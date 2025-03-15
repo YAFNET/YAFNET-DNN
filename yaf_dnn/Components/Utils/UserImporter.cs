@@ -193,8 +193,6 @@ public class UserImporter
         BoardContext.Current.GetRepository<User>().AdminSave(
             boardId,
             yafUserId,
-            userInfo.Name,
-            userInfo.DisplayName,
             userFlags.BitValue,
             userInfo.RankID);
     }

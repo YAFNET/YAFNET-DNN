@@ -44,6 +44,12 @@ public class YafTaskModule : IHttpModule, IHaveServiceLocator
     /// </summary>
     protected bool ModuleInitialized;
 
+
+    /// <summary>
+    /// The lock object.
+    /// </summary>
+    protected readonly object lockObject = new();
+
     /// <summary>
     ///   Gets or sets the logger associated with the object.
     /// </summary>
@@ -67,7 +73,7 @@ public class YafTaskModule : IHttpModule, IHaveServiceLocator
         }
 
         // create a lock so no other instance can affect the static variable
-        lock (this)
+        lock (this.lockObject)
         {
             if (!this.ModuleInitialized)
             {

@@ -45,7 +45,7 @@ public class SendMail : IMailService, IHaveServiceLocator
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
 
     /// <summary>
-    /// Creates a SMTP Client and sends a MailMessage.
+    /// Creates an SMTP Client and sends a MailMessage.
     /// </summary>
     /// <param name="mailMessage">
     /// The message.
