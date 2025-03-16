@@ -101,7 +101,7 @@ public class SendMail : IMailService, IHaveServiceLocator
     /// <param name="messages">The messages.</param>
     public void SendAll(IEnumerable<MailMessage> messages)
     {
-        var mailMessages = messages as IList<MailMessage> ?? messages.ToList();
+        var mailMessages = messages as IList<MailMessage> ?? [.. messages];
 
         mailMessages.ForEach(
             mailMessage =>

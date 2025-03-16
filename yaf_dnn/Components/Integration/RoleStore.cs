@@ -123,10 +123,20 @@ public class RoleStore : IQueryableRoleStore<AspNetRoles, string>,
     }
 
     /// <summary>
-    /// The dispose.
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
     /// </summary>
-    public virtual void Dispose()
+    public void Dispose()
     {
-        // No resource to dispose for now!
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Releases unmanaged and - optionally - managed resources.
+    /// </summary>
+    /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        // Cleanup
     }
 }

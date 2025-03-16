@@ -43,7 +43,6 @@ global using YAF.DotNetNuke.Components.Controllers;
 global using YAF.DotNetNuke.Components.Utils;
 global using YAF.DotNetNuke.Extensions;
 global using YAF.DotNetNuke.Models;
-global using YAF.Types;
 global using YAF.Types.Attributes;
 global using YAF.Types.Constants;
 global using YAF.Types.Extensions;

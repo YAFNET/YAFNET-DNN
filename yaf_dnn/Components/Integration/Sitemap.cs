@@ -40,12 +40,12 @@ public class Sitemap : SitemapProvider
     /// Get the Sitemap URLs.
     /// </summary>
     /// <param name="portalId">The portal id.</param>
-    /// <param name="portalSettings">The portal settings.</param>
+    /// <param name="ps">The portal settings.</param>
     /// <param name="version">The version.</param>
     /// <returns>
     /// The List with URLs.
     /// </returns>
-    public override List<SitemapUrl> GetUrls(int portalId, PortalSettings portalSettings, string version)
+    public override List<SitemapUrl> GetUrls(int portalId, PortalSettings ps, string version)
     {
         var urls = new List<SitemapUrl>();
 
