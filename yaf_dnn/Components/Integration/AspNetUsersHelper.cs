@@ -1104,7 +1104,6 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
                         IsGuest = Sql.Custom<bool>($"({OrmLiteConfig.DialectProvider.ConvertFlag($"{expression.Column<User>(x => x.Flags, true)}&4")})"),
                         a.Profile_GoogleId,
                         a.Profile_FacebookId,
-                        a.Profile_TwitterId,
                         RankName = r.Name,
                         TotalRows = Sql.Custom($"({countTotalSql})")
                     });
