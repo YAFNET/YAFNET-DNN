@@ -1,0 +1,105 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Deploy" />
+    <BuildType Name="MonoTouch" />
+    <BuildType Name="Package" />
+    <BuildType Name="Release" />
+    <BuildType Name="STATIC_ONLY NO_EXPRESSIONS" />
+  </Configurations>
+  <Folder Name="/DNN Module/">
+    <Project Path="YAF.DNN.Module.csproj">
+      <BuildType Solution="MonoTouch|*" Project="Release" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/Third-Party Libs/" />
+  <Folder Name="/Third-Party Libs/Lucene.NET/">
+    <Project Path="../yafsrc/Lucene.Net/Lucene.Net.Analysis.Common/YAF.Lucene.Net.Analysis.Common.csproj">
+      <BuildType Solution="Deploy|*" Project="Debug" />
+      <BuildType Solution="MonoTouch|*" Project="Debug" />
+      <BuildType Solution="Package|*" Project="Release" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
+    </Project>
+    <Project Path="../yafsrc/Lucene.Net/Lucene.Net.Highlighter/YAF.Lucene.Net.Highlighter.csproj">
+      <BuildType Solution="Deploy|*" Project="Debug" />
+      <BuildType Solution="MonoTouch|*" Project="Debug" />
+      <BuildType Solution="Package|*" Project="Release" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
+    </Project>
+    <Project Path="../yafsrc/Lucene.Net/Lucene.Net.Queries/YAF.Lucene.Net.Queries.csproj">
+      <BuildType Solution="Deploy|*" Project="Debug" />
+      <BuildType Solution="MonoTouch|*" Project="Debug" />
+      <BuildType Solution="Package|*" Project="Release" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
+    </Project>
+    <Project Path="../yafsrc/Lucene.Net/Lucene.Net.QueryParser/YAF.Lucene.Net.QueryParser.csproj">
+      <BuildType Solution="Deploy|*" Project="Debug" />
+      <BuildType Solution="MonoTouch|*" Project="Debug" />
+      <BuildType Solution="Package|*" Project="Release" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
+    </Project>
+    <Project Path="../yafsrc/Lucene.Net/Lucene.Net/YAF.Lucene.Net.csproj">
+      <BuildType Solution="Deploy|*" Project="Debug" />
+      <BuildType Solution="MonoTouch|*" Project="Debug" />
+      <BuildType Solution="Package|*" Project="Release" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Third-Party Libs/ServiceStack/">
+    <Project Path="../yafsrc/ServiceStack/ServiceStack.OrmLite.SqlServer/ServiceStack.OrmLite.SqlServer.csproj">
+      <BuildType Solution="Deploy|*" Project="Debug" />
+      <BuildType Solution="MonoTouch|*" Project="Debug" />
+      <BuildType Solution="Package|*" Project="Release" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
+    </Project>
+    <Project Path="../yafsrc/ServiceStack/ServiceStack.OrmLite/ServiceStack.OrmLite.csproj">
+      <BuildType Solution="Deploy|*" Project="Debug" />
+      <BuildType Solution="MonoTouch|*" Project="Debug" />
+      <BuildType Solution="Package|*" Project="Release" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/YAF_source/">
+    <Project Path="../yafsrc/YAF.Configuration/YAF.Configuration.csproj">
+      <BuildType Solution="Deploy|*" Project="Debug" />
+      <BuildType Solution="MonoTouch|*" Project="Debug" />
+      <BuildType Solution="Package|*" Project="Release" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
+    </Project>
+    <Project Path="../yafsrc/YAF.Core/YAF.Core.csproj">
+      <BuildType Solution="Deploy|*" Project="Debug" />
+      <BuildType Solution="MonoTouch|*" Project="Debug" />
+      <BuildType Solution="Package|*" Project="Debug" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
+    </Project>
+    <Project Path="../yafsrc/YAF.Data/YAF.Data.SqlServer/YAF.Data.SqlServer.csproj">
+      <BuildType Solution="Deploy|*" Project="Debug" />
+      <BuildType Solution="MonoTouch|*" Project="Debug" />
+      <BuildType Solution="Package|*" Project="Release" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
+    </Project>
+    <Project Path="../yafsrc/YAF.Types/YAF.Types.csproj">
+      <BuildType Solution="Deploy|*" Project="Debug" />
+      <BuildType Solution="MonoTouch|*" Project="Release" />
+      <BuildType Solution="Package|*" Project="Release" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Release" />
+    </Project>
+    <Project Path="../yafsrc/YAF.UrlRewriter/YAF.UrlRewriter.csproj">
+      <BuildType Solution="Deploy|*" Project="Debug" />
+      <BuildType Solution="MonoTouch|*" Project="Debug" />
+      <BuildType Solution="Package|*" Project="Release" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
+    </Project>
+    <Project Path="../yafsrc/YAF.Web/YAF.Web.csproj">
+      <BuildType Solution="Deploy|*" Project="Debug" />
+      <BuildType Solution="MonoTouch|*" Project="Debug" />
+      <BuildType Solution="Package|*" Project="Release" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
+    </Project>
+    <Project Path="../yafsrc/YetAnotherForum.NET/YAF-SqlServer.csproj">
+      <BuildType Solution="MonoTouch|*" Project="Debug" />
+      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
+    </Project>
+  </Folder>
+</Solution>
