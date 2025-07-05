@@ -8,7 +8,7 @@
     <BuildType Name="STATIC_ONLY NO_EXPRESSIONS" />
   </Configurations>
   <Folder Name="/DNN Module/">
-    <Project Path="YAF.DNN.Module.csproj">
+    <Project Path="YAF.DNN.Module.csproj" Id="ebbeabd8-324f-4bdc-873e-dda78b6e669d">
       <BuildType Solution="MonoTouch|*" Project="Release" />
       <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Release" />
     </Project>
@@ -97,7 +97,7 @@
       <BuildType Solution="Package|*" Project="Release" />
       <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
     </Project>
-    <Project Path="../yafsrc/YetAnotherForum.NET/YAF-SqlServer.csproj">
+    <Project Path="../yafsrc/YetAnotherForum.NET/YAF-SqlServer.csproj" Id="555357e5-a150-4c4d-bc81-97f4ae19086a">
       <BuildType Solution="MonoTouch|*" Project="Debug" />
       <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
     </Project>
