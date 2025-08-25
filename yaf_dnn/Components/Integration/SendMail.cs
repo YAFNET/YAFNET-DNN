@@ -22,13 +22,14 @@
  * under the License.
  */
 
+using DotNetNuke.Abstractions.Application;
+
 namespace YAF.DotNetNuke.Components.Integration;
 
 using System.Collections.Generic;
 using System.Net.Mail;
 
 using global::DotNetNuke.Collections;
-using global::DotNetNuke.Entities.Host;
 using global::DotNetNuke.Services.Mail;
 
 using MailPriority = global::DotNetNuke.Services.Mail.MailPriority;
@@ -37,7 +38,7 @@ using MailPriority = global::DotNetNuke.Services.Mail.MailPriority;
 /// Functions to send email via SMTP
 /// </summary>
 [ExportService(ServiceLifetimeScope.Singleton)]
-public class SendMail : IMailService, IHaveServiceLocator
+public class SendMail : PortalModuleBase, IMailService, IHaveServiceLocator
 {
     /// <summary>
     ///     Gets the service locator.
@@ -78,6 +79,9 @@ public class SendMail : IMailService, IHaveServiceLocator
             fromAddress = mailMessage.From.Address;
         }
 
+        var mailSettings = this.DependencyProvider.GetRequiredService<IMailSettings>();
+
+
         Mail.SendMail(
             fromAddress,
             mailMessage.To.ToString(),
@@ -89,10 +93,10 @@ public class SendMail : IMailService, IHaveServiceLocator
             mailMessage.BodyEncoding,
             body,
             string.Empty,
-            Host.SMTPServer,
-            Host.SMTPAuthentication,
-            Host.SMTPUsername,
-            Host.SMTPPassword);
+            mailSettings.GetServer(BoardContext.Current.BoardSettings.DNNPortalId),
+            mailSettings.GetAuthentication(BoardContext.Current.BoardSettings.DNNPortalId),
+            mailSettings.GetUsername(BoardContext.Current.BoardSettings.DNNPortalId),
+            mailSettings.GetPassword(BoardContext.Current.BoardSettings.DNNPortalId));
     }
 
     /// <summary>

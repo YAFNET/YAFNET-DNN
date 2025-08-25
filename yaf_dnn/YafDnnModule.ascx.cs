@@ -24,16 +24,16 @@
 
 namespace YAF.DotNetNuke;
 
-using System.Collections.Generic;
-using System.Threading;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-
 using global::DotNetNuke.Common.Utilities;
 using global::DotNetNuke.Entities.Modules.Actions;
 using global::DotNetNuke.Framework;
 using global::DotNetNuke.Instrumentation;
 using global::DotNetNuke.Security;
+
+using System.Collections.Generic;
+using System.Threading;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
 using Forum = YAF.Web.Controls.Forum;
 

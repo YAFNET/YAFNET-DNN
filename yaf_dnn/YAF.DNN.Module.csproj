@@ -65,16 +65,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Web.ApplicationServices" />
-    <Reference Include="System.Web.DynamicData" />
-    <Reference Include="System.Web.Entity" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Web.Services" />
-    <Reference Include="System.EnterpriseServices" />
-    <Reference Include="System.Web.Mobile" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\yafsrc\GlobalAssemblyInfo.cs">
@@ -100,7 +92,9 @@
     <Compile Include="Components\Integration\Journal.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Components\Integration\SendMail.cs" />
+    <Compile Include="Components\Integration\SendMail.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Components\Rewriter\DotNetNukeUrlBuilder.cs" />
     <Compile Include="Components\Tasks\YafDnnImportScheduler.cs" />
     <Compile Include="Components\Utils\RoleSyncronizer.cs">
@@ -161,6 +155,7 @@
       <SubType>Designer</SubType>
     </None>
     <Content Include="Installation\03.14.006108.txt" />
+    <Content Include="Installation\03.29.006137.txt" />
     <Content Include="Installation\03.00.006100.sql" />
     <None Include="Installation\Uninstall.SqlDataProvider" />
     <None Include="Installation\YAF.DotNetNuke.Module.dnn">
@@ -260,16 +255,16 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac">
-      <Version>8.3.0</Version>
+      <Version>8.4.0</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.Abstractions">
-      <Version>10.0.1</Version>
+      <Version>10.1.0</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.Core">
-      <Version>10.0.1</Version>
+      <Version>10.1.0</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.WebApi">
-      <Version>10.0.1</Version>
+      <Version>10.1.0</Version>
     </PackageReference>
     <PackageReference Include="MSBuild.Extension.Pack">
       <Version>1.9.1</Version>
@@ -280,7 +275,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="SonarAnalyzer.CSharp">
-      <Version>10.12.0.118525</Version>
+      <Version>10.15.0.120848</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

@@ -58,7 +58,6 @@
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\sceditor\plugins\dragdrop.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\sceditor\plugins\undo.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\sceditor\mentions.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\sceditor\sceditor.min.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootbox.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-bundle.js" />
@@ -66,16 +65,14 @@
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap-notify.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\InstallWizard.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\InstallWizard.comb.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\fileUploader.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\forumExtensions.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\forumExtensions.min.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\forumExtensionsDnn.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\forumAdminExtensions.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\forumAdminExtensions.min.js" />
-      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\forumAdminExtensionsDnn.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\prism.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\dark-editable.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Gruntfile.js" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\webpack.config.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap.bundle.js" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\bootstrap\**\*.css" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\css\**\*.css" />
@@ -112,6 +109,7 @@
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\Themes\cyborg\bootstrap-forum.css" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\Themes\cosmo\bootstrap-forum.css" />
       <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\Themes\cerulean\bootstrap-forum.css" />
+      <DefaultExclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\Themes\brite\bootstrap-forum.css" />
     </ItemGroup>
 
     <ItemGroup>
@@ -155,19 +153,15 @@
                          Exclude="@(DefaultExclude);$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\obj\**\*.*" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.aspx"
                          Exclude="@(DefaultExclude)" />
-      <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.ttf"
-                         Exclude="@(DefaultExclude)" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.eot"
                          Exclude="@(DefaultExclude)" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.svg"
-                         Exclude="@(DefaultExclude)" />
-      <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.woff"
                          Exclude="@(DefaultExclude)" />
       <yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.woff2"
                          Exclude="@(DefaultExclude)" />
 
 		<yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.json" 
-		                   Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\themes\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\node_modules\**\*.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\package.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\package-lock.json" />
+		                   Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\themes\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\node_modules\**\*.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\package.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\package-lock.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\tsconfig.json" />
      </ItemGroup>
 
     <ItemGroup>
