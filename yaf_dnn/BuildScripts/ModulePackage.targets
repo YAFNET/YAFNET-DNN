@@ -236,6 +236,8 @@
     <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\ReadMe.html" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
     <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\yaf.svg" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
     <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\02.30.005901.txt" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\03.14.006108.txt" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\Installation\03.29.006137.txt" DestinationFolder="$(MSBuildProjectDirectory)\Package"/>
     <Copy SourceFiles="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Scripts\bootstrap.bundle.min.js" DestinationFolder="$(MSBuildProjectDirectory)\Package" />
 
     <!-- create the INSTALL YafDnnWhatsNewResources.ZIP file -->
