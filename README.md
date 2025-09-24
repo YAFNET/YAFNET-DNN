@@ -8,7 +8,7 @@
 [Full Feature List](https://github.com/YAFNET/YAFNET/wiki/YAF.NET-Features).
 
 ## DNN® (DotNetNuke) Module
-This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 09.13.03 or higher).
+This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 10.01.00 or higher).
 
 An Example Forum running the current Version can be found here
 
