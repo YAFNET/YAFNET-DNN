@@ -200,10 +200,7 @@ public class DotNetNukeUrlBuilder : BaseUrlBuilder
                             return Globals.UserProfileURL(userInfo.UserID);
                         }
 
-                        var userId = BoardContext.Current.Get<IAspNetUsersHelper>()
-                            .GetUserProviderKeyFromUserID(parser["u"].ToType<int>()).ToType<int>();
-
-                        return Globals.UserProfileURL(userId);
+                        return yafTab.FullUrl;
                     }
 
                 case ForumPages.Board:
