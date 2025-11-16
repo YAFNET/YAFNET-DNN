@@ -16,7 +16,7 @@
       <license src="License.html" />
       <releaseNotes src="ReadMe.html" />
       <dependencies>
-        <dependency type="CoreVersion">10.01.00</dependency>
+        <dependency type="CoreVersion">10.01.02</dependency>
       </dependencies>
       <components>
         <component type="Module">
@@ -540,7 +540,7 @@
       <license src="License.html" />
       <releaseNotes />
       <dependencies>
-        <dependency type="CoreVersion">10.01.00</dependency>
+        <dependency type="CoreVersion">10.01.02</dependency>
       </dependencies>
       <components>
         <component type="Module">
@@ -629,10 +629,9 @@
       </components>
     </package>
     <package name="bootstrap-bundle" type="JavaScript_Library" version="05.38.106138">
-      <friendlyName>Bootstrap v5.3.7 JavaScript Bundle (width Popper.js)</friendlyName>
+      <friendlyName>Bootstrap v5.3.8 JavaScript Bundle (width Popper.js)</friendlyName>
       <description>
-        <![CDATA[<p>Bootstrap is a sleek, intuitive, and powerful front-end framework for faster and easier web development, created and maintained by <a href="http://twitter.com/mdo">Mark Otto</a> and <a href="http://twitter.com/fat">Jacob Thornton</a>.</p>
-<p>To get started, check out <a href="http://getbootstrap.com">http://getbootstrap.com</a>!</p>]]>
+        <![CDATA[Sleek, intuitive, and powerful front-end framework for faster and easier web development.]]>
       </description>
       <owner>
         <name>Ingo Herbote</name>
@@ -646,7 +645,7 @@
           <javaScriptLibrary>
             <libraryName>bootstrap-bundle</libraryName>
             <fileName>bootstrap.bundle.min.js</fileName>
-            <CDNPath>https://maxcdn.bootstrapcdn.com/bootstrap/5.3.8/js/bootstrap.bundle.min.js</CDNPath>
+            <CDNPath>https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js</CDNPath>
             <objectName>bootstrap.Alert.VERSION</objectName>
           </javaScriptLibrary>
         </component>
