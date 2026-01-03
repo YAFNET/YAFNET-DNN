@@ -73,15 +73,23 @@ public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
 
             this.HtmlHeader.Text = this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
                                        ? this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>()
-                                       : """<div class="card" style="width: 20rem;"><ul class="list-group list-group-flush">""";
+                                       : """<div class="container my-3 p-3">""";
 
             this.HtmlItem.Text = this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>().IsSet()
                                      ? this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>()
-                                     : "<li class=\"list-group-item\"><strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />\"[LASTMESSAGE:150]\"<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
+                                     : """
+                                       <div class="d-flex text-secondary pt-3">
+                                       [LASTPOSTICON] 
+                                       	<p class="pb-3 mb-0 small lh-sm border-bottom"> 
+                                       		<span class="d-block text-secondary"><strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])</strong>
+                                       		[LASTMESSAGE:150]</span>
+                                               [BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]
+                                       </p> </div>
+                                       """;
 
             this.HtmlFooter.Text = this.TabModuleSettings["YafWhatsNewFooter"].ToType<string>().IsSet()
                                        ? this.TabModuleSettings["YafWhatsNewFooter"].ToType<string>()
-                                       : "</ul></div>";
+                                       : "</div>";
         }
         catch (Exception exc)
         {

@@ -58,10 +58,23 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     private CDefault basePage;
 
     /// <summary>
+    /// The java script
+    /// </summary>
+    private readonly IJavaScriptLibraryHelper javaScript;
+
+    /// <summary>
     /// Gets the Service Locator.
     /// </summary>
     [Inject]
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="YafDnnWhatsNew"/> class.
+    /// </summary>
+    public YafDnnModule(IJavaScriptLibraryHelper javaScript)
+    {
+        this.javaScript = javaScript ?? this.DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+    }
 
     /// <summary>
     ///  Gets Add Menu Entries to Module Container
@@ -175,9 +188,7 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     /// </param>
     protected override void OnPreRender(EventArgs e)
     {
-        this.Get<IJavaScriptLibraryHelper>().RequestRegistration("bootstrap-bundle");
-
-        JavaScript.Register(null, null, null, null, null, this.Page);
+        this.javaScript.RequestRegistration("bootstrap-bundle");
 
         base.OnPreRender(e);
     }

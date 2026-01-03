@@ -210,7 +210,6 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\System.Numerics.Vectors.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\System.Runtime.CompilerServices.Unsafe.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\System.Threading.Tasks.Extensions.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\System.ValueTuple.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.Configuration.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.Web.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.Core.dll" />

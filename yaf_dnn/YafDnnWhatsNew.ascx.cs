@@ -22,12 +22,15 @@
  * under the License.
  */
 
+using DotNetNuke.Services.ClientDependency;
+
 namespace YAF.DotNetNuke;
+
+using global::DotNetNuke.Abstractions.ClientResources;
+using global::DotNetNuke.Services.Url.FriendlyUrl;
 
 using System.Text.RegularExpressions;
 using System.Web.UI.WebControls;
-
-using global::DotNetNuke.Services.Url.FriendlyUrl;
 
 using YAF.Web.Controls;
 
@@ -88,6 +91,16 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
 
     /// <summary>
+    /// The java script
+    /// </summary>
+    private readonly IJavaScriptLibraryHelper javaScript;
+
+    /// <summary>
+    /// The client resource controller
+    /// </summary>
+    private readonly IClientResourceController clientResourceController;
+
+    /// <summary>
     /// The On PreRender event.
     /// </summary>
     /// <param name="e">
@@ -95,9 +108,18 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
     /// </param>
     protected override void OnPreRender(EventArgs e)
     {
-        this.Get<IJavaScriptLibraryHelper>().RequestRegistration("bootstrap-bundle");
+        this.clientResourceController.RegisterStylesheet(this.Get<ITheme>().BuildThemePath("bootstrap-forum.min.css"));
 
         base.OnPreRender(e);
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="YafDnnWhatsNew"/> class.
+    /// </summary>
+    public YafDnnWhatsNew(IJavaScriptLibraryHelper javaScript)
+    {
+        this.javaScript = javaScript ?? this.DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+        this.clientResourceController = this.DependencyProvider.GetRequiredService<IClientResourceController>();
     }
 
     /// <summary>
@@ -114,25 +136,25 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
         switch (e.Item.ItemType)
         {
             case ListItemType.Header:
-                {
-                    var objLiteral = new Literal { Text = this.GetHeader() };
-                    e.Item.Controls.Add(objLiteral);
-                }
+            {
+                var objLiteral = new Literal { Text = this.GetHeader() };
+                e.Item.Controls.Add(objLiteral);
+            }
 
                 break;
             case ListItemType.AlternatingItem:
             case ListItemType.Item:
-                {
-                    var objLiteral = new Literal { Text = this.ProcessItem(e) };
-                    e.Item.Controls.Add(objLiteral);
-                }
+            {
+                var objLiteral = new Literal { Text = this.ProcessItem(e) };
+                e.Item.Controls.Add(objLiteral);
+            }
 
                 break;
             case ListItemType.Footer:
-                {
-                    var objLiteral = new Literal { Text = this.GetFooter() };
-                    e.Item.Controls.Add(objLiteral);
-                }
+            {
+                var objLiteral = new Literal { Text = this.GetFooter() };
+                e.Item.Controls.Add(objLiteral);
+            }
 
                 break;
         }
@@ -197,14 +219,15 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
         {
             var yafUserId = this.GetYafUserId();
 
-            BoardContext.Current.GetRepository<ActiveAccess>().InsertPageAccess(this.boardId, yafUserId, HttpContext.Current.User.Identity.IsAuthenticated);
+            BoardContext.Current.GetRepository<ActiveAccess>().InsertPageAccess(this.boardId, yafUserId,
+                HttpContext.Current.User.Identity.IsAuthenticated);
 
             var sortOrderTopics = this.sortOrder switch
-                {
-                    "views" => 1,
-                    "replies" => 2,
-                    _ => 0
-                };
+            {
+                "views" => 1,
+                "replies" => 2,
+                _ => 0
+            };
 
             var activeTopics = BoardContext.Current.GetRepository<Topic>().Latest(
                 this.boardId,
@@ -351,24 +374,32 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
             else
             {
                 this.sortOrder = moduleSettings["YafSortOrder"].ToType<string>().IsSet()
-                                     ? moduleSettings["YafSortOrder"].ToType<string>()
-                                     : "lastpost";
+                    ? moduleSettings["YafSortOrder"].ToType<string>()
+                    : "lastpost";
 
                 this.maxPosts = moduleSettings["YafMaxPosts"].ToType<string>().IsSet()
-                                    ? moduleSettings["YafMaxPosts"].ToType<int>()
-                                    : 10;
+                    ? moduleSettings["YafMaxPosts"].ToType<int>()
+                    : 10;
 
                 this.headerTemplate = moduleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
-                                          ? moduleSettings["YafWhatsNewHeader"].ToType<string>()
-                                          : """<div class="card" style="width: 20rem;"><ul class="list-group list-group-flush">""";
+                    ? moduleSettings["YafWhatsNewHeader"].ToType<string>()
+                    : """<div class="container my-3 p-3">""";
 
                 this.itemTemplate = moduleSettings["YafWhatsNewItemTemplate"].ToType<string>().IsSet()
-                                        ? moduleSettings["YafWhatsNewItemTemplate"].ToType<string>()
-                                        : "<li class=\"list-group-item\">[LASTPOSTICON]&nbsp;<strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />\"[LASTMESSAGE:150]\"<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
+                    ? moduleSettings["YafWhatsNewItemTemplate"].ToType<string>()
+                    : """
+                      <div class="d-flex text-secondary pt-3"> 
+                      	[LASTPOSTICON]
+                      	<p class="pb-3 mb-0 small lh-sm border-bottom"> 
+                      		<span class="d-block text-secondary"><strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])</strong>
+                      		[LASTMESSAGE:150]</span>
+                              [BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]
+                      </p> </div>
+                      """;
 
                 this.footerTemplate = moduleSettings["YafWhatsNewFooter"].ToType<string>().IsSet()
-                                          ? moduleSettings["YafWhatsNewFooter"].ToType<string>()
-                                          : "</ul></div>";
+                    ? moduleSettings["YafWhatsNewFooter"].ToType<string>()
+                    : "</div>";
             }
         }
         catch (Exception exc)
@@ -407,30 +438,31 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
             UrlRewriteHelper.CleanStringForURL(
                 BoardContext.Current.Get<IBadWordReplace>().Replace(dataItem.Topic)));
 
-        currentItem = currentItem.Replace("[LASTPOSTICON]", string.Empty);
+        currentItem = currentItem.Replace("[LASTPOSTICON]",
+            """<svg class="topic-icon me-2" height="32" width="32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M51.9 384.9C19.3 344.6 0 294.4 0 240 0 107.5 114.6 0 256 0S512 107.5 512 240 397.4 480 256 480c-36.5 0-71.2-7.2-102.6-20L37 509.9c-3.7 1.6-7.5 2.1-11.5 2.1-14.1 0-25.5-11.4-25.5-25.5 0-4.3 1.1-8.5 3.1-12.2l48.8-89.4zm37.3-30.2c12.2 15.1 14.1 36.1 4.8 53.2l-18 33.1 58.5-25.1c11.8-5.1 25.2-5.2 37.1-.3 25.7 10.5 54.2 16.4 84.3 16.4 117.8 0 208-88.8 208-192S373.8 48 256 48 48 136.8 48 240c0 42.8 15.1 82.4 41.2 114.7z"/></svg>""");
 
         // Render TOPICLINK
         var textMessageLink = new HyperLink
-                                  {
-                                      Text =
-                                          BoardContext.Current.Get<IBadWordReplace>()
-                                              .Replace(dataItem.Topic),
-                                      NavigateUrl = messageUrl
-                                  };
+        {
+            Text =
+                BoardContext.Current.Get<IBadWordReplace>()
+                    .Replace(dataItem.Topic),
+            NavigateUrl = messageUrl
+        };
 
         currentItem = currentItem.Replace("[TOPICLINK]", textMessageLink.RenderToString());
 
         // Render FORUMLINK
         var forumLink = new HyperLink
-                            {
-                                Text = dataItem.Forum,
-                                NavigateUrl = FriendlyUrlProvider.Instance().FriendlyUrl(
-                                    this.yafTabInfo,
-                                    $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=topics&f={dataItem.ForumID}",
-                                    UrlRewriteHelper.CleanStringForURL(
-                                        BoardContext.Current.Get<IBadWordReplace>()
-                                            .Replace(dataItem.Forum)))
-                            };
+        {
+            Text = dataItem.Forum,
+            NavigateUrl = FriendlyUrlProvider.Instance().FriendlyUrl(
+                this.yafTabInfo,
+                $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=topics&f={dataItem.ForumID}",
+                UrlRewriteHelper.CleanStringForURL(
+                    BoardContext.Current.Get<IBadWordReplace>()
+                        .Replace(dataItem.Forum)))
+        };
 
         currentItem = currentItem.Replace("[FORUMLINK]", forumLink.RenderToString());
 
@@ -444,20 +476,20 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
         if (dataItem.LastUserID.HasValue)
         {
             var userName = BoardContext.Current.Get<BoardSettings>().EnableDisplayName
-                               ? dataItem.LastUserDisplayName
-                               : dataItem.LastUserName;
+                ? dataItem.LastUserDisplayName
+                : dataItem.LastUserName;
 
             userName = new UnicodeEncoder().XSSEncode(userName);
 
             var lastUserLink = new HyperLink
-                                   {
-                                       Text = userName,
-                                       ToolTip = userName,
-                                       NavigateUrl = FriendlyUrlProvider.Instance().FriendlyUrl(
-                                           this.yafTabInfo,
-                                           $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=profile&u={dataItem.LastUserID}",
-                                           userName)
-                                   };
+            {
+                Text = userName,
+                ToolTip = userName,
+                NavigateUrl = FriendlyUrlProvider.Instance().FriendlyUrl(
+                    this.yafTabInfo,
+                    $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=profile&u={dataItem.LastUserID}",
+                    userName)
+            };
 
             currentItem = currentItem.Replace("[LASTUSERLINK]", lastUserLink.RenderToString());
         }
