@@ -1,7 +1,7 @@
 /* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2024 Ingo Herbote
+ * Copyright (C) 2014-2026 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -77,7 +77,7 @@ public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
 
             this.HtmlItem.Text = this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>().IsSet()
                                      ? this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>()
-                                     : "<li class=\"list-group-item\">[LASTPOSTICON]&nbsp;<strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />\"[LASTMESSAGE:150]\"<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
+                                     : "<li class=\"list-group-item\"><strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])<br />\"[LASTMESSAGE:150]\"<br />[BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]</li>";
 
             this.HtmlFooter.Text = this.TabModuleSettings["YafWhatsNewFooter"].ToType<string>().IsSet()
                                        ? this.TabModuleSettings["YafWhatsNewFooter"].ToType<string>()
@@ -115,30 +115,11 @@ public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
             }
 
             objModules.UpdateTabModuleSetting(this.TabModuleId, "YafSortOrder", this.SortOrder.SelectedValue);
-
-            if (ValidationHelper.IsNumeric(this.txtMaxResult.Text) || this.txtMaxResult.Text.IsSet())
-            {
-                objModules.UpdateTabModuleSetting(this.TabModuleId, "YafMaxPosts", this.txtMaxResult.Text);
-            }
-            else
-            {
-                objModules.UpdateTabModuleSetting(this.TabModuleId, "YafMaxPosts", "10");
-            }
-
-            if (this.HtmlHeader.Text.IsSet())
-            {
-                objModules.UpdateTabModuleSetting(this.TabModuleId, "YafWhatsNewHeader", this.HtmlHeader.Text);
-            }
-
-            if (this.HtmlItem.Text.IsSet())
-            {
-                objModules.UpdateTabModuleSetting(this.TabModuleId, "YafWhatsNewItemTemplate", this.HtmlItem.Text);
-            }
-
-            if (this.HtmlFooter.Text.IsSet())
-            {
-                objModules.UpdateTabModuleSetting(this.TabModuleId, "YafWhatsNewFooter", this.HtmlFooter.Text);
-            }
+            objModules.UpdateTabModuleSetting(this.TabModuleId, "YafMaxPosts",
+                ValidationHelper.IsNumeric(this.txtMaxResult.Text) ? this.txtMaxResult.Text : "10");
+            objModules.UpdateTabModuleSetting(this.TabModuleId, "YafWhatsNewHeader", this.HtmlHeader.Text);
+            objModules.UpdateTabModuleSetting(this.TabModuleId, "YafWhatsNewItemTemplate", this.HtmlItem.Text);
+            objModules.UpdateTabModuleSetting(this.TabModuleId, "YafWhatsNewFooter", this.HtmlFooter.Text);
         }
         catch (Exception exc)
         {

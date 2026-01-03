@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2024 Ingo Herbote
+ * Copyright (C) 2014-2026 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -175,8 +175,9 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     /// </param>
     protected override void OnPreRender(EventArgs e)
     {
-        JavaScript.RequestRegistration("bootstrap-bundle");
-        JavaScript.Register(this.Page);
+        this.Get<IJavaScriptLibraryHelper>().RequestRegistration("bootstrap-bundle");
+
+        JavaScript.Register(null, null, null, null, null, this.Page);
 
         base.OnPreRender(e);
     }

@@ -184,9 +184,6 @@
   <data name="OtherSettings.Text" xml:space="preserve">
     <value>Other Settings...</value>
   </data>
-  <data name="OverrideTheme.Text" xml:space="preserve">
-    <value>Override Theme?</value>
-  </data>
   <data name="RemoveTabName0.Text" xml:space="preserve">
     <value>Don't Remove</value>
   </data>

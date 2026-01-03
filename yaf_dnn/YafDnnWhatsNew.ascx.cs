@@ -1,7 +1,7 @@
 /* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2024 Ingo Herbote
+ * Copyright (C) 2014-2026 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -86,6 +86,19 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
     /// </summary>
     [Inject]
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
+
+    /// <summary>
+    /// The On PreRender event.
+    /// </summary>
+    /// <param name="e">
+    /// the Event Arguments
+    /// </param>
+    protected override void OnPreRender(EventArgs e)
+    {
+        this.Get<IJavaScriptLibraryHelper>().RequestRegistration("bootstrap-bundle");
+
+        base.OnPreRender(e);
+    }
 
     /// <summary>
     /// The latest posts_ item data bound.

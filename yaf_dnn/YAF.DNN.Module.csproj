@@ -161,6 +161,7 @@
     <None Include="Installation\YAF.DotNetNuke.Module.dnn">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="Installation\yaf.svg" />
     <Content Include="web.config" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
@@ -255,16 +256,16 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac">
-      <Version>8.4.0</Version>
+      <Version>9.0.0</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.Abstractions">
-      <Version>10.1.2</Version>
+      <Version>10.2.1</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.Core">
-      <Version>10.1.2</Version>
+      <Version>10.2.1</Version>
     </PackageReference>
     <PackageReference Include="DotNetNuke.WebApi">
-      <Version>10.1.2</Version>
+      <Version>10.2.1</Version>
     </PackageReference>
     <PackageReference Include="MSBuild.Extension.Pack">
       <Version>1.9.1</Version>
@@ -275,7 +276,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="SonarAnalyzer.CSharp">
-      <Version>10.15.0.120848</Version>
+      <Version>10.17.0.131074</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

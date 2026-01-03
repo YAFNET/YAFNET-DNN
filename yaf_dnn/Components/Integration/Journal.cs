@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2024 Ingo Herbote
+ * Copyright (C) 2014-2026 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -362,7 +362,7 @@ public class Journal : PortalModuleBase, IActivityStream, IHaveServiceLocator
     {
         var forumAccessList = BoardContext.Current.GetRepository<ForumAccess>().GetReadAccessList(forumId);
 
-        var dnnRoles = new RoleController().GetRoles(portalId).ToList();
+        var dnnRoles = RoleController.Instance.GetRoles(portalId).ToList();
 
         var securitySet = new StringBuilder();
 

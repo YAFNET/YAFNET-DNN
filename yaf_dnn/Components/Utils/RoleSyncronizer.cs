@@ -1,7 +1,7 @@
 ﻿/* Yet Another Forum.NET
  * Copyright (C) 2003-2005 Bjørnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
- * Copyright (C) 2014-2024 Ingo Herbote
+ * Copyright (C) 2014-2026 Ingo Herbote
  * https://www.yetanotherforum.net/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -103,12 +103,10 @@ public class RoleSyncronizer : PortalModuleBase
             }
         }
 
-        var roleController = new RoleController();
-
         // Remove user from dnn role if no longer included
         foreach (
             var role in
-            roleController.GetRoles(portalId)
+            RoleController.Instance.GetRoles(portalId)
                 .Where(
                     role =>
                         !dnnUserInfo.Roles.Exists(existRole => existRole.Equals(role.RoleName))
