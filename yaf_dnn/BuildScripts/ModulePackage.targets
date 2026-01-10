@@ -18,7 +18,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-      <YAFVersion>v$(YAFVersion.Remove($(YAFVersion.LastIndexOf('.')),2))$([System.Text.RegularExpressions.Regex]::Replace($(Version), '([0-9])([0-9]).([0-9])([0-9]).(00)([0-9]+)', '-$6'))</YAFVersion>
+      <YAFVersion>v$(YAFVersion.Remove($(YAFVersion.LastIndexOf('.')),2))$([System.Text.RegularExpressions.Regex]::Replace($(Version), '([0-9])([0-9]).([0-9])([0-9])([0-9]).(00)([0-9]+)', '-$7'))</YAFVersion>
     </PropertyGroup>
 	
     <RemoveDir Directories ="$(MSBuildProjectDirectory)\deploy\" />
