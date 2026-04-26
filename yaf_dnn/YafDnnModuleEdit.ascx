@@ -23,7 +23,7 @@
     </div>
     <h2 id="SelectBoard" class="dnnFormSectionHead">
         <a href="#">
-            <%= this.LocalizeString("CreateOrSelect")%>
+            <%= this.LocalizeText("CreateOrSelect")%>
         </a>
     </h2>
     <fieldset class="dnnClear">
@@ -45,7 +45,7 @@
                 datavaluefield="ModuleID" datatextfield="ModuleTitle">
             </asp:DropDownList>&nbsp;
             <asp:LinkButton runat="server" id="ImportForums" CssClass="dnnPrimaryAction" OnClick="ImportForums_OnClick" />
-        <div class="dnnFormMessage dnnFormInfo"><%= this.LocalizeString("NoteAF")%></div>
+        <div class="dnnFormMessage dnnFormInfo"><%= this.LocalizeText("NoteAF")%></div>
         </div>
         </asp:PlaceHolder>
     </fieldset>

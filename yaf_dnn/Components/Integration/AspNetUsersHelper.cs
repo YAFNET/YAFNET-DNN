@@ -118,7 +118,7 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
         var allUsers = this.Get<IAspNetUsersHelper>().GetAllUsers();
 
         // iterate through each one...
-        allUsers.Where(user => !user.IsApproved).ForEach(
+        allUsers.Where(user => !user.IsApproved).AsEnumerable().ForEach(
             user =>
                 {
                     // approve this user...
@@ -193,7 +193,7 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
         var allUsers = this.Get<IAspNetUsersHelper>().GetAllUsers();
 
         // iterate through each one...
-        allUsers.Where(user => !user.IsApproved && user.CreateDate < createdCutoff).ForEach(
+        allUsers.Where(user => !user.IsApproved && user.CreateDate < createdCutoff).AsEnumerable().ForEach(
             user =>
                 {
                     var yafUser = this.Get<IAspNetUsersHelper>().GetUserFromProviderUserKey(user.Id);
@@ -226,7 +226,7 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
         var allUsers = this.Get<IAspNetUsersHelper>().GetAllUsers();
 
         // iterate through each one...
-        allUsers.Where(user => !user.IsApproved && user.LastActivityDate < createdCutoff).ForEach(
+        allUsers.Where(user => !user.IsApproved && user.LastActivityDate < createdCutoff).AsEnumerable().ForEach(
             user =>
                 {
                     // Set user to un-approve...

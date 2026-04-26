@@ -91,11 +91,6 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
     public IServiceLocator ServiceLocator => BoardContext.Current.ServiceLocator;
 
     /// <summary>
-    /// The java script
-    /// </summary>
-    private readonly IJavaScriptLibraryHelper javaScript;
-
-    /// <summary>
     /// The client resource controller
     /// </summary>
     private readonly IClientResourceController clientResourceController;
@@ -118,7 +113,6 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
     /// </summary>
     public YafDnnWhatsNew(IJavaScriptLibraryHelper javaScript)
     {
-        this.javaScript = javaScript ?? this.DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
         this.clientResourceController = this.DependencyProvider.GetRequiredService<IClientResourceController>();
     }
 
