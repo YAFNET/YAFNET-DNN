@@ -8,7 +8,7 @@
 [Full Feature List](https://github.com/YAFNET/YAFNET/wiki/YAF.NET-Features).
 
 ## DNN® (DotNetNuke) Module
-This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 10.02.01 or higher).
+This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 10.03.01 or higher).
 
 An Example Forum running the current Version can be found here
 
@@ -16,14 +16,14 @@ http://watchersnet.de/Service/Forum.aspx
 
 ### Screen Shots
 
-![mainscreen](https://yetanotherforum.net/images/main.png)
+![mainscreen](https://raw.githubusercontent.com/YAFNET/YAFNET/master/yafsrc/YetAnotherForum.NET/wwwroot/assets/main.webp)
 
-![forumsscreen](https://yetanotherforum.net/images/forum.png)
+![forumsscreen](https://raw.githubusercontent.com/YAFNET/YAFNET/master/yafsrc/YetAnotherForum.NET/wwwroot/assets/forum.webp)
 
-![topicsscreen](https://yetanotherforum.net/images/topic.png)
+![topicsscreen](https://raw.githubusercontent.com/YAFNET/YAFNET/master/yafsrc/YetAnotherForum.NET/wwwroot/assets/topic.webp)
 
 Admin Control Panel
-![adminpanel](https://yetanotherforum.net/images/admin.png)
+![adminpanel](https://raw.githubusercontent.com/YAFNET/YAFNET/master/yafsrc/YetAnotherForum.NET/wwwroot/assets/admin.webp)
 
 There is also a Second Child Module the *YAF.NET Forums What's New* Module which shows The Latest Posts in a List
 ![whatsnew](http://www.watchersnet.de/Portals/0/screenshots/dnn/ScreenshotYafLatestPosts.jpg)
