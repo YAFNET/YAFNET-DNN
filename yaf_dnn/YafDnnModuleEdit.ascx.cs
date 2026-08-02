@@ -106,7 +106,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
 
         boardSettings.DNNPageTab = this.TabId;
         boardSettings.DNNPortalId = this.PortalId;
-        boardSettings.BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/";
+        boardSettings.BaseUrlMask = $"{(HttpContext.Current.Request.IsSecureConnection ? "https" : "http")}://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/";
 
         // save the settings to the database
         this.Get<BoardSettingsService>().SaveRegistry(boardSettings);
@@ -140,7 +140,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
 
         boardSettings.DNNPageTab = this.TabId;
         boardSettings.DNNPortalId = this.PortalId;
-        boardSettings.BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/";
+        boardSettings.BaseUrlMask = $"{(HttpContext.Current.Request.IsSecureConnection ? "https" : "http")}://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/";
 
         // save the settings to the database
         this.Get<BoardSettingsService>().SaveRegistry(boardSettings);
@@ -299,7 +299,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
 
         boardSettings.DNNPageTab = this.TabId;
         boardSettings.DNNPortalId = this.PortalId;
-        boardSettings.BaseUrlMask = $"http://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/";
+        boardSettings.BaseUrlMask = $"{(HttpContext.Current.Request.IsSecureConnection ? "https" : "http")}://{HttpContext.Current.Request.ServerVariables["SERVER_NAME"]}/";
 
         // save the settings to the database
         this.Get<BoardSettingsService>().SaveRegistry(boardSettings);
