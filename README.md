@@ -35,9 +35,11 @@ This project is dependent upon the parent solution, YAFNET.  This requires that 
 1. Create a local directory for your project o live, such as C:\dev\YAFDev\ (just an example path).
 2. Fork this YAFNET-DNN project into your account and then clone it into the local folder you just created. There should now be a C:\dev\YAFDev\yaf_dnn\ folder, as well as a README and other Git files.
 3. (Optional) Attach an upstream to this YAFNET-DNN project in Git.
-4. Download a copy of the netfx branch of [the YAFNET project](https://github.com/YAFNET/YAFNET), and extract to the main folder. The resulting path should be C:\dev\YAFDev\yafsrc\.
+4. The `netfx` branch of [the YAFNET project](https://github.com/YAFNET/YAFNET) is wired in as the `YAFNET` git submodule. From a Windows PowerShell prompt in the repo root, run `.\init-yafsrc.ps1`. This initializes the submodule and creates an NTFS junction `yafsrc\` -> `YAFNET\yafsrc\`, so the resulting path is still C:\dev\YAFDev\yafsrc\ as before.
 5. Open and then build the YAFNET solution.
 6. Open and then build the YAFNET-DNN solution.
+
+To later update to a newer commit of the YAFNET netfx branch, run `git submodule update --remote YAFNET` (the `yafsrc` junction does not need to be recreated).
 
 Congratulations! You're now ready to begin development.
 

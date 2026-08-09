@@ -1,0 +1,4 @@
+[submodule "YAFNET"]
+	path = YAFNET
+	url = https://github.com/YAFNET/YAFNET.git
+	branch = netfx
