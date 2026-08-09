@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Create yafsrc junction
+        shell: pwsh
+        run: ./init-yafsrc.ps1
+
+      - name: Determine release version
+        id: version
+        shell: pwsh
+        run: ./.github/scripts/Get-ReleaseInfo.ps1
+
+      - name: Check for existing release
+        id: check
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          gh release view $env:TAG 2>$null
+          $exists = if ($LASTEXITCODE -eq 0) { 'true' } else { 'false' }
+          "exists=$exists" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Setup MSBuild
+        if: steps.check.outputs.exists != 'true'
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore
+        if: steps.check.outputs.exists != 'true'
+        working-directory: yaf_dnn
+        run: dotnet restore YAF.DNN.Module.slnx
+
+      - name: Build DNN package
+        if: steps.check.outputs.exists != 'true'
+        working-directory: yaf_dnn
+        run: msbuild YAF.DNN.Module.slnx /p:Configuration=Release /t:Build "/p:WarningLevel=0;CreateDnnPackages=true"
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.exists != 'true'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+          TITLE: ${{ steps.version.outputs.title }}
+          NOTES_FILE: ${{ steps.version.outputs.notesFile }}
+        run: |
+          $assets = Get-ChildItem -Path "yaf_dnn/deploy/*.zip" | ForEach-Object { $_.FullName }
+          if (-not $assets) {
+            throw "No release assets found in yaf_dnn/deploy/"
+          }
+          gh release create $env:TAG @assets --title $env:TITLE --notes-file $env:NOTES_FILE --target $env:GITHUB_SHA
