@@ -38,6 +38,7 @@ jobs:
           gh release view $env:TAG *>$null
           $exists = if ($LASTEXITCODE -eq 0) { 'true' } else { 'false' }
           "exists=$exists" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          exit 0
 
       - name: Setup MSBuild
         if: steps.check.outputs.exists != 'true'
