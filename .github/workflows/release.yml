@@ -44,6 +44,11 @@ jobs:
         if: steps.check.outputs.exists != 'true'
         uses: microsoft/setup-msbuild@v3
 
+      - name: Build YAFNET
+        if: steps.check.outputs.exists != 'true'
+        working-directory: yafsrc
+        run: dotnet build YAF.NET-SqlServer.slnx /p:Configuration=Release /p:Platform="Any CPU" /p:WarningLevel=0
+
       - name: Restore
         if: steps.check.outputs.exists != 'true'
         working-directory: yaf_dnn
