@@ -47,12 +47,7 @@ jobs:
       - name: Build YAFNET
         if: steps.check.outputs.exists != 'true'
         working-directory: yafsrc
-        # Build the web project directly rather than YAF.NET-SqlServer.slnx: the
-        # solution also lists ../tests/YAF.Tests.CoreTests, a path that reaches
-        # outside the yafsrc junction and resolves lexically against the wrong
-        # (nonexistent) directory. YAF-SqlServer.csproj's own ProjectReferences
-        # all stay within yafsrc, so building it directly avoids that.
-        run: dotnet build YetAnotherForum.NET/YAF-SqlServer.csproj /p:Configuration=Release /p:Platform="Any CPU" /p:WarningLevel=0
+        run: dotnet build YetAnotherForum.NET/YAF-SqlServer.csproj /p:Configuration=Release /p:WarningLevel=0
 
       - name: Restore
         if: steps.check.outputs.exists != 'true'
