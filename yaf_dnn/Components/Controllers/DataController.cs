@@ -1,5 +1,5 @@
 /* Yet Another Forum.NET
- * Copyright (C) 2003-2005 Bjørnar Henden
+ * Copyright (C) 2003-2005 Bjï¿½rnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2026 Ingo Herbote
  * https://www.yetanotherforum.net/
@@ -29,7 +29,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Module Data Controller to Handle SQL Stuff
 /// </summary>
-public class DataController
+public static class DataController
 {
     /// <summary>
     /// Gets the YAF board roles.

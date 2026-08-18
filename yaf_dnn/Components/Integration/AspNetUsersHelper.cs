@@ -964,7 +964,7 @@ public class AspNetUsersHelper : IAspNetUsersHelper, IHaveServiceLocator
             .Execute(db => db.Connection.SelectMulti<User, Rank, VAccess>(expression)).FirstOrDefault();
 
         var aspUser = ValidationHelper.IsNumeric(user.Item1.ProviderUserKey)
-                          ? UserController.GetUserById(
+                          ? UserController.Instance.GetUserById(
                               PortalController.Instance.GetCurrentSettings().PortalId,
                               user.Item1.ProviderUserKey.ToType<int>())
                           : UserController.GetUserByEmail(

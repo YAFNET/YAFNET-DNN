@@ -1,5 +1,5 @@
 /* Yet Another Forum.NET
- * Copyright (C) 2003-2005 Bjørnar Henden
+ * Copyright (C) 2003-2005 Bjï¿½rnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2026 Ingo Herbote
  * https://www.yetanotherforum.net/
@@ -26,7 +26,10 @@ using DotNetNuke.Services.ClientDependency;
 
 namespace YAF.DotNetNuke;
 
+using global::DotNetNuke.Abstractions.Application;
 using global::DotNetNuke.Abstractions.ClientResources;
+using global::DotNetNuke.Abstractions.Logging;
+using global::DotNetNuke.Abstractions.Security.Permissions;
 using global::DotNetNuke.Services.Url.FriendlyUrl;
 
 using System.Text.RegularExpressions;
@@ -96,6 +99,26 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
     private readonly IClientResourceController clientResourceController;
 
     /// <summary>
+    /// The event logger.
+    /// </summary>
+    private readonly IEventLogger eventLogger;
+
+    /// <summary>
+    /// The permission definition service.
+    /// </summary>
+    private readonly IPermissionDefinitionService permissionDefinitionService;
+
+    /// <summary>
+    /// The host settings.
+    /// </summary>
+    private readonly IHostSettings hostSettings;
+
+    /// <summary>
+    /// The application status information.
+    /// </summary>
+    private readonly IApplicationStatusInfo applicationStatusInfo;
+
+    /// <summary>
     /// The On PreRender event.
     /// </summary>
     /// <param name="e">
@@ -114,6 +137,33 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
     public YafDnnWhatsNew(IJavaScriptLibraryHelper javaScript)
     {
         this.clientResourceController = this.DependencyProvider.GetRequiredService<IClientResourceController>();
+        this.eventLogger = this.DependencyProvider.GetRequiredService<IEventLogger>();
+        this.permissionDefinitionService = this.DependencyProvider.GetRequiredService<IPermissionDefinitionService>();
+        this.hostSettings = this.DependencyProvider.GetRequiredService<IHostSettings>();
+        this.applicationStatusInfo = this.DependencyProvider.GetRequiredService<IApplicationStatusInfo>();
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="ModuleController"/> instance using the non-obsolete constructor.
+    /// </summary>
+    /// <returns>Returns a new <see cref="ModuleController"/>.</returns>
+    private ModuleController NewModuleController()
+    {
+        return new ModuleController(this.eventLogger, this.permissionDefinitionService, this.hostSettings);
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="TabController"/> instance using the non-obsolete constructor.
+    /// </summary>
+    /// <returns>Returns a new <see cref="TabController"/>.</returns>
+    private TabController NewTabController()
+    {
+        return new TabController(
+            this.eventLogger,
+            DataProvider.Instance(),
+            this.permissionDefinitionService,
+            this.hostSettings,
+            this.applicationStatusInfo);
     }
 
     /// <summary>
@@ -184,9 +234,9 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
     /// <returns>
     /// The Board Id From the Settings
     /// </returns>
-    private static int GetYafBoardId(int moduleId, int tabId)
+    private int GetYafBoardId(int moduleId, int tabId)
     {
-        var moduleInfo = new ModuleController().GetModule(moduleId, tabId);
+        var moduleInfo = this.NewModuleController().GetModule(moduleId, tabId);
 
         var moduleSettings = moduleInfo.ModuleSettings;
 
@@ -309,7 +359,8 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
             {
                 this.yafTabId = moduleSettings["YafPage"].ToType<int>();
 
-                this.yafTabInfo = new TabController().GetTab(this.yafTabId, this.PortalSettings.PortalId, true);
+                this.yafTabInfo = this.NewTabController()
+                    .GetTab(this.yafTabId, this.PortalSettings.PortalId, true);
             }
             else
             {
@@ -348,7 +399,7 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
             }
 
             // Get and Set Board Id
-            this.boardId = GetYafBoardId(this.yafModuleId, this.yafTabId);
+            this.boardId = this.GetYafBoardId(this.yafModuleId, this.yafTabId);
 
             if (this.boardId.Equals(-1))
             {

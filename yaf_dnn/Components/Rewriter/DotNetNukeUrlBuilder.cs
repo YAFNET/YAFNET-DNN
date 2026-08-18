@@ -87,13 +87,13 @@ public class DotNetNukeUrlBuilder : BaseUrlBuilder
     {
         var yafBoardSettings = boardSettings.ToType<BoardSettings>();
 
-        var yafTab = new TabController().GetTab(yafBoardSettings.DNNPageTab, yafBoardSettings.DNNPortalId, true);
+        var yafTab = TabController.Instance.GetTab(yafBoardSettings.DNNPageTab, yafBoardSettings.DNNPortalId, true);
 
         var portalSettings = BoardContext.Current.Get<IPortalController>().GetCurrentSettings();
 
         if (portalSettings.ContentLocalizationEnabled)
         {
-            yafTab = new TabController().GetTabByCulture(
+            yafTab = TabController.Instance.GetTabByCulture(
                 yafBoardSettings.DNNPageTab,
                 yafBoardSettings.DNNPortalId,
                 LocaleController.Instance.GetCurrentLocale(yafBoardSettings.DNNPortalId));

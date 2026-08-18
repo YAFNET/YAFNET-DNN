@@ -122,7 +122,7 @@ public class UserStore : IUserLoginStore<AspNetUsers>,
         var logins = this.GetRepository<AspNetUserLogins>().Get(l => l.UserId == user.Id)
             .Select(l => new UserLoginInfo(l.LoginProvider, l.ProviderKey));
 
-        IList<UserLoginInfo> result = logins.ToList();
+        IList<UserLoginInfo> result = [.. logins];
         return Task.FromResult(result);
     }
 
@@ -187,7 +187,7 @@ public class UserStore : IUserLoginStore<AspNetUsers>,
     /// </returns>
     public virtual Task<AspNetUsers> FindByIdAsync(string userId)
     {
-        var dnnUser = UserController.GetUserById(
+        var dnnUser = UserController.Instance.GetUserById(
             PortalController.Instance.GetCurrentSettings().PortalId,
             userId.ToType<int>());
 
@@ -280,7 +280,7 @@ public class UserStore : IUserLoginStore<AspNetUsers>,
         var claims = this.GetRepository<AspNetUserClaims>().Get(l => l.UserId == user.Id)
             .Select(c => new Claim(c.ClaimType, c.ClaimValue));
 
-        IList<Claim> result = claims.ToList();
+        IList<Claim> result = [.. claims];
         return Task.FromResult(result);
     }
 

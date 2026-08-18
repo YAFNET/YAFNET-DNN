@@ -1,5 +1,5 @@
 /* Yet Another Forum.NET
- * Copyright (C) 2003-2005 Bjørnar Henden
+ * Copyright (C) 2003-2005 Bjï¿½rnar Henden
  * Copyright (C) 2006-2013 Jaben Cargman
  * Copyright (C) 2014-2026 Ingo Herbote
  * https://www.yetanotherforum.net/
@@ -26,6 +26,9 @@ namespace YAF.DotNetNuke;
 
 using System.Web.UI.WebControls;
 
+using global::DotNetNuke.Abstractions.Application;
+using global::DotNetNuke.Abstractions.Logging;
+using global::DotNetNuke.Abstractions.Security.Permissions;
 using global::DotNetNuke.Common.Utilities;
 
 /// -----------------------------------------------------------------------------
@@ -37,6 +40,32 @@ using global::DotNetNuke.Common.Utilities;
 /// -----------------------------------------------------------------------------
 public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
 {
+    /// <summary>
+    /// Creates a new <see cref="ModuleController"/> instance using the non-obsolete constructor.
+    /// </summary>
+    /// <returns>Returns a new <see cref="ModuleController"/>.</returns>
+    private ModuleController NewModuleController()
+    {
+        return new ModuleController(
+            this.DependencyProvider.GetRequiredService<IEventLogger>(),
+            this.DependencyProvider.GetRequiredService<IPermissionDefinitionService>(),
+            this.DependencyProvider.GetRequiredService<IHostSettings>());
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="TabController"/> instance using the non-obsolete constructor.
+    /// </summary>
+    /// <returns>Returns a new <see cref="TabController"/>.</returns>
+    private TabController NewTabController()
+    {
+        return new TabController(
+            this.DependencyProvider.GetRequiredService<IEventLogger>(),
+            DataProvider.Instance(),
+            this.DependencyProvider.GetRequiredService<IPermissionDefinitionService>(),
+            this.DependencyProvider.GetRequiredService<IHostSettings>(),
+            this.DependencyProvider.GetRequiredService<IApplicationStatusInfo>());
+    }
+
     /// -----------------------------------------------------------------------------
     /// <summary>
     /// LoadSettings loads the settings from the Database and displays them
@@ -109,7 +138,7 @@ public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
     {
         try
         {
-            var objModules = new ModuleController();
+            var objModules = this.NewModuleController();
 
             if (this.YafInstances.Items.Count > 0)
             {
@@ -141,12 +170,15 @@ public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
     /// </summary>
     private void FillYafInstances()
     {
-        var objTabController = new TabController();
+        var hostSettings = this.DependencyProvider.GetRequiredService<IHostSettings>();
+        var applicationStatusInfo = this.DependencyProvider.GetRequiredService<IApplicationStatusInfo>();
 
-        var objTabs = TabController.GetPortalTabs(this.PortalSettings.PortalId, -1, true, true);
+        var objTabController = this.NewTabController();
+
+        var objTabs = TabController.GetPortalTabs(hostSettings, applicationStatusInfo, this.PortalSettings.PortalId, -1, true, true);
 
         var objDesktopModuleInfo =
-            DesktopModuleController.GetDesktopModuleByModuleName("YetAnotherForumDotNet", this.PortalId);
+            DesktopModuleController.GetDesktopModuleByModuleName(hostSettings, "YetAnotherForumDotNet", this.PortalId);
 
         if (objDesktopModuleInfo is null)
         {
@@ -156,7 +188,7 @@ public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
         objTabs.Where(tab => tab is { IsDeleted: false }).ForEach(
             objTab =>
                 {
-                    var objModules = new ModuleController();
+                    var objModules = this.NewModuleController();
 
                     var tabModules = objModules.GetTabModules(objTab.TabID).Select(pair => pair.Value).Where(
                         m => !m.IsDeleted && m.DesktopModuleID == objDesktopModuleInfo.DesktopModuleID);

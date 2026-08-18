@@ -27,6 +27,8 @@ namespace YAF.DotNetNuke;
 using System.Web.UI.WebControls;
 
 using global::DotNetNuke.Abstractions.Application;
+using global::DotNetNuke.Abstractions.Logging;
+using global::DotNetNuke.Abstractions.Security.Permissions;
 using global::DotNetNuke.Common.Utilities;
 
 using YAF.Core.Services.Import;
@@ -44,6 +46,21 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     private readonly IApplicationStatusInfo applicationStatusInfo;
 
     /// <summary>
+    /// The host settings.
+    /// </summary>
+    private readonly IHostSettings hostSettings;
+
+    /// <summary>
+    /// The event logger.
+    /// </summary>
+    private readonly IEventLogger eventLogger;
+
+    /// <summary>
+    /// The permission definition service.
+    /// </summary>
+    private readonly IPermissionDefinitionService permissionDefinitionService;
+
+    /// <summary>
     ///     Gets or sets the service locator.
     /// </summary>
     public IServiceLocator ServiceLocator { get; set; }
@@ -56,6 +73,32 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
         this.ServiceLocator = BoardContext.Current.ServiceLocator;
         this.navigationManager = this.DependencyProvider.GetRequiredService<INavigationManager>();
         this.applicationStatusInfo = this.DependencyProvider.GetRequiredService<IApplicationStatusInfo>();
+        this.hostSettings = this.DependencyProvider.GetRequiredService<IHostSettings>();
+        this.eventLogger = this.DependencyProvider.GetRequiredService<IEventLogger>();
+        this.permissionDefinitionService = this.DependencyProvider.GetRequiredService<IPermissionDefinitionService>();
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="ModuleController"/> instance using the non-obsolete constructor.
+    /// </summary>
+    /// <returns>Returns a new <see cref="ModuleController"/>.</returns>
+    private ModuleController NewModuleController()
+    {
+        return new ModuleController(this.eventLogger, this.permissionDefinitionService, this.hostSettings);
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="TabController"/> instance using the non-obsolete constructor.
+    /// </summary>
+    /// <returns>Returns a new <see cref="TabController"/>.</returns>
+    private TabController NewTabController()
+    {
+        return new TabController(
+            this.eventLogger,
+            DataProvider.Instance(),
+            this.permissionDefinitionService,
+            this.hostSettings,
+            this.applicationStatusInfo);
     }
 
     /// <summary>
@@ -78,7 +121,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
     protected void ImportForums_OnClick(object sender, EventArgs e)
     {
-        var moduleController = new ModuleController();
+        var moduleController = this.NewModuleController();
 
         var tabModule = moduleController.GetModule(this.ActiveForums.SelectedValue.ToType<int>());
 
@@ -126,7 +169,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     {
         var newBoardId = this.CreateBoard(true, this.NewBoardName.Text.Trim());
 
-        var moduleController = new ModuleController();
+        var moduleController = this.NewModuleController();
 
         moduleController.UpdateModuleSetting(this.ModuleId, "forumboardid", newBoardId.ToString());
 
@@ -188,10 +231,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
         if (this.Settings["forumboardid"] != null)
         {
             var item = this.BoardID.Items.FindByValue(this.Settings["forumboardid"].ToString());
-            if (item != null)
-            {
-                item.Selected = true;
-            }
+            item?.Selected = true;
         }
 
         this.FillActiveForumsList();
@@ -224,10 +264,10 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     /// </summary>
     private void FillActiveForumsList()
     {
-        var objTabController = new TabController();
+        var objTabController = this.NewTabController();
 
         var objDesktopModuleInfo =
-            DesktopModuleController.GetDesktopModuleByModuleName("Active Forums", this.PortalId);
+            DesktopModuleController.GetDesktopModuleByModuleName(this.hostSettings, "Active Forums", this.PortalId);
 
         if (objDesktopModuleInfo is null)
         {
@@ -235,12 +275,18 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
             return;
         }
 
-        var tabs = TabController.GetPortalTabs(this.PortalSettings.PortalId, -1, true, true);
+        var tabs = TabController.GetPortalTabs(
+            this.hostSettings,
+            this.applicationStatusInfo,
+            this.PortalSettings.PortalId,
+            -1,
+            true,
+            true);
 
         tabs.Where(tab => !tab.IsDeleted).ForEach(
             tabInfo =>
                 {
-                    var moduleController = new ModuleController();
+                    var moduleController = this.NewModuleController();
 
                     var tabModules = moduleController.GetTabModules(tabInfo.TabID).Select(pair => pair.Value).Where(
                         m => !m.IsDeleted && m.DesktopModuleID == objDesktopModuleInfo.DesktopModuleID);
@@ -284,7 +330,7 @@ public partial class YafDnnModuleEdit : PortalModuleBase, IHaveServiceLocator
     /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     private void UpdateClick(object sender, EventArgs e)
     {
-        var moduleController = new ModuleController();
+        var moduleController = this.NewModuleController();
 
         moduleController.UpdateModuleSetting(this.ModuleId, "forumboardid", this.BoardID.SelectedValue);
 
