@@ -30,8 +30,14 @@ using System.Security.Claims;
 /// <summary>
 /// The user store.
 /// </summary>
+/// <remarks>
+/// Initializes a new instance of the <see cref="UserStore"/> class.
+/// </remarks>
+/// <param name="serviceLocator">
+/// The service locator.
+/// </param>
 [ExportService(ServiceLifetimeScope.Singleton)]
-public class UserStore : IUserLoginStore<AspNetUsers>,
+public class UserStore(IServiceLocator serviceLocator) : IUserLoginStore<AspNetUsers>,
                          IUserClaimStore<AspNetUsers>,
                          IUserRoleStore<AspNetUsers>,
                          IUserPasswordStore<AspNetUsers>,
@@ -45,20 +51,9 @@ public class UserStore : IUserLoginStore<AspNetUsers>,
                          IHaveServiceLocator
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="UserStore"/> class.
-    /// </summary>
-    /// <param name="serviceLocator">
-    /// The service locator.
-    /// </param>
-    public UserStore(IServiceLocator serviceLocator)
-    {
-        this.ServiceLocator = serviceLocator;
-    }
-
-    /// <summary>
     /// Gets the service locator.
     /// </summary>
-    public IServiceLocator ServiceLocator { get; }
+    public IServiceLocator ServiceLocator { get; } = serviceLocator;
 
     /// <summary>
     /// The users.

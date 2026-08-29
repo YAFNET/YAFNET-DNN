@@ -29,7 +29,7 @@ using global::DotNetNuke.Common.Utilities;
 /// <summary>
 /// YAF User Importer
 /// </summary>
-public class UserImporter
+public static class UserImporter
 {
     /// <summary>
     /// Imports the users.
@@ -139,7 +139,7 @@ public class UserImporter
         int portalId,
         BoardSettings boardSettings)
     {
-        // create the user in the YAF DB so profile can gets created...
+        // create the user in the YAF DB so profile can get created...
         var yafUserId = BoardContext.Current.Get<IAspNetRolesHelper>().CreateForumUser(
             dnnUserInfo.ToAspNetUsers(),
             dnnUserInfo.DisplayName,
