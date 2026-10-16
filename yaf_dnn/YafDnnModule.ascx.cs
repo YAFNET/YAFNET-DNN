@@ -27,8 +27,9 @@ namespace YAF.DotNetNuke;
 using global::DotNetNuke.Common.Utilities;
 using global::DotNetNuke.Entities.Modules.Actions;
 using global::DotNetNuke.Framework;
-using global::DotNetNuke.Instrumentation;
 using global::DotNetNuke.Security;
+
+using Microsoft.Extensions.Logging;
 
 using System.Collections.Generic;
 using System.Threading;
@@ -63,6 +64,11 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     private readonly IJavaScriptLibraryHelper javaScript;
 
     /// <summary>
+    /// The logger
+    /// </summary>
+    private readonly ILogger<YafDnnModule> logger;
+
+    /// <summary>
     /// Gets the Service Locator.
     /// </summary>
     [Inject]
@@ -71,9 +77,10 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
     /// <summary>
     /// Initializes a new instance of the <see cref="YafDnnWhatsNew"/> class.
     /// </summary>
-    public YafDnnModule(IJavaScriptLibraryHelper javaScript)
+    public YafDnnModule(IJavaScriptLibraryHelper javaScript, ILogger<YafDnnModule> logger)
     {
         this.javaScript = javaScript ?? this.DependencyProvider.GetRequiredService<IJavaScriptLibraryHelper>();
+        this.logger = logger ?? this.DependencyProvider.GetRequiredService<ILogger<YafDnnModule>>();
     }
 
     /// <summary>
@@ -431,8 +438,6 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
 
     private void InitializeForumIfNotExist()
     {
-        var logger = LoggerSource.Instance.GetLogger(typeof(YafDnnModule));
-
         try
         {
             var isForumInstalled = this.Get<InstallService>().IsForumInstalled;
@@ -466,12 +471,12 @@ public partial class YafDnnModule : PortalModuleBase, IActionable, IHaveServiceL
                 // execute SQL installation script
                 var exceptions = DataProvider.Instance().ExecuteScript(CommandTextHelpers.GetCommandTextReplaced(script));
 
-                logger.Error(exceptions);
+                this.logger.LogError("{Exceptions}", exceptions);
             }
         }
         catch (Exception exception)
         {
-            logger.Error(exception);
+            this.logger.LogError(exception, "Error initializing the forum");
         }
     }
 
