@@ -10,10 +10,6 @@
 ## DNN® (DotNetNuke) Module
 This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 10.03.01 or higher).
 
-An Example Forum running the current Version can be found here
-
-http://watchersnet.de/Service/Forum.aspx
-
 ### Screen Shots
 
 ![mainscreen](https://raw.githubusercontent.com/YAFNET/YAFNET/master/yafsrc/YetAnotherForum.NET/wwwroot/assets/main.webp)
