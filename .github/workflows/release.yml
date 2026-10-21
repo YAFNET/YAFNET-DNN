@@ -44,6 +44,11 @@ jobs:
         if: steps.check.outputs.exists != 'true'
         uses: microsoft/setup-msbuild@v3
 
+      - name: Restore YAFNET packages.config
+        if: steps.check.outputs.exists != 'true'
+        working-directory: yafsrc
+        run: nuget restore YetAnotherForum.NET/packages.config -PackagesDirectory packages
+
       - name: Build YAFNET
         if: steps.check.outputs.exists != 'true'
         working-directory: yafsrc
