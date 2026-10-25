@@ -26,6 +26,8 @@ namespace YAF.Core.Modules;
 
 using Autofac;
 
+using YAF.DotNetNuke.Components.Integration;
+
 /// <summary>
 /// Registers all Service Modules
 /// </summary>
@@ -39,5 +41,9 @@ public class DnnServicesModule : BaseModule
     {
         builder.RegisterType<PortalController>().As<IPortalController>().SingleInstance()
             .PreserveExistingDefaults();
+
+        // the posts are indexed and searched with the DNN search (DNN uses its own Lucene.Net version, the
+        // YAF Lucene search must not be loaded inside DNN)
+        builder.RegisterType<DnnSearch>().As<ISearch>().InstancePerLifetimeScope();
     }
 }

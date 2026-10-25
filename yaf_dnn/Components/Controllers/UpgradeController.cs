@@ -24,14 +24,20 @@
 
 namespace YAF.DotNetNuke.Components.Controllers;
 
+using System.Collections.Generic;
+
+using global::DotNetNuke.Services.Search.Controllers;
+using global::DotNetNuke.Services.Search.Entities;
+
 using YAF.Core.Services.Import;
+using YAF.DotNetNuke.Components.Integration;
 using YAF.Types.EventProxies;
 using YAF.Types.Interfaces.Events;
 
 /// <summary>
-/// The upgrade controller.
+/// The upgrade controller, and the search controller of the forum module (the posts are indexed with the DNN search).
 /// </summary>
-public class UpgradeController : ModuleSettingsBase, IUpgradeable, IHaveServiceLocator
+public class UpgradeController : ModuleSearchBase, IUpgradeable, IModuleSearchResultController, IHaveServiceLocator
 {
     /// <summary>
     ///     Gets or sets the service locator.
@@ -76,6 +82,130 @@ public class UpgradeController : ModuleSettingsBase, IUpgradeable, IHaveServiceL
         }
     }
 
+    /// <summary>
+    /// Gets the search documents of the posts which were added or changed since the last indexing
+    /// (all posts when the DNN search index is rebuilt).
+    /// </summary>
+    /// <param name="moduleInfo">The module.</param>
+    /// <param name="beginDateUtc">The date of the last indexing.</param>
+    /// <returns>Returns the search documents.</returns>
+    public override IList<SearchDocument> GetModifiedSearchDocuments(ModuleInfo moduleInfo, DateTime beginDateUtc)
+    {
+        var documents = new List<SearchDocument>();
+
+        // the controller is also the business controller of the what's new module
+        if (moduleInfo.DesktopModule?.ModuleName != ForumSearchDocuments.ModuleName)
+        {
+            return documents;
+        }
+
+        var boardId = ForumSearchDocuments.GetBoardId(moduleInfo);
+
+        if (boardId < 0)
+        {
+            return documents;
+        }
+
+        // all posts on the first indexing or a rebuild of the index
+        DateTime? changedSince = beginDateUtc.Year > 1900 ? beginDateUtc : null;
+
+        var forums = this.GetRepository<Forum>().ListAll(boardId).Select(forum => forum.Item2);
+        var topicTags = this.GetRepository<TopicTag>().ListAll();
+        var users = new Dictionary<int, int>();
+
+        foreach (var forum in forums.Where(
+                     forum => !changedSince.HasValue
+                              || forum.LastPosted.HasValue && forum.LastPosted.Value > changedSince.Value))
+        {
+            documents.AddRange(
+                this.GetRepository<Message>().GetAllSearchMessagesByForum(forum.ID, topicTags, changedSince)
+                    .Select(
+                        message => ForumSearchDocuments.CreateDocument(
+                            message,
+                            moduleInfo,
+                            boardId,
+                            ForumSearchDocuments.GetDnnUserId(message.UserId, users))));
+        }
+
+        return documents;
+    }
+
+    /// <summary>
+    /// Checks if the current user can read the forum of the post.
+    /// </summary>
+    /// <param name="searchResult">The search result.</param>
+    /// <returns>Returns if the user can see the result.</returns>
+    public bool HasViewPermission(SearchResult searchResult)
+    {
+        // not a post (e.g. the title of the module)
+        if (!searchResult.NumericKeys.TryGetValue(ForumSearchDocuments.BoardIdKey, out var boardId)
+            || !searchResult.NumericKeys.TryGetValue(ForumSearchDocuments.ForumIdKey, out var forumId))
+        {
+            return true;
+        }
+
+        return this.GetUserAccess(boardId).Exists(access => access.ForumID == forumId && access.ReadAccess > 0);
+    }
+
+    /// <summary>
+    /// Gets the url of the post.
+    /// </summary>
+    /// <param name="searchResult">The search result.</param>
+    /// <returns>Returns the url.</returns>
+    public string GetDocUrl(SearchResult searchResult)
+    {
+        // not a post, the url of the page
+        if (!searchResult.NumericKeys.TryGetValue(ForumSearchDocuments.BoardIdKey, out var boardId)
+            || !searchResult.NumericKeys.TryGetValue(ForumSearchDocuments.MessageIdKey, out var messageId))
+        {
+            return string.Empty;
+        }
+
+        // the url to the page of the board (not the current board of the request)
+        var boardSettings = this.Get<BoardSettingsService>().LoadBoardSettings(boardId, null);
+
+        var url = $"g={ForumPages.Posts}&m={messageId}&name={UrlRewriteHelper.CleanStringForURL(searchResult.Title)}";
+
+        return this.Get<IUrlBuilder>() is BaseUrlBuilder urlBuilder
+                   ? urlBuilder.BuildUrl(boardSettings, url)
+                   : this.Get<IUrlBuilder>().BuildUrl(url);
+    }
+
+    /// <summary>
+    /// Gets the forum access of the current DNN user to a board (cached for the request).
+    /// </summary>
+    /// <param name="boardId">The board id.</param>
+    /// <returns>Returns the forum access.</returns>
+    private List<VAccess> GetUserAccess(int boardId)
+    {
+        var dnnUser = UserController.Instance.GetCurrentUserInfo();
+
+        var cacheKey = $"YafSearchAccess_{boardId}_{dnnUser?.UserID ?? -1}";
+
+        if (HttpContext.Current?.Items[cacheKey] is List<VAccess> cachedAccess)
+        {
+            return cachedAccess;
+        }
+
+        var yafUser = dnnUser is { UserID: > 0 }
+                          ? this.GetRepository<User>().GetUserByProviderKey(boardId, dnnUser.UserID.ToString())
+                          : null;
+
+        // users which were not imported yet can see the posts the guests can see
+        yafUser ??= this.GetRepository<User>().GetSingle(u => u.BoardID == boardId && (u.Flags & 4) == 4);
+
+        var userAccess = yafUser is null
+                             ? []
+                             : this.GetRepository<VAccess>().Get(access => access.UserID == yafUser.ID);
+
+        if (HttpContext.Current != null)
+        {
+            HttpContext.Current.Items[cacheKey] = userAccess;
+        }
+
+        return userAccess;
+    }
+
     private void UpdateProviderKeys()
     {
         var prevVersion = this.GetRepository<Registry>().GetDbVersion();
@@ -85,7 +215,7 @@ public class UpgradeController : ModuleSettingsBase, IUpgradeable, IHaveServiceL
             return;
         }
 
-        var dnnUsers = UserController.GetUsers(this.PortalId);
+        var dnnUsers = UserController.GetUsers(PortalController.Instance.GetCurrentSettings().PortalId);
 
         if (dnnUsers == null)
         {

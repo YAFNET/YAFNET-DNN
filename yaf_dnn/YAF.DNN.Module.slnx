@@ -14,38 +14,6 @@
     </Project>
   </Folder>
   <Folder Name="/Third-Party Libs/" />
-  <Folder Name="/Third-Party Libs/Lucene.NET/">
-    <Project Path="../yafsrc/Lucene.Net/Lucene.Net.Analysis.Common/YAF.Lucene.Net.Analysis.Common.csproj">
-      <BuildType Solution="Deploy|*" Project="Debug" />
-      <BuildType Solution="MonoTouch|*" Project="Debug" />
-      <BuildType Solution="Package|*" Project="Release" />
-      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
-    </Project>
-    <Project Path="../yafsrc/Lucene.Net/Lucene.Net.Highlighter/YAF.Lucene.Net.Highlighter.csproj">
-      <BuildType Solution="Deploy|*" Project="Debug" />
-      <BuildType Solution="MonoTouch|*" Project="Debug" />
-      <BuildType Solution="Package|*" Project="Release" />
-      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
-    </Project>
-    <Project Path="../yafsrc/Lucene.Net/Lucene.Net.Queries/YAF.Lucene.Net.Queries.csproj">
-      <BuildType Solution="Deploy|*" Project="Debug" />
-      <BuildType Solution="MonoTouch|*" Project="Debug" />
-      <BuildType Solution="Package|*" Project="Release" />
-      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
-    </Project>
-    <Project Path="../yafsrc/Lucene.Net/Lucene.Net.QueryParser/YAF.Lucene.Net.QueryParser.csproj">
-      <BuildType Solution="Deploy|*" Project="Debug" />
-      <BuildType Solution="MonoTouch|*" Project="Debug" />
-      <BuildType Solution="Package|*" Project="Release" />
-      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
-    </Project>
-    <Project Path="../yafsrc/Lucene.Net/Lucene.Net/YAF.Lucene.Net.csproj">
-      <BuildType Solution="Deploy|*" Project="Debug" />
-      <BuildType Solution="MonoTouch|*" Project="Debug" />
-      <BuildType Solution="Package|*" Project="Release" />
-      <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Debug" />
-    </Project>
-  </Folder>
   <Folder Name="/Third-Party Libs/ServiceStack/">
     <Project Path="../yafsrc/ServiceStack/ServiceStack.OrmLite.SqlServer/ServiceStack.OrmLite.SqlServer.csproj">
       <BuildType Solution="Deploy|*" Project="Debug" />

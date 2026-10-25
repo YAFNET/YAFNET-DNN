@@ -24,7 +24,10 @@
 
 namespace YAF.DotNetNuke;
 
+using System.Collections.Generic;
+
 using global::DotNetNuke.Abstractions.Portals;
+using global::DotNetNuke.Common.Extensions;
 using global::DotNetNuke.Services.Url.FriendlyUrl;
 
 using YAF.Core.Utilities;
@@ -102,6 +105,13 @@ public class DotNetNukeUrlBuilder : BaseUrlBuilder
         if (url.IsNotSet())
         {
             return GetBaseUrl(yafTab);
+        }
+
+        var searchResultsUrl = GetSearchResultsUrl(yafBoardSettings, url, portalSettings);
+
+        if (searchResultsUrl.IsSet())
+        {
+            return searchResultsUrl;
         }
 
         if (!Configuration.Config.EnableURLRewriting)
@@ -247,6 +257,73 @@ public class DotNetNukeUrlBuilder : BaseUrlBuilder
         return finalUrl.Length >= 260
                    ? GetStandardUrl(yafTab, url, boardNameOrPageName, portalSettings)
                    : finalUrl;
+    }
+
+    /// <summary>
+    /// Gets the URL of the DNN search results page for a link to the YAF search page (the posts are indexed with
+    /// the DNN search).
+    /// </summary>
+    /// <param name="boardSettings">The board settings.</param>
+    /// <param name="url">The URL.</param>
+    /// <param name="portalSettings">The portal settings.</param>
+    /// <returns>
+    /// Returns the URL of the search results page, or an empty string if the YAF search page is used.
+    /// </returns>
+    private static string GetSearchResultsUrl(BoardSettings boardSettings, string url, IPortalSettings portalSettings)
+    {
+        var parser = new SimpleURLParameterParser(url);
+
+        if (!string.Equals(parser["g"], nameof(ForumPages.Search), StringComparison.OrdinalIgnoreCase))
+        {
+            return string.Empty;
+        }
+
+        // the DNN search results can not be filtered by forum or author, these searches stay on the YAF search page
+        if (parser["forum"].IsSet() || parser["postedby"].IsSet())
+        {
+            return string.Empty;
+        }
+
+        var searchTabId = PortalController.Instance.GetPortal(boardSettings.DNNPortalId)?.SearchTabId ?? -1;
+
+        if (searchTabId < 0)
+        {
+            return string.Empty;
+        }
+
+        var searchTab = portalSettings.ContentLocalizationEnabled
+                            ? TabController.Instance.GetTabByCulture(
+                                searchTabId,
+                                boardSettings.DNNPortalId,
+                                LocaleController.Instance.GetCurrentLocale(boardSettings.DNNPortalId))
+                            : TabController.Instance.GetTab(searchTabId, boardSettings.DNNPortalId, false);
+
+        if (searchTab is null || searchTab.IsDeleted)
+        {
+            return string.Empty;
+        }
+
+        var navigationManager = HttpContext.Current?.GetScope()?.ServiceProvider.GetService<INavigationManager>();
+
+        if (navigationManager is null)
+        {
+            return string.Empty;
+        }
+
+        var parameters = new List<string>();
+
+        // the search term of the header search is url encoded
+        if (parser["search"].IsSet())
+        {
+            parameters.Add($"Search={HttpUtility.UrlEncode(HttpUtility.UrlDecode(parser["search"]))}");
+        }
+
+        if (parser["tag"].IsSet())
+        {
+            parameters.Add($"Tag={HttpUtility.UrlEncode(HttpUtility.UrlDecode(parser["tag"]))}");
+        }
+
+        return navigationManager.NavigateURL(searchTab.TabID, string.Empty, [.. parameters]);
     }
 
     /// <summary>

@@ -80,6 +80,8 @@
     <Compile Include="Components\Integration\AspNetRolesHelper.cs" />
     <Compile Include="Components\Integration\AspNetUserManager.cs" />
     <Compile Include="Components\Integration\AspNetUsersHelper.cs" />
+    <Compile Include="Components\Integration\DnnSearch.cs" />
+    <Compile Include="Components\Integration\ForumSearchDocuments.cs" />
     <Compile Include="Components\Integration\RoleStore.cs" />
     <Compile Include="Components\Integration\UserStore.cs" />
     <Compile Include="Components\Modules\DnnServicesModule.cs" />
@@ -265,6 +267,41 @@
     </PackageReference>
     <PackageReference Include="DotNetNuke.WebApi">
       <Version>10.4.0</Version>
+    </PackageReference>
+    <PackageReference Include="Lucene.Net">
+      <Version>4.8.0-beta00018</Version>
+      <!-- only for the build of YAF.Core: DNN ships Lucene.Net 3.0.3, the YAF Lucene search is not used inside DNN -->
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Lucene.Net.Analysis.Common">
+      <Version>4.8.0-beta00018</Version>
+      <!-- only for the build of YAF.Core: DNN ships Lucene.Net 3.0.3, the YAF Lucene search is not used inside DNN -->
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Lucene.Net.Highlighter">
+      <Version>4.8.0-beta00018</Version>
+      <!-- only for the build of YAF.Core: DNN ships Lucene.Net 3.0.3, the YAF Lucene search is not used inside DNN -->
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Lucene.Net.Queries">
+      <Version>4.8.0-beta00018</Version>
+      <!-- only for the build of YAF.Core: DNN ships Lucene.Net 3.0.3, the YAF Lucene search is not used inside DNN -->
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Lucene.Net.QueryParser">
+      <Version>4.8.0-beta00018</Version>
+      <!-- only for the build of YAF.Core: DNN ships Lucene.Net 3.0.3, the YAF Lucene search is not used inside DNN -->
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Lucene.Net.Memory">
+      <Version>4.8.0-beta00018</Version>
+      <!-- only for the build of YAF.Core: DNN ships Lucene.Net 3.0.3, the YAF Lucene search is not used inside DNN -->
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Lucene.Net.Sandbox">
+      <Version>4.8.0-beta00018</Version>
+      <!-- only for the build of YAF.Core: DNN ships Lucene.Net 3.0.3, the YAF Lucene search is not used inside DNN -->
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions">
       <Version>10.0.13</Version>

@@ -25,6 +25,7 @@
             <businessControllerClass>YAF.DotNetNuke.Components.Controllers.UpgradeController, YAF.DotNetNuke.Module</businessControllerClass>
             <supportedFeatures>
               <supportedFeature type="Upgradeable" />
+              <supportedFeature type="Searchable" />
             </supportedFeatures>
             <foldername>YetAnotherForumDotNet</foldername>
             <moduleDefinitions>
@@ -157,6 +158,12 @@
             <assembly>
               <name>Microsoft.Extensions.Configuration.Abstractions.dll</name>
             </assembly>
+	        <assembly>
+		      <name>Microsoft.Extensions.Logging.Abstractions.dll</name>
+	        </assembly>
+	        <assembly>
+		      <name>StackTraceBeautify.dll</name>
+	        </assembly>
             <assembly>
               <name>OEmbed.Core.dll</name>
             </assembly>
@@ -171,21 +178,6 @@
             </assembly>
             <assembly>
               <name>YAF.Core.dll</name>
-            </assembly>
-            <assembly>
-              <name>YAF.Lucene.Net.Analysis.Common.dll</name>
-            </assembly>
-            <assembly>
-              <name>YAF.Lucene.Net.dll</name>
-            </assembly>
-            <assembly>
-              <name>YAF.Lucene.Net.Highlighter.dll</name>
-            </assembly>
-            <assembly>
-              <name>YAF.Lucene.Net.Queries.dll</name>
-            </assembly>
-            <assembly>
-              <name>YAF.Lucene.Net.QueryParser.dll</name>
             </assembly>
             <assembly>
               <name>YAF.Data.SqlServer.dll</name>
@@ -206,6 +198,30 @@
               <name>FarsiLibrary.Utils.dll</name>
             </assembly>
           </assemblies>
+        </component>
+        <component type="Cleanup" version="03.218.006146">
+          <files>
+            <file>
+              <path>bin</path>
+              <name>YAF.Lucene.Net.dll</name>
+            </file>
+            <file>
+              <path>bin</path>
+              <name>YAF.Lucene.Net.Analysis.Common.dll</name>
+            </file>
+            <file>
+              <path>bin</path>
+              <name>YAF.Lucene.Net.Highlighter.dll</name>
+            </file>
+            <file>
+              <path>bin</path>
+              <name>YAF.Lucene.Net.Queries.dll</name>
+            </file>
+            <file>
+              <path>bin</path>
+              <name>YAF.Lucene.Net.QueryParser.dll</name>
+            </file>
+          </files>
         </component>
         <component type="Cleanup" version="1.94.02">
           <files>

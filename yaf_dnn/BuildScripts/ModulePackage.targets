@@ -161,7 +161,7 @@
                          Exclude="@(DefaultExclude)" />
 
 		<yafdnn-resInclude Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\*.json" 
-		                   Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\themes\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\node_modules\**\*.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\package.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\package-lock.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\tsconfig.json" />
+		                   Exclude="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\Content\themes\**\*.*;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\.vs\**\*.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\node_modules\**\*.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\package.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\package-lock.json;$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\**\tsconfig.json" />
      </ItemGroup>
 
     <ItemGroup>
@@ -194,6 +194,7 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.AspNet.Identity.Owin.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Bcl.AsyncInterfaces.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Extensions.Configuration.Abstractions.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Extensions.Logging.Abstractions.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Extensions.Primitives.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Owin.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Owin.Host.SystemWeb.dll" />
@@ -202,6 +203,7 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Newtonsoft.Json.Bson.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Owin.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\OEmbed.Core.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\StackTraceBeautify.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.SqlServer.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\System.Buffers.dll" />
@@ -216,11 +218,6 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\YAF.Data.SqlServer.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.DotNetNuke.Module.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\YAF.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.Lucene.Net.Analysis.Common.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.Lucene.Net.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.Lucene.Net.Highlighter.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.Lucene.Net.Queries.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.Lucene.Net.QueryParser.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\YAF.Types.dll" />
     </ItemGroup>
 
