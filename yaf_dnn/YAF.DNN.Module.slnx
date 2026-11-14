@@ -9,6 +9,7 @@
   </Configurations>
   <Folder Name="/DNN Module/">
     <Project Path="YAF.DNN.Module.csproj" Id="ebbeabd8-324f-4bdc-873e-dda78b6e669d">
+      <BuildDependency Project="../yafsrc/YetAnotherForum.NET/YAF-SqlServer.csproj" />
       <BuildType Solution="MonoTouch|*" Project="Release" />
       <BuildType Solution="STATIC_ONLY NO_EXPRESSIONS|*" Project="Release" />
     </Project>

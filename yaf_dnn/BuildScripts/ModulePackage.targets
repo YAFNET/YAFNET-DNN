@@ -189,7 +189,6 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\AutoFac.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\FarsiLibrary.Localization.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\FarsiLibrary.Utils.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\J2N.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.AspNet.Identity.Core.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.AspNet.Identity.Owin.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Microsoft.Bcl.AsyncInterfaces.dll" />
@@ -203,7 +202,7 @@
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Newtonsoft.Json.Bson.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\Owin.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\OEmbed.Core.dll" />
-      <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\StackTraceBeautify.dll" />
+      <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\StackTraceBeautify.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\..\yafsrc\YetAnotherForum.NET\bin\ServiceStack.OrmLite.SqlServer.dll" />
       <LibaryFiles Include="$(MSBuildProjectDirectory)\bin\System.Buffers.dll" />
