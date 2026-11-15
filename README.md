@@ -2,13 +2,17 @@
 
 **YetAnotherForum.NET** (YAF.NET) ASP.NET Open Source Forum solution! The **YAF.NET** project is an international collaboration of like-minded, skilled, and creative individuals who are striving to make **YAF.NET** the most robust and malleable forum solutions available.
 
-![license](https://img.shields.io/github/license/yafnet/yafnet)
+[![Build](https://img.shields.io/github/actions/workflow/status/YAFNET/YAFNET-DNN/release.yml?branch=master&label=build)](https://github.com/YAFNET/YAFNET-DNN/actions/workflows/release.yml)
+[![YAF.NET Version](https://img.shields.io/github/v/release/YAFNET/YAFNET?label=YAF.NET)](https://github.com/YAFNET/YAFNET-DNN/releases/latest)
+[![DNN Platform](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2FYAFNET%2FYAFNET-DNN%2Fmaster%2Fyaf_dnn%2FYAF.DNN.Module.csproj&query=%2F%2F*%5Blocal-name()%3D%27PackageReference%27%5D%5B%40Include%3D%27DotNetNuke.Core%27%5D%2F*%5Blocal-name()%3D%27Version%27%5D&label=DNN%20Platform&color=0d6efd)](https://github.com/dnnsoftware/Dnn.Platform)
+[![license](https://img.shields.io/github/license/yafnet/yafnet)](LICENSE.md)
+[![ko-fi](https://img.shields.io/badge/Ko--fi-support-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/w8tcha)
 
 ### Features
 [Full Feature List](https://github.com/YAFNET/YAFNET/wiki/YAF.NET-Features).
 
 ## DNN® (DotNetNuke) Module
-This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 10.03.01 or higher).
+This is the DNN Module Version of YetAnotherForum.NET which runs YAF inside a Module (DotNetNuke 10.04.01 or higher).
 
 ### Screen Shots
 
