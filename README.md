@@ -26,7 +26,7 @@ Admin Control Panel
 ![adminpanel](https://raw.githubusercontent.com/YAFNET/YAFNET/master/yafsrc/YetAnotherForum.NET/wwwroot/assets/admin.webp)
 
 There is also a Second Child Module the *YAF.NET Forums What's New* Module which shows The Latest Posts in a List
-![whatsnew](https://raw.githubusercontent.com/YAFNET/YAFNET-DNN/WhatsNew.png)
+![whatsnew](https://raw.githubusercontent.com/YAFNET/YAFNET-DNN/master/WhatsNew.png)
 
 ### Getting Started with Development
 
