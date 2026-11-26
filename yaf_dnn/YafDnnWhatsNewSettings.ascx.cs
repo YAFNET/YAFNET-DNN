@@ -22,6 +22,8 @@
  * under the License.
  */
 
+using YAF.DotNetNuke.Components;
+
 namespace YAF.DotNetNuke;
 
 using System.Web.UI.WebControls;
