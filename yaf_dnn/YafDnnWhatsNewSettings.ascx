@@ -29,7 +29,7 @@
     </div>
     <div class="dnnFormItem">
         <dnn:label id="labelHtmlItem" runat="server" controlname="HtmlItem" suffix=":"></dnn:label>
-        <asp:TextBox ID="HtmlItem" runat="server" TextMode="MultiLine" Rows="5"></asp:TextBox>
+        <asp:TextBox ID="HtmlItem" runat="server" TextMode="MultiLine" Rows="10"></asp:TextBox>
     </div>
     <div class="dnnFormItem">
         <dnn:label id="labelHtmlFooter" runat="server" controlname="HtmlFooter" suffix=":"></dnn:label>

@@ -426,25 +426,11 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
                     ? moduleSettings["YafMaxPosts"].ToType<int>()
                     : 10;
 
-                this.headerTemplate = moduleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
-                    ? moduleSettings["YafWhatsNewHeader"].ToType<string>()
-                    : """<div class="container my-3 p-3">""";
+                this.headerTemplate = WhatsNewTemplates.HeaderOrDefault(moduleSettings["YafWhatsNewHeader"].ToType<string>());
 
-                this.itemTemplate = moduleSettings["YafWhatsNewItemTemplate"].ToType<string>().IsSet()
-                    ? moduleSettings["YafWhatsNewItemTemplate"].ToType<string>()
-                    : """
-                      <div class="d-flex text-secondary pt-3"> 
-                      	[LASTPOSTICON]
-                      	<p class="pb-3 mb-0 small lh-sm border-bottom"> 
-                      		<span class="d-block text-secondary"><strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])</strong>
-                      		[LASTMESSAGE:150]</span>
-                              [BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]
-                      </p> </div>
-                      """;
+                this.itemTemplate = WhatsNewTemplates.ItemOrDefault(moduleSettings["YafWhatsNewItemTemplate"].ToType<string>());
 
-                this.footerTemplate = moduleSettings["YafWhatsNewFooter"].ToType<string>().IsSet()
-                    ? moduleSettings["YafWhatsNewFooter"].ToType<string>()
-                    : "</div>";
+                this.footerTemplate = WhatsNewTemplates.FooterOrDefault(moduleSettings["YafWhatsNewFooter"].ToType<string>());
             }
         }
         catch (Exception exc)
@@ -486,13 +472,24 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
         currentItem = currentItem.Replace("[LASTPOSTICON]",
             """<svg class="topic-icon me-2" height="32" width="32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M51.9 384.9C19.3 344.6 0 294.4 0 240 0 107.5 114.6 0 256 0S512 107.5 512 240 397.4 480 256 480c-36.5 0-71.2-7.2-102.6-20L37 509.9c-3.7 1.6-7.5 2.1-11.5 2.1-14.1 0-25.5-11.4-25.5-25.5 0-4.3 1.1-8.5 3.1-12.2l48.8-89.4zm37.3-30.2c12.2 15.1 14.1 36.1 4.8 53.2l-18 33.1 58.5-25.1c11.8-5.1 25.2-5.2 37.1-.3 25.7 10.5 54.2 16.4 84.3 16.4 117.8 0 208-88.8 208-192S373.8 48 256 48 48 136.8 48 240c0 42.8 15.1 82.4 41.2 114.7z"/></svg>""");
 
+        // Render TOPICICON (the comment icon in a box, like the latest topics of the sample application)
+        currentItem = currentItem.Replace(
+            "[TOPICICON]",
+            """<span class="d-inline-flex align-items-center justify-content-center flex-shrink-0 rounded-3 bg-primary-subtle text-primary-emphasis" style="width: 2.75rem; height: 2.75rem"><svg height="20" width="20" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free--><path d="M512 240c0 114.9-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6C73.6 471.1 44.7 480 16 480c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4l.3-.3c.3-.3 .7-.7 1.3-1.4c1.1-1.2 2.8-3.1 4.9-5.7c4.1-5 9.6-12.4 15.2-21.6c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208z"/></svg></span>""");
+
+        // Render POSTS (the number of posts of the topic as a badge)
+        currentItem = currentItem.Replace(
+            "[POSTS]",
+            $"""<span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle" title="{HttpUtility.HtmlAttributeEncode(BoardContext.Current.Get<IHaveLocalization>().GetText("DEFAULT", "POSTS"))}"><svg class="me-1" height="11" width="11" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M205 34.8c11.5 5.1 19 16.6 19 29.2v64H336c97.2 0 176 78.8 176 176c0 113.3-81.5 163.9-100.2 174.1c-2.5 1.4-5.3 1.9-8.1 1.9c-10.9 0-19.7-8.9-19.7-19.7c0-7.5 4.3-14.4 9.8-19.5c9.4-8.8 22.2-26.4 22.2-56.7c0-53-43-96-96-96H224v64c0 12.6-7.4 24.1-19 29.2s-25 3-34.4-5.4l-160-144C3.9 225.7 0 217.1 0 208s3.9-17.7 10.6-23.8l160-144c9.4-8.5 22.9-10.6 34.4-5.4z"/></svg>{dataItem.NumPosts:N0}</span>""");
+
         // Render TOPICLINK
         var textMessageLink = new HyperLink
         {
             Text =
                 BoardContext.Current.Get<IBadWordReplace>()
                     .Replace(dataItem.Topic),
-            NavigateUrl = messageUrl
+            NavigateUrl = messageUrl,
+            CssClass = "fw-semibold text-decoration-none"
         };
 
         currentItem = currentItem.Replace("[TOPICLINK]", textMessageLink.RenderToString());
@@ -509,7 +506,16 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
                         .Replace(dataItem.Forum)))
         };
 
-        currentItem = currentItem.Replace("[FORUMLINK]", forumLink.RenderToString());
+        forumLink.CssClass = "link-secondary";
+
+        var forumLinkHtml = forumLink.RenderToString();
+
+        currentItem = currentItem.Replace("[FORUMLINK]", forumLinkHtml);
+
+        // Render INFORUMLINK ("in" and the forum link)
+        currentItem = currentItem.Replace(
+            "[INFORUMLINK]",
+            string.Format(BoardContext.Current.Get<IHaveLocalization>().GetText("DEFAULT", "IN"), forumLinkHtml));
 
         // Render BYTEXT
         currentItem = currentItem.Replace(
@@ -533,7 +539,8 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
                 NavigateUrl = FriendlyUrlProvider.Instance().FriendlyUrl(
                     this.yafTabInfo,
                     $"{Globals.ApplicationURL(this.yafTabInfo.TabID)}&g=profile&u={dataItem.LastUserID}",
-                    userName)
+                    userName),
+                CssClass = "link-secondary"
             };
 
             currentItem = currentItem.Replace("[LASTUSERLINK]", lastUserLink.RenderToString());
@@ -547,7 +554,7 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
 
         try
         {
-            var match = Regex.Match(currentItem, @"\[LASTMESSAGE\:(?<count>[0-9]*)\]", RegexOptions.Compiled);
+            var match = Regex.Match(currentItem, @"\[LASTMESSAGE\:(?<count>[0-9]*)\]", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
             if (match.Success)
             {
@@ -583,4 +590,103 @@ public partial class YafDnnWhatsNew : PortalModuleBase, IHaveServiceLocator
     {
         return this.footerTemplate;
     }
+}
+
+/// <summary>
+/// The default templates of the What's New module (the same look as the latest topics of the YAF.NET sample application).
+/// </summary>
+public static class WhatsNewTemplates
+{
+    /// <summary>
+    /// The default header template.
+    /// </summary>
+    public const string Header = """<div class="card"><ul class="list-group list-group-flush">""";
+
+    /// <summary>
+    /// The default item template.
+    /// </summary>
+    public const string Item = """
+                               <li class="list-group-item d-flex align-items-start gap-3 py-3">
+                               	[TOPICICON]
+                               	<div class="flex-grow-1" style="min-width: 0">
+                               		<div class="text-truncate">[TOPICLINK]</div>
+                               		<div class="small text-body-secondary">[INFORUMLINK] &middot; [BYTEXT] [LASTUSERLINK], [LASTPOSTEDDATETIME]</div>
+                               	</div>
+                               	[POSTS]
+                               </li>
+                               """;
+
+    /// <summary>
+    /// The default footer template.
+    /// </summary>
+    public const string Footer = "</ul></div>";
+
+    /// <summary>
+    /// The header template of older versions.
+    /// </summary>
+    private const string OldHeader = """<div class="container my-3 p-3">""";
+
+    /// <summary>
+    /// The item template of older versions.
+    /// </summary>
+    private const string OldItem = """
+                                   <div class="d-flex text-secondary pt-3">
+                                   	[LASTPOSTICON]
+                                   	<p class="pb-3 mb-0 small lh-sm border-bottom">
+                                   		<span class="d-block text-secondary"><strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])</strong>
+                                   		[LASTMESSAGE:150]</span>
+                                           [BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]
+                                   </p> </div>
+                                   """;
+
+    /// <summary>
+    /// The footer template of older versions.
+    /// </summary>
+    private const string OldFooter = "</div>";
+
+    /// <summary>
+    /// The header template to use: the saved one, the default when nothing is saved or the default of an older version is saved.
+    /// </summary>
+    /// <param name="saved">The saved template.</param>
+    /// <returns>The template.</returns>
+    public static string HeaderOrDefault(string saved) => OrDefault(saved, OldHeader, Header);
+
+    /// <summary>
+    /// The item template to use: the saved one, the default when nothing is saved or the default of an older version is saved.
+    /// </summary>
+    /// <param name="saved">The saved template.</param>
+    /// <returns>The template.</returns>
+    public static string ItemOrDefault(string saved) => OrDefault(saved, OldItem, Item);
+
+    /// <summary>
+    /// The footer template to use: the saved one, the default when nothing is saved or the default of an older version is saved.
+    /// </summary>
+    /// <param name="saved">The saved template.</param>
+    /// <returns>The template.</returns>
+    public static string FooterOrDefault(string saved) => OrDefault(saved, OldFooter, Footer);
+
+    /// <summary>
+    /// The saved template, or the new default when nothing is saved or the (unchanged) old default is saved:
+    /// the settings page saves the default templates, so these modules get the new look too.
+    /// </summary>
+    /// <param name="saved">The saved template.</param>
+    /// <param name="oldDefault">The default of older versions.</param>
+    /// <param name="newDefault">The default.</param>
+    /// <returns>The template.</returns>
+    private static string OrDefault(string saved, string oldDefault, string newDefault)
+    {
+        if (saved.IsNotSet())
+        {
+            return newDefault;
+        }
+
+        return Normalize(saved) == Normalize(oldDefault) ? newDefault : saved;
+    }
+
+    /// <summary>
+    /// The template without whitespace (the saved templates differ in indentation and line breaks).
+    /// </summary>
+    /// <param name="template">The template.</param>
+    /// <returns>The template without whitespace.</returns>
+    private static string Normalize(string template) => Regex.Replace(template, @"\s+", string.Empty, RegexOptions.None, TimeSpan.FromSeconds(1));
 }

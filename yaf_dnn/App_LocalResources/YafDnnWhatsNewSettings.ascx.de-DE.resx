@@ -148,7 +148,7 @@
     <value>Html Kopf Vorlage</value>
   </data>
   <data name="labelHtmlItem.Help" xml:space="preserve">
-    <value>Passen Sie die Vorlage für das Element an.</value>
+    <value>Passen Sie die Vorlage für das Element an. Platzhalter: [TOPICLINK], [TOPICICON], [LASTPOSTICON], [FORUMLINK], [INFORUMLINK] ("in" und das Forum), [BYTEXT], [LASTUSERLINK], [LASTPOSTEDDATETIME], [POSTS] (Anzahl der Beiträge), [LASTMESSAGE] oder [LASTMESSAGE:150] (der Text des letzten Beitrags, auf 150 Zeichen gekürzt). Leeren Sie die Vorlage (und Kopf- und Fußzeile), um die Standardvorlage zurückzubekommen.</value>
   </data>
   <data name="labelHtmlItem.Text" xml:space="preserve">
     <value>Html Element Vorlage</value>

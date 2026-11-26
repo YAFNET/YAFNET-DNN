@@ -148,7 +148,7 @@
     <value>Html Header Template</value>
   </data>
   <data name="labelHtmlItem.Help" xml:space="preserve">
-    <value>Customize the template for the item.</value>
+    <value>Customize the template for the item. Placeholders: [TOPICLINK], [TOPICICON], [LASTPOSTICON], [FORUMLINK], [INFORUMLINK] ("in" and the forum), [BYTEXT], [LASTUSERLINK], [LASTPOSTEDDATETIME], [POSTS] (number of posts), [LASTMESSAGE] or [LASTMESSAGE:150] (the text of the last post, shortened to 150 characters). Empty the template (and the header and footer) to get the default back.</value>
   </data>
   <data name="labelHtmlItem.Text" xml:space="preserve">
     <value>Html Item Template</value>

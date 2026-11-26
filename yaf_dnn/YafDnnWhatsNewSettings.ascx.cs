@@ -100,25 +100,12 @@ public partial class YafDnnWhatsNewSettings : ModuleSettingsBase
                                          ? this.TabModuleSettings["YafMaxPosts"].ToType<string>()
                                          : "10";
 
-            this.HtmlHeader.Text = this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>().IsSet()
-                                       ? this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>()
-                                       : """<div class="container my-3 p-3">""";
+            // an unchanged template of an older version shows (and saves) the new default
+            this.HtmlHeader.Text = WhatsNewTemplates.HeaderOrDefault(this.TabModuleSettings["YafWhatsNewHeader"].ToType<string>());
 
-            this.HtmlItem.Text = this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>().IsSet()
-                                     ? this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>()
-                                     : """
-                                       <div class="d-flex text-secondary pt-3">
-                                       [LASTPOSTICON] 
-                                       	<p class="pb-3 mb-0 small lh-sm border-bottom"> 
-                                       		<span class="d-block text-secondary"><strong>[TOPICLINK]</strong>&nbsp;([FORUMLINK])</strong>
-                                       		[LASTMESSAGE:150]</span>
-                                               [BYTEXT]&nbsp;[LASTUSERLINK]&nbsp;[LASTPOSTEDDATETIME]
-                                       </p> </div>
-                                       """;
+            this.HtmlItem.Text = WhatsNewTemplates.ItemOrDefault(this.TabModuleSettings["YafWhatsNewItemTemplate"].ToType<string>());
 
-            this.HtmlFooter.Text = this.TabModuleSettings["YafWhatsNewFooter"].ToType<string>().IsSet()
-                                       ? this.TabModuleSettings["YafWhatsNewFooter"].ToType<string>()
-                                       : "</div>";
+            this.HtmlFooter.Text = WhatsNewTemplates.FooterOrDefault(this.TabModuleSettings["YafWhatsNewFooter"].ToType<string>());
         }
         catch (Exception exc)
         {
